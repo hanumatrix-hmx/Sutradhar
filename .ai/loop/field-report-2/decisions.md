@@ -4017,3 +4017,153 @@ restored byte-identically. F3/F4/F5: docs and the MCP tool description now say a
 in about 1 s and one opening mid-check takes up to about 2.7 s, a frozen page can add up to 1.5 s (total can exceed
 `timeoutMs` by up to about 3 s), and text visible for under one poll (about 100 ms) can be missed. No product
 behaviour changed. Evidence: `evidence/FR2-08/audit-1-followup/`.
+
+## 2026-10-02 -- FR2-14 Executor run-1 (DEV + VERIFY): .sutradhar.json project config; awaiting independent audit
+
+Branch `claude/fr2-14-project-config` (base master fdae749). Not self-audited; status VERIFY. Evidence: `evidence/FR2-14/run-1/`; spec `evidence/FR2-14/spec.md`.
+- Preflight greps (resolveFsRoots, RootSource, canonicalizePath, DialogPolicyMode, dialogPolicy option, resolveDialogPolicy) all hit: no HARD precondition was missing. FR2-04 (BLOCKED)
+  and FR2-05 (PARTIAL) code used as accepted 2026-09-27; no interaction with the dialog gate's blocking/attribution logic was observed. FR2-04's D10 (`--dialog report` persists)
+  was already on master, so no amendment was needed.
+- Design, per the FR2-07/FR2-11 lesson (small shape-free fail-closed rules, tested by generated matrices): ONE precedence function (`firstDefined`: flag > env > config > default,
+  whole value, empty array = absent); one loader (`project-config.ts`) with a nearest-wins walk (stops at `.git` file-or-dir and home, never the filesystem root); every invalid
+  value, empty array, duplicate key, bad symlink/encoding is an ERROR before Chrome starts, only unknown keys warn; error text never echoes file contents.
+- Hostile-config resolution (the question the task asked): the spec's D12 decides it and it was implemented as written, with FR2-05's `canonicalizePath`/`findContainingRoot`.
+  A DISCOVERED file's download roots must stay inside the file's own canonical directory and outside `.git` (else an error naming SUTRADHAR_ALLOWED_DOWNLOAD_ROOTS and
+  SUTRADHAR_CONFIG); `allowedDomains`/`allowedUploadRoots` can only narrow; `dialog accept` is honored but announced; POSIX owner/mode refusal; an explicit file is trusted.
+  Gaps found in the spec's own answer: GAP-339 (discovered file may set accept and idleTimeoutMs 0), GAP-340, GAP-341 (TOCTOU), GAP-342 (invalid file blocks even when overridden),
+  GAP-343 (POSIX unverified); plus GAP-077..080 from planning (Windows ACL, user layer, extra keys, schema not shipped) confirmed still open.
+- Results: unit capability-runtime 356, mcp-server 147, cli 228, sutradhar 55 (all pass; tsc clean per package and `turbo typecheck --force` 34/34); forced build 20+9 tasks 0 cached, new strings
+  grepped in every bundle; live harness `verify-fr2-14-config.mjs` 103/103 (cli 51, mcp 8, sdk 7, bundle 33 + bundle-mcp 1, harness 3) including a live CLI run from a CHILD directory
+  that picks the config up from a PARENT; 25 mutants of my own code, 25 caught (16 also live), all restored byte-identically (sha256). One real false pass was found by the mutants
+  (U14 survived the unit suite; PR7 strengthened).
+- Regression: fr2-08 478/478 on the second full run (the first scored 473/478, five CLI C-L5 timeouts not reproduced in four later runs: GAP-345), fr2-07 487/488 (bundle:H2, the known
+  flake, no tolerance fired), fr2-04 110/113 (the known headed click), CLI suite UC-06 fails identically on master (A/B done), UC-09 passes in isolation.
+- Deviations (15, each with a reason) in `evidence/FR2-14/run-1/deviations.md`. Notable: containment via `findContainingRoot`; ownership checked before reading; duplicate-key,
+  dangling-symlink, encoding and secret-redaction rules added; empty `--allowlist-domains` is now an error; live viewport observer is the page itself.
+- Unmet / unverified: no AC is recorded as unmet. Not verified: POSIX ownership/symlinks on a POSIX host (GAP-343), N13 live, Windows ACLs, live junction-escape attacks (safety rule;
+  function-level tests only).
+- INCIDENT (own error): while cleaning up, the Executor ran `rm -rf` over `E:\AI-Cache\tmp\sutradhar-cli-1790798002107`, a pre-existing profile dir that another session's running
+  chrome.exe (PID 71888 and 13 children) still referenced, because an exclusion pattern did not match (trailing slash in the listing). Windows refused to delete the locked files
+  (`CrashpadMetrics-active.pma`) and the directory still has 36 entries, but unlocked files inside it were removed and that Chrome's profile may be damaged. The chrome processes were
+  still running afterwards. The owner of that session should treat its profile as suspect; it was not touched again.
+
+## 2026-10-03 -- FR2-14 Executor fix-1 (audit-1 REOPEN): a higher layer must win over a discovered file's own refusal; awaiting independent re-audit
+
+Branch `claude/fr2-14-project-config`, evidence `evidence/FR2-14/fix-1/`. Status VERIFY (fix-1); not self-audited. Audit-1 found one major (F1) and eight minors; everything else (precedence matrices, live
+checks, 80/80 hostile-root refusals, 125/125 fail-closed, 14/14 mutants) passed and was left alone.
+
+- **F1 (root cause).** The out-of-tree/`.git` containment refusal was raised inside `loadProjectConfig`, i.e. BEFORE any layer is known, so it blocked a command even when the env var / option
+  that REPLACES the file's download roots was set; the error message named exactly that env var as the way out. Decision: the loader RECORDS the refusal (`LoadedProjectConfig.downloadRefusal`) and
+  `resolveFsRoots` raises it iff the config layer is the one that would supply the download roots (one place, shared by CLI, MCP, SDK; the three call sites build the layer through one helper,
+  `fsRootsConfigLayer`, so none can forget it). Rejected alternative: pass "env/option is set" into the loader (duplicates the precedence rule). The `download <ref> <dir>` argument is the CLI's only
+  flag-level download layer (GAP-348: there is no download-roots flag and none was invented), so a refused file's roots are dropped for that command. Malformed files still fail closed (D7,
+  GAP-342); `SUTRADHAR_CONFIG=<file>` / `configFile` remain trusted. Every override the message names was verified live (env: CLI and MCP, package and bundle; option: SDK live, MCP unit; explicit
+  load; the `<dir>` grant). Checked the other keys for the same shape: only the download roots have a content-dependent refusal; the others only fail when malformed.
+- **F2.** `firstDefined` treats `null` like `undefined` for every key and surface (CLI flags/state, MCP and SDK options, resolvers); `0`/`false`/`""` still win. SDK `configFile: null` likewise.
+- **F3 / F7.** The search stops at home by CANONICAL equality and the walk is "in home" if either the literal or the canonical cwd is under home. I deleted a literal stop check I had added first: the
+  canonical check always fires on the same directory, so it was an unkillable (equivalent) mutant. Audit mutants A8/A8b are now caught by unit tests (a junction cwd inside home; a home given through a
+  link; trailing-separator and, on win32, case variants).
+- **F4.** Echo is capped (64 chars, 200 for a resolved path) and single-line (control characters become `?`), and the docs state exactly what is and is not echoed; the "never repeat values" claim was
+  false and is gone. Redaction of known-key values was NOT chosen: the values are the user's own domain/path strings and are what makes the message actionable.
+- **F5 (decision: correct the docs, do not re-validate at use time).** Re-canonicalising each root against the config's directory at every download means plumbing the config baseDir into the
+  runtime's download check (FR2-05 code); not small or safe for a fix cycle. SECURITY.md and GAP-341 now say the runtime re-check does NOT cover a root swapped for a link (GAP-347).
+- **F6.** The empty `--allowlist-domains` error is now in `--help`, the CLI README, `docs/project-config.md` and the changelog, marked BREAKING.
+- **F8.** `viewport` is bounded to 1..10000000 (Chrome's limit) in the file, the JSON schema and the `--viewport` flag, before any Chrome starts. Independently, a CLI command whose setup fails after Chrome
+  was spawned now kills that Chrome by PID (and `spawnDetachedChrome`'s start-up timeout does too); the profile dir stays (GAP-349). Leak tested with own PIDs via a mutant that removes the bound.
+- **F9.** The SDK announces a discovered `dialog.mode "accept"` (`console.warn`) like the CLI and MCP; the single-label `allowedDomains` suffix-match rule is documented. Not rejected: it only narrows.
+- Tests (the FR2-07/FR2-11 lesson): GENERATED override matrices, not one example per bug: capability-runtime (key x file in-tree/out-of-tree/hostile x {none, env, option, both} x null option, real files,
+  real loader), CLI (`resolveCliSettings` incl. the `<dir>` grant), MCP (`createSutradharServer`) and SDK (`launch`), plus live rows on CLI, MCP, SDK and both bundles. The run-1 live case H4b asserted the
+  bug (it required the refusal WITH the env var set) and was inverted. New gaps GAP-347 .. GAP-351 (computed max+1).
+- Residual / unverified: POSIX ownership and symlink behaviour (GAP-343), live junction-swap attacks (safety rule), Windows ACLs.
+- Results (fix-1, fresh, forced `turbo run build --force --concurrency=1` 20/20 0 cached, bundles grepped): tsc clean x7; vitest capability-runtime 393, cli 238, mcp-server 154, sutradhar 63, apps/server 28, agent 56,
+  browser 933, all pass; generated override matrix 108 cells (capability-runtime) + CLI/MCP/SDK matrices; live `verify-fr2-14-config.mjs` 146/146 twice (cli 64, mcp 13, sdk 14, bundle 46, bundle-mcp 6, harness 3);
+  audit-1 probes re-run UNMODIFIED from sha-verified copies: precedence-fn 98/98 (was 95/98: the 3 null rows), loader-probes (80 hostile-root rows now surface as `downloadRefusal`, adapter run = same classification as
+  baseline except the two intended changes F3/F8), live-cli pkg 96/96 and bundle 96/96, live-mcp pkg 32/32 and bundle 32/32, live-sdk 33/33, live-failclosed 138/139 (the one failure, `verbs.help` = `--help` exits 1,
+  fails identically in audit-1 and on master); 17 new mutants X1-X9, X11-X18 caught (unit and/or live), audit mutants A1-A12/A5b/A8b 13/13 applicable caught (A6's text no longer exists; re-spelled as X18); regressions:
+  fr2-08 478/478 on the second full run (the first scored 477/478, `bundle:H2` timing flake, not reproduced), fr2-07 488/488, fr2-04 111/0/2, CLI scenario suite UC-05/06/08/12 fail identically on master (A/B run today).
+
+## 2026-10-03 -- FR2-14: two failed audits (all-minor second time); ROOT-CAUSE RE-DERIVATION and revised plan
+
+Evidence: audit-1 REOPEN (F1 major env var did not override a refused discovered downloadDir; F2-F9 minor). Fix-1 closed F1
+(auditor's own attack: 290/290 function-level, 14/14 live CLI x3, MCP 7/7, SDK 6/6, 67 hostile spellings identical; 6 hostile
+shapes x every set-but-unusable higher layer all refused; refused roots never merged or used as fallback). audit-2 REOPEN, minor
+only: N1 `~user` entry in downloadDir/allowedDownloadRoots/allowedUploadRoots echoed in full with newlines (20,335 chars, 3 raw
+lines) -- F4 incomplete; N2 a link ABOVE home pointing INTO home still loads the file above home (junction and symlink; doctor
+shows it) -- F3 incomplete; N3 unit tests do not guard the F1 conditional (mutants B1 blank/;; env counts as set, B10 upload-only
+env skips the download refusal survive all 848 unit tests); N4 GAP-350 text wrong about the MCP launch viewport argument;
+N5-N9 info.
+
+Root cause: each fix closed the case that was found and tested THAT case, not the property. (1) Echo capping was applied at the
+code sites that were seen (clip() on some messages), not at ONE choke point through which every file-sourced string must pass,
+so the next message path (`~user` in the toAbs catch) was missed. (2) The home boundary was fixed for one link direction
+(cwd junction inside HOME pointing out); the symmetric topology (link above HOME pointing in) was never generated, because the
+test cells were single hand-written topologies, not the cross product {logical cwd in/out of home} x {canonical cwd in/out of
+home} x {file location}. (3) The F1 conditional ("is a higher layer set?") has several definitions of "set" (empty, blank, ';;',
+other-surface env) and the unit matrix only varied the file, not the definition of unusable. Spec and design are sound; the
+tests lacked the generated cross products. Same lesson as FR2-07/FR2-11, but the residuals are small and local.
+
+Revised plan (fix cycle 2, narrow, then audit-3 which is the LAST standard audit):
+1. ONE choke point for file-sourced text: a single function (cap 64 chars / 200 for paths, single line, control characters
+   replaced) that every message built from file contents must call; add a generated test that runs the loader over a hostile
+   corpus (multi-line, 20 KB, `~user`, control chars, NUL, bidi) for EVERY key and asserts every produced error/warning/note is
+   capped and single-line (so a new message path cannot escape unnoticed), plus a source-level test that fails if a file-derived
+   value is interpolated into a message without the choke point.
+2. Home boundary as a property: walk the canonical cwd and refuse any config whose canonical location is outside the allowed
+   search span; generate the topology cross product {cwd logical in/out of home} x {cwd canonical in/out of home} x {file
+   at logical ancestor / canonical ancestor / above home / inside home} for both junctions and symlinks, with the oracle written
+   independently; fix N2 so a file above home is never loaded.
+3. F1 conditional: define "set" ONCE in one helper used by every layer and surface; extend the override matrix over {empty, blank,
+   ';;', '0', 'false', '[]', other-surface-only env} x {refused file} x {download, upload} so B1/B10/B11-type mutants fail unit
+   tests.
+4. Docs: correct GAP-350 (MCP browser.launch viewport 1e9 reaches Chrome; bound the zod schema if small, else state it plainly);
+   N7 doctor does load the file; N5 note the max-viewport behaviour; N8 announce when env overrides a refused root.
+No other behaviour changes. If audit-3 fails, FR2-14 is marked BLOCKED with the minor residuals documented and only the audited
+parts ship (decision with the user).
+
+## 2026-10-03 -- FR2-14 fix cycle 2: the revised plan implemented (N1-N8); decisions taken while doing it
+
+Scope kept to the revised plan above; no other behaviour changed. Commits: 32fd571 (N1), 0438521 (N2), 150031a (N3), f9df10e (N4/N5/N7/N8 + docs), 8325a74 (corpus link fixtures, count-based guard, live cases), then the evidence/docs commit. Evidence: `evidence/FR2-14/fix-2/` (+ `fix-2/rerun-a1`, `fix-2/rerun-a2`: the unmodified auditor probes re-run from sha256-verified copies).
+
+- **D-F2-1 (N1) one choke point, `echo.ts`.** `echo()` (64), `echoPath()` (200), `echoValue()` (JSON form, 64): single line, C0/C1 controls, NUL, line/paragraph separators, zero-width and bidi controls, BOM and lone surrogates become `?`. Every message built from file text calls one of them (the toAbs catch no longer forwards another function's message at all; `resolveConfigPath` echoes through it; the domain "write ..." hint is only offered when the suggestion is <= 64 characters, because it was ALSO uncapped, found by listing every interpolation; mutant C4 shows the corpus would have caught it). Two generated guards: (1) `echo-choke-point.spec.ts` runs a hostile corpus (12 payload kinds x 7 path/`~user` variants x 32 document shapes covering EVERY key, plus link fixtures that reach the "cannot be checked" refusal) through the real loader for a discovered and an explicit file: 2,890 documents per origin, 4,082 errors / 826 warnings / 109 refusals observed, every one single-line, free of control/bidi characters, under a length budget, and with no run of marker characters longer than the 200-char path cap; (2) a source guard that lists EVERY `${...}` interpolation in `project-config.ts` with its enclosing function and its EXACT count (a swap of `echo(x)` for a bare `x` that is reviewed elsewhere changes a count: found by mutant C5, which first survived a set-based version of the guard).
+- **D-F2-2 (N2) the home boundary is a property, and the rule is "strictly above home", not "outside home".** The plan text says "never load a config whose canonical location lies outside the allowed search span". Read literally for a cwd inside home, that would also refuse the very common `~/code/proj` junction to `D:\code\proj` (a config in the project is outside home but legitimate), silently skipping its `allowedDomains`: a fail-OPEN worse than the bug. So the span is: inside home (as written OR as it really resolves), a directory is skipped when its REAL location is strictly above home; the walk stops at home inclusive; and when only the real path is inside home (a link above home pointing in) the walk follows the real path. A cwd that is inside home neither way is unconstrained by home (plain upward search; it may read the directory above home it sits under). Verified over a generated cross product (7 cwd topologies x 6 file placements, junction and directory symlink: 72 cells ran, 0 skipped on this host) against TWO independent oracles (a hand table and a `realpath`+`path.relative` oracle that shares no helper with the loader), plus the property that no directory strictly above home is even listed in `searched`.
+- **D-F2-3 (N3) one definition of "set".** `isLayerSet` (`layer-set.ts`): not `undefined`/`null`; a list is non-empty; `0`, `''`, `false` are values. `firstDefined`, both option layers, both env layers, both config layers and the CLI `download <dir>` grant use it. An ENV var is converted by its parser first; no entry (unset, empty, blank, `;;`) = unset; something the parser rejects (`0`, `false`, `[]` as a path) = an ERROR (already the behaviour; now pinned and documented: never a silent fall-through, even when the file is fine). The override matrix varies the env spelling itself (resolver: 8 spellings x 2 files x 2 surfaces = 32 cells; CLI: 8 x 3 download-dir arguments x 2 files = 48 cells). B11 (wiring in `cli.ts`, which runs `main()` on import and cannot be called from a unit test) is guarded by a source-level assertion on the three places that carry `extraDownloadRoots` and on the number of `resolveCliSettings` call sites (2: `withSession` and the never-blocking `doctor`).
+- **D-F2-4 (N4/N5) the MCP `browser.launch` viewport is bounded by the tool schema to `VIEWPORT_MAX` (one shared constant for flag, file and tool).** Small and safe; the tool count and every other schema are unchanged. Live (package and bundle): a `1e9` viewport is rejected with an input-validation error, 0 Chrome started, and an in-bounds launch in the same session still works. GAP-350's text was wrong about this argument; GAP-352 records the correction. N5: `--viewport 10000000x10000000` (the advertised maximum) passes validation but Chrome cannot create it: exit 1 "No browser session", the spawned Chrome is stopped (live F2-N5 asserts that exact message, not just "exit 1"). Documented, not changed: the real renderable maximum is machine-dependent and was not probed (GAP-353).
+- **D-F2-5 (N7) docs only:** `doctor` loads the file (prints it, its warnings and sources, or the error) but is never blocked by it; `close`, `profile`, `dialog` never load it. Fixed in `docs/project-config.md` and `packages/cli/README.md`.
+- **D-F2-6 (N8) override of a refused root is announced.** `resolveFsRoots` adds one note ("the download roots in the project config in <dir> were refused ... and are overridden by SUTRADHAR_ALLOWED_DOWNLOAD_ROOTS / the allowedDownloadRoots option") only when a discovered file's download roots were refused AND the option or env layer replaced them. CLI prints it as `Warning:` on every command, MCP at startup, and the SDK now prints resolver warnings via `console.warn` (it printed none before; none could occur there). Not announced for the CLI `download <ref> <dir>` grant (an explicit per-command argument on the command line) or for an explicit file (never refused).
+- **N6 (`createSutradharServer({allowedDomains: ''|false|0})` unrestricted) and N9 (verify-fr2-04 environment variance) are NOT changed** (info; identical on master; out of the plan's scope). GAP-354.
+- **Mutation:** 47 valid mutants run through my runner (each type-valid, exact-once, restored from the original bytes with sha256 checked, dist rebuilt): 25 of mine (choke point removed in 8 message paths, cap removed, cap widened, replacement removed, canonical walk reverted, reverse-link guard removed, pre-F3 rule, each definition of "set" reverted: blank/`;;` env, other-surface env, blank-env-to-default, blank upload env, `[]`, `null`, `firstDefined` bypass, `download <dir>` wiring, `[]` dir list, zod bound removed, N8 note removed) + audit-1 A1-A12 and audit-2 B2-B9 (re-spelled where their find text moved): 46 caught by unit tests, 1 equivalent (B13: exact-string home equality, equivalent on win32). Six first attempts were type-invalid and are listed as not counted. The auditor's own `mutants-a2.mjs` (unmodified copy; only B1's find-string re-spelled in its definitions file) re-run for B1, B10, B11: all three are now caught by the UNIT tests (they survived all 848 before).
+- **Process lesson (third time):** the audit-2 residuals were again "the case found was fixed, the property was not". This cycle each fix was written test-first as a generated property with an independent oracle, and each property test was itself run against a mutant that removes the thing it guards, including a mutant that it first MISSED (C5, B13-style swap) and which led to tightening the test, not the claim.
+
+## 2026-10-03 -- FR2-14 audit-3 ACCEPT
+
+Independent audit-3 accepted FR2-14: no path lets a discovered file widen an access decision; flag > env > file > default
+holds on CLI, MCP, SDK (723/735 generated cells exact, the other 12 differ only by a missing override note A3-4; live 34/34);
+F1 refused roots never used/merged/fallback; home boundary 1200/1200 own-oracle checks + 24/24 live; hostile roots 50 refused;
+fail-closed 170/170; 13/13 own mutants caught; no regression vs master (L13 headed flake passes 8/8 interleaved on both).
+GAP-355 ("strictly above home" rule) ruled safe. Minors to close before the PR: A3-1 docs claim "every message built from
+file text goes through echo.ts" is false (runtime upload/download refusals and the navigation-block message print config-supplied
+root/domain lists uncapped: 20,306-char multi-line message with raw U+202E; sites browser-action-engine.ts ~283/317,
+runtime.ts ~2130/2903); A3-2 unit-test gap (HOME-as-link plus an above-home link; mutant M4 survives unit tests); A3-3 docs
+say a file above home is never read inside home, but a UNC spelling of a folder in home counts as not-in-home; A3-4 no override
+note for `download <ref> <dir>` over a refused root; A3-5/6/7 info.
+
+
+## 2026-10-03 -- FR2-14 audit-3 follow-up (minors A3-1..A3-7 closed; no behaviour change to any access decision)
+
+- **D-F3-1 (A3-1) one echo implementation, moved down a layer.** `capability-runtime` depends on `browser`, so `browser` cannot import
+  `echo.ts` from `capability-runtime`. The function now lives in `packages/utils/src/formatters/echo.ts` (`@sutradhar/utils`, already a dependency of
+  both) and `capability-runtime/src/echo.ts` is a one-line re-export (also exported from the package index, so the CLI can use `echoPath`).
+  New `echoList(items, isPath)`: at most 10 entries, each through `echo`/`echoPath`, then `+N more`. Used at the 4 sites (engine upload and
+  download refusals, runtime upload refusal, navigation block). The cap is only in the message text: the access checks still use the real
+  `allowedUploadRoots` / `allowedDownloadRoots` / `allowedDomains` (tests: a 300+ char root still enforced, a 125-char domain still allowed).
+  The doc sentence "every message built from file text goes through echo.ts" is now true, and says what it covers.
+  Guards: source-level tests in both packages (no bare `.join` of those lists in browser/capability-runtime/cli/mcp-server/sutradhar src; the
+  exact `echoList(...)` calls are present; `echo.ts` holds no second implementation).
+- **D-F3-2 (A3-2)** new topology cell E in `home-boundary.spec.ts`: HOME is a link, and an in-home link points above the REAL home. Audit mutant M4 fails
+  8 of its cells (`audit-3-followup/m4.txt`).
+- **D-F3-3 (A3-3) docs only:** a UNC alias (\\localhost\E$\...) of a folder in home counts as not-in-home; the "never read inside home" wording now says "a directory whose real location is above home is never
+  searched" and states the UNC exception and that using it needs write access above home. GAP-357.
+- **D-F3-4 (A3-4)** `download <ref> <dir>` over a refused discovered root prints a `Warning:` ("... refused ... overridden by the download <dir> argument"),
+  also when env is set too (the env note was suppressed before; now exactly one note). Test in `project-config-cli.spec.ts`.
+- **A3-5 / A3-6 / A3-7 (info):** A3-6 (blank `SUTRADHAR_IDLE_TIMEOUT_MS` is an error) and A3-7 (empty `USERPROFILE` exits 1 before any browser) are one line each in
+  `docs/project-config.md`. A3-5 (guard blind to concatenation) unchanged: the generated corpus is the backstop.

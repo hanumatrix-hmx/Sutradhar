@@ -224,6 +224,31 @@ between. Each iteration is a full round trip through your context window, and yo
 the interval. One `wait_for` call does the same thing in-process every 100 ms, and returns one
 result.
 
+## Project config: `.sutradhar.json`
+
+Drop a `.sutradhar.json` in a project and the CLI and the MCP server pick it up from that directory or any parent
+(stopping at the git root or your home directory; the SDK reads one only if you ask). It sets defaults so you do not
+repeat flags on every command:
+
+```json
+{
+  "$schema": "urn:sutradhar:config:1",
+  "allowedDomains": ["example.com", "localhost"],
+  "downloadDir": "./downloads",
+  "allowedUploadRoots": ["./fixtures"],
+  "dialog": { "mode": "dismiss" },
+  "viewport": { "width": 1280, "height": 800 },
+  "idleTimeoutMs": 1800000
+}
+```
+
+Keys: `allowedDomains`, `downloadDir`, `allowedDownloadRoots`, `allowedUploadRoots`, `dialog`, `viewport`,
+`idleTimeoutMs`. **Precedence: CLI flag > env var > config file > built-in default.** Paths in the file are relative
+to the file. Unknown keys give a warning; anything invalid stops the command (an empty array is an error, not
+"allow everything"). `SUTRADHAR_CONFIG=<absolute path>` loads one file explicitly, `SUTRADHAR_CONFIG=none` ignores
+project config, and `sutradhar doctor` shows which file is in use. A file found by searching upward is treated as
+untrusted: its download directory must stay inside its own folder. Full reference: `docs/project-config.md`.
+
 ## Other ways in
 
 **CLI** (no scripting, one-shot terminal commands):

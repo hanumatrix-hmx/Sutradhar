@@ -1,0 +1,314 @@
+[
+ {
+  "name": "F3 cwd=home/P/jout (->X/Y), file at X",
+  "level": "fn",
+  "cwd": "E:\\AI-Cache\\tmp\\fr214a3\\ah\\T\\U\\H\\P\\jout",
+  "homedir": "E:\\AI-Cache\\tmp\\fr214a3\\ah\\T\\U\\H",
+  "got": "home@E:\\AI-Cache\\tmp\\fr214a3\\ah\\T\\U\\H",
+  "width": "none",
+  "expect": "none",
+  "ok": true
+ },
+ {
+  "name": "F3 live",
+  "level": "live-doctor",
+  "cwd": "E:\\AI-Cache\\tmp\\fr214a3\\ah\\T\\U\\H\\P\\jout",
+  "home": "E:\\AI-Cache\\tmp\\fr214a3\\ah\\T\\U\\H",
+  "status": 0,
+  "line": "Config:          none (searched 3 directories upward from E:\\AI-Cache\\tmp\\fr214a3\\ah\\T\\U\\H\\P\\jout; stopped at home E:\\AI-Cache\\tmp\\fr214a3\\ah\\T\\U\\H) | Config sources:  allowedDomains=default, downloadRoots=default, uploadRoots=unrestricted, dialog=default, vie",
+  "width": "none",
+  "expect": "none",
+  "ok": true
+ },
+ {
+  "name": "F3 dir-symlink variant",
+  "level": "fn",
+  "cwd": "E:\\AI-Cache\\tmp\\fr214a3\\ah\\T\\U\\H\\P\\sout",
+  "homedir": "E:\\AI-Cache\\tmp\\fr214a3\\ah\\T\\U\\H",
+  "got": "home@E:\\AI-Cache\\tmp\\fr214a3\\ah\\T\\U\\H",
+  "width": "none",
+  "expect": "none",
+  "ok": true
+ },
+ {
+  "name": "N2 cwd=T/jin (->home/P/Q), file at T and U",
+  "level": "fn",
+  "cwd": "E:\\AI-Cache\\tmp\\fr214a3\\ah\\T\\jin",
+  "homedir": "E:\\AI-Cache\\tmp\\fr214a3\\ah\\T\\U\\H",
+  "got": "home@E:\\AI-Cache\\tmp\\fr214a3\\ah\\T\\U\\H",
+  "width": "none",
+  "expect": "none",
+  "ok": true
+ },
+ {
+  "name": "N2 live",
+  "level": "live-doctor",
+  "cwd": "E:\\AI-Cache\\tmp\\fr214a3\\ah\\T\\jin",
+  "home": "E:\\AI-Cache\\tmp\\fr214a3\\ah\\T\\U\\H",
+  "status": 0,
+  "line": "Config:          none (searched 3 directories upward from E:\\AI-Cache\\tmp\\fr214a3\\ah\\T\\jin; stopped at home E:\\AI-Cache\\tmp\\fr214a3\\ah\\T\\U\\H) | Config sources:  allowedDomains=default, downloadRoots=default, uploadRoots=unrestricted, dialog=default, viewport=d",
+  "width": "none",
+  "expect": "none",
+  "ok": true
+ },
+ {
+  "name": "N2 dir-symlink from U into home/P, sub Q",
+  "level": "fn",
+  "cwd": "E:\\AI-Cache\\tmp\\fr214a3\\ah\\T\\U\\sin\\Q",
+  "homedir": "E:\\AI-Cache\\tmp\\fr214a3\\ah\\T\\U\\H",
+  "got": "home@E:\\AI-Cache\\tmp\\fr214a3\\ah\\T\\U\\H",
+  "width": "none",
+  "expect": "none",
+  "ok": true
+ },
+ {
+  "name": "junction->junction chain into home",
+  "level": "fn",
+  "cwd": "E:\\AI-Cache\\tmp\\fr214a3\\ah\\c1",
+  "homedir": "E:\\AI-Cache\\tmp\\fr214a3\\ah\\T\\U\\H",
+  "got": "home@E:\\AI-Cache\\tmp\\fr214a3\\ah\\T\\U\\H",
+  "width": "none",
+  "expect": "none",
+  "ok": true
+ },
+ {
+  "name": "symlink->junction->junction chain into home",
+  "level": "fn",
+  "cwd": "E:\\AI-Cache\\tmp\\fr214a3\\ah\\c2",
+  "homedir": "E:\\AI-Cache\\tmp\\fr214a3\\ah\\T\\U\\H",
+  "got": "home@E:\\AI-Cache\\tmp\\fr214a3\\ah\\T\\U\\H",
+  "width": "none",
+  "expect": "none",
+  "ok": true
+ },
+ {
+  "name": "home junction -> junction -> outside",
+  "level": "fn",
+  "cwd": "E:\\AI-Cache\\tmp\\fr214a3\\ah\\T\\U\\H\\P\\j2",
+  "homedir": "E:\\AI-Cache\\tmp\\fr214a3\\ah\\T\\U\\H",
+  "got": "home@E:\\AI-Cache\\tmp\\fr214a3\\ah\\T\\U\\H",
+  "width": "none",
+  "expect": "none",
+  "ok": true
+ },
+ {
+  "name": "cwd=home/P/up (->T, above home)",
+  "level": "fn",
+  "cwd": "E:\\AI-Cache\\tmp\\fr214a3\\ah\\T\\U\\H\\P\\up",
+  "homedir": "E:\\AI-Cache\\tmp\\fr214a3\\ah\\T\\U\\H",
+  "got": "home@E:\\AI-Cache\\tmp\\fr214a3\\ah\\T\\U\\H",
+  "width": "none",
+  "expect": "none",
+  "ok": true
+ },
+ {
+  "name": "cwd=home/P/up/U (->U, parent of home)",
+  "level": "fn",
+  "cwd": "E:\\AI-Cache\\tmp\\fr214a3\\ah\\T\\U\\H\\P\\up\\U",
+  "homedir": "E:\\AI-Cache\\tmp\\fr214a3\\ah\\T\\U\\H",
+  "got": "home@E:\\AI-Cache\\tmp\\fr214a3\\ah\\T\\U\\H",
+  "width": "none",
+  "expect": "none",
+  "ok": true
+ },
+ {
+  "name": "home/P/up/U live",
+  "level": "live-doctor",
+  "cwd": "E:\\AI-Cache\\tmp\\fr214a3\\ah\\T\\U\\H\\P\\up\\U",
+  "home": "E:\\AI-Cache\\tmp\\fr214a3\\ah\\T\\U\\H",
+  "status": 0,
+  "line": "Config:          none (searched 2 directories upward from E:\\AI-Cache\\tmp\\fr214a3\\ah\\T\\U\\H\\P\\up\\U; stopped at home E:\\AI-Cache\\tmp\\fr214a3\\ah\\T\\U\\H) | Config sources:  allowedDomains=default, downloadRoots=default, uploadRoots=unrestricted, dialog=default, vie",
+  "width": "none",
+  "expect": "none",
+  "ok": true
+ },
+ {
+  "name": "HOME is a link, cwd real P",
+  "level": "fn",
+  "cwd": "E:\\AI-Cache\\tmp\\fr214a3\\ah\\T\\U\\H\\P",
+  "homedir": "E:\\AI-Cache\\tmp\\fr214a3\\ah\\HL",
+  "got": "home@E:\\AI-Cache\\tmp\\fr214a3\\ah\\T\\U\\H",
+  "width": "none",
+  "expect": "none",
+  "ok": true
+ },
+ {
+  "name": "HOME is a link, cwd via link HL/P",
+  "level": "fn",
+  "cwd": "E:\\AI-Cache\\tmp\\fr214a3\\ah\\HL\\P",
+  "homedir": "E:\\AI-Cache\\tmp\\fr214a3\\ah\\HL",
+  "got": "home@E:\\AI-Cache\\tmp\\fr214a3\\ah\\HL",
+  "width": "none",
+  "expect": "none",
+  "ok": true
+ },
+ {
+  "name": "HOME is a link live",
+  "level": "live-doctor",
+  "cwd": "E:\\AI-Cache\\tmp\\fr214a3\\ah\\HL\\P",
+  "home": "E:\\AI-Cache\\tmp\\fr214a3\\ah\\HL",
+  "status": 0,
+  "line": "Config:          none (searched 2 directories upward from E:\\AI-Cache\\tmp\\fr214a3\\ah\\HL\\P; stopped at home E:\\AI-Cache\\tmp\\fr214a3\\ah\\HL) | Config sources:  allowedDomains=default, downloadRoots=default, uploadRoots=unrestricted, dialog=default, viewport=defau",
+  "width": "none",
+  "expect": "none",
+  "ok": true
+ },
+ {
+  "name": "HOME trailing slash",
+  "level": "fn",
+  "cwd": "E:\\AI-Cache\\tmp\\fr214a3\\ah\\T\\U\\H\\P",
+  "homedir": "E:\\AI-Cache\\tmp\\fr214a3\\ah\\T\\U\\H\\",
+  "got": "home@E:\\AI-Cache\\tmp\\fr214a3\\ah\\T\\U\\H",
+  "width": "none",
+  "expect": "none",
+  "ok": true
+ },
+ {
+  "name": "HOME upper case",
+  "level": "fn",
+  "cwd": "E:\\AI-Cache\\tmp\\fr214a3\\ah\\T\\U\\H\\P",
+  "homedir": "E:\\AI-CACHE\\TMP\\FR214A3\\AH\\T\\U\\H",
+  "got": "home@E:\\AI-Cache\\tmp\\fr214a3\\ah\\T\\U\\H",
+  "width": "none",
+  "expect": "none",
+  "ok": true
+ },
+ {
+  "name": "HOME forward slashes",
+  "level": "fn",
+  "cwd": "E:\\AI-Cache\\tmp\\fr214a3\\ah\\T\\U\\H\\P",
+  "homedir": "E:/AI-Cache/tmp/fr214a3/ah/T/U/H",
+  "got": "home@E:\\AI-Cache\\tmp\\fr214a3\\ah\\T\\U\\H",
+  "width": "none",
+  "expect": "none",
+  "ok": true
+ },
+ {
+  "name": "home has file, cwd T/jin",
+  "level": "fn",
+  "cwd": "E:\\AI-Cache\\tmp\\fr214a3\\ah\\T\\jin",
+  "homedir": "E:\\AI-Cache\\tmp\\fr214a3\\ah\\T\\U\\H",
+  "got": "F:E:\\AI-Cache\\tmp\\fr214a3\\ah\\T\\U\\H\\.sutradhar.json",
+  "width": 5,
+  "expect": "5",
+  "ok": true
+ },
+ {
+  "name": "home has file, cwd P/up/U",
+  "level": "fn",
+  "cwd": "E:\\AI-Cache\\tmp\\fr214a3\\ah\\T\\U\\H\\P\\up\\U",
+  "homedir": "E:\\AI-Cache\\tmp\\fr214a3\\ah\\T\\U\\H",
+  "got": "F:E:\\AI-Cache\\tmp\\fr214a3\\ah\\T\\U\\H\\.sutradhar.json",
+  "width": 5,
+  "expect": "5",
+  "ok": true
+ },
+ {
+  "name": "homedir empty string -> plain walk reaches U (documented: not in home)",
+  "level": "fn",
+  "cwd": "E:\\AI-Cache\\tmp\\fr214a3\\ah\\T\\U\\H\\P\\Q",
+  "homedir": "",
+  "got": "F:E:\\AI-Cache\\tmp\\fr214a3\\ah\\T\\U\\.sutradhar.json",
+  "width": 2,
+  "expect": "2",
+  "ok": true
+ },
+ {
+  "name": "HOME on another drive (C:), cwd E:/.../Q",
+  "level": "fn",
+  "cwd": "E:\\AI-Cache\\tmp\\fr214a3\\ah\\T\\U\\H\\P\\Q",
+  "homedir": "C:\\Users\\Varad M",
+  "got": "F:E:\\AI-Cache\\tmp\\fr214a3\\ah\\T\\U\\.sutradhar.json",
+  "width": 2,
+  "expect": "2",
+  "ok": true
+ },
+ {
+  "name": "cwd=E:/S/jreal/.claude (-> real C: home): canonical walk stops at home",
+  "level": "fn",
+  "cwd": "E:\\AI-Cache\\tmp\\fr214a3\\ah\\jreal\\.claude",
+  "homedir": "C:\\Users\\Varad M",
+  "got": "home@C:\\Users\\Varad M",
+  "width": "none",
+  "expect": "(g) => g.startsWith('home')",
+  "ok": true
+ },
+ {
+  "name": "HOME 8.3 spelling, cwd real long path",
+  "level": "fn",
+  "cwd": "C:\\Users\\Varad M\\.claude",
+  "homedir": "C:\\Users\\VARADM~1",
+  "got": "home@C:\\Users\\Varad M",
+  "width": "none",
+  "expect": "(g) => g.startsWith('home')",
+  "ok": true
+ },
+ {
+  "name": "HOME long, cwd 8.3 path",
+  "level": "fn",
+  "cwd": "C:\\Users\\VARADM~1\\.claude",
+  "homedir": "C:\\Users\\Varad M",
+  "got": "home@C:\\Users\\Varad M",
+  "width": "none",
+  "expect": "(g) => g.startsWith('home')",
+  "ok": true
+ },
+ {
+  "name": "config is a file symlink into untrusted tree: baseDir is the link dir, escaping downloadDir refused",
+  "level": "fn",
+  "baseDir": "E:\\AI-Cache\\tmp\\fr214a3\\ah\\T\\U\\H\\R1",
+  "refused": true,
+  "ok": true
+ },
+ {
+  "name": "in-home file symlink to an above-home file: read as R2 content (project-owned link)",
+  "level": "fn",
+  "cwd": "E:\\AI-Cache\\tmp\\fr214a3\\ah\\T\\U\\H\\R2",
+  "homedir": "E:\\AI-Cache\\tmp\\fr214a3\\ah\\T\\U\\H",
+  "got": "F:E:\\AI-Cache\\tmp\\fr214a3\\ah\\T\\U\\H\\R2\\.sutradhar.json",
+  "width": 1,
+  "expect": "1",
+  "ok": true
+ },
+ {
+  "name": "dangling config symlink -> error",
+  "level": "fn",
+  "cwd": "E:\\AI-Cache\\tmp\\fr214a3\\ah\\T\\U\\H\\R3",
+  "homedir": "E:\\AI-Cache\\tmp\\fr214a3\\ah\\T\\U\\H",
+  "got": "ERR:E:\\AI-Cache\\tmp\\fr214a3\\ah\\T\\U\\H\\R3\\.sutradhar.json is a broken symbolic link. Set SUTRADHAR_CONFIG=none to ignore project config.",
+  "width": "ERR",
+  "expect": "ERR",
+  "ok": true
+ },
+ {
+  "name": "cwd = drive root E: -> never read",
+  "level": "fn",
+  "cwd": "E:\\",
+  "homedir": "E:\\AI-Cache\\tmp\\fr214a3\\ah\\T\\U\\H",
+  "got": "filesystem-root",
+  "width": "none",
+  "expect": "(g) => g === 'filesystem-root'",
+  "ok": true
+ },
+ {
+  "name": "cwd = device path form of Q (info only)",
+  "level": "fn",
+  "cwd": "\\\\?\\E:\\AI-Cache\\tmp\\fr214a3\\ah\\T\\U\\H\\P\\Q",
+  "homedir": "E:\\AI-Cache\\tmp\\fr214a3\\ah\\T\\U\\H",
+  "got": "home@E:\\AI-Cache\\tmp\\fr214a3\\ah\\T\\U\\H",
+  "width": "none",
+  "expect": "() => true",
+  "ok": true
+ },
+ {
+  "name": "cwd = UNC path to Q, home = UNC H",
+  "level": "fn",
+  "cwd": "\\\\localhost\\E$\\AI-Cache\\tmp\\fr214a3\\ah\\T\\U\\H\\P\\Q",
+  "homedir": "\\\\localhost\\E$\\AI-Cache\\tmp\\fr214a3\\ah\\T\\U\\H",
+  "got": "home@\\\\localhost\\E$\\AI-Cache\\tmp\\fr214a3\\ah\\T\\U\\H",
+  "width": "none",
+  "expect": "none",
+  "ok": true
+ }
+]
+PASS 31 FAIL 0

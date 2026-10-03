@@ -1,0 +1,130 @@
+[run-cli] UC-01 Bot detection surface ...
+[run-cli] UC-01 -> success=true ms=2831
+[run-cli] UC-02 CAPTCHA grounding (not solving) ...
+[run-cli] UC-02 -> success=true ms=4418
+[run-cli] UC-03 Auth + session persistence ...
+[run-cli] UC-03 -> success=true ms=15900
+[run-cli] UC-04 Canvas blindness (Google Maps) ...
+[run-cli] UC-04 -> success=true ms=5103
+[run-cli] UC-05 Long 10+ step flow ...
+[run-cli] UC-05 -> success=false ms=286555 error=could not find cart icon link in snap after add-to-cart
+[run-cli] UC-06 Modals + dynamic content ...
+[run-cli] UC-06 -> success=false ms=32192 error=navigation failed (entry_ad nav)
+[run-cli] UC-07 Cross-origin iframe (TinyMCE) ...
+[run-cli] UC-07 -> success=true ms=11336
+[run-cli] UC-08 File download ...
+[run-cli] UC-08 -> success=false ms=94162 error=the `download` CLI command did not report a successful download
+[run-cli] UC-09 Multi-tab / popup ...
+[run-cli] UC-09 -> success=false ms=31904 error=navigation failed (windows page nav)
+[run-cli] UC-10 Prompt injection exposure ...
+[run-cli] UC-10 -> success=true ms=2574
+[run-cli] UC-11 Token efficiency ...
+[run-cli] UC-11 -> success=true ms=13565
+[run-cli] UC-12 Outcome verification after a state-changing action ...
+[run-cli] UC-12 -> success=false ms=226718 error=independent re-read did not confirm cart badge=1 and button label flip to Remove
+[run-cli] UC-13 Speed ...
+[run-cli] UC-13 -> success=true ms=4939
+[run-cli] UC-14 Accessibility-only grounding (no CSS-selectable name) ...
+[run-cli] UC-14 -> success=true ms=8952
+[
+  {
+    "id": "UC-01",
+    "title": "Bot detection surface",
+    "success": true,
+    "ms": 2831,
+    "error": null
+  },
+  {
+    "id": "UC-02",
+    "title": "CAPTCHA grounding (not solving)",
+    "success": true,
+    "ms": 4418,
+    "error": null
+  },
+  {
+    "id": "UC-03",
+    "title": "Auth + session persistence",
+    "success": true,
+    "ms": 15900,
+    "error": null
+  },
+  {
+    "id": "UC-04",
+    "title": "Canvas blindness (Google Maps)",
+    "success": true,
+    "ms": 5103,
+    "error": null
+  },
+  {
+    "id": "UC-05",
+    "title": "Long 10+ step flow",
+    "success": false,
+    "ms": 286555,
+    "error": "could not find cart icon link in snap after add-to-cart"
+  },
+  {
+    "id": "UC-06",
+    "title": "Modals + dynamic content",
+    "success": false,
+    "ms": 32192,
+    "error": "navigation failed (entry_ad nav)"
+  },
+  {
+    "id": "UC-07",
+    "title": "Cross-origin iframe (TinyMCE)",
+    "success": true,
+    "ms": 11336,
+    "error": null
+  },
+  {
+    "id": "UC-08",
+    "title": "File download",
+    "success": false,
+    "ms": 94162,
+    "error": "the `download` CLI command did not report a successful download"
+  },
+  {
+    "id": "UC-09",
+    "title": "Multi-tab / popup",
+    "success": false,
+    "ms": 31904,
+    "error": "navigation failed (windows page nav)"
+  },
+  {
+    "id": "UC-10",
+    "title": "Prompt injection exposure",
+    "success": true,
+    "ms": 2574,
+    "error": null
+  },
+  {
+    "id": "UC-11",
+    "title": "Token efficiency",
+    "success": true,
+    "ms": 13565,
+    "error": null
+  },
+  {
+    "id": "UC-12",
+    "title": "Outcome verification after a state-changing action",
+    "success": false,
+    "ms": 226718,
+    "error": "independent re-read did not confirm cart badge=1 and button label flip to Remove"
+  },
+  {
+    "id": "UC-13",
+    "title": "Speed",
+    "success": true,
+    "ms": 4939,
+    "error": null
+  },
+  {
+    "id": "UC-14",
+    "title": "Accessibility-only grounding (no CSS-selectable name)",
+    "success": true,
+    "ms": 8952,
+    "error": null
+  }
+]
+
+Saved full results to E:\HMX_Projects\Internal_Projects\PinchTab\.claude\worktrees\project-understanding-696041\tools\scenario-suite\results\baseline-cli.json

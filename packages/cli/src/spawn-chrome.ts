@@ -94,6 +94,7 @@ export async function spawnDetachedChrome(
     }
     await new Promise((r) => setTimeout(r, 150));
   }
+  killChromeTree(pid); // never leave a Chrome that no state file knows about
   throw new Error(`Timed out waiting for Chrome to start on port ${port}.`);
 }
 

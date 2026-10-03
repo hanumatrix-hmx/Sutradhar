@@ -1,0 +1,41 @@
+# fresh re-queries for the fix-1 false-pass analysis (2026-10-03 02:39:28)
+
+$ git rev-parse --short HEAD; git status --short -- packages tools (tracked source must be clean)
+6dae8b5
+ M packages/capability-runtime/tests/unit/override-matrix.spec.ts
+(empty above = clean)
+
+$ grep -c downloadRefusal in every dist that must carry the fix
+packages/capability-runtime/dist/project-config.js: 6
+packages/capability-runtime/dist/fs-roots.js: 2
+packages/capability-runtime/dist/config-precedence.js: 2
+packages/sutradhar/dist/cli-bin.js: 10
+packages/sutradhar/dist/mcp-cli.js: 9
+packages/sutradhar/dist/index.js: 9
+
+$ F1 live rows from the final repro run (negative control = same file, no env):
+{"id":"F1/out-of-tree/cliPkg/env-wins","pass":true,"obs":"exit=0 close=0 chromeLeft=0 "}
+{"id":"F1/out-of-tree/cliPkg/no-env-refused","pass":true,"obs":"exit=1 Error: Invalid project config E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Pr"}
+{"id":"F1/out-of-tree/mcpBundle/env-wins","pass":true,"obs":"aliveAt4s=true [sutradhar-mcp] config: loaded E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--cl"}
+{"id":"F1/out-of-tree/mcpBundle/no-env-refused","pass":true,"obs":"alive=false code=1"}
+
+$ F3/F4/F8 rows:
+{"id":"F3/cliPkg","pass":true,"obs":"Config:          none (searched 2 directories upward from E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpa
+{"id":"F3/cliBundle","pass":true,"obs":"Config:          none (searched 2 directories upward from E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratc
+{"id":"F4/cliPkg","pass":true,"obs":"warningLength=303"}
+{"id":"F4/cliBundle","pass":true,"obs":"warningLength=306"}
+{"id":"F8/file/cliPkg","pass":true,"obs":"exit=1/1 chromePidsLeft=0 profileDirs=0 Error: Invalid project config E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--cla"}
+{"id":"F8/flag/cliPkg","pass":true,"obs":"exit=1/1 chromePidsLeft=0 profileDirs=0 Error: --viewport must be WIDTHxHEIGHT with each side 1..10000000 (e.g. --viewport 390x844)"}
+{"id":"F8/file/cliBundle","pass":true,"obs":"exit=1/1 chromePidsLeft=0 profileDirs=0 Error: Invalid project config E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--cla"}
+{"id":"F8/flag/cliBundle","pass":true,"obs":"exit=1/1 chromePidsLeft=0 profileDirs=0 Error: --viewport must be WIDTHxHEIGHT with each side 1..10000000 (e.g. --viewport 390x844)"}
+
+$ F2 rows (function level, built mcp-server dist, env SUTRADHAR_ALLOWED_DOMAINS=e.test):
+{"id":"F2/MCP.allowedDomains=null+env","pass":true,"obs":"runtime.allowedDomains=[\"e.test\"]"}
+{"id":"F2/MCP.allowedDomains=undefined+env","pass":true,"obs":"runtime.allowedDomains=[\"e.test\"]"}
+{"id":"F2/MCP.allowedDomains=empty-array+env","pass":true,"obs":"runtime.allowedDomains=[\"e.test\"]"}
+
+$ docs: stale claims must be gone
+0
+0
+1
+84:  was swapped for a link to somewhere else still passes (decision fix-1/F5: documented, not re-validated at use time;

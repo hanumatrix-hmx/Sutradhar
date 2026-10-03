@@ -11,11 +11,22 @@ import {
   SutradharRuntime,
   writeAuditArtifacts,
   prepareAuditOutDir,
-  resolveFsRoots,
+  resolveViewport,
+  loadProjectConfig,
+  readConfigEnv,
+  ProjectConfigError,
   failedExpectations,
-  type ResolvedFsRoots,
+  type ConfigDiscovery,
+  type LoadedProjectConfig,
   type VerificationResultDto,
 } from '@sutradhar/capability-runtime';
+import {
+  resolveCliSettings,
+  cliDialogFromConfig,
+  cliTrustNotice,
+  formatDoctorConfigLines,
+  type CliSettings,
+} from './project-config-cli.js';
 import { cliDownloadGrant, assertDownloadDirUsable } from './download-roots.js';
 import { StructuredLogger } from '@sutradhar/observability';
 import { readFile, writeFile } from 'node:fs/promises';
@@ -78,6 +89,7 @@ const {
   profileFlag,
   userAgentFlag,
   allowlistDomainsFlag,
+  allowlistDomainsGivenButEmpty,
   baselineFlag,
   baselineFlagGivenButInvalid,
   settle,
@@ -126,6 +138,39 @@ process.on('exit', () => {
 function printErrorAndExit(message: string): never {
   console.error(`Error: ${message}`);
   process.exit(1);
+}
+
+// ─────────────────────────────────────────────────────────────────────────
+// FR2-14: .sutradhar.json project config
+// ─────────────────────────────────────────────────────────────────────────
+
+let configLoad: Promise<LoadedProjectConfig | undefined> | undefined;
+/** The project config in effect for THIS command (set by withSession before any session work). */
+let activeConfig: LoadedProjectConfig | undefined;
+/** The config's `dialog`, already mapped for the CLI (auto -> report). */
+let activeConfigDialog: { mode: 'auto' | 'report' | 'accept' | 'dismiss'; promptText?: string } | undefined;
+
+/**
+ * Finds (or explicitly loads) the project config once per process. `SUTRADHAR_CONFIG=none` touches no
+ * filesystem. A broken file REJECTS with a ProjectConfigError, which main().catch prints as
+ * "Error: ..." (exit 1) — before any Chrome contact, since withSession calls this first. Never
+ * called by doctor/close/sessions/profile/dialog/help, so a broken file can't block cleanup.
+ */
+function loadCliConfig(): Promise<LoadedProjectConfig | undefined> {
+  configLoad ??= (async () => {
+    const env = readConfigEnv(process.env);
+    if (env.kind === 'disabled') return undefined;
+    const d = await loadProjectConfig({
+      cwd: process.cwd(),
+      discover: env.kind === 'unset',
+      explicitPath: env.kind === 'path' ? env.path : undefined,
+      explicitOrigin: 'env',
+    });
+    if (d.status !== 'loaded') return undefined;
+    for (const w of d.config.warnings) console.error(`Warning: ${w}`);
+    return d.config;
+  })();
+  return configLoad;
 }
 
 // ─────────────────────────────────────────────────────────────────────────
@@ -232,20 +277,31 @@ async function spawnFreshSession(
       printErrorAndExit((err as Error).message);
     }
   }
+  // flag > config > Chrome default. Only the FLAG is persisted below (D10), so a later edit of the
+  // config file keeps taking effect.
+  const spawnViewport = resolveViewport({ flag: viewportFlag, config: activeConfig }).value;
   let spawned: Awaited<ReturnType<typeof spawnDetachedChrome>>;
   try {
-    spawned = await spawnDetachedChrome(!headed, profileUserDataDir, userAgentFlag, viewportFlag);
+    spawned = await spawnDetachedChrome(!headed, profileUserDataDir, userAgentFlag, spawnViewport);
   } catch (err) {
     printErrorAndExit((err as Error).message);
   }
-  const attached = await runtime.attach({ endpoint: spawned.wsEndpoint });
-  if (!attached.hasRealBrowser) {
-    printErrorAndExit('Spawned Chrome but could not attach to it. Run "sutradhar doctor" to diagnose.');
+  // F8: this Chrome is not in state.json yet, so if anything below fails nothing could ever `close`
+  // it. Kill it (only the PID we just spawned) before the error propagates.
+  let attached: Awaited<ReturnType<typeof runtime.attach>>;
+  try {
+    attached = await runtime.attach({ endpoint: spawned.wsEndpoint });
+    if (!attached.hasRealBrowser) {
+      throw new Error('Spawned Chrome but could not attach to it. Run "sutradhar doctor" to diagnose.');
+    }
+    if (spawnViewport) {
+      await runtime.setViewport(attached.sessionId, spawnViewport);
+    }
+  } catch (err) {
+    killChromeTree(spawned.pid);
+    throw err; // main().catch prints it and exits 1; the process stays up long enough for the kill to start
   }
-  if (viewportFlag) {
-    await runtime.setViewport(attached.sessionId, viewportFlag);
-  }
-  const { policy: resolved, persist } = resolveDialogPolicy(dialogFlag, dialogTextFlag, carry);
+  const { policy: resolved, persist } = resolveDialogPolicy(dialogFlag, dialogTextFlag, carry, activeConfigDialog);
   // D10 (corrected): 'set' persists whatever mode was resolved, INCLUDING 'report' — it is not
   // special-cased to "no key" any more. 'keep' carries over whatever the old state already had
   // (self-heal) or nothing at all (a genuinely fresh spawn with no flag and no prior state).
@@ -264,9 +320,9 @@ async function spawnFreshSession(
   if (dialogPolicy) {
     runtime.setDialogPolicy(attached.sessionId, { mode: dialogPolicy.action, promptText: dialogPolicy.promptText });
   } else {
-    // The CLI's own default is 'report' — every session it creates gets this, unlike the
-    // runtime's own MCP/SDK-facing default of 'auto' (D-2).
-    runtime.setDialogPolicy(attached.sessionId, { mode: 'report' });
+    // Nothing persisted: the effective policy is the config file's `dialog` if any, else the CLI's
+    // own default 'report' (unlike the runtime's own MCP/SDK-facing default of 'auto', D-2).
+    runtime.setDialogPolicy(attached.sessionId, resolved);
   }
   activeSessionId = attached.sessionId;
   return attached.sessionId;
@@ -348,18 +404,34 @@ async function withSession<T>(
   fn: (runtime: SutradharRuntime, sessionId: string) => Promise<T>,
   opts?: { extraDownloadRoots?: readonly string[] },
 ): Promise<T> {
-  let fsRoots: ResolvedFsRoots;
+  // FR2-14: FIRST statement — a broken .sutradhar.json stops the command before any Chrome contact.
+  const cfg = await loadCliConfig();
+  activeConfig = cfg;
+  activeConfigDialog = cliDialogFromConfig(cfg).policy;
+  let settings: CliSettings;
   try {
-    fsRoots = resolveFsRoots({ env: process.env });
+    settings = resolveCliSettings({
+      flags: { allowlistDomains: allowlistDomainsFlag, viewport: viewportFlag, dialog: dialogFlag, dialogText: dialogTextFlag },
+      env: process.env,
+      state: await readState(),
+      config: cfg,
+      extraDownloadRoots: opts?.extraDownloadRoots,
+    });
   } catch (e) {
     printErrorAndExit((e as Error).message);
   }
-  for (const w of fsRoots.warnings) console.error(`Warning: ${w}`);
+  for (const w of [...settings.fsRoots.warnings, ...settings.warnings]) console.error(`Warning: ${w}`);
+  const notice = cliTrustNotice(cfg, {
+    downloadSource: settings.fsRoots.sources.download,
+    dialogSource: settings.dialog.source,
+    dialogMode: settings.dialog.policy.mode,
+  });
+  if (notice) console.error(notice);
   const runtime = new SutradharRuntime({
     logger,
-    allowedDomains: allowlistDomainsFlag,
-    allowedDownloadRoots: [...fsRoots.allowedDownloadRoots, ...(opts?.extraDownloadRoots ?? [])],
-    allowedUploadRoots: fsRoots.allowedUploadRoots,
+    allowedDomains: settings.allowedDomains.value,
+    allowedDownloadRoots: [...settings.fsRoots.allowedDownloadRoots, ...(opts?.extraDownloadRoots ?? [])],
+    allowedUploadRoots: settings.fsRoots.allowedUploadRoots,
   });
   activeRuntime = runtime;
   const verbClass = classifyVerb(verb);
@@ -370,7 +442,7 @@ async function withSession<T>(
     gate: async (rawState) => {
       if (verbClass === 'exempt') return;
       const state = rawState as CliState;
-      const { policy } = resolveDialogPolicy(dialogFlag, dialogTextFlag, state);
+      const { policy } = resolveDialogPolicy(dialogFlag, dialogTextFlag, state, activeConfigDialog);
       const broker = await getBroker(state);
       const result = await runDialogGate(verb, broker, policy, 'command');
       if (result.status === 'handled') {
@@ -394,7 +466,7 @@ async function withSession<T>(
       if (state.activeTabId && (await runtime.listTabs(sid)).some((t) => t.id === state.activeTabId)) {
         await runtime.focusTab(sid, state.activeTabId).catch(() => {});
       }
-      const effectiveViewport = viewportFlag ?? state.viewport;
+      const effectiveViewport = resolveViewport({ flag: viewportFlag, state: state.viewport, config: activeConfig }).value;
       if (effectiveViewport) {
         await runtime.setViewport(sid, effectiveViewport).catch(() => {});
       }
@@ -413,7 +485,7 @@ async function withSession<T>(
     },
     afterAttach: async (sid, isFreshSpawn) => {
       const state = await readState();
-      const { policy, persist } = resolveDialogPolicy(dialogFlag, dialogTextFlag, state);
+      const { policy, persist } = resolveDialogPolicy(dialogFlag, dialogTextFlag, state, activeConfigDialog);
       if (!isFreshSpawn) {
         runtime.setDialogPolicy(sid, policy);
         if (persist === 'set' && state) {
@@ -611,6 +683,44 @@ async function cmdDoctor() {
   }
   const state = await readState();
   console.log(`Active session:  ${state ? `${state.sessionId} (attach via saved wsEndpoint)` : 'none'}`);
+  // FR2-14: which .sutradhar.json is in use and where every key comes from. Never changes the exit
+  // code: a broken file is REPORTED here (and still lets close/doctor work).
+  const cwd = process.cwd();
+  try {
+    const envCfg = readConfigEnv(process.env);
+    const discovery: ConfigDiscovery =
+      envCfg.kind === 'disabled'
+        ? { status: 'none', reason: 'disabled', searched: [] }
+        : await loadProjectConfig({
+            cwd,
+            discover: envCfg.kind === 'unset',
+            explicitPath: envCfg.kind === 'path' ? envCfg.path : undefined,
+            explicitOrigin: 'env',
+          });
+    let sources;
+    let sourcesError: string | undefined;
+    try {
+      const s = resolveCliSettings({
+        flags: { allowlistDomains: allowlistDomainsFlag, viewport: viewportFlag, dialog: dialogFlag, dialogText: dialogTextFlag },
+        env: process.env,
+        state,
+        config: discovery.status === 'loaded' ? discovery.config : undefined,
+      });
+      sources = {
+        allowedDomains: s.allowedDomains.source,
+        downloadRoots: s.fsRoots.sources.download,
+        uploadRoots: s.fsRoots.sources.upload,
+        dialog: s.dialog.source,
+        viewport: s.viewport.source,
+      };
+    } catch (e) {
+      sourcesError = (e as Error).message;
+    }
+    for (const line of formatDoctorConfigLines({ discovery, cwd, sources })) console.log(line);
+    if (sourcesError) console.log(`Config sources:  unavailable (${sourcesError})`);
+  } catch (e) {
+    for (const line of formatDoctorConfigLines({ error: e as Error, cwd })) console.log(line);
+  }
 }
 
 async function cmdNav(url: string | undefined) {
@@ -1582,7 +1692,12 @@ async function main() {
     );
   }
   if (viewportFlagGivenButInvalid) {
-    printErrorAndExit('--viewport must be WIDTHxHEIGHT (e.g. --viewport 390x844)');
+    printErrorAndExit('--viewport must be WIDTHxHEIGHT with each side 1..10000000 (e.g. --viewport 390x844)');
+  }
+  if (allowlistDomainsGivenButEmpty) {
+    printErrorAndExit(
+      '--allowlist-domains needs at least one domain (e.g. --allowlist-domains example.com,internal.corp); an empty list is not "no restriction" — omit the flag for that',
+    );
   }
   if (stateFlagGivenButInvalid) {
     printErrorAndExit('--state must be one of: visible, attached, hidden (e.g. wait "#toast" --state hidden)');
@@ -1815,7 +1930,7 @@ Flags:
                         starting a new session)
   --headed             Launch visibly instead of headless (only applies to "nav" when
                         starting a new session)
-  --viewport <WxH>      Set the CDP viewport (e.g. --viewport 390x844) and, when --headed, the
+  --viewport <WxH>      Set the CDP viewport (e.g. --viewport 390x844; each side 1..10000000) and, when --headed, the
                         real OS window's size too. Applies at session creation and persists
                         across later commands until a new --viewport is given
   --json                "snap" additionally prints structured per-element data as JSON;
@@ -1857,9 +1972,12 @@ Flags:
                         Block navigation to any domain not in this comma-separated list (and
                         their subdomains). Per-command, not persisted in session state — pass
                         it on every command that might navigate ("nav", "compare") if you want
-                        the guard to hold for the whole session. Does not intercept
+                        the guard to hold for the whole session (or set allowedDomains in
+                        .sutradhar.json / SUTRADHAR_ALLOWED_DOMAINS to apply it to every command). Does not intercept
                         page-initiated navigation from a clicked link (browser-internal, not
                         routed through this check) — see .ai/known-problems.md PROB-018.
+                        An empty value ("--allowlist-domains ''") is an error, not "unrestricted"
+                        (omit the flag for no restriction).
   --dialog <accept|dismiss|report>
                         Default policy for native dialogs in this session; persisted until changed.
                         report (the default) leaves alert/confirm/prompt open and prints
@@ -1893,7 +2011,16 @@ SUTRADHAR_CLI_STATE_DIR to share state across directories or use a custom path.
 Environment:
   SUTRADHAR_ALLOWED_DOWNLOAD_ROOTS  Directories downloads may go to, separated by ";" on Windows or ":" elsewhere; absolute paths or ~.
                                      Replaces the default <temp>/sutradhar-downloads; the first entry is the default destination.
-  SUTRADHAR_ALLOWED_UPLOAD_ROOTS    If set, "upload" may only read files under these directories (off by default).`);
+  SUTRADHAR_ALLOWED_UPLOAD_ROOTS    If set, "upload" may only read files under these directories (off by default).
+  SUTRADHAR_ALLOWED_DOMAINS         Comma-separated domains navigation is limited to (same as --allowlist-domains).
+  SUTRADHAR_CONFIG                  Absolute path of one .sutradhar.json to load, or "none" to ignore project config.
+
+Project config:
+  .sutradhar.json in this directory or the nearest parent (stopping at the git root or your home
+  directory) sets defaults: allowedDomains, downloadDir, allowedDownloadRoots, allowedUploadRoots,
+  dialog, viewport. Flags > env vars > the file > built-in defaults. Paths in the file are relative
+  to the file. SUTRADHAR_CONFIG=<absolute path> loads one file explicitly; SUTRADHAR_CONFIG=none
+  ignores project config. "sutradhar doctor" shows which file is in use.`);
       process.exitCode = verb ? 1 : 0;
   }
 }
@@ -1943,6 +2070,13 @@ if (verb === '__dialog-warden') {
         console.error(DIALOG_HINT(err.dialogs[0]?.dialogType ?? 'unknown'));
         finalExitCode = err.exitCode;
         process.exitCode = err.exitCode;
+        return;
+      }
+      if (err instanceof ProjectConfigError || (err as Error)?.name === 'ProjectConfigError') {
+        // FR2-14: a bad .sutradhar.json / SUTRADHAR_CONFIG is an operator error, reported plainly (exit 1).
+        console.error(`Error: ${(err as Error).message}`);
+        finalExitCode = 1;
+        process.exitCode = 1;
         return;
       }
       console.error(`Fatal: ${(err as Error).message}`);

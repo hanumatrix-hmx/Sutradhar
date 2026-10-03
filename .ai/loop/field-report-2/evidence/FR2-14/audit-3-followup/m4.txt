@@ -1,0 +1,5 @@
+M4 (auditor mutants-a3.mjs): replace isPathWithinRoot(home, here, platform) && !sameFold(here, home) by isPathWithinRoot(literalHome!, here, platform) && ... in packages/capability-runtime/src/project-config.ts
+unit result with mutant: Tests 8 failed | 75 passed (home-boundary.spec.ts, the 8 new E cells: junction+dir x above/k/home/none)
+sha256 before: 86c6459130b99aece6a2267ae1f26e34e626c3ddc1ad3312eb2b575d283d3768
+sha256 after restore: 86c6459130b99aece6a2267ae1f26e34e626c3ddc1ad3312eb2b575d283d3768 (git checkout of that single, otherwise-unmodified file)
+then: forced turbo rebuild (build-1.log) and full vitest 505/505 on the restored tree

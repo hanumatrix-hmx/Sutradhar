@@ -105,7 +105,7 @@ Run `sutradhar` with no arguments for the full command list.
 | `--headed` | `nav` (new session only) | Launch visibly instead of headless. |
 | `--profile <name>` | `nav` (new session only) | Launch as a named persistent profile (create one first via `profile create`). |
 | `--user-agent <ua>` | `nav` (new session only) | Launch with a custom `navigator.userAgent`. |
-| `--allowlist-domains <a.com,b.com>` | any command | Block navigation to any domain not in this comma-separated list (and their subdomains). Per-command, not persisted in session state — pass it on every command that might navigate. |
+| `--allowlist-domains <a.com,b.com>` | any command | Block navigation to any domain not in this comma-separated list (and their subdomains). Per-command, not persisted in session state — pass it on every command that might navigate. An empty value (`--allowlist-domains ""`) is an error, not "unrestricted" (breaking change; omit the flag for no restriction). |
 | `--json` | `snap`, `audit`, action verbs | `snap`: additionally print structured per-element data as JSON. `audit`: print the machine-readable JSON report instead of the human-readable text. Action verbs (`click`, `type`, `press`, `nav`, `download`, …): print the full result JSON (including `verification`) instead of the one-line status. |
 | `--expect-text <t>` | action verbs | After the action, require this **rendered** text on the page (any frame, open shadow roots; case-sensitive): laid out, `visibility:visible`, not under `display:none` / `content-visibility:hidden` / a closed `<details>`, and every enclosing `<iframe>` itself visible; `opacity:0`, `aria-hidden`, off-screen and clipped text still count. Known limit: text inside SVG containers that are never painted (<defs>, an unused <symbol>, <mask>, <clipPath>, <pattern>, <marker>) still counts, because Chrome reports it as laid out and visible. Exit **4** if absent. Checked once. |
 | `--expect-url <s>` | action verbs | Require the final URL to contain `<s>` (exit 4 if not). |
@@ -118,7 +118,7 @@ Run `sutradhar` with no arguments for the full command list.
 | `--text <t>` / `--text-gone <t>` / `--url <s>` / `--js <expr>` | `waitfor` | The conditions to wait for (see `waitfor`). An error on any other verb (a `click 7 --text Saved` would otherwise look like an assertion that never ran; use `--expect-text`). |
 | `--scan-listeners` | `snap` | Also find real `addEventListener`-only elements (see command list above). |
 | `--state <visible|attached|hidden>` | `wait` | Which state to wait for (default `visible`). |
-| `--viewport <WxH>` | session creation | Set the CDP viewport (e.g. `--viewport 390x844`) and, with `--headed`, the real OS window size. Persists across later commands until a new `--viewport` is given. |
+| `--viewport <WxH>` | session creation | Set the CDP viewport (e.g. `--viewport 390x844`; each side 1..10000000, anything else is rejected before Chrome starts) and, with `--headed`, the real OS window size. Persists across later commands until a new `--viewport` is given. |
 | `--frame <selector>` | `eval` | Evaluate inside a specific `<iframe>` (see the `eval` rows above). |
 | `--modifiers <Control,Shift>` | `press` | Hold modifier keys while pressing the given key. |
 | `--dialog <accept\|dismiss\|report>` | any session command | Sets this session's default policy for native dialogs (alert/confirm/prompt/beforeunload), **persisted** across later commands until changed again — including `--dialog report`, which explicitly persists back to the default "leave it open and report it" behavior (it does not merely clear a previous `accept`/`dismiss`). `report` (the CLI's own default) never auto-resolves alert/confirm/prompt; while one is open, other commands exit with code **3** until you run `sutradhar dialog accept\|dismiss`. `beforeunload` during a navigation is still auto-accepted after 3s under `report`, so a page-initiated "leave this page?" prompt can't hang a `nav` forever. |
@@ -144,8 +144,42 @@ Run `sutradhar` with no arguments for this same list straight from the binary.
 |---|---|---|
 | `SUTRADHAR_ALLOWED_DOWNLOAD_ROOTS` | `<OS temp>/sutradhar-downloads` | Directories `download` may write into, separated by `;` (Windows) or `:` (elsewhere); absolute paths, or `~` for the home directory. Replaces the default; the first entry becomes the destination when `download`'s `[dir]` is omitted. The directory named on `download <ref> <dir>` itself is always allowed too, for that one invocation only — it is not written to session state and does not widen later commands. |
 | `SUTRADHAR_ALLOWED_UPLOAD_ROOTS` | _(unset — unrestricted)_ | If set, `upload` may only read files under these directories (off by default). |
+| `SUTRADHAR_ALLOWED_DOMAINS` | _(unset — any domain)_ | Comma-separated domains navigation is limited to (and their subdomains); the same as `--allowlist-domains` on every command. Overridden by the flag; overrides `.sutradhar.json`. |
+| `SUTRADHAR_CONFIG` | _(unset — search for `.sutradhar.json`)_ | An absolute path loads exactly that project config file; `none` ignores project config. See "Project config" below. |
 | `SUTRADHAR_CLI_STATE_DIR` | per-project-directory hash | Where session state (`state.json`) is stored — see above. |
 | `SUTRADHAR_CLI_DEADLINE_MS` | `300000` | Process watchdog: a command still running after this many milliseconds is stopped with an error message. `wait <ref> <timeoutMs>` extends its own deadline to at least 3 x `timeoutMs` + 30 s. |
+
+## Project config (`.sutradhar.json`)
+
+Put a `.sutradhar.json` in a project directory and every command run from that directory or a subdirectory picks it
+up (the nearest file wins; the search stops at a `.git` boundary or your home directory and never reads the
+filesystem root). Example:
+
+```json
+{
+  "$schema": "urn:sutradhar:config:1",
+  "allowedDomains": ["example.com", "localhost"],
+  "downloadDir": "./downloads",
+  "allowedUploadRoots": ["./fixtures"],
+  "dialog": { "mode": "dismiss" },
+  "viewport": { "width": 1280, "height": 800 },
+  "idleTimeoutMs": 1800000
+}
+```
+
+Precedence for every key is **flag > env var > config file > built-in default**: `--allowlist-domains` beats
+`SUTRADHAR_ALLOWED_DOMAINS` beats `allowedDomains`; `--viewport` (and the viewport it made sticky) beats `viewport`;
+`--dialog` (and the policy it made sticky, including `--dialog report`) beats `dialog`;
+`SUTRADHAR_ALLOWED_DOWNLOAD_ROOTS`/`SUTRADHAR_ALLOWED_UPLOAD_ROOTS` replace the file's roots (including an out-of-tree `downloadDir` that would otherwise be refused). Paths in the file are
+relative to the file, not to your shell's directory (the `[dir]` of `download <ref> [dir]` is still relative to your
+shell). `idleTimeoutMs` is ignored by the CLI. The file is re-read on every command and nothing from it is written
+to session state.
+
+`sutradhar doctor` prints the file in use and the source of every key. Unknown keys print `Warning:`; an invalid
+file prints `Error:` and exits 1 before Chrome is touched (`close`, `profile` and `dialog` never load it, so a broken
+file cannot block cleanup; `doctor` does load it but only reports a broken one and still exits 0). `SUTRADHAR_CONFIG=none` ignores it. A file found by searching upward is
+untrusted: its download directory must stay inside its own folder (and outside `.git`), and a `dialog.mode "accept"`
+or file-supplied download directory is announced with a `Note:` on every command. Details: `docs/project-config.md`.
 
 ## Native dialogs (alert / confirm / prompt / beforeunload)
 

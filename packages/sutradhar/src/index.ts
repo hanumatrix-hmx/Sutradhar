@@ -21,7 +21,19 @@
  * await browser.close();
  */
 
-import { SutradharRuntime, resolveFsRoots } from '@sutradhar/capability-runtime';
+import os from 'node:os';
+import path from 'node:path';
+import {
+  SutradharRuntime,
+  resolveFsRoots,
+  fsRootsConfigLayer,
+  resolveAllowedDomains,
+  resolveIdleTimeoutMs,
+  resolveRuntimeDialogPolicy,
+  resolveViewport,
+  loadProjectConfig,
+  expandHome,
+} from '@sutradhar/capability-runtime';
 import { Browser, type LaunchOptions } from './browser.js';
 
 export const SUTRADHAR_VERSION = '0.5.0';
@@ -34,6 +46,13 @@ export const SUTRADHAR_VERSION = '0.5.0';
  * const browser = await launch({ url: 'https://example.com' });
  */
 export async function launch(options: LaunchOptions = {}): Promise<Browser> {
+  // `null` means "not set" for JS / JSON-fed callers, exactly like `undefined` (F2).
+  const configFile = options.configFile ?? undefined;
+  if (configFile !== undefined && options.discoverConfig) {
+    throw new TypeError('launch(): pass either configFile or discoverConfig, not both');
+  }
+  // Fails fast (before any config I/O or runtime) on a policy the SDK cannot honor.
+  resolveRuntimeDialogPolicy({ option: options.dialogPolicy, surface: 'sdk' });
   if (Browser.openSessionCount > 0) {
     // eslint-disable-next-line no-console
     console.warn(
@@ -42,20 +61,49 @@ export async function launch(options: LaunchOptions = {}): Promise<Browser> {
         'browser.close() when done or Chrome processes will leak.',
     );
   }
+  // FR2-14: the project config is OPT-IN for the SDK (a library must not change its sandbox from
+  // ambient files or env vars). Precedence for every setting: option > config file > default.
+  let explicitPath: string | undefined;
+  if (configFile !== undefined) {
+    const expanded = expandHome(configFile, os.homedir());
+    if (expanded === undefined) throw new TypeError(`launch(): configFile "${configFile}": ~user is not supported`);
+    explicitPath = path.resolve(process.cwd(), expanded);
+  }
+  const discovery = await loadProjectConfig({
+    cwd: process.cwd(),
+    discover: options.discoverConfig === true,
+    explicitPath,
+    explicitOrigin: 'option',
+  });
+  const cfg = discovery.status === 'loaded' ? discovery.config : undefined;
+  for (const w of cfg?.warnings ?? []) console.warn(`[sutradhar] ${w}`);
+  const dialog = resolveRuntimeDialogPolicy({ option: options.dialogPolicy, config: cfg, surface: 'sdk' });
+  for (const w of dialog.warnings) console.warn(`[sutradhar] ${w}`);
+  // D12c (F9): a DISCOVERED file that makes native dialogs auto-accept is announced, as on the CLI and MCP.
+  if (cfg?.origin === 'discovered' && dialog.source === 'config' && dialog.value?.mode === 'accept') {
+    console.warn(
+      `[sutradhar] ${cfg.path} sets dialog.mode "accept": native alert/confirm/prompt dialogs will be accepted automatically.`,
+    );
+  }
   const fsRoots = resolveFsRoots({
     options: { allowedDownloadRoots: options.allowedDownloadRoots, allowedUploadRoots: options.allowedUploadRoots },
+    config: fsRootsConfigLayer(cfg),
   });
+  for (const w of fsRoots.warnings) console.warn(`[sutradhar] ${w}`);
+  const viewport = resolveViewport({ option: options.viewport, config: cfg }).value;
   const runtime = new SutradharRuntime({
-    allowedDomains: options.allowedDomains,
+    allowedDomains: resolveAllowedDomains({ option: options.allowedDomains, config: cfg }).value,
     allowedDownloadRoots: fsRoots.allowedDownloadRoots,
     allowedUploadRoots: fsRoots.allowedUploadRoots,
+    idleTimeoutMs: resolveIdleTimeoutMs({ option: options.idleTimeoutMs, config: cfg, fallback: undefined }).value,
+    dialogPolicy: dialog.value,
   });
   const result = await runtime.launch({
     initialUrl: options.url,
     isIncognito: options.isIncognito,
     launch:
-      options.headless !== undefined || options.userAgent !== undefined || options.viewport !== undefined
-        ? { headless: options.headless, userAgent: options.userAgent, viewport: options.viewport }
+      options.headless !== undefined || options.userAgent !== undefined || viewport !== undefined
+        ? { headless: options.headless, userAgent: options.userAgent, viewport }
         : undefined,
     profileName: options.profileName,
   });
@@ -72,6 +120,7 @@ export async function launch(options: LaunchOptions = {}): Promise<Browser> {
 
 export { Browser, type LaunchOptions } from './browser.js';
 export { ActionFailedError, ExpectationFailedError } from './errors.js';
+export type { DialogPolicy, DialogPolicyMode, ProjectConfigFile } from '@sutradhar/capability-runtime';
 export {
   Page,
   type ActionOptions,

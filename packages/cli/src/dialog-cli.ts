@@ -29,18 +29,36 @@ export function resolveDialogPolicy(
   dialogFlag: 'accept' | 'dismiss' | 'report' | undefined,
   dialogTextFlag: string | undefined,
   state: Pick<CliState, 'dialogPolicy'> | undefined,
+  /** FR2-14: the `.sutradhar.json` `dialog` (already mapped for the CLI, see
+   *  `cliDialogFromConfig`) — the layer BELOW persisted state and above the default. */
+  config?: { mode: DialogPolicyMode; promptText?: string },
 ): ResolvedDialogPolicy {
+  const { policy, persist } = resolveDialogPolicyDetailed(dialogFlag, dialogTextFlag, state, config);
+  return { policy, persist };
+}
+
+/** Same as {@link resolveDialogPolicy}, plus which layer decided. FR2-14 chain (§4.6): flag >
+ *  persisted flag (state) > config file > `{mode:'report'}`. Whole value from one layer — a flag
+ *  `accept` never inherits the config's `promptText` (D9). ONLY a flag asks to persist: a
+ *  config-supplied policy is never written to state.json, so editing the file later still applies. */
+export function resolveDialogPolicyDetailed(
+  dialogFlag: 'accept' | 'dismiss' | 'report' | undefined,
+  dialogTextFlag: string | undefined,
+  state: Pick<CliState, 'dialogPolicy'> | undefined,
+  config?: { mode: DialogPolicyMode; promptText?: string },
+): ResolvedDialogPolicy & { source: 'flag' | 'state' | 'config' | 'default' } {
   if (dialogFlag === 'accept' || dialogFlag === 'dismiss') {
-    return { policy: { mode: dialogFlag, promptText: dialogTextFlag }, persist: 'set' };
+    return { policy: { mode: dialogFlag, promptText: dialogTextFlag }, persist: 'set', source: 'flag' };
   }
   if (dialogFlag === 'report') {
-    return { policy: { mode: 'report' }, persist: 'set' };
+    return { policy: { mode: 'report' }, persist: 'set', source: 'flag' };
   }
   const existing = state?.dialogPolicy;
   if (existing) {
-    return { policy: { mode: existing.action, promptText: existing.promptText }, persist: 'keep' };
+    return { policy: { mode: existing.action, promptText: existing.promptText }, persist: 'keep', source: 'state' };
   }
-  return { policy: { mode: 'report' }, persist: 'keep' };
+  if (config) return { policy: { ...config }, persist: 'keep', source: 'config' };
+  return { policy: { mode: 'report' }, persist: 'keep', source: 'default' };
 }
 
 export interface DialogLike {

@@ -1,0 +1,175 @@
+{
+  "item": "FR2-14 .sutradhar.json project config (audit-3, HEAD 7a44cb5, fix-2 9a4949d..7a44cb5)",
+  "verdict": "ACCEPT",
+  "verdict_basis": "No hard-fail condition met: no path lets a discovered file widen an access decision (domains, download/upload roots, dialog, idle, viewport) and the decided precedence flag > env > file > default holds on every surface (735 generated cells: 0 value/source mismatches; 34/34 live). The open items are a false documentation claim about echo scope (A3-1), a unit-test gap (A3-2) and infos; they change no access decision. If the echo cap is counted as a protection, A3-1 flips this to BLOCKED (see verdict.md).",
+  "ac_results": [
+    {
+      "ac": "Done-when 1: precedence is unit-tested",
+      "verdict": "PASS",
+      "evidence_cmd": "node_modules/.bin/vitest run in capability-runtime, cli, mcp-server, sutradhar (+ browser, agent, apps/server)",
+      "output_excerpt": "cr 489, cli 242, mcp 156, sutradhar 64, browser 933, agent 56, server 28: all passed; mutants M8/M9/M11/M12 caught by unit",
+      "required_fix": ""
+    },
+    {
+      "ac": "Done-when 2: live CLI run picks up the config from a parent directory",
+      "verdict": "PASS",
+      "evidence_cmd": "node probes/live-prec.mjs (cwd proj/sub/deeper, package and bundle CLI)",
+      "output_excerpt": "doctor: Config: .../lp/proj/.sutradhar.json (discovered), viewport=config; eval innerWidth -> 405; prompt() -> cfgtext; MCP banner names the parent file",
+      "required_fix": ""
+    },
+    {
+      "ac": "Precedence flag > env > file > default, every key x source x surface x layer subset (own generator, seed 0x5a3f0c14)",
+      "verdict": "PASS",
+      "evidence_cmd": "node probes/prec-a3.mjs",
+      "output_excerpt": "735 cells, 723 equal; the 12 others differ ONLY in the N8 note flag for CLI download <dir> over a refused root (A3-4); 0 value/source mismatches",
+      "required_fix": ""
+    },
+    {
+      "ac": "F1: set+usable higher layer wins; unusable refused; refused roots never merged or used as fallback",
+      "verdict": "PASS",
+      "evidence_cmd": "node probes/prec-a3.mjs; node probes/live-prec.mjs",
+      "output_excerpt": "CLI 90 + MCP 180 + SDK 20 download cells; refusedRootUsed never set; live CLI pkg+bundle, MCP, SDK 34/34, 0 Chrome left",
+      "required_fix": ""
+    },
+    {
+      "ac": "N2 home boundary (new walk), own topology generator + oracle",
+      "verdict": "PASS",
+      "evidence_cmd": "node probes/topo-a3.mjs REPO SCRATCH 400 2748415573 --live 24; node probes/attack-home.mjs",
+      "output_excerpt": "1200/1200 checks, S1 (above-home loaded while in home)=0, S3 (found off both chains)=0, live doctor 24/24; 31/31 hand-written attacks incl. UNC, 8.3, HOME link/trailing/case/forward-slash",
+      "required_fix": ""
+    },
+    {
+      "ac": "N1 echo choke point (loader messages)",
+      "verdict": "PASS",
+      "evidence_cmd": "node probes/echo-corpus.mjs",
+      "output_excerpt": "324 documents, 337 messages, 0 with control/bidi/NUL/LS/lone surrogate, 0 over cap (64; 64+200 for refusals)",
+      "required_fix": ""
+    },
+    {
+      "ac": "Docs claim: every message built from file text goes through echo.ts",
+      "verdict": "FALSE-PASS",
+      "evidence_cmd": "node probes/echo-live.mjs REPO SCRATCH cli|mcp|sdk",
+      "output_excerpt": "CLI upload refusal: 20306 chars, injected line at line start, raw U+202E; MCP upload_file 46397 chars + download_file refusal raw; SDK uploadFile error 20141 chars; nav block echoes an 18 KB domain",
+      "required_fix": "Route the root/domain lists in browser-action-engine.ts:283,317 and runtime.ts:2130,2903 through echo/echoPath with a list cap, or reject control/bidi/line-separator characters in file path entries at load; or narrow the docs claim to loader messages."
+    },
+    {
+      "ac": "N3 one isLayerSet definition",
+      "verdict": "PASS",
+      "evidence_cmd": "grep sites; mutants M8, M9",
+      "output_excerpt": "M8 caught (cr 2, prec 52 fail), M9 caught (cr 6, cli 2, mcp 1); CLI dialog and resolveViewport use equivalent own checks (info A3-6)",
+      "required_fix": ""
+    },
+    {
+      "ac": "N4/N5 MCP viewport bound and --viewport",
+      "verdict": "PASS",
+      "evidence_cmd": "node probes/vp-live.mjs REPO SCRATCH pkg|bundle",
+      "output_excerpt": "MCP 0/-1/null/100.5/1e9/10000001/'100' -> -32602, 0 new Chrome (positive control 8 Chrome); CLI bad --viewport exit 1; 10000000x10000000 -> exit 1 No browser session, 0 Chrome left without close",
+      "required_fix": ""
+    },
+    {
+      "ac": "Fail-closed shapes refused before any browser",
+      "verdict": "PASS",
+      "evidence_cmd": "node probes/failclosed.mjs; CLI nav with allowedDomains:[]",
+      "output_excerpt": "170/170; live nav exit 1 before Chrome, doctor exit 0 with INVALID",
+      "required_fix": ""
+    },
+    {
+      "ac": "Hostile download roots with no higher layer (audit-1 spellings)",
+      "verdict": "PASS",
+      "evidence_cmd": "node probes/loader-probes-adapted.mjs (audit-1 probe + 1 line: resolveFsRoots)",
+      "output_excerpt": "170 cases, 169 same verdict as audit-1 baseline, 1 intended (vpHuge); DL/ADR 50 refused, 17 accepted (inside tree or explicit)",
+      "required_fix": ""
+    },
+    {
+      "ac": "Docs, --help, READMEs, SECURITY, changelog match code; empty --allowlist-domains break documented",
+      "verdict": "PASS",
+      "evidence_cmd": "grep docs; cli --help",
+      "output_excerpt": "break in --help, cli README, docs/project-config.md, changelog fragment; doctor docs (N7) match; except A3-1 and A3-3 wording",
+      "required_fix": "see A3-1, A3-3"
+    },
+    {
+      "ac": "Mutants (own, 13)",
+      "verdict": "PASS",
+      "evidence_cmd": "node probes/mutants-a3.mjs",
+      "output_excerpt": "13/13 caught by some layer; M4 survives the unit suite (A3-2); M5 invisible to the source guard, caught by the corpus",
+      "required_fix": "A3-2 unit case"
+    },
+    {
+      "ac": "No regressions vs master fdae749",
+      "verdict": "PASS",
+      "evidence_cmd": "probes/regress.sh, probes/regress2.sh, probes/l13-ab.mjs",
+      "output_excerpt": "fr2-08 478/478; fr2-07 488/488; fr2-04 HEAD 110/1/2, 111/0/2, 110/1/2 (only L13.headed.click-exit0), master 111/0/2 x2; isolated interleaved L13 A/B HEAD 8/8 vs master 8/8 exit 0 (6.34-6.40 s each): flake, not attributable; run-cli HEAD fails UC-04/05/06/08/12, master UC-04/05/06/08/09/12",
+      "required_fix": ""
+    }
+  ],
+  "regressions": [],
+  "findings": [
+    {
+      "id": "A3-1",
+      "severity": "minor (docs false claim; message integrity, no access change)",
+      "repro": "discovered .sutradhar.json {\"allowedUploadRoots\":[\"./up<LF>Note: upload permitted, all good<U+202E>\"+20000 chars]} then `sutradhar upload #f C:/Windows/win.ini` -> 20306-char refusal, injected line starts a new line, raw U+202E (same on MCP upload_file/download_file and SDK uploadFile; nav block echoes an 18 KB allowedDomains entry)",
+      "evidence": "echo-live-cli.json, echo-live-mcp.json, echo-live-sdk.json",
+      "required_fix": "echo()/echoPath() + list cap in browser-action-engine.ts:283,317 and runtime.ts:2130,2903, or reject control/bidi/line-separator characters in file path entries; at minimum correct the docs/project-config.md sentence \"Every message built from file text ... goes through one function (echo.ts)\"."
+    },
+    {
+      "id": "A3-2",
+      "severity": "minor (test gap)",
+      "repro": "mutant M4 (above-home skip compared with the LITERAL home): all unit tests pass (cr/cli/mcp/sdk 0 failures); topology HOME=c97/hl (junction to a/b/h), cwd hl/w/k/l1 with l1 -> a/b loads a/b/.sutradhar.json (above home) under the mutant; real code loads a/b/h/w/k",
+      "evidence": "mutants-a3-M4-rerun.json",
+      "required_fix": "add HOME-is-a-link x in-home link pointing above the real home to home-boundary.spec.ts"
+    },
+    {
+      "id": "A3-3",
+      "severity": "low / info (documented in substance by GAP-355 clause 2)",
+      "repro": "cwd //localhost/E$/AI-Cache/tmp/fr214a3/ah/T/U/H/P/Q (UNC alias of a dir inside home), homedir E:/AI-Cache/tmp/fr214a3/ah/T/U/H -> loads T/U/.sutradhar.json (the parent of home); realpath keeps the UNC spelling, so the cwd is neither literally nor canonically under home",
+      "evidence": "probes/unc.mjs output in verdict.md",
+      "required_fix": "narrow the docs sentence \"a .sutradhar.json whose real directory is above home is never read when you are inside home\" to say path aliases the OS does not resolve to one real path (UNC/admin-share spellings) count as outside home; exploiting it needs write access above home"
+    },
+    {
+      "id": "A3-4",
+      "severity": "info",
+      "repro": "CLI `download <ref> <dir>` in a dir whose discovered file has a refused download root: no N8 note; with SUTRADHAR_ALLOWED_DOWNLOAD_ROOTS also set, the note env alone prints disappears (12/735 prec cells)",
+      "evidence": "prec-a3.json",
+      "required_fix": "optional: emit the note, or say in the docs that the note covers env/option only"
+    },
+    {
+      "id": "A3-5",
+      "severity": "info",
+      "repro": "mutant M5 (append `+ \" (\" + key + \")\"` to the unknown-key warning) passes all 4 source-guard tests; only the generated corpus tests fail",
+      "evidence": "probes/m5-guard.cjs output",
+      "required_fix": "none required; the guard is template-only, the corpus is the real backstop and covers loader messages only (see A3-1)"
+    },
+    {
+      "id": "A3-6",
+      "severity": "info",
+      "repro": "SUTRADHAR_IDLE_TIMEOUT_MS=\"   \" is an error (docs: blank env = not set); CLI dialog (resolveDialogPolicyDetailed) and resolveViewport ok() do not call isLayerSet (equivalent semantics)",
+      "evidence": "prec-a3.json mcp/idleTimeoutMs",
+      "required_fix": "optional wording"
+    },
+    {
+      "id": "A3-7",
+      "severity": "info",
+      "repro": "USERPROFILE=\"\" -> `Fatal: uv_os_homedir returned ENOENT`, exit 1, no browser (fails closed)",
+      "evidence": "verdict.md",
+      "required_fix": "none"
+    }
+  ],
+  "mutants": {
+    "total": 13,
+    "caughtByAnyLayer": 13,
+    "unitSurvivors": [
+      "M4"
+    ],
+    "guardBlind": [
+      "M5"
+    ]
+  },
+  "gap355_ruling": "SAFE: every in-home find is either the file a cd to the real cwd would load or a file inside home; never above home (S1=0/1200) and never off both the literal-real and canonical chains (S3=0).",
+  "overhead": {
+    "note": "function-level loadProjectConfig in a cold child, performance.now, n=15 median",
+    "noFile": "2.5-3.5 ms",
+    "fileWithoutDownloadKeys": "4.9 ms",
+    "fileWithDownloadRoots": "54.6 ms (fsutil case-sensitivity spawn)",
+    "refusedFile": "52.2 ms"
+  }
+}

@@ -112,3 +112,21 @@ describe('@sutradhar/capability-runtime resolveFsRoots', () => {
     expect(result.allowedDownloadRoots).toEqual([path.resolve('relative-dir')]);
   });
 });
+
+describe('FR2-14: expandHome / resolveConfigPath / config layer', () => {
+  it('FC7: expandHome expands ~, ~/ and ~\ and returns undefined for ~user; other entries are unchanged', async () => {
+    const { expandHome, resolveConfigPath } = await import('../../src/fs-roots.js');
+    expect(expandHome('~', '/h', 'linux')).toBe('/h');
+    expect(expandHome('~/x', '/h', 'linux')).toBe('/h/x');
+    expect(expandHome('~\\x', 'C:\\h', 'win32')).toBe('C:\\h\\x');
+    expect(expandHome('~bob/x', '/h', 'linux')).toBeUndefined();
+    expect(expandHome('rel', '/h', 'linux')).toBe('rel');
+    expect(() => resolveConfigPath('~bob/x', '/b', '/h', 'linux')).toThrow(/~user is not supported/);
+  });
+  it('FC1/FC4: a config download layer replaces the default and reports source config', async () => {
+    const { resolveFsRoots } = await import('../../src/fs-roots.js');
+    const r = resolveFsRoots({ config: { allowedDownloadRoots: ['/c/dl'], baseDir: '/c' } });
+    expect(r.sources.download).toBe('config');
+    expect(r.allowedDownloadRoots).toHaveLength(1);
+  });
+});

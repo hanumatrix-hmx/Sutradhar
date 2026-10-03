@@ -1,0 +1,22 @@
+CAUGHT  U1 precedence reversed: config layer outranks env
+    unit: CAUGHT (2 test(s) failed) e.g. tests/unit/config-precedence.spec.ts > PD allowedDomains: matrix over every surface > CLI: flag > env > config
+    live: n/a
+    restored byte-identical: true
+CAUGHT  U2 env var ignored for allowedDomains
+    unit: CAUGHT (3 test(s) failed) e.g. tests/unit/config-precedence.spec.ts > PD allowedDomains: matrix over every surface > CLI: flag > env > config
+    live: n/a
+    restored byte-identical: true
+CAUGHT  U3 CLI flag ignored
+    unit: CAUGHT (2 test(s) failed) e.g. tests/unit/project-config-cli.spec.ts > resolveCliSettings: generated precedence matrices (CLI: flag > persist
+    live: n/a
+    restored byte-identical: true
+CAUGHT  U8 fail-open allowedDomains: an empty array is accepted
+    unit: CAUGHT (3 test(s) failed) e.g. tests/unit/project-config.spec.ts > validation (V1-V12) > V3 (D8): [] for each array key is an error that says
+    live: n/a
+    restored byte-identical: true
+CAUGHT  U10 a discovered (parent-directory) file may widen download roots: containment skipped
+    unit: CAUGHT (9 test(s) failed) e.g. tests/unit/project-config.spec.ts > hostile discovered config: containment (CT1-CT7, D12b) > CT1/CT6: an escap
+    live: n/a
+    restored byte-identical: true
+
+5/5 mutants caught and restored byte-identically

@@ -1,0 +1,81 @@
+{
+ "id": "B1",
+ "desc": "set-but-unusable env (blank/\";;\") counts as \"env set\": refusal skipped and the FILE roots used",
+ "file": "packages/capability-runtime/src/fs-roots.ts",
+ "shaBefore": "5fef21684dbd5328e0586b4948abaa57de5d6dd46016f2891e1ebd48a63b1d34",
+ "occurrences": 1,
+ "build": {
+  "pkg": 0,
+  "bundle": 0,
+  "tail": [
+   " Tasks:    8 successful, 8 total",
+   " Tasks:    9 successful, 9 total"
+  ]
+ },
+ "unit": {
+  "capability-runtime": {
+   "code": 1,
+   "tests": "3 failed | 486 passed (489)",
+   "failed": [
+    "tests/unit/override-matrix.spec.ts > FR2-14 fix-2 N3: one definition of \"set\" - generated over env values x file x surface > surface=downloa",
+    "tests/unit/override-matrix.spec.ts > FR2-14 fix-2 N3: one definition of \"set\" - generated over env values x file x surface > surface=downloa",
+    "tests/unit/override-matrix.spec.ts > FR2-14 fix-2 N3: one definition of \"set\" - generated over env values x file x surface > the matrix is n"
+   ]
+  },
+  "cli": {
+   "code": 1,
+   "tests": "3 failed | 239 passed (242)",
+   "failed": [
+    "tests/unit/project-config-cli.spec.ts > fix-2 N3: the CLI composition uses the one definition of \"set\" (generated: env value x download-dir ",
+    "tests/unit/project-config-cli.spec.ts > fix-2 N3: the CLI composition uses the one definition of \"set\" (generated: env value x download-dir ",
+    "tests/unit/project-config-cli.spec.ts > fix-2 N3: the CLI composition uses the one definition of \"set\" (generated: env value x download-dir "
+   ]
+  },
+  "mcp-server": {
+   "code": 0,
+   "tests": "156 passed (156)",
+   "failed": []
+  },
+  "sutradhar": {
+   "code": 0,
+   "tests": "64 passed (64)",
+   "failed": []
+  }
+ },
+ "f1attack": {
+  "pass": 236,
+  "fail": 54,
+  "firstFails": [
+   "CLI.escDl.env=empty FILE ROOT LEAKED e:\\ai-cache\\tmp\\fr214f2\\a2\\f1m-b1\\outside",
+   "MCP.escDl.env=empty FILE ROOT LEAKED e:\\ai-cache\\tmp\\fr214f2\\a2\\f1m-b1\\outside",
+   "CLI.escDl.env=spaces FILE ROOT LEAKED e:\\ai-cache\\tmp\\fr214f2\\a2\\f1m-b1\\outside",
+   "MCP.escDl.env=spaces FILE ROOT LEAKED e:\\ai-cache\\tmp\\fr214f2\\a2\\f1m-b1\\outside"
+  ]
+ },
+ "liveCliF1": {
+  "pass": 11,
+  "fail": 3,
+  "fails": [
+   "pkg.F1.env=empty.refused",
+   "pkg.F1.env=blank.refused",
+   "pkg.F1.env=delims.refused"
+  ]
+ },
+ "shaAfter": "5fef21684dbd5328e0586b4948abaa57de5d6dd46016f2891e1ebd48a63b1d34",
+ "restored": true,
+ "rebuild": {
+  "pkg": 0,
+  "bundle": 0,
+  "tail": [
+   " Tasks:    8 successful, 8 total",
+   " Tasks:    9 successful, 9 total"
+  ]
+ },
+ "caught": {
+  "unit": true,
+  "f1attack": true,
+  "liveCli": true,
+  "any": true
+ }
+}
+exit=0

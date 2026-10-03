@@ -1,0 +1,33 @@
+{"id":"bundle[none].banner","banner":["[sutradhar-mcp] config: none found (searched upward from E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\live9\\mcp-bundle\\proj\\a\\b, stopped at git root E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\live9\\mcp-bundle\\proj); set SUTRADHAR_CONFIG to an absolute path to load one explicitly"],"pass":true}
+{"id":"bundle[none].allowedDomains","expectWinner":"unrestricted","nav":{"127.0.0.3":{"isError":false,"reached":true},"127.0.0.4":{"isError":false,"reached":true},"127.0.0.5":{"isError":false,"reached":true}},"pass":true}
+{"id":"bundle[none].viewport(config>default)","want":"DEFAULT","got":"1264x705","pass":true}
+{"id":"bundle[none].viewport(call>config)","got":"404x304","pass":true}
+{"id":"bundle[none].dialog","want":"pending-auto","got":null,"pend":"{\n  \"dialog\": {\n    \"dialogType\": \"prompt\",\n    \"message\": \"qbundle[none]-main\"\n  }\n}","pass":true}
+{"id":"bundle[none].download","want":"default","found":["default"],"shaOk":true,"pass":true}
+{"id":"bundle[none].upload","allowedSet":["e","c","o"],"ups":{"e":{"success":true,"isError":false,"got":"e.txt:10"},"c":{"success":true,"isError":false,"got":"c.txt:6"},"o":{"success":true,"isError":false,"got":"o.txt:17"}},"pass":true}
+{"id":"bundle[none].idle","wantReaped":false,"chromeBefore":10,"reaped":false,"pass":true}
+{"id":"bundle[env].banner","banner":["[sutradhar-mcp] config: none found (searched upward from E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\live9\\mcp-bundle\\proj\\a\\b, stopped at git root E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\live9\\mcp-bundle\\proj); set SUTRADHAR_CONFIG to an absolute path to load one explicitly"],"pass":true}
+{"id":"bundle[env].allowedDomains","expectWinner":"127.0.0.3","nav":{"127.0.0.3":{"isError":false,"reached":true},"127.0.0.4":{"isError":true,"reached":false},"127.0.0.5":{"isError":true,"reached":false}},"pass":true}
+{"id":"bundle[env].viewport(config>default)","want":"DEFAULT","got":"1264x705","pass":true}
+{"id":"bundle[env].viewport(call>config)","got":"404x304","pass":true}
+{"id":"bundle[env].dialog","want":"pending-auto","got":null,"pend":"{\n  \"dialog\": {\n    \"dialogType\": \"prompt\",\n    \"message\": \"qbundle[env]-main\"\n  }\n}","pass":true}
+{"id":"bundle[env].download","want":"env","found":["env"],"shaOk":true,"pass":true}
+{"id":"bundle[env].upload","allowedSet":["e"],"ups":{"e":{"success":true,"isError":false,"got":"e.txt:10"},"c":{"success":false,"isError":false,"got":null},"o":{"success":false,"isError":false,"got":null}},"pass":true}
+{"id":"bundle[env].idle","wantReaped":false,"chromeBefore":8,"reaped":false,"pass":true}
+{"id":"bundle[config].banner","banner":["[sutradhar-mcp] config: loaded E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\live9\\mcp-bundle\\proj\\.sutradhar.json (found by searching upward from E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\live9\\mcp-bundle\\proj\\a\\b)","[sutradhar-mcp] warning: E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\live9\\mcp-bundle\\proj\\.sutradhar.json sets dialog.mode \"accept\": native alert/confirm/prompt dialogs will be accepted automatically."],"pass":true}
+{"id":"bundle[config].allowedDomains","expectWinner":"127.0.0.4","nav":{"127.0.0.3":{"isError":true,"reached":false},"127.0.0.4":{"isError":false,"reached":true},"127.0.0.5":{"isError":true,"reached":false}},"pass":true}
+{"id":"bundle[config].viewport(config>default)","want":"405x305","got":"405x305","pass":true}
+{"id":"bundle[config].viewport(call>config)","got":"404x304","pass":true}
+{"id":"bundle[config].dialog","want":"CFG","got":"CFG","pend":null,"pass":true}
+{"id":"bundle[config].download","want":"config","found":["config"],"shaOk":true,"pass":true}
+{"id":"bundle[config].upload","allowedSet":["c"],"ups":{"e":{"success":false,"isError":false,"got":null},"c":{"success":true,"isError":false,"got":"c.txt:6"},"o":{"success":false,"isError":false,"got":null}},"pass":true}
+{"id":"bundle[config].idle","wantReaped":true,"chromeBefore":8,"reaped":true,"pass":true}
+{"id":"bundle[env+config].banner","banner":["[sutradhar-mcp] config: loaded E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\live9\\mcp-bundle\\proj\\.sutradhar.json (found by searching upward from E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\live9\\mcp-bundle\\proj\\a\\b)","[sutradhar-mcp] warning: E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\live9\\mcp-bundle\\proj\\.sutradhar.json sets dialog.mode \"accept\": native alert/confirm/prompt dialogs will be accepted automatically."],"pass":true}
+{"id":"bundle[env+config].allowedDomains","expectWinner":"127.0.0.3","nav":{"127.0.0.3":{"isError":false,"reached":true},"127.0.0.4":{"isError":true,"reached":false},"127.0.0.5":{"isError":true,"reached":false}},"pass":true}
+{"id":"bundle[env+config].viewport(config>default)","want":"405x305","got":"405x305","pass":true}
+{"id":"bundle[env+config].viewport(call>config)","got":"404x304","pass":true}
+{"id":"bundle[env+config].dialog","want":"CFG","got":"CFG","pend":null,"pass":true}
+{"id":"bundle[env+config].download","want":"env","found":["env"],"shaOk":true,"pass":true}
+{"id":"bundle[env+config].upload","allowedSet":["e"],"ups":{"e":{"success":true,"isError":false,"got":"e.txt:10"},"c":{"success":false,"isError":false,"got":null},"o":{"success":false,"isError":false,"got":null}},"pass":true}
+{"id":"bundle[env+config].idle","wantReaped":false,"chromeBefore":7,"reaped":false,"pass":true}
+{"summary":{"build":"bundle","pass":32,"fail":0,"fails":[],"seconds":235}}

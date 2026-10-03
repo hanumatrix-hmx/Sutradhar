@@ -1,0 +1,70 @@
+{
+ "id": "B10",
+ "desc": "an UPLOAD-roots env var skips the DOWNLOAD refusal",
+ "file": "packages/capability-runtime/src/fs-roots.ts",
+ "shaBefore": "3797a6b57ca7077b303e5d61f85df658326098fa8fe50ce453c06a89a19e1c6b",
+ "occurrences": 1,
+ "build": {
+  "pkg": 0,
+  "bundle": 0,
+  "tail": [
+   " Tasks:    8 successful, 8 total",
+   " Tasks:    9 successful, 9 total"
+  ]
+ },
+ "unit": {
+  "capability-runtime": {
+   "code": 0,
+   "tests": "393 passed (393)",
+   "failed": []
+  },
+  "cli": {
+   "code": 0,
+   "tests": "238 passed (238)",
+   "failed": []
+  },
+  "mcp-server": {
+   "code": 0,
+   "tests": "154 passed (154)",
+   "failed": []
+  },
+  "sutradhar": {
+   "code": 0,
+   "tests": "63 passed (63)",
+   "failed": []
+  }
+ },
+ "f1attack": {
+  "pass": 277,
+  "fail": 13,
+  "firstFails": [
+   "CLI.escDl.uploadEnvOnly FILE ROOT LEAKED e:\\ai-cache\\tmp\\claude\\e--hmx-projects-internal-projects-pinchtab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\fr214a2\\mut\\f1m-b10\\outside",
+   "MCP.escDl.uploadEnvOnly FILE ROOT LEAKED e:\\ai-cache\\tmp\\claude\\e--hmx-projects-internal-projects-pinchtab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\fr214a2\\mut\\f1m-b10\\outside",
+   "CLI.escRoots.uploadEnvOnly FILE ROOT LEAKED e:\\ai-cache\\tmp\\claude\\e--hmx-projects-internal-projects-pinchtab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\fr214a2\\mut\\f1m-b10\\escroots\\ok,e:\\ai-cache\\tmp\\claude\\e--hmx-projects-internal-projects-pinchtab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\fr214a2\\mut\\f1m-b10\\outside",
+   "MCP.escRoots.uploadEnvOnly FILE ROOT LEAKED e:\\ai-cache\\tmp\\claude\\e--hmx-projects-internal-projects-pinchtab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\fr214a2\\mut\\f1m-b10\\escroots\\ok,e:\\ai-cache\\tmp\\claude\\e--hmx-projects-internal-projects-pinchtab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\fr214a2\\mut\\f1m-b10\\outside"
+  ]
+ },
+ "liveCliF1": {
+  "pass": 13,
+  "fail": 1,
+  "fails": [
+   "pkg.F1.uploadEnvOnly.refused"
+  ]
+ },
+ "shaAfter": "3797a6b57ca7077b303e5d61f85df658326098fa8fe50ce453c06a89a19e1c6b",
+ "restored": true,
+ "rebuild": {
+  "pkg": 0,
+  "bundle": 0,
+  "tail": [
+   " Tasks:    8 successful, 8 total",
+   " Tasks:    9 successful, 9 total"
+  ]
+ },
+ "caught": {
+  "unit": false,
+  "f1attack": true,
+  "liveCli": true,
+  "any": true
+ }
+}

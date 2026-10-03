@@ -1,0 +1,60 @@
+[
+ {
+  "mcpPid": 39744
+ },
+ {
+  "step": "launch",
+  "label": "launch",
+  "len": 78,
+  "injectedLineStart": false,
+  "rawLF_inMessage": false,
+  "rlo": false,
+  "fill": 0,
+  "longDomainChars": 0,
+  "head": "\"{\\n  \\\"sessionId\\\": \\\"a3\\\",\\n  \\\"activeTabId\\\": \\\"tab_a3_1\\\",\\n  \\\"hasRealBrowser\\\": true\\n}\""
+ },
+ {
+  "step": "upload outside roots",
+  "label": "upload",
+  "len": 6675,
+  "injectedLineStart": false,
+  "rawLF_inMessage": false,
+  "rlo": false,
+  "fill": 272,
+  "longDomainChars": 0,
+  "head": "\"{\\n  \\\"success\\\": false,\\n  \\\"actionType\\\": \\\"upload_file\\\",\\n  \\\"executionTimeMs\\\": 1525,\\n  \\\"currentUrl\\\": \\\"about:blank\\\",\\n  \\\"title\\\": \\\"\\\",\\n  \\\"error\\\": \\\"Upload file \\\\\\\"C:\\\\\\\\Windows\\\\\\\\win.ini\\\\\\\" is outside the allowed upload directories (E:\\\\\\\\AI-Cache\\\\\\\\tmp\\\\\\\\fr214a3f\\\\\\\\le\\\\\\\\up?Note: upload permitted, all good?ƩƩƩƩƩƩƩƩƩƩƩƩƩ\""
+ },
+ {
+  "step": "download_file outside roots (refused before click)",
+  "label": "dl",
+  "len": 7080,
+  "injectedLineStart": false,
+  "rawLF_inMessage": false,
+  "rlo": false,
+  "fill": 266,
+  "longDomainChars": 0,
+  "head": "\"{\\n  \\\"success\\\": false,\\n  \\\"actionType\\\": \\\"download_file\\\",\\n  \\\"executionTimeMs\\\": 1523,\\n  \\\"currentUrl\\\": \\\"about:blank\\\",\\n  \\\"title\\\": \\\"\\\",\\n  \\\"error\\\": \\\"downloadDir \\\\\\\"E:/AI-Cache/tmp/fr214a3f\\\\\\\" is outside the allowed download directories (E:\\\\\\\\AI-Cache\\\\\\\\tmp\\\\\\\\fr214a3f\\\\\\\\le\\\\\\\\dl?[sutradhar] Note: download roots OK?ƩƩ\""
+ },
+ {
+  "step": "navigate blocked",
+  "label": "navblock",
+  "len": 320,
+  "injectedLineStart": false,
+  "rawLF_inMessage": false,
+  "rlo": false,
+  "fill": 0,
+  "longDomainChars": 60,
+  "head": "\"navigate failed: Navigation to \\\"http://blocked.example/\\\" was blocked: allowedDomains is configured and \\\"blocked.example\\\" is not in the allowlist (localhost, aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.aaa...). This is a safety guardrail — add the domain to allowedDomains if this nav\""
+ },
+ {
+  "step": "stderr banner",
+  "label": "stderr",
+  "len": 3295,
+  "injectedLineStart": false,
+  "rawLF_inMessage": false,
+  "rlo": false,
+  "fill": 807,
+  "longDomainChars": 0,
+  "head": "\"[sutradhar-mcp] config: loaded E:\\\\AI-Cache\\\\tmp\\\\fr214a3f\\\\le\\\\.sutradhar.json (found by searching upward from E:\\\\AI-Cache\\\\tmp\\\\fr214a3f\\\\le)\\n{\\\"timestamp\\\":\\\"2026-10-03T04:46:09.971Z\\\",\\\"level\\\":\\\"warn\\\",\\\"message\\\":\\\"[BrowserActionEngine] Action upload_file failed (attempt 1/3): Upload file \\\\\\\"C:\\\\\\\\Windows\\\\\\\\win.ini\\\\\""
+ }
+]

@@ -1,0 +1,99 @@
+[33mThe CJS build of Vite's Node API is deprecated. See https://vite.dev/guide/troubleshooting.html#vite-cjs-node-api-deprecated for more details.[39m
+
+[7m[1m[36m RUN [39m[22m[27m [36mv1.6.1[39m [90mE:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/packages/agent[39m
+
+ [32m✓[39m tests/unit/block-detector.spec.ts [2m ([22m[2m5 tests[22m[2m)[22m[90m 2[2mms[22m[39m
+ [32m✓[39m tests/unit/failure-classifier.spec.ts [2m ([22m[2m12 tests[22m[2m)[22m[90m 2[2mms[22m[39m
+[90mstdout[2m | tests/unit/task-graph.spec.ts[2m > [22m[2mEngineering Iteration 5 — Task Graph Engine Unit Tests[2m > [22m[2m2. should resolve dependencies when parent node transitions to COMPLETED[22m[39m
+{"timestamp":"2026-10-03T00:33:01.203Z","level":"info","message":"[TaskGraphEngine] Starting node execution n1 in graph graph_1","context":{}}
+{"timestamp":"2026-10-03T00:33:01.203Z","level":"info","message":"[TaskGraphEngine] Completed node execution n1 in graph graph_1","context":{}}
+
+[90mstdout[2m | tests/unit/task-graph.spec.ts[2m > [22m[2mEngineering Iteration 5 — Task Graph Engine Unit Tests[2m > [22m[2m4. should handle partial completion and support state serialization/deserialization[22m[39m
+{"timestamp":"2026-10-03T00:33:01.204Z","level":"info","message":"[TaskGraphEngine] Starting node execution n1 in graph graph_1","context":{}}
+{"timestamp":"2026-10-03T00:33:01.204Z","level":"info","message":"[TaskGraphEngine] Completed node execution n1 in graph graph_1","context":{}}
+
+[90mstderr[2m | tests/unit/task-graph.spec.ts[2m > [22m[2mEngineering Iteration 5 — Task Graph Engine Unit Tests[2m > [22m[2m5. should increment node retries and mark FAILED when maxRetries exceeded[22m[39m
+{"timestamp":"2026-10-03T00:33:01.204Z","level":"warn","message":"[TaskGraphEngine] Node n1 failed (attempt 1/2); setting READY for retry","context":{}}
+{"timestamp":"2026-10-03T00:33:01.204Z","level":"error","message":"[TaskGraphEngine] Node n1 failed permanently: Second timeout","context":{}}
+
+ [32m✓[39m tests/unit/task-graph.spec.ts [2m ([22m[2m5 tests[22m[2m)[22m[90m 3[2mms[22m[39m
+ [32m✓[39m tests/unit/planner.spec.ts [2m ([22m[2m2 tests[22m[2m)[22m[90m 2[2mms[22m[39m
+[90mstdout[2m | tests/unit/planner.spec.ts[2m > [22m[2m@sutradhar/agent Goal Planner & Prompt Compiler[2m > [22m[2mshould create structured AgentPlanDto via GoalPlanner[22m[39m
+{"timestamp":"2026-10-03T00:33:01.210Z","level":"info","message":"[GoalPlanner] Creating plan for goal goal_123","context":{"goal":"Search Wikipedia for Alan Turing"}}
+
+[90mstderr[2m | tests/unit/cross-run-memory.spec.ts[2m > [22m[2m@sutradhar/agent CrossRunMemory[2m > [22m[2mnever throws when recording fails (best-effort)[22m[39m
+{"timestamp":"2026-10-03T00:33:01.249Z","level":"warn","message":"[CrossRunMemory] failed to persist run summary: ENOTDIR: not a directory, mkdir 'E:\\AI-Cache\\tmp\\sutradhar-cross-run-memory-KtI8RU\\blocked'","context":{}}
+
+[90mstderr[2m | tests/unit/reflection-recovery.spec.ts[2m > [22m[2mEngineering Iteration 1 — ReflectionEngine & RecoveryEngine Integration[2m > [22m[2mshould detect stuck state loops when consecutive identical actions occur[22m[39m
+{"timestamp":"2026-10-03T00:33:01.462Z","level":"warn","message":"[ReflectionEngine] Detected stuck state loop for action navigate_and_inspect","context":{}}
+
+[90mstderr[2m | tests/unit/reflection-recovery.spec.ts[2m > [22m[2mEngineering Iteration 1 — ReflectionEngine & RecoveryEngine Integration[2m > [22m[2mshould trigger RecoveryEngine strategy when stuck loop detected[22m[39m
+{"timestamp":"2026-10-03T00:33:01.463Z","level":"warn","message":"[RecoveryEngine] Attempting recovery for failure reason: stale_element","context":{"url":"https://example.com"}}
+
+ [32m✓[39m tests/unit/reflection-recovery.spec.ts [2m ([22m[2m2 tests[22m[2m)[22m[90m 2[2mms[22m[39m
+ [32m✓[39m tests/unit/decision-evidence.spec.ts [2m ([22m[2m5 tests[22m[2m)[22m[90m 2[2mms[22m[39m
+ [32m✓[39m tests/unit/confidence-execution.spec.ts [2m ([22m[2m5 tests[22m[2m)[22m[90m 4[2mms[22m[39m
+[90mstderr[2m | tests/unit/confidence-execution.spec.ts[2m > [22m[2mEngineering Iteration 2 — Confidence-Aware Execution Unit Tests[2m > [22m[2mshould trigger low confidence fallback when query score is < 0.70[22m[39m
+{"timestamp":"2026-10-03T00:33:01.466Z","level":"warn","message":"[RecoveryEngine] Attempting recovery for failure reason: low_confidence","context":{"url":"https://example.com","targetTextOrSelector":"Unrelated footer"}}
+
+[90mstdout[2m | tests/unit/agent-loop.spec.ts[2m > [22m[2m@sutradhar/agent runAgentLoop bootstrap failure path[2m > [22m[2mcloses an owned session it just created if the resulting tab has no live Page[22m[39m
+{"timestamp":"2026-10-03T00:33:01.481Z","level":"info","message":"[AgentLoop] starting","context":{"agentId":"agent_1","goalId":"goal_1790987581480","objective":"test objective"}}
+
+[90mstdout[2m | tests/unit/agent-loop.spec.ts[2m > [22m[2m@sutradhar/agent runAgentLoop bootstrap failure path[2m > [22m[2mdoes NOT close a caller-owned session (sessionId supplied) even when bootstrap fails[22m[39m
+{"timestamp":"2026-10-03T00:33:01.488Z","level":"info","message":"[AgentLoop] starting","context":{"agentId":"agent_1","goalId":"goal_1790987581488","objective":"test objective"}}
+
+[90mstdout[2m | tests/unit/agent-loop.spec.ts[2m > [22m[2m@sutradhar/agent runAgentLoop bootstrap failure path[2m > [22m[2mpropagates a createSession failure and does not attempt to close anything (no session was ever created)[22m[39m
+{"timestamp":"2026-10-03T00:33:01.490Z","level":"info","message":"[AgentLoop] starting","context":{"agentId":"agent_1","goalId":"goal_1790987581490","objective":"test objective"}}
+
+ [32m✓[39m tests/unit/agent-loop.spec.ts [2m ([22m[2m3 tests[22m[2m)[22m[90m 14[2mms[22m[39m
+ [32m✓[39m tests/unit/executor.spec.ts [2m ([22m[2m2 tests[22m[2m)[22m[90m 2[2mms[22m[39m
+[90mstderr[2m | tests/unit/executor.spec.ts[2m > [22m[2m@sutradhar/agent Task Step Executor & Reflection Engine[2m > [22m[2mshould evaluate step success and detect stuck state loops in ReflectionEngine[22m[39m
+{"timestamp":"2026-10-03T00:33:01.561Z","level":"warn","message":"[ReflectionEngine] Detected stuck state loop for action click","context":{}}
+
+[90mstdout[2m | tests/unit/executor.spec.ts[2m > [22m[2m@sutradhar/agent Task Step Executor & Reflection Engine[2m > [22m[2mshould execute step on active browser tab and publish domain events[22m[39m
+{"timestamp":"2026-10-03T00:33:01.562Z","level":"info","message":"[StepExecutor] Executing step 1 (navigate) for agent ag_1","context":{}}
+
+ [32m✓[39m tests/unit/runtime-kernel.spec.ts [2m ([22m[2m4 tests[22m[2m)[22m[90m 3[2mms[22m[39m
+[90mstdout[2m | tests/unit/runtime-kernel.spec.ts[2m > [22m[2mEngineering Iteration 7 — Runtime Kernel Unit Tests[2m > [22m[2m1. should register services and retrieve by serviceId[22m[39m
+{"timestamp":"2026-10-03T00:33:01.561Z","level":"info","message":"[RuntimeKernel] Registered service PlannerService with dependencies: []","context":{}}
+
+[90mstdout[2m | tests/unit/runtime-kernel.spec.ts[2m > [22m[2mEngineering Iteration 7 — Runtime Kernel Unit Tests[2m > [22m[2m2. should start services in topological dependency order and stop in reverse order[22m[39m
+{"timestamp":"2026-10-03T00:33:01.562Z","level":"info","message":"[RuntimeKernel] Registered service ServiceB with dependencies: [ServiceA]","context":{}}
+{"timestamp":"2026-10-03T00:33:01.562Z","level":"info","message":"[RuntimeKernel] Registered service ServiceA with dependencies: []","context":{}}
+{"timestamp":"2026-10-03T00:33:01.562Z","level":"info","message":"[RuntimeKernel] Starting runtime kernel across 2 registered services","context":{}}
+{"timestamp":"2026-10-03T00:33:01.562Z","level":"info","message":"[RuntimeKernel] Started service ServiceA","context":{}}
+{"timestamp":"2026-10-03T00:33:01.562Z","level":"info","message":"[RuntimeKernel] Started service ServiceB","context":{}}
+{"timestamp":"2026-10-03T00:33:01.562Z","level":"info","message":"[RuntimeKernel] Stopping runtime kernel gracefully...","context":{}}
+{"timestamp":"2026-10-03T00:33:01.562Z","level":"info","message":"[RuntimeKernel] Stopped service ServiceB","context":{}}
+{"timestamp":"2026-10-03T00:33:01.562Z","level":"info","message":"[RuntimeKernel] Stopped service ServiceA","context":{}}
+
+[90mstdout[2m | tests/unit/runtime-kernel.spec.ts[2m > [22m[2mEngineering Iteration 7 — Runtime Kernel Unit Tests[2m > [22m[2m3. should aggregate service health and report kernel metrics[22m[39m
+{"timestamp":"2026-10-03T00:33:01.562Z","level":"info","message":"[RuntimeKernel] Registered service BrowserService with dependencies: []","context":{}}
+{"timestamp":"2026-10-03T00:33:01.562Z","level":"info","message":"[RuntimeKernel] Registered service MemoryService with dependencies: []","context":{}}
+{"timestamp":"2026-10-03T00:33:01.562Z","level":"info","message":"[RuntimeKernel] Starting runtime kernel across 2 registered services","context":{}}
+{"timestamp":"2026-10-03T00:33:01.563Z","level":"info","message":"[RuntimeKernel] Started service BrowserService","context":{}}
+{"timestamp":"2026-10-03T00:33:01.563Z","level":"info","message":"[RuntimeKernel] Started service MemoryService","context":{}}
+
+[90mstdout[2m | tests/unit/runtime-kernel.spec.ts[2m > [22m[2mEngineering Iteration 7 — Runtime Kernel Unit Tests[2m > [22m[2m4. should publish lifecycle events to EventBus during service startup and shutdown[22m[39m
+{"timestamp":"2026-10-03T00:33:01.563Z","level":"info","message":"[RuntimeKernel] Registered service PlannerService with dependencies: []","context":{}}
+{"timestamp":"2026-10-03T00:33:01.563Z","level":"info","message":"[RuntimeKernel] Starting runtime kernel across 1 registered services","context":{}}
+{"timestamp":"2026-10-03T00:33:01.563Z","level":"info","message":"[RuntimeKernel] Started service PlannerService","context":{}}
+
+[90mstdout[2m | tests/unit/agent-core.spec.ts[2m > [22m[2m@sutradhar/agent Execution Core & State Machine[2m > [22m[2mshould enforce allowed state transitions and throw error on invalid jumps[22m[39m
+{"timestamp":"2026-10-03T00:33:01.562Z","level":"info","message":"[AgentStateMachine] Transitioned Agent ag_1","context":{"previousState":"idle","newState":"planning"}}
+
+[90mstdout[2m | tests/unit/agent-core.spec.ts[2m > [22m[2m@sutradhar/agent Execution Core & State Machine[2m > [22m[2mshould publish agent:state:changed events on valid transitions[22m[39m
+{"timestamp":"2026-10-03T00:33:01.563Z","level":"info","message":"[AgentStateMachine] Transitioned Agent ag_bus","context":{"previousState":"idle","newState":"planning"}}
+{"timestamp":"2026-10-03T00:33:01.563Z","level":"info","message":"[AgentStateMachine] Transitioned Agent ag_bus","context":{"previousState":"planning","newState":"executing"}}
+
+ [32m✓[39m tests/unit/agent-core.spec.ts [2m ([22m[2m5 tests[22m[2m)[22m[90m 4[2mms[22m[39m
+[90mstdout[2m | tests/unit/cross-run-memory.spec.ts[2m > [22m[2m@sutradhar/agent CrossRunMemory[2m > [22m[2mprunes the oldest runs once the stored count exceeds the cap by the margin[22m[39m
+{"timestamp":"2026-10-03T00:33:01.785Z","level":"info","message":"[CrossRunMemory] Pruned 21 old run summaries (cap: 200)","context":{}}
+
+ [32m✓[39m tests/unit/cross-run-memory.spec.ts [2m ([22m[2m6 tests[22m[2m)[22m[33m 555[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m12 passed[39m[22m[90m (12)[39m
+[2m      Tests [22m [1m[32m56 passed[39m[22m[90m (56)[39m
+[2m   Start at [22m 06:03:00
+[2m   Duration [22m 1.22s[2m (transform 900ms, setup 2ms, collect 4.74s, tests 595ms, environment 1ms, prepare 2.29s)[22m
+

@@ -1,0 +1,180 @@
+{"timestamp":"2026-10-03T03:06:10.260Z","level":"info","message":"[BrowserLauncher] Launching browser instance","context":{"executablePath":"C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe","headless":true,"argsCount":11}}
+{"timestamp":"2026-10-03T03:06:10.531Z","level":"info","message":"[BrowserSessionManager] Created browser session sess_1790996770260_1","context":{"isIncognito":false}}
+{"timestamp":"2026-10-03T03:06:10.711Z","level":"info","message":"[BrowserSession] Closed session sess_1790996770260_1","context":{"reason":"Runtime shutdown"}}
+{"timestamp":"2026-10-03T03:06:10.711Z","level":"info","message":"[BrowserSessionManager] Closed session sess_1790996770260_1","context":{"reason":"Runtime shutdown"}}
+[
+ {
+  "name": "pkg done-when: doctor in proj/sub/deeper names the PARENT config",
+  "ok": true,
+  "detail": "Config:          E:\\AI-Cache\\tmp\\fr214a3\\lp\\proj\\.sutradhar.json (discovered) | Config sources:  allowedDomains=config, downloadRoots=default, uploadRoots=unrestricted, dialog=config, viewport=config"
+ },
+ {
+  "name": "pkg nav localhost allowed by config",
+  "ok": true,
+  "detail": "Note: using dialog.mode \"accept\" from project config E:\\AI-Cache\\tmp\\fr214a3\\lp\\proj\\.sutradhar.json. Set SUTRADHAR_CONFIG=none to ignore it."
+ },
+ {
+  "name": "pkg config viewport -> innerWidth 405",
+  "ok": true,
+  "detail": "405"
+ },
+ {
+  "name": "pkg config dialog accept+promptText -> prompt() returns cfgtext",
+  "ok": true,
+  "detail": "cfgtext\ndialogHandled: {\"type\":\"prompt\",\"message\":\"q\",\"action\":\"accept\",\"promptText\":\"cfgtext\",\"by\":\"policy\"} Note: using dialog.mode \"accept\" from project config E:\\AI-Cache\\tmp\\fr214a3\\lp\\proj\\.sutradhar.json. Set SUTRADHAR_CONFIG=none to ignore it."
+ },
+ {
+  "name": "pkg config allowlist blocks 127.0.0.1",
+  "ok": true,
+  "detail": "Note: using dialog.mode \"accept\" from project config E:\\AI-Cache\\tmp\\fr214a3\\lp\\proj\\.sutradhar.json. Set SUTRADHAR_CONFIG=none to ignore it.\nFatal: Navigation to \"http://127.0.0.1:64019/\" was blocked: allowedDomains is configured and \"127.0.0.1\" is not in the allowlist (localhost). This is a safety"
+ },
+ {
+  "name": "pkg env > config: 127.0.0.1 allowed",
+  "ok": true,
+  "detail": "Note: using dialog.mode \"accept\" from project config E:\\AI-Cache\\tmp\\fr214a3\\lp\\proj\\.sutradhar.json. Set SUTRADHAR_CONFIG=none to ignore it."
+ },
+ {
+  "name": "pkg flag > env: blocked again",
+  "ok": true,
+  "detail": "Note: using dialog.mode \"accept\" from project config E:\\AI-Cache\\tmp\\fr214a3\\lp\\proj\\.sutradhar.json. Set SUTRADHAR_CONFIG=none to ignore it.\nFatal: Navigation to \"http://127.0.0.1:64019/\" was blocked: allowedDomains is configured and \"127.0.0.1\" is not in the allowlist (localhost). This is a safety"
+ },
+ {
+  "name": "pkg flag viewport nav",
+  "ok": true,
+  "detail": "Note: using dialog.mode \"accept\" from project config E:\\AI-Cache\\tmp\\fr214a3\\lp\\proj\\.sutradhar.json. Set SUTRADHAR_CONFIG=none to ignore it."
+ },
+ {
+  "name": "pkg flag > config: innerWidth 401",
+  "ok": true,
+  "detail": "401"
+ },
+ {
+  "name": "pkg --dialog dismiss > config accept: prompt() -> null",
+  "ok": true,
+  "detail": "null\ndialogHandled: {\"type\":\"prompt\",\"message\":\"q\",\"action\":\"dismiss\",\"promptText\":null,\"by\":\"policy\"} Note: dialog policy for this session is now \"dismiss\"."
+ },
+ {
+  "name": "pkg F1: refused discovered root, no higher layer -> exit 1 before Chrome",
+  "ok": true,
+  "detail": "Error: Invalid project config E:\\AI-Cache\\tmp\\fr214a3\\lp\\refused\\.sutradhar.json: downloadDir \"../outside\" resolves to \"E:\\AI-Cache\\tmp\\fr214a3\\lp\\outside\", outside this config's directory \"E:\\AI-Cach"
+ },
+ {
+  "name": "pkg F1: env overrides refused root + N8 warning",
+  "ok": true,
+  "detail": "Warning: the download roots in the project config in E:\\AI-Cache\\tmp\\fr214a3\\lp\\refused were refused (outside its directory or inside .git) and are overridden by SUTRADHAR_ALLOWED_DOWNLOAD_ROOTS"
+ },
+ {
+  "name": "pkg F1: doctor shows downloadRoots=env",
+  "ok": true,
+  "detail": "Config:          E:\\AI-Cache\\tmp\\fr214a3\\lp\\refused\\.sutradhar.json (discovered) | Config sources:  allowedDomains=default, downloadRoots=env, uploadRoots=unrestricted, dialog=default, viewport=default"
+ },
+ {
+  "name": "pkg F1: env ;; is unset -> still refused",
+  "ok": true,
+  "detail": "Error: Invalid project config E:\\AI-Cache\\tmp\\fr214a3\\lp\\refused\\.sutradhar.json: downloadDir \"../outside\" resolves to \"E:\\AI-Cache\\tmp\\fr214a3\\lp\\outside\", out"
+ },
+ {
+  "name": "bundle done-when: doctor in proj/sub/deeper names the PARENT config",
+  "ok": true,
+  "detail": "Config:          E:\\AI-Cache\\tmp\\fr214a3\\lp\\proj\\.sutradhar.json (discovered) | Config sources:  allowedDomains=config, downloadRoots=default, uploadRoots=unrestricted, dialog=config, viewport=config"
+ },
+ {
+  "name": "bundle nav localhost allowed by config",
+  "ok": true,
+  "detail": "Note: using dialog.mode \"accept\" from project config E:\\AI-Cache\\tmp\\fr214a3\\lp\\proj\\.sutradhar.json. Set SUTRADHAR_CONFIG=none to ignore it."
+ },
+ {
+  "name": "bundle config viewport -> innerWidth 405",
+  "ok": true,
+  "detail": "405"
+ },
+ {
+  "name": "bundle config dialog accept+promptText -> prompt() returns cfgtext",
+  "ok": true,
+  "detail": "cfgtext\ndialogHandled: {\"type\":\"prompt\",\"message\":\"q\",\"action\":\"accept\",\"promptText\":\"cfgtext\",\"by\":\"policy\"} Note: using dialog.mode \"accept\" from project config E:\\AI-Cache\\tmp\\fr214a3\\lp\\proj\\.sutradhar.json. Set SUTRADHAR_CONFIG=none to ignore it."
+ },
+ {
+  "name": "bundle config allowlist blocks 127.0.0.1",
+  "ok": true,
+  "detail": "Note: using dialog.mode \"accept\" from project config E:\\AI-Cache\\tmp\\fr214a3\\lp\\proj\\.sutradhar.json. Set SUTRADHAR_CONFIG=none to ignore it.\nFatal: Navigation to \"http://127.0.0.1:64019/\" was blocked: allowedDomains is configured and \"127.0.0.1\" is not in the allowlist (localhost). This is a safety"
+ },
+ {
+  "name": "bundle env > config: 127.0.0.1 allowed",
+  "ok": true,
+  "detail": "Note: using dialog.mode \"accept\" from project config E:\\AI-Cache\\tmp\\fr214a3\\lp\\proj\\.sutradhar.json. Set SUTRADHAR_CONFIG=none to ignore it."
+ },
+ {
+  "name": "bundle flag > env: blocked again",
+  "ok": true,
+  "detail": "Note: using dialog.mode \"accept\" from project config E:\\AI-Cache\\tmp\\fr214a3\\lp\\proj\\.sutradhar.json. Set SUTRADHAR_CONFIG=none to ignore it.\nFatal: Navigation to \"http://127.0.0.1:64019/\" was blocked: allowedDomains is configured and \"127.0.0.1\" is not in the allowlist (localhost). This is a safety"
+ },
+ {
+  "name": "bundle flag viewport nav",
+  "ok": true,
+  "detail": "Note: using dialog.mode \"accept\" from project config E:\\AI-Cache\\tmp\\fr214a3\\lp\\proj\\.sutradhar.json. Set SUTRADHAR_CONFIG=none to ignore it."
+ },
+ {
+  "name": "bundle flag > config: innerWidth 401",
+  "ok": true,
+  "detail": "401"
+ },
+ {
+  "name": "bundle --dialog dismiss > config accept: prompt() -> null",
+  "ok": true,
+  "detail": "null\ndialogHandled: {\"type\":\"prompt\",\"message\":\"q\",\"action\":\"dismiss\",\"promptText\":null,\"by\":\"policy\"} Note: dialog policy for this session is now \"dismiss\"."
+ },
+ {
+  "name": "bundle F1: refused discovered root, no higher layer -> exit 1 before Chrome",
+  "ok": true,
+  "detail": "Error: Invalid project config E:\\AI-Cache\\tmp\\fr214a3\\lp\\refused\\.sutradhar.json: downloadDir \"../outside\" resolves to \"E:\\AI-Cache\\tmp\\fr214a3\\lp\\outside\", outside this config's directory \"E:\\AI-Cach"
+ },
+ {
+  "name": "bundle F1: env overrides refused root + N8 warning",
+  "ok": true,
+  "detail": "Warning: the download roots in the project config in E:\\AI-Cache\\tmp\\fr214a3\\lp\\refused were refused (outside its directory or inside .git) and are overridden by SUTRADHAR_ALLOWED_DOWNLOAD_ROOTS"
+ },
+ {
+  "name": "bundle F1: doctor shows downloadRoots=env",
+  "ok": true,
+  "detail": "Config:          E:\\AI-Cache\\tmp\\fr214a3\\lp\\refused\\.sutradhar.json (discovered) | Config sources:  allowedDomains=default, downloadRoots=env, uploadRoots=unrestricted, dialog=default, viewport=default"
+ },
+ {
+  "name": "bundle F1: env ;; is unset -> still refused",
+  "ok": true,
+  "detail": "Error: Invalid project config E:\\AI-Cache\\tmp\\fr214a3\\lp\\refused\\.sutradhar.json: downloadDir \"../outside\" resolves to \"E:\\AI-Cache\\tmp\\fr214a3\\lp\\outside\", out"
+ },
+ {
+  "name": "mcp F1: refused discovered root, no higher layer -> fatal at startup, no Chrome",
+  "ok": true,
+  "detail": "pid 96976 exit 1 [sutradhar-mcp] config: loaded E:\\AI-Cache\\tmp\\fr214a3\\lp\\refused\\.sutradhar.json (found by searching upward from E:\\AI-Cache\\tmp\\fr214a3\\lp\\refused)\n[sutradhar-mcp] fatal: Error [ProjectConfigError]:"
+ },
+ {
+  "name": "mcp F1: env overrides + startup warning",
+  "ok": true,
+  "detail": "pid 76300 [sutradhar-mcp] config: loaded E:\\AI-Cache\\tmp\\fr214a3\\lp\\refused\\.sutradhar.json (found by searching upward from E:\\AI-Cache\\tmp\\fr214a3\\lp\\refused)\n[sutradhar-mcp] warning: the download roots in the project config in E:\\AI-Cache\\tmp\\fr214a3\\lp\\refused were refused (outside its directory "
+ },
+ {
+  "name": "mcp banner names the parent config (searched upward)",
+  "ok": true,
+  "detail": "[sutradhar-mcp] config: loaded E:\\AI-Cache\\tmp\\fr214a3\\lp\\proj\\.sutradhar.json (found by searching upward from E:\\AI-Cache\\tmp\\fr214a3\\lp\\proj\\sub\\deeper)"
+ },
+ {
+  "name": "sdk F1: discoverConfig in refused dir -> throws before Chrome",
+  "ok": true,
+  "detail": "Invalid project config E:\\AI-Cache\\tmp\\fr214a3\\lp\\refused\\.sutradhar.json: downloadDir \"../outside\" resolves to \"E:\\AI-Cache\\tmp\\fr214a3\\lp\\outside\", outside this config's directory \"E:\\AI-Cache\\tmp\\f"
+ },
+ {
+  "name": "sdk F1: option overrides refused root + console.warn note",
+  "ok": true,
+  "detail": "[sutradhar] the download roots in the project config in E:\\AI-Cache\\tmp\\fr214a3\\lp\\refused were refused (outside its directory or inside .git) and are overridden by the allowedDownloadRoots option"
+ },
+ {
+  "name": "no Chrome left from this probe",
+  "ok": true,
+  "detail": {
+   "before": [],
+   "after": []
+  }
+ }
+]
+PASS 34 FAIL 0

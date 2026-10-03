@@ -1,0 +1,3144 @@
+{
+ "summary": {
+  "pass": 338,
+  "fail": 0,
+  "total": 338,
+  "failures": []
+ },
+ "odd": {
+  "dom-empty-string": {
+   "allowedDomains": null,
+   "dialog": {
+    "mode": "dismiss"
+   },
+   "idle": 1800000
+  },
+  "dom-false": {
+   "allowedDomains": null,
+   "dialog": {
+    "mode": "dismiss"
+   },
+   "idle": 1800000
+  },
+  "dom-zero": {
+   "allowedDomains": null,
+   "dialog": {
+    "mode": "dismiss"
+   },
+   "idle": 1800000
+  },
+  "dlg-false": {
+   "allowedDomains": [
+    "e.test"
+   ],
+   "dialog": false,
+   "idle": 1800000
+  },
+  "idle-false": "THROW idleTimeoutMs must be a finite number of milliseconds (0 disables); got false",
+  "idle-empty-string": "THROW idleTimeoutMs must be a finite number of milliseconds (0 disables); got "
+ },
+ "rows": [
+  {
+   "id": "CLI.allowedDomains[none]",
+   "ok": true,
+   "got": {
+    "source": "default"
+   },
+   "want": {
+    "source": "default"
+   }
+  },
+  {
+   "id": "CLI.allowedDomains[flag:v]",
+   "ok": true,
+   "got": {
+    "source": "flag",
+    "value": [
+     "flag-970.test"
+    ]
+   },
+   "want": {
+    "source": "flag",
+    "value": [
+     "flag-970.test"
+    ]
+   }
+  },
+  {
+   "id": "CLI.allowedDomains[env:v]",
+   "ok": true,
+   "got": {
+    "source": "env",
+    "value": [
+     "env-149.test"
+    ]
+   },
+   "want": {
+    "source": "env",
+    "value": [
+     "env-149.test"
+    ]
+   }
+  },
+  {
+   "id": "CLI.allowedDomains[env:empty]",
+   "ok": true,
+   "got": {
+    "source": "default"
+   },
+   "want": {
+    "source": "default"
+   }
+  },
+  {
+   "id": "CLI.allowedDomains[env:blank]",
+   "ok": true,
+   "got": {
+    "source": "default"
+   },
+   "want": {
+    "source": "default"
+   }
+  },
+  {
+   "id": "CLI.allowedDomains[env:zero]",
+   "ok": true,
+   "got": {
+    "source": "env",
+    "value": [
+     "0"
+    ]
+   },
+   "want": {
+    "source": "env",
+    "value": [
+     "0"
+    ]
+   }
+  },
+  {
+   "id": "CLI.allowedDomains[flag:v+env:v]",
+   "ok": true,
+   "got": {
+    "source": "flag",
+    "value": [
+     "flag-776.test"
+    ]
+   },
+   "want": {
+    "source": "flag",
+    "value": [
+     "flag-776.test"
+    ]
+   }
+  },
+  {
+   "id": "CLI.allowedDomains[flag:v+env:empty]",
+   "ok": true,
+   "got": {
+    "source": "flag",
+    "value": [
+     "flag-862.test"
+    ]
+   },
+   "want": {
+    "source": "flag",
+    "value": [
+     "flag-862.test"
+    ]
+   }
+  },
+  {
+   "id": "CLI.allowedDomains[flag:v+env:blank]",
+   "ok": true,
+   "got": {
+    "source": "flag",
+    "value": [
+     "flag-267.test"
+    ]
+   },
+   "want": {
+    "source": "flag",
+    "value": [
+     "flag-267.test"
+    ]
+   }
+  },
+  {
+   "id": "CLI.allowedDomains[flag:v+env:zero]",
+   "ok": true,
+   "got": {
+    "source": "flag",
+    "value": [
+     "flag-324.test"
+    ]
+   },
+   "want": {
+    "source": "flag",
+    "value": [
+     "flag-324.test"
+    ]
+   }
+  },
+  {
+   "id": "CLI.allowedDomains[config:v]",
+   "ok": true,
+   "got": {
+    "source": "config",
+    "value": [
+     "config-918.test"
+    ]
+   },
+   "want": {
+    "source": "config",
+    "value": [
+     "config-918.test"
+    ]
+   }
+  },
+  {
+   "id": "CLI.allowedDomains[flag:v+config:v]",
+   "ok": true,
+   "got": {
+    "source": "flag",
+    "value": [
+     "flag-866.test"
+    ]
+   },
+   "want": {
+    "source": "flag",
+    "value": [
+     "flag-866.test"
+    ]
+   }
+  },
+  {
+   "id": "CLI.allowedDomains[env:v+config:v]",
+   "ok": true,
+   "got": {
+    "source": "env",
+    "value": [
+     "env-377.test"
+    ]
+   },
+   "want": {
+    "source": "env",
+    "value": [
+     "env-377.test"
+    ]
+   }
+  },
+  {
+   "id": "CLI.allowedDomains[env:empty+config:v]",
+   "ok": true,
+   "got": {
+    "source": "config",
+    "value": [
+     "config-981.test"
+    ]
+   },
+   "want": {
+    "source": "config",
+    "value": [
+     "config-981.test"
+    ]
+   }
+  },
+  {
+   "id": "CLI.allowedDomains[env:blank+config:v]",
+   "ok": true,
+   "got": {
+    "source": "config",
+    "value": [
+     "config-747.test"
+    ]
+   },
+   "want": {
+    "source": "config",
+    "value": [
+     "config-747.test"
+    ]
+   }
+  },
+  {
+   "id": "CLI.allowedDomains[env:zero+config:v]",
+   "ok": true,
+   "got": {
+    "source": "env",
+    "value": [
+     "0"
+    ]
+   },
+   "want": {
+    "source": "env",
+    "value": [
+     "0"
+    ]
+   }
+  },
+  {
+   "id": "CLI.allowedDomains[flag:v+env:v+config:v]",
+   "ok": true,
+   "got": {
+    "source": "flag",
+    "value": [
+     "flag-893.test"
+    ]
+   },
+   "want": {
+    "source": "flag",
+    "value": [
+     "flag-893.test"
+    ]
+   }
+  },
+  {
+   "id": "CLI.allowedDomains[flag:v+env:empty+config:v]",
+   "ok": true,
+   "got": {
+    "source": "flag",
+    "value": [
+     "flag-380.test"
+    ]
+   },
+   "want": {
+    "source": "flag",
+    "value": [
+     "flag-380.test"
+    ]
+   }
+  },
+  {
+   "id": "CLI.allowedDomains[flag:v+env:blank+config:v]",
+   "ok": true,
+   "got": {
+    "source": "flag",
+    "value": [
+     "flag-242.test"
+    ]
+   },
+   "want": {
+    "source": "flag",
+    "value": [
+     "flag-242.test"
+    ]
+   }
+  },
+  {
+   "id": "CLI.allowedDomains[flag:v+env:zero+config:v]",
+   "ok": true,
+   "got": {
+    "source": "flag",
+    "value": [
+     "flag-149.test"
+    ]
+   },
+   "want": {
+    "source": "flag",
+    "value": [
+     "flag-149.test"
+    ]
+   }
+  },
+  {
+   "id": "CLI.viewport[none]",
+   "ok": true,
+   "got": {
+    "source": "default"
+   },
+   "want": {
+    "source": "default"
+   }
+  },
+  {
+   "id": "CLI.viewport[flag:v]",
+   "ok": true,
+   "got": {
+    "source": "flag",
+    "value": {
+     "width": 593,
+     "height": 394
+    }
+   },
+   "want": {
+    "source": "flag",
+    "value": {
+     "width": 593,
+     "height": 394
+    }
+   }
+  },
+  {
+   "id": "CLI.viewport[flag:zeroWide]",
+   "ok": true,
+   "got": {
+    "error": true
+   },
+   "want": {
+    "error": true
+   }
+  },
+  {
+   "id": "CLI.viewport[flag:huge]",
+   "ok": true,
+   "got": {
+    "error": true
+   },
+   "want": {
+    "error": true
+   }
+  },
+  {
+   "id": "CLI.viewport[state:v]",
+   "ok": true,
+   "got": {
+    "source": "state",
+    "value": {
+     "width": 642,
+     "height": 1186
+    }
+   },
+   "want": {
+    "source": "state",
+    "value": {
+     "width": 642,
+     "height": 1186
+    }
+   }
+  },
+  {
+   "id": "CLI.viewport[state:malformed]",
+   "ok": true,
+   "got": {
+    "source": "default"
+   },
+   "want": {
+    "source": "default"
+   }
+  },
+  {
+   "id": "CLI.viewport[state:null]",
+   "ok": true,
+   "got": {
+    "source": "default"
+   },
+   "want": {
+    "source": "default"
+   }
+  },
+  {
+   "id": "CLI.viewport[flag:v+state:v]",
+   "ok": true,
+   "got": {
+    "source": "flag",
+    "value": {
+     "width": 639,
+     "height": 428
+    }
+   },
+   "want": {
+    "source": "flag",
+    "value": {
+     "width": 639,
+     "height": 428
+    }
+   }
+  },
+  {
+   "id": "CLI.viewport[flag:v+state:malformed]",
+   "ok": true,
+   "got": {
+    "source": "flag",
+    "value": {
+     "width": 1465,
+     "height": 692
+    }
+   },
+   "want": {
+    "source": "flag",
+    "value": {
+     "width": 1465,
+     "height": 692
+    }
+   }
+  },
+  {
+   "id": "CLI.viewport[flag:v+state:null]",
+   "ok": true,
+   "got": {
+    "source": "flag",
+    "value": {
+     "width": 758,
+     "height": 383
+    }
+   },
+   "want": {
+    "source": "flag",
+    "value": {
+     "width": 758,
+     "height": 383
+    }
+   }
+  },
+  {
+   "id": "CLI.viewport[flag:zeroWide+state:v]",
+   "ok": true,
+   "got": {
+    "error": true
+   },
+   "want": {
+    "error": true
+   }
+  },
+  {
+   "id": "CLI.viewport[flag:zeroWide+state:malformed]",
+   "ok": true,
+   "got": {
+    "error": true
+   },
+   "want": {
+    "error": true
+   }
+  },
+  {
+   "id": "CLI.viewport[flag:zeroWide+state:null]",
+   "ok": true,
+   "got": {
+    "error": true
+   },
+   "want": {
+    "error": true
+   }
+  },
+  {
+   "id": "CLI.viewport[flag:huge+state:v]",
+   "ok": true,
+   "got": {
+    "error": true
+   },
+   "want": {
+    "error": true
+   }
+  },
+  {
+   "id": "CLI.viewport[flag:huge+state:malformed]",
+   "ok": true,
+   "got": {
+    "error": true
+   },
+   "want": {
+    "error": true
+   }
+  },
+  {
+   "id": "CLI.viewport[flag:huge+state:null]",
+   "ok": true,
+   "got": {
+    "error": true
+   },
+   "want": {
+    "error": true
+   }
+  },
+  {
+   "id": "CLI.viewport[config:v]",
+   "ok": true,
+   "got": {
+    "source": "config",
+    "value": {
+     "width": 506,
+     "height": 517
+    }
+   },
+   "want": {
+    "source": "config",
+    "value": {
+     "width": 506,
+     "height": 517
+    }
+   }
+  },
+  {
+   "id": "CLI.viewport[flag:v+config:v]",
+   "ok": true,
+   "got": {
+    "source": "flag",
+    "value": {
+     "width": 1591,
+     "height": 1051
+    }
+   },
+   "want": {
+    "source": "flag",
+    "value": {
+     "width": 1591,
+     "height": 1051
+    }
+   }
+  },
+  {
+   "id": "CLI.viewport[flag:zeroWide+config:v]",
+   "ok": true,
+   "got": {
+    "error": true
+   },
+   "want": {
+    "error": true
+   }
+  },
+  {
+   "id": "CLI.viewport[flag:huge+config:v]",
+   "ok": true,
+   "got": {
+    "error": true
+   },
+   "want": {
+    "error": true
+   }
+  },
+  {
+   "id": "CLI.viewport[state:v+config:v]",
+   "ok": true,
+   "got": {
+    "source": "state",
+    "value": {
+     "width": 603,
+     "height": 341
+    }
+   },
+   "want": {
+    "source": "state",
+    "value": {
+     "width": 603,
+     "height": 341
+    }
+   }
+  },
+  {
+   "id": "CLI.viewport[state:malformed+config:v]",
+   "ok": true,
+   "got": {
+    "source": "config",
+    "value": {
+     "width": 890,
+     "height": 708
+    }
+   },
+   "want": {
+    "source": "config",
+    "value": {
+     "width": 890,
+     "height": 708
+    }
+   }
+  },
+  {
+   "id": "CLI.viewport[state:null+config:v]",
+   "ok": true,
+   "got": {
+    "source": "config",
+    "value": {
+     "width": 587,
+     "height": 1022
+    }
+   },
+   "want": {
+    "source": "config",
+    "value": {
+     "width": 587,
+     "height": 1022
+    }
+   }
+  },
+  {
+   "id": "CLI.viewport[flag:v+state:v+config:v]",
+   "ok": true,
+   "got": {
+    "source": "flag",
+    "value": {
+     "width": 501,
+     "height": 1131
+    }
+   },
+   "want": {
+    "source": "flag",
+    "value": {
+     "width": 501,
+     "height": 1131
+    }
+   }
+  },
+  {
+   "id": "CLI.viewport[flag:v+state:malformed+config:v]",
+   "ok": true,
+   "got": {
+    "source": "flag",
+    "value": {
+     "width": 1216,
+     "height": 949
+    }
+   },
+   "want": {
+    "source": "flag",
+    "value": {
+     "width": 1216,
+     "height": 949
+    }
+   }
+  },
+  {
+   "id": "CLI.viewport[flag:v+state:null+config:v]",
+   "ok": true,
+   "got": {
+    "source": "flag",
+    "value": {
+     "width": 1090,
+     "height": 349
+    }
+   },
+   "want": {
+    "source": "flag",
+    "value": {
+     "width": 1090,
+     "height": 349
+    }
+   }
+  },
+  {
+   "id": "CLI.viewport[flag:zeroWide+state:v+config:v]",
+   "ok": true,
+   "got": {
+    "error": true
+   },
+   "want": {
+    "error": true
+   }
+  },
+  {
+   "id": "CLI.viewport[flag:zeroWide+state:malformed+config:v]",
+   "ok": true,
+   "got": {
+    "error": true
+   },
+   "want": {
+    "error": true
+   }
+  },
+  {
+   "id": "CLI.viewport[flag:zeroWide+state:null+config:v]",
+   "ok": true,
+   "got": {
+    "error": true
+   },
+   "want": {
+    "error": true
+   }
+  },
+  {
+   "id": "CLI.viewport[flag:huge+state:v+config:v]",
+   "ok": true,
+   "got": {
+    "error": true
+   },
+   "want": {
+    "error": true
+   }
+  },
+  {
+   "id": "CLI.viewport[flag:huge+state:malformed+config:v]",
+   "ok": true,
+   "got": {
+    "error": true
+   },
+   "want": {
+    "error": true
+   }
+  },
+  {
+   "id": "CLI.viewport[flag:huge+state:null+config:v]",
+   "ok": true,
+   "got": {
+    "error": true
+   },
+   "want": {
+    "error": true
+   }
+  },
+  {
+   "id": "CLI.dialog[none]",
+   "ok": true,
+   "got": {
+    "source": "default",
+    "value": "report"
+   },
+   "want": {
+    "source": "default",
+    "value": "report"
+   }
+  },
+  {
+   "id": "CLI.dialog[flag:v]",
+   "ok": true,
+   "got": {
+    "source": "flag",
+    "value": "dismiss"
+   },
+   "want": {
+    "source": "flag",
+    "value": "dismiss"
+   }
+  },
+  {
+   "id": "CLI.dialog[state:v]",
+   "ok": true,
+   "got": {
+    "source": "state",
+    "value": "accept"
+   },
+   "want": {
+    "source": "state",
+    "value": "accept"
+   }
+  },
+  {
+   "id": "CLI.dialog[flag:v+state:v]",
+   "ok": true,
+   "got": {
+    "source": "flag",
+    "value": "dismiss"
+   },
+   "want": {
+    "source": "flag",
+    "value": "dismiss"
+   }
+  },
+  {
+   "id": "CLI.dialog[config:v]",
+   "ok": true,
+   "got": {
+    "source": "config",
+    "value": "accept",
+    "pt": "P7102"
+   },
+   "want": {
+    "source": "config",
+    "value": "accept",
+    "pt": "P7102"
+   }
+  },
+  {
+   "id": "CLI.dialog[flag:v+config:v]",
+   "ok": true,
+   "got": {
+    "source": "flag",
+    "value": "dismiss"
+   },
+   "want": {
+    "source": "flag",
+    "value": "dismiss"
+   }
+  },
+  {
+   "id": "CLI.dialog[state:v+config:v]",
+   "ok": true,
+   "got": {
+    "source": "state",
+    "value": "accept"
+   },
+   "want": {
+    "source": "state",
+    "value": "accept"
+   }
+  },
+  {
+   "id": "CLI.dialog[flag:v+state:v+config:v]",
+   "ok": true,
+   "got": {
+    "source": "flag",
+    "value": "dismiss"
+   },
+   "want": {
+    "source": "flag",
+    "value": "dismiss"
+   }
+  },
+  {
+   "id": "CLI.download[none]",
+   "ok": true,
+   "got": {
+    "source": "default",
+    "value": [
+     "E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\fr214a2\\tmp\\sutradhar-downloads"
+    ]
+   },
+   "want": {
+    "source": "default",
+    "value": [
+     "E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\fr214a2\\tmp\\sutradhar-downloads"
+    ]
+   }
+  },
+  {
+   "id": "CLI.download[env:v]",
+   "ok": true,
+   "got": {
+    "source": "env",
+    "value": [
+     "E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\fr214a2\\precfinal\\roots\\env-497"
+    ]
+   },
+   "want": {
+    "source": "env",
+    "value": [
+     "E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\fr214a2\\precfinal\\roots\\env-497"
+    ]
+   }
+  },
+  {
+   "id": "CLI.download[env:empty]",
+   "ok": true,
+   "got": {
+    "source": "default",
+    "value": [
+     "E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\fr214a2\\tmp\\sutradhar-downloads"
+    ]
+   },
+   "want": {
+    "source": "default",
+    "value": [
+     "E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\fr214a2\\tmp\\sutradhar-downloads"
+    ]
+   }
+  },
+  {
+   "id": "CLI.download[env:blank]",
+   "ok": true,
+   "got": {
+    "source": "default",
+    "value": [
+     "E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\fr214a2\\tmp\\sutradhar-downloads"
+    ]
+   },
+   "want": {
+    "source": "default",
+    "value": [
+     "E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\fr214a2\\tmp\\sutradhar-downloads"
+    ]
+   }
+  },
+  {
+   "id": "CLI.download[config:v]",
+   "ok": true,
+   "got": {
+    "source": "config",
+    "value": [
+     "E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\fr214a2\\precfinal\\c30\\cfg677"
+    ]
+   },
+   "want": {
+    "source": "config",
+    "value": [
+     "E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\fr214a2\\precfinal\\c30\\cfg677"
+    ]
+   }
+  },
+  {
+   "id": "CLI.download[env:v+config:v]",
+   "ok": true,
+   "got": {
+    "source": "env",
+    "value": [
+     "E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\fr214a2\\precfinal\\roots\\env-604"
+    ]
+   },
+   "want": {
+    "source": "env",
+    "value": [
+     "E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\fr214a2\\precfinal\\roots\\env-604"
+    ]
+   }
+  },
+  {
+   "id": "CLI.download[env:empty+config:v]",
+   "ok": true,
+   "got": {
+    "source": "config",
+    "value": [
+     "E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\fr214a2\\precfinal\\c32\\cfg112"
+    ]
+   },
+   "want": {
+    "source": "config",
+    "value": [
+     "E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\fr214a2\\precfinal\\c32\\cfg112"
+    ]
+   }
+  },
+  {
+   "id": "CLI.download[env:blank+config:v]",
+   "ok": true,
+   "got": {
+    "source": "config",
+    "value": [
+     "E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\fr214a2\\precfinal\\c33\\cfg480"
+    ]
+   },
+   "want": {
+    "source": "config",
+    "value": [
+     "E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\fr214a2\\precfinal\\c33\\cfg480"
+    ]
+   }
+  },
+  {
+   "id": "CLI.upload[none]",
+   "ok": true,
+   "got": {
+    "source": "default"
+   },
+   "want": {
+    "source": "default"
+   }
+  },
+  {
+   "id": "CLI.upload[env:v]",
+   "ok": true,
+   "got": {
+    "source": "env",
+    "value": [
+     "E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\fr214a2\\precfinal\\roots\\env-126"
+    ]
+   },
+   "want": {
+    "source": "env",
+    "value": [
+     "E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\fr214a2\\precfinal\\roots\\env-126"
+    ]
+   }
+  },
+  {
+   "id": "CLI.upload[env:empty]",
+   "ok": true,
+   "got": {
+    "source": "default"
+   },
+   "want": {
+    "source": "default"
+   }
+  },
+  {
+   "id": "CLI.upload[env:blank]",
+   "ok": true,
+   "got": {
+    "source": "default"
+   },
+   "want": {
+    "source": "default"
+   }
+  },
+  {
+   "id": "CLI.upload[config:v]",
+   "ok": true,
+   "got": {
+    "source": "config",
+    "value": [
+     "E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\fr214a2\\precfinal\\c34\\cfg281"
+    ]
+   },
+   "want": {
+    "source": "config",
+    "value": [
+     "E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\fr214a2\\precfinal\\c34\\cfg281"
+    ]
+   }
+  },
+  {
+   "id": "CLI.upload[env:v+config:v]",
+   "ok": true,
+   "got": {
+    "source": "env",
+    "value": [
+     "E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\fr214a2\\precfinal\\roots\\env-661"
+    ]
+   },
+   "want": {
+    "source": "env",
+    "value": [
+     "E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\fr214a2\\precfinal\\roots\\env-661"
+    ]
+   }
+  },
+  {
+   "id": "CLI.upload[env:empty+config:v]",
+   "ok": true,
+   "got": {
+    "source": "config",
+    "value": [
+     "E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\fr214a2\\precfinal\\c36\\cfg181"
+    ]
+   },
+   "want": {
+    "source": "config",
+    "value": [
+     "E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\fr214a2\\precfinal\\c36\\cfg181"
+    ]
+   }
+  },
+  {
+   "id": "CLI.upload[env:blank+config:v]",
+   "ok": true,
+   "got": {
+    "source": "config",
+    "value": [
+     "E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\fr214a2\\precfinal\\c37\\cfg436"
+    ]
+   },
+   "want": {
+    "source": "config",
+    "value": [
+     "E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\fr214a2\\precfinal\\c37\\cfg436"
+    ]
+   }
+  },
+  {
+   "id": "CLI.flag.domains.empty->error",
+   "ok": true,
+   "got": true,
+   "want": true
+  },
+  {
+   "id": "CLI.flag.domains.blank->error",
+   "ok": true,
+   "got": true,
+   "want": true
+  },
+  {
+   "id": "CLI.flag.viewport.max-ok",
+   "ok": true,
+   "got": {
+    "width": 10000000,
+    "height": 10000000
+   },
+   "want": {
+    "width": 10000000,
+    "height": 10000000
+   }
+  },
+  {
+   "id": "CLI.flag.viewport.max+1->invalid",
+   "ok": true,
+   "got": [
+    null,
+    true
+   ],
+   "want": [
+    null,
+    true
+   ]
+  },
+  {
+   "id": "CLI.flag.viewport.1x1-ok",
+   "ok": true,
+   "got": {
+    "width": 1,
+    "height": 1
+   },
+   "want": {
+    "width": 1,
+    "height": 1
+   }
+  },
+  {
+   "id": "CLI.flag.viewport.overflow->invalid",
+   "ok": true,
+   "got": true,
+   "want": true
+  },
+  {
+   "id": "MCP.allowedDomains[none]",
+   "ok": true
+  },
+  {
+   "id": "MCP.allowedDomains[option:v]",
+   "ok": true,
+   "got": [
+    "option-735.test"
+   ],
+   "want": [
+    "option-735.test"
+   ]
+  },
+  {
+   "id": "MCP.allowedDomains[option:null]",
+   "ok": true
+  },
+  {
+   "id": "MCP.allowedDomains[option:undef]",
+   "ok": true
+  },
+  {
+   "id": "MCP.allowedDomains[option:empty]",
+   "ok": true
+  },
+  {
+   "id": "MCP.allowedDomains[env:v]",
+   "ok": true,
+   "got": [
+    "env-184.test"
+   ],
+   "want": [
+    "env-184.test"
+   ]
+  },
+  {
+   "id": "MCP.allowedDomains[env:empty]",
+   "ok": true
+  },
+  {
+   "id": "MCP.allowedDomains[env:blank]",
+   "ok": true
+  },
+  {
+   "id": "MCP.allowedDomains[env:zero]",
+   "ok": true,
+   "got": [
+    "0"
+   ],
+   "want": [
+    "0"
+   ]
+  },
+  {
+   "id": "MCP.allowedDomains[option:v+env:v]",
+   "ok": true,
+   "got": [
+    "option-340.test"
+   ],
+   "want": [
+    "option-340.test"
+   ]
+  },
+  {
+   "id": "MCP.allowedDomains[option:v+env:empty]",
+   "ok": true,
+   "got": [
+    "option-656.test"
+   ],
+   "want": [
+    "option-656.test"
+   ]
+  },
+  {
+   "id": "MCP.allowedDomains[option:v+env:blank]",
+   "ok": true,
+   "got": [
+    "option-715.test"
+   ],
+   "want": [
+    "option-715.test"
+   ]
+  },
+  {
+   "id": "MCP.allowedDomains[option:v+env:zero]",
+   "ok": true,
+   "got": [
+    "option-375.test"
+   ],
+   "want": [
+    "option-375.test"
+   ]
+  },
+  {
+   "id": "MCP.allowedDomains[option:null+env:v]",
+   "ok": true,
+   "got": [
+    "env-899.test"
+   ],
+   "want": [
+    "env-899.test"
+   ]
+  },
+  {
+   "id": "MCP.allowedDomains[option:null+env:empty]",
+   "ok": true
+  },
+  {
+   "id": "MCP.allowedDomains[option:null+env:blank]",
+   "ok": true
+  },
+  {
+   "id": "MCP.allowedDomains[option:null+env:zero]",
+   "ok": true,
+   "got": [
+    "0"
+   ],
+   "want": [
+    "0"
+   ]
+  },
+  {
+   "id": "MCP.allowedDomains[option:undef+env:v]",
+   "ok": true,
+   "got": [
+    "env-289.test"
+   ],
+   "want": [
+    "env-289.test"
+   ]
+  },
+  {
+   "id": "MCP.allowedDomains[option:undef+env:empty]",
+   "ok": true
+  },
+  {
+   "id": "MCP.allowedDomains[option:undef+env:blank]",
+   "ok": true
+  },
+  {
+   "id": "MCP.allowedDomains[option:undef+env:zero]",
+   "ok": true,
+   "got": [
+    "0"
+   ],
+   "want": [
+    "0"
+   ]
+  },
+  {
+   "id": "MCP.allowedDomains[option:empty+env:v]",
+   "ok": true,
+   "got": [
+    "env-879.test"
+   ],
+   "want": [
+    "env-879.test"
+   ]
+  },
+  {
+   "id": "MCP.allowedDomains[option:empty+env:empty]",
+   "ok": true
+  },
+  {
+   "id": "MCP.allowedDomains[option:empty+env:blank]",
+   "ok": true
+  },
+  {
+   "id": "MCP.allowedDomains[option:empty+env:zero]",
+   "ok": true,
+   "got": [
+    "0"
+   ],
+   "want": [
+    "0"
+   ]
+  },
+  {
+   "id": "MCP.allowedDomains[config:v]",
+   "ok": true,
+   "got": [
+    "config-748.test"
+   ],
+   "want": [
+    "config-748.test"
+   ]
+  },
+  {
+   "id": "MCP.allowedDomains[option:v+config:v]",
+   "ok": true,
+   "got": [
+    "option-215.test"
+   ],
+   "want": [
+    "option-215.test"
+   ]
+  },
+  {
+   "id": "MCP.allowedDomains[option:null+config:v]",
+   "ok": true,
+   "got": [
+    "config-736.test"
+   ],
+   "want": [
+    "config-736.test"
+   ]
+  },
+  {
+   "id": "MCP.allowedDomains[option:undef+config:v]",
+   "ok": true,
+   "got": [
+    "config-103.test"
+   ],
+   "want": [
+    "config-103.test"
+   ]
+  },
+  {
+   "id": "MCP.allowedDomains[option:empty+config:v]",
+   "ok": true,
+   "got": [
+    "config-274.test"
+   ],
+   "want": [
+    "config-274.test"
+   ]
+  },
+  {
+   "id": "MCP.allowedDomains[env:v+config:v]",
+   "ok": true,
+   "got": [
+    "env-133.test"
+   ],
+   "want": [
+    "env-133.test"
+   ]
+  },
+  {
+   "id": "MCP.allowedDomains[env:empty+config:v]",
+   "ok": true,
+   "got": [
+    "config-468.test"
+   ],
+   "want": [
+    "config-468.test"
+   ]
+  },
+  {
+   "id": "MCP.allowedDomains[env:blank+config:v]",
+   "ok": true,
+   "got": [
+    "config-412.test"
+   ],
+   "want": [
+    "config-412.test"
+   ]
+  },
+  {
+   "id": "MCP.allowedDomains[env:zero+config:v]",
+   "ok": true,
+   "got": [
+    "0"
+   ],
+   "want": [
+    "0"
+   ]
+  },
+  {
+   "id": "MCP.allowedDomains[option:v+env:v+config:v]",
+   "ok": true,
+   "got": [
+    "option-330.test"
+   ],
+   "want": [
+    "option-330.test"
+   ]
+  },
+  {
+   "id": "MCP.allowedDomains[option:v+env:empty+config:v]",
+   "ok": true,
+   "got": [
+    "option-452.test"
+   ],
+   "want": [
+    "option-452.test"
+   ]
+  },
+  {
+   "id": "MCP.allowedDomains[option:v+env:blank+config:v]",
+   "ok": true,
+   "got": [
+    "option-267.test"
+   ],
+   "want": [
+    "option-267.test"
+   ]
+  },
+  {
+   "id": "MCP.allowedDomains[option:v+env:zero+config:v]",
+   "ok": true,
+   "got": [
+    "option-147.test"
+   ],
+   "want": [
+    "option-147.test"
+   ]
+  },
+  {
+   "id": "MCP.allowedDomains[option:null+env:v+config:v]",
+   "ok": true,
+   "got": [
+    "env-487.test"
+   ],
+   "want": [
+    "env-487.test"
+   ]
+  },
+  {
+   "id": "MCP.allowedDomains[option:null+env:empty+config:v]",
+   "ok": true,
+   "got": [
+    "config-386.test"
+   ],
+   "want": [
+    "config-386.test"
+   ]
+  },
+  {
+   "id": "MCP.allowedDomains[option:null+env:blank+config:v]",
+   "ok": true,
+   "got": [
+    "config-281.test"
+   ],
+   "want": [
+    "config-281.test"
+   ]
+  },
+  {
+   "id": "MCP.allowedDomains[option:null+env:zero+config:v]",
+   "ok": true,
+   "got": [
+    "0"
+   ],
+   "want": [
+    "0"
+   ]
+  },
+  {
+   "id": "MCP.allowedDomains[option:undef+env:v+config:v]",
+   "ok": true,
+   "got": [
+    "env-664.test"
+   ],
+   "want": [
+    "env-664.test"
+   ]
+  },
+  {
+   "id": "MCP.allowedDomains[option:undef+env:empty+config:v]",
+   "ok": true,
+   "got": [
+    "config-668.test"
+   ],
+   "want": [
+    "config-668.test"
+   ]
+  },
+  {
+   "id": "MCP.allowedDomains[option:undef+env:blank+config:v]",
+   "ok": true,
+   "got": [
+    "config-102.test"
+   ],
+   "want": [
+    "config-102.test"
+   ]
+  },
+  {
+   "id": "MCP.allowedDomains[option:undef+env:zero+config:v]",
+   "ok": true,
+   "got": [
+    "0"
+   ],
+   "want": [
+    "0"
+   ]
+  },
+  {
+   "id": "MCP.allowedDomains[option:empty+env:v+config:v]",
+   "ok": true,
+   "got": [
+    "env-509.test"
+   ],
+   "want": [
+    "env-509.test"
+   ]
+  },
+  {
+   "id": "MCP.allowedDomains[option:empty+env:empty+config:v]",
+   "ok": true,
+   "got": [
+    "config-522.test"
+   ],
+   "want": [
+    "config-522.test"
+   ]
+  },
+  {
+   "id": "MCP.allowedDomains[option:empty+env:blank+config:v]",
+   "ok": true,
+   "got": [
+    "config-118.test"
+   ],
+   "want": [
+    "config-118.test"
+   ]
+  },
+  {
+   "id": "MCP.allowedDomains[option:empty+env:zero+config:v]",
+   "ok": true,
+   "got": [
+    "0"
+   ],
+   "want": [
+    "0"
+   ]
+  },
+  {
+   "id": "MCP.download[none]",
+   "ok": true,
+   "got": [
+    "E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\fr214a2\\tmp\\sutradhar-downloads"
+   ],
+   "want": [
+    "E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\fr214a2\\tmp\\sutradhar-downloads"
+   ]
+  },
+  {
+   "id": "MCP.download[option:v]",
+   "ok": true,
+   "got": [
+    "E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\fr214a2\\precfinal\\roots\\option-250"
+   ],
+   "want": [
+    "E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\fr214a2\\precfinal\\roots\\option-250"
+   ]
+  },
+  {
+   "id": "MCP.download[option:null]",
+   "ok": true,
+   "got": [
+    "E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\fr214a2\\tmp\\sutradhar-downloads"
+   ],
+   "want": [
+    "E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\fr214a2\\tmp\\sutradhar-downloads"
+   ]
+  },
+  {
+   "id": "MCP.download[option:undef]",
+   "ok": true,
+   "got": [
+    "E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\fr214a2\\tmp\\sutradhar-downloads"
+   ],
+   "want": [
+    "E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\fr214a2\\tmp\\sutradhar-downloads"
+   ]
+  },
+  {
+   "id": "MCP.download[option:empty]",
+   "ok": true,
+   "got": [
+    "E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\fr214a2\\tmp\\sutradhar-downloads"
+   ],
+   "want": [
+    "E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\fr214a2\\tmp\\sutradhar-downloads"
+   ]
+  },
+  {
+   "id": "MCP.download[env:v]",
+   "ok": true,
+   "got": [
+    "E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\fr214a2\\precfinal\\roots\\env-803"
+   ],
+   "want": [
+    "E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\fr214a2\\precfinal\\roots\\env-803"
+   ]
+  },
+  {
+   "id": "MCP.download[env:empty]",
+   "ok": true,
+   "got": [
+    "E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\fr214a2\\tmp\\sutradhar-downloads"
+   ],
+   "want": [
+    "E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\fr214a2\\tmp\\sutradhar-downloads"
+   ]
+  },
+  {
+   "id": "MCP.download[env:blank]",
+   "ok": true,
+   "got": [
+    "E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\fr214a2\\tmp\\sutradhar-downloads"
+   ],
+   "want": [
+    "E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\fr214a2\\tmp\\sutradhar-downloads"
+   ]
+  },
+  {
+   "id": "MCP.download[option:v+env:v]",
+   "ok": true,
+   "got": [
+    "E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\fr214a2\\precfinal\\roots\\option-668"
+   ],
+   "want": [
+    "E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\fr214a2\\precfinal\\roots\\option-668"
+   ]
+  },
+  {
+   "id": "MCP.download[option:v+env:empty]",
+   "ok": true,
+   "got": [
+    "E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\fr214a2\\precfinal\\roots\\option-464"
+   ],
+   "want": [
+    "E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\fr214a2\\precfinal\\roots\\option-464"
+   ]
+  },
+  {
+   "id": "MCP.download[option:v+env:blank]",
+   "ok": true,
+   "got": [
+    "E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\fr214a2\\precfinal\\roots\\option-348"
+   ],
+   "want": [
+    "E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\fr214a2\\precfinal\\roots\\option-348"
+   ]
+  },
+  {
+   "id": "MCP.download[option:null+env:v]",
+   "ok": true,
+   "got": [
+    "E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\fr214a2\\precfinal\\roots\\env-384"
+   ],
+   "want": [
+    "E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\fr214a2\\precfinal\\roots\\env-384"
+   ]
+  },
+  {
+   "id": "MCP.download[option:null+env:empty]",
+   "ok": true,
+   "got": [
+    "E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\fr214a2\\tmp\\sutradhar-downloads"
+   ],
+   "want": [
+    "E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\fr214a2\\tmp\\sutradhar-downloads"
+   ]
+  },
+  {
+   "id": "MCP.download[option:null+env:blank]",
+   "ok": true,
+   "got": [
+    "E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\fr214a2\\tmp\\sutradhar-downloads"
+   ],
+   "want": [
+    "E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\fr214a2\\tmp\\sutradhar-downloads"
+   ]
+  },
+  {
+   "id": "MCP.download[option:undef+env:v]",
+   "ok": true,
+   "got": [
+    "E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\fr214a2\\precfinal\\roots\\env-333"
+   ],
+   "want": [
+    "E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\fr214a2\\precfinal\\roots\\env-333"
+   ]
+  },
+  {
+   "id": "MCP.download[option:undef+env:empty]",
+   "ok": true,
+   "got": [
+    "E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\fr214a2\\tmp\\sutradhar-downloads"
+   ],
+   "want": [
+    "E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\fr214a2\\tmp\\sutradhar-downloads"
+   ]
+  },
+  {
+   "id": "MCP.download[option:undef+env:blank]",
+   "ok": true,
+   "got": [
+    "E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\fr214a2\\tmp\\sutradhar-downloads"
+   ],
+   "want": [
+    "E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\fr214a2\\tmp\\sutradhar-downloads"
+   ]
+  },
+  {
+   "id": "MCP.download[option:empty+env:v]",
+   "ok": true,
+   "got": [
+    "E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\fr214a2\\precfinal\\roots\\env-508"
+   ],
+   "want": [
+    "E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\fr214a2\\precfinal\\roots\\env-508"
+   ]
+  },
+  {
+   "id": "MCP.download[option:empty+env:empty]",
+   "ok": true,
+   "got": [
+    "E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\fr214a2\\tmp\\sutradhar-downloads"
+   ],
+   "want": [
+    "E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\fr214a2\\tmp\\sutradhar-downloads"
+   ]
+  },
+  {
+   "id": "MCP.download[option:empty+env:blank]",
+   "ok": true,
+   "got": [
+    "E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\fr214a2\\tmp\\sutradhar-downloads"
+   ],
+   "want": [
+    "E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\fr214a2\\tmp\\sutradhar-downloads"
+   ]
+  },
+  {
+   "id": "MCP.download[config:v]",
+   "ok": true,
+   "got": [
+    "E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\fr214a2\\precfinal\\c108\\d987"
+   ],
+   "want": [
+    "E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\fr214a2\\precfinal\\c108\\d987"
+   ]
+  },
+  {
+   "id": "MCP.download[option:v+config:v]",
+   "ok": true,
+   "got": [
+    "E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\fr214a2\\precfinal\\roots\\option-535"
+   ],
+   "want": [
+    "E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\fr214a2\\precfinal\\roots\\option-535"
+   ]
+  },
+  {
+   "id": "MCP.download[option:null+config:v]",
+   "ok": true,
+   "got": [
+    "E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\fr214a2\\precfinal\\c110\\d284"
+   ],
+   "want": [
+    "E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\fr214a2\\precfinal\\c110\\d284"
+   ]
+  },
+  {
+   "id": "MCP.download[option:undef+config:v]",
+   "ok": true,
+   "got": [
+    "E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\fr214a2\\precfinal\\c111\\d573"
+   ],
+   "want": [
+    "E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\fr214a2\\precfinal\\c111\\d573"
+   ]
+  },
+  {
+   "id": "MCP.download[option:empty+config:v]",
+   "ok": true,
+   "got": [
+    "E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\fr214a2\\precfinal\\c112\\d965"
+   ],
+   "want": [
+    "E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\fr214a2\\precfinal\\c112\\d965"
+   ]
+  },
+  {
+   "id": "MCP.download[env:v+config:v]",
+   "ok": true,
+   "got": [
+    "E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\fr214a2\\precfinal\\roots\\env-380"
+   ],
+   "want": [
+    "E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\fr214a2\\precfinal\\roots\\env-380"
+   ]
+  },
+  {
+   "id": "MCP.download[env:empty+config:v]",
+   "ok": true,
+   "got": [
+    "E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\fr214a2\\precfinal\\c114\\d962"
+   ],
+   "want": [
+    "E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\fr214a2\\precfinal\\c114\\d962"
+   ]
+  },
+  {
+   "id": "MCP.download[env:blank+config:v]",
+   "ok": true,
+   "got": [
+    "E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\fr214a2\\precfinal\\c115\\d795"
+   ],
+   "want": [
+    "E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\fr214a2\\precfinal\\c115\\d795"
+   ]
+  },
+  {
+   "id": "MCP.download[option:v+env:v+config:v]",
+   "ok": true,
+   "got": [
+    "E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\fr214a2\\precfinal\\roots\\option-694"
+   ],
+   "want": [
+    "E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\fr214a2\\precfinal\\roots\\option-694"
+   ]
+  },
+  {
+   "id": "MCP.download[option:v+env:empty+config:v]",
+   "ok": true,
+   "got": [
+    "E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\fr214a2\\precfinal\\roots\\option-137"
+   ],
+   "want": [
+    "E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\fr214a2\\precfinal\\roots\\option-137"
+   ]
+  },
+  {
+   "id": "MCP.download[option:v+env:blank+config:v]",
+   "ok": true,
+   "got": [
+    "E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\fr214a2\\precfinal\\roots\\option-438"
+   ],
+   "want": [
+    "E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\fr214a2\\precfinal\\roots\\option-438"
+   ]
+  },
+  {
+   "id": "MCP.download[option:null+env:v+config:v]",
+   "ok": true,
+   "got": [
+    "E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\fr214a2\\precfinal\\roots\\env-782"
+   ],
+   "want": [
+    "E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\fr214a2\\precfinal\\roots\\env-782"
+   ]
+  },
+  {
+   "id": "MCP.download[option:null+env:empty+config:v]",
+   "ok": true,
+   "got": [
+    "E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\fr214a2\\precfinal\\c120\\d973"
+   ],
+   "want": [
+    "E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\fr214a2\\precfinal\\c120\\d973"
+   ]
+  },
+  {
+   "id": "MCP.download[option:null+env:blank+config:v]",
+   "ok": true,
+   "got": [
+    "E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\fr214a2\\precfinal\\c121\\d523"
+   ],
+   "want": [
+    "E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\fr214a2\\precfinal\\c121\\d523"
+   ]
+  },
+  {
+   "id": "MCP.download[option:undef+env:v+config:v]",
+   "ok": true,
+   "got": [
+    "E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\fr214a2\\precfinal\\roots\\env-182"
+   ],
+   "want": [
+    "E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\fr214a2\\precfinal\\roots\\env-182"
+   ]
+  },
+  {
+   "id": "MCP.download[option:undef+env:empty+config:v]",
+   "ok": true,
+   "got": [
+    "E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\fr214a2\\precfinal\\c123\\d982"
+   ],
+   "want": [
+    "E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\fr214a2\\precfinal\\c123\\d982"
+   ]
+  },
+  {
+   "id": "MCP.download[option:undef+env:blank+config:v]",
+   "ok": true,
+   "got": [
+    "E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\fr214a2\\precfinal\\c124\\d990"
+   ],
+   "want": [
+    "E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\fr214a2\\precfinal\\c124\\d990"
+   ]
+  },
+  {
+   "id": "MCP.download[option:empty+env:v+config:v]",
+   "ok": true,
+   "got": [
+    "E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\fr214a2\\precfinal\\roots\\env-789"
+   ],
+   "want": [
+    "E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\fr214a2\\precfinal\\roots\\env-789"
+   ]
+  },
+  {
+   "id": "MCP.download[option:empty+env:empty+config:v]",
+   "ok": true,
+   "got": [
+    "E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\fr214a2\\precfinal\\c126\\d257"
+   ],
+   "want": [
+    "E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\fr214a2\\precfinal\\c126\\d257"
+   ]
+  },
+  {
+   "id": "MCP.download[option:empty+env:blank+config:v]",
+   "ok": true,
+   "got": [
+    "E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\fr214a2\\precfinal\\c127\\d169"
+   ],
+   "want": [
+    "E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\fr214a2\\precfinal\\c127\\d169"
+   ]
+  },
+  {
+   "id": "MCP.upload[none]",
+   "ok": true
+  },
+  {
+   "id": "MCP.upload[option:v]",
+   "ok": true,
+   "got": [
+    "E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\fr214a2\\precfinal\\roots\\option-765"
+   ],
+   "want": [
+    "E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\fr214a2\\precfinal\\roots\\option-765"
+   ]
+  },
+  {
+   "id": "MCP.upload[option:null]",
+   "ok": true
+  },
+  {
+   "id": "MCP.upload[option:undef]",
+   "ok": true
+  },
+  {
+   "id": "MCP.upload[option:empty]",
+   "ok": true
+  },
+  {
+   "id": "MCP.upload[env:v]",
+   "ok": true,
+   "got": [
+    "E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\fr214a2\\precfinal\\roots\\env-408"
+   ],
+   "want": [
+    "E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\fr214a2\\precfinal\\roots\\env-408"
+   ]
+  },
+  {
+   "id": "MCP.upload[env:empty]",
+   "ok": true
+  },
+  {
+   "id": "MCP.upload[env:blank]",
+   "ok": true
+  },
+  {
+   "id": "MCP.upload[option:v+env:v]",
+   "ok": true,
+   "got": [
+    "E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\fr214a2\\precfinal\\roots\\option-123"
+   ],
+   "want": [
+    "E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\fr214a2\\precfinal\\roots\\option-123"
+   ]
+  },
+  {
+   "id": "MCP.upload[option:v+env:empty]",
+   "ok": true,
+   "got": [
+    "E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\fr214a2\\precfinal\\roots\\option-609"
+   ],
+   "want": [
+    "E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\fr214a2\\precfinal\\roots\\option-609"
+   ]
+  },
+  {
+   "id": "MCP.upload[option:v+env:blank]",
+   "ok": true,
+   "got": [
+    "E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\fr214a2\\precfinal\\roots\\option-870"
+   ],
+   "want": [
+    "E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\fr214a2\\precfinal\\roots\\option-870"
+   ]
+  },
+  {
+   "id": "MCP.upload[option:null+env:v]",
+   "ok": true,
+   "got": [
+    "E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\fr214a2\\precfinal\\roots\\env-730"
+   ],
+   "want": [
+    "E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\fr214a2\\precfinal\\roots\\env-730"
+   ]
+  },
+  {
+   "id": "MCP.upload[option:null+env:empty]",
+   "ok": true
+  },
+  {
+   "id": "MCP.upload[option:null+env:blank]",
+   "ok": true
+  },
+  {
+   "id": "MCP.upload[option:undef+env:v]",
+   "ok": true,
+   "got": [
+    "E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\fr214a2\\precfinal\\roots\\env-883"
+   ],
+   "want": [
+    "E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\fr214a2\\precfinal\\roots\\env-883"
+   ]
+  },
+  {
+   "id": "MCP.upload[option:undef+env:empty]",
+   "ok": true
+  },
+  {
+   "id": "MCP.upload[option:undef+env:blank]",
+   "ok": true
+  },
+  {
+   "id": "MCP.upload[option:empty+env:v]",
+   "ok": true,
+   "got": [
+    "E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\fr214a2\\precfinal\\roots\\env-707"
+   ],
+   "want": [
+    "E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\fr214a2\\precfinal\\roots\\env-707"
+   ]
+  },
+  {
+   "id": "MCP.upload[option:empty+env:empty]",
+   "ok": true
+  },
+  {
+   "id": "MCP.upload[option:empty+env:blank]",
+   "ok": true
+  },
+  {
+   "id": "MCP.upload[config:v]",
+   "ok": true,
+   "got": [
+    "E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\fr214a2\\precfinal\\c148\\u337"
+   ],
+   "want": [
+    "E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\fr214a2\\precfinal\\c148\\u337"
+   ]
+  },
+  {
+   "id": "MCP.upload[option:v+config:v]",
+   "ok": true,
+   "got": [
+    "E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\fr214a2\\precfinal\\roots\\option-570"
+   ],
+   "want": [
+    "E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\fr214a2\\precfinal\\roots\\option-570"
+   ]
+  },
+  {
+   "id": "MCP.upload[option:null+config:v]",
+   "ok": true,
+   "got": [
+    "E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\fr214a2\\precfinal\\c150\\u579"
+   ],
+   "want": [
+    "E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\fr214a2\\precfinal\\c150\\u579"
+   ]
+  },
+  {
+   "id": "MCP.upload[option:undef+config:v]",
+   "ok": true,
+   "got": [
+    "E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\fr214a2\\precfinal\\c151\\u543"
+   ],
+   "want": [
+    "E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\fr214a2\\precfinal\\c151\\u543"
+   ]
+  },
+  {
+   "id": "MCP.upload[option:empty+config:v]",
+   "ok": true,
+   "got": [
+    "E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\fr214a2\\precfinal\\c152\\u524"
+   ],
+   "want": [
+    "E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\fr214a2\\precfinal\\c152\\u524"
+   ]
+  },
+  {
+   "id": "MCP.upload[env:v+config:v]",
+   "ok": true,
+   "got": [
+    "E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\fr214a2\\precfinal\\roots\\env-905"
+   ],
+   "want": [
+    "E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\fr214a2\\precfinal\\roots\\env-905"
+   ]
+  },
+  {
+   "id": "MCP.upload[env:empty+config:v]",
+   "ok": true,
+   "got": [
+    "E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\fr214a2\\precfinal\\c154\\u576"
+   ],
+   "want": [
+    "E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\fr214a2\\precfinal\\c154\\u576"
+   ]
+  },
+  {
+   "id": "MCP.upload[env:blank+config:v]",
+   "ok": true,
+   "got": [
+    "E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\fr214a2\\precfinal\\c155\\u997"
+   ],
+   "want": [
+    "E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\fr214a2\\precfinal\\c155\\u997"
+   ]
+  },
+  {
+   "id": "MCP.upload[option:v+env:v+config:v]",
+   "ok": true,
+   "got": [
+    "E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\fr214a2\\precfinal\\roots\\option-412"
+   ],
+   "want": [
+    "E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\fr214a2\\precfinal\\roots\\option-412"
+   ]
+  },
+  {
+   "id": "MCP.upload[option:v+env:empty+config:v]",
+   "ok": true,
+   "got": [
+    "E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\fr214a2\\precfinal\\roots\\option-624"
+   ],
+   "want": [
+    "E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\fr214a2\\precfinal\\roots\\option-624"
+   ]
+  },
+  {
+   "id": "MCP.upload[option:v+env:blank+config:v]",
+   "ok": true,
+   "got": [
+    "E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\fr214a2\\precfinal\\roots\\option-475"
+   ],
+   "want": [
+    "E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\fr214a2\\precfinal\\roots\\option-475"
+   ]
+  },
+  {
+   "id": "MCP.upload[option:null+env:v+config:v]",
+   "ok": true,
+   "got": [
+    "E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\fr214a2\\precfinal\\roots\\env-575"
+   ],
+   "want": [
+    "E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\fr214a2\\precfinal\\roots\\env-575"
+   ]
+  },
+  {
+   "id": "MCP.upload[option:null+env:empty+config:v]",
+   "ok": true,
+   "got": [
+    "E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\fr214a2\\precfinal\\c160\\u227"
+   ],
+   "want": [
+    "E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\fr214a2\\precfinal\\c160\\u227"
+   ]
+  },
+  {
+   "id": "MCP.upload[option:null+env:blank+config:v]",
+   "ok": true,
+   "got": [
+    "E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\fr214a2\\precfinal\\c161\\u131"
+   ],
+   "want": [
+    "E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\fr214a2\\precfinal\\c161\\u131"
+   ]
+  },
+  {
+   "id": "MCP.upload[option:undef+env:v+config:v]",
+   "ok": true,
+   "got": [
+    "E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\fr214a2\\precfinal\\roots\\env-912"
+   ],
+   "want": [
+    "E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\fr214a2\\precfinal\\roots\\env-912"
+   ]
+  },
+  {
+   "id": "MCP.upload[option:undef+env:empty+config:v]",
+   "ok": true,
+   "got": [
+    "E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\fr214a2\\precfinal\\c163\\u804"
+   ],
+   "want": [
+    "E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\fr214a2\\precfinal\\c163\\u804"
+   ]
+  },
+  {
+   "id": "MCP.upload[option:undef+env:blank+config:v]",
+   "ok": true,
+   "got": [
+    "E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\fr214a2\\precfinal\\c164\\u579"
+   ],
+   "want": [
+    "E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\fr214a2\\precfinal\\c164\\u579"
+   ]
+  },
+  {
+   "id": "MCP.upload[option:empty+env:v+config:v]",
+   "ok": true,
+   "got": [
+    "E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\fr214a2\\precfinal\\roots\\env-847"
+   ],
+   "want": [
+    "E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\fr214a2\\precfinal\\roots\\env-847"
+   ]
+  },
+  {
+   "id": "MCP.upload[option:empty+env:empty+config:v]",
+   "ok": true,
+   "got": [
+    "E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\fr214a2\\precfinal\\c166\\u902"
+   ],
+   "want": [
+    "E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\fr214a2\\precfinal\\c166\\u902"
+   ]
+  },
+  {
+   "id": "MCP.upload[option:empty+env:blank+config:v]",
+   "ok": true,
+   "got": [
+    "E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\fr214a2\\precfinal\\c167\\u763"
+   ],
+   "want": [
+    "E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\fr214a2\\precfinal\\c167\\u763"
+   ]
+  },
+  {
+   "id": "MCP.idle[none]",
+   "ok": true,
+   "got": 1800000,
+   "want": 1800000
+  },
+  {
+   "id": "MCP.idle[option:v]",
+   "ok": true,
+   "got": 81047,
+   "want": 81047
+  },
+  {
+   "id": "MCP.idle[option:null]",
+   "ok": true,
+   "got": 1800000,
+   "want": 1800000
+  },
+  {
+   "id": "MCP.idle[option:undef]",
+   "ok": true,
+   "got": 1800000,
+   "want": 1800000
+  },
+  {
+   "id": "MCP.idle[option:zero]",
+   "ok": true
+  },
+  {
+   "id": "MCP.idle[env:v]",
+   "ok": true,
+   "got": 95101,
+   "want": 95101
+  },
+  {
+   "id": "MCP.idle[env:empty]",
+   "ok": true,
+   "got": 1800000,
+   "want": 1800000
+  },
+  {
+   "id": "MCP.idle[env:zero]",
+   "ok": true
+  },
+  {
+   "id": "MCP.idle[option:v+env:v]",
+   "ok": true,
+   "got": 62574,
+   "want": 62574
+  },
+  {
+   "id": "MCP.idle[option:v+env:empty]",
+   "ok": true,
+   "got": 56899,
+   "want": 56899
+  },
+  {
+   "id": "MCP.idle[option:v+env:zero]",
+   "ok": true,
+   "got": 23877,
+   "want": 23877
+  },
+  {
+   "id": "MCP.idle[option:null+env:v]",
+   "ok": true,
+   "got": 88304,
+   "want": 88304
+  },
+  {
+   "id": "MCP.idle[option:null+env:empty]",
+   "ok": true,
+   "got": 1800000,
+   "want": 1800000
+  },
+  {
+   "id": "MCP.idle[option:null+env:zero]",
+   "ok": true
+  },
+  {
+   "id": "MCP.idle[option:undef+env:v]",
+   "ok": true,
+   "got": 13606,
+   "want": 13606
+  },
+  {
+   "id": "MCP.idle[option:undef+env:empty]",
+   "ok": true,
+   "got": 1800000,
+   "want": 1800000
+  },
+  {
+   "id": "MCP.idle[option:undef+env:zero]",
+   "ok": true
+  },
+  {
+   "id": "MCP.idle[option:zero+env:v]",
+   "ok": true
+  },
+  {
+   "id": "MCP.idle[option:zero+env:empty]",
+   "ok": true
+  },
+  {
+   "id": "MCP.idle[option:zero+env:zero]",
+   "ok": true
+  },
+  {
+   "id": "MCP.idle[config:v]",
+   "ok": true,
+   "got": 12242,
+   "want": 12242
+  },
+  {
+   "id": "MCP.idle[config:zero]",
+   "ok": true
+  },
+  {
+   "id": "MCP.idle[option:v+config:v]",
+   "ok": true,
+   "got": 23324,
+   "want": 23324
+  },
+  {
+   "id": "MCP.idle[option:v+config:zero]",
+   "ok": true,
+   "got": 14741,
+   "want": 14741
+  },
+  {
+   "id": "MCP.idle[option:null+config:v]",
+   "ok": true,
+   "got": 88730,
+   "want": 88730
+  },
+  {
+   "id": "MCP.idle[option:null+config:zero]",
+   "ok": true
+  },
+  {
+   "id": "MCP.idle[option:undef+config:v]",
+   "ok": true,
+   "got": 1454,
+   "want": 1454
+  },
+  {
+   "id": "MCP.idle[option:undef+config:zero]",
+   "ok": true
+  },
+  {
+   "id": "MCP.idle[option:zero+config:v]",
+   "ok": true
+  },
+  {
+   "id": "MCP.idle[option:zero+config:zero]",
+   "ok": true
+  },
+  {
+   "id": "MCP.idle[env:v+config:v]",
+   "ok": true,
+   "got": 80928,
+   "want": 80928
+  },
+  {
+   "id": "MCP.idle[env:v+config:zero]",
+   "ok": true,
+   "got": 83011,
+   "want": 83011
+  },
+  {
+   "id": "MCP.idle[env:empty+config:v]",
+   "ok": true,
+   "got": 93262,
+   "want": 93262
+  },
+  {
+   "id": "MCP.idle[env:empty+config:zero]",
+   "ok": true
+  },
+  {
+   "id": "MCP.idle[env:zero+config:v]",
+   "ok": true
+  },
+  {
+   "id": "MCP.idle[env:zero+config:zero]",
+   "ok": true
+  },
+  {
+   "id": "MCP.idle[option:v+env:v+config:v]",
+   "ok": true,
+   "got": 32959,
+   "want": 32959
+  },
+  {
+   "id": "MCP.idle[option:v+env:v+config:zero]",
+   "ok": true,
+   "got": 86154,
+   "want": 86154
+  },
+  {
+   "id": "MCP.idle[option:v+env:empty+config:v]",
+   "ok": true,
+   "got": 32651,
+   "want": 32651
+  },
+  {
+   "id": "MCP.idle[option:v+env:empty+config:zero]",
+   "ok": true,
+   "got": 36931,
+   "want": 36931
+  },
+  {
+   "id": "MCP.idle[option:v+env:zero+config:v]",
+   "ok": true,
+   "got": 38569,
+   "want": 38569
+  },
+  {
+   "id": "MCP.idle[option:v+env:zero+config:zero]",
+   "ok": true,
+   "got": 62105,
+   "want": 62105
+  },
+  {
+   "id": "MCP.idle[option:null+env:v+config:v]",
+   "ok": true,
+   "got": 30497,
+   "want": 30497
+  },
+  {
+   "id": "MCP.idle[option:null+env:v+config:zero]",
+   "ok": true,
+   "got": 20431,
+   "want": 20431
+  },
+  {
+   "id": "MCP.idle[option:null+env:empty+config:v]",
+   "ok": true,
+   "got": 1964,
+   "want": 1964
+  },
+  {
+   "id": "MCP.idle[option:null+env:empty+config:zero]",
+   "ok": true
+  },
+  {
+   "id": "MCP.idle[option:null+env:zero+config:v]",
+   "ok": true
+  },
+  {
+   "id": "MCP.idle[option:null+env:zero+config:zero]",
+   "ok": true
+  },
+  {
+   "id": "MCP.idle[option:undef+env:v+config:v]",
+   "ok": true,
+   "got": 66608,
+   "want": 66608
+  },
+  {
+   "id": "MCP.idle[option:undef+env:v+config:zero]",
+   "ok": true,
+   "got": 87847,
+   "want": 87847
+  },
+  {
+   "id": "MCP.idle[option:undef+env:empty+config:v]",
+   "ok": true,
+   "got": 73248,
+   "want": 73248
+  },
+  {
+   "id": "MCP.idle[option:undef+env:empty+config:zero]",
+   "ok": true
+  },
+  {
+   "id": "MCP.idle[option:undef+env:zero+config:v]",
+   "ok": true
+  },
+  {
+   "id": "MCP.idle[option:undef+env:zero+config:zero]",
+   "ok": true
+  },
+  {
+   "id": "MCP.idle[option:zero+env:v+config:v]",
+   "ok": true
+  },
+  {
+   "id": "MCP.idle[option:zero+env:v+config:zero]",
+   "ok": true
+  },
+  {
+   "id": "MCP.idle[option:zero+env:empty+config:v]",
+   "ok": true
+  },
+  {
+   "id": "MCP.idle[option:zero+env:empty+config:zero]",
+   "ok": true
+  },
+  {
+   "id": "MCP.idle[option:zero+env:zero+config:v]",
+   "ok": true
+  },
+  {
+   "id": "MCP.idle[option:zero+env:zero+config:zero]",
+   "ok": true
+  },
+  {
+   "id": "MCP.dialog[none]",
+   "ok": true
+  },
+  {
+   "id": "MCP.dialog[option:v]",
+   "ok": true,
+   "got": {
+    "mode": "dismiss"
+   },
+   "want": {
+    "mode": "dismiss"
+   }
+  },
+  {
+   "id": "MCP.dialog[option:null]",
+   "ok": true
+  },
+  {
+   "id": "MCP.dialog[option:undef]",
+   "ok": true
+  },
+  {
+   "id": "MCP.dialog[config:v]",
+   "ok": true,
+   "got": {
+    "mode": "dismiss"
+   },
+   "want": {
+    "mode": "dismiss"
+   }
+  },
+  {
+   "id": "MCP.dialog[option:v+config:v]",
+   "ok": true,
+   "got": {
+    "mode": "dismiss"
+   },
+   "want": {
+    "mode": "dismiss"
+   }
+  },
+  {
+   "id": "MCP.dialog[option:null+config:v]",
+   "ok": true,
+   "got": {
+    "mode": "auto"
+   },
+   "want": {
+    "mode": "auto"
+   }
+  },
+  {
+   "id": "MCP.dialog[option:undef+config:v]",
+   "ok": true,
+   "got": {
+    "mode": "auto"
+   },
+   "want": {
+    "mode": "auto"
+   }
+  },
+  {
+   "id": "MCP.viewport[none]",
+   "ok": true
+  },
+  {
+   "id": "MCP.viewport[call:v]",
+   "ok": true,
+   "got": {
+    "width": 867,
+    "height": 463
+   },
+   "want": {
+    "width": 867,
+    "height": 463
+   }
+  },
+  {
+   "id": "MCP.viewport[option:v]",
+   "ok": true,
+   "got": {
+    "width": 749,
+    "height": 1138
+   },
+   "want": {
+    "width": 749,
+    "height": 1138
+   }
+  },
+  {
+   "id": "MCP.viewport[option:null]",
+   "ok": true
+  },
+  {
+   "id": "MCP.viewport[option:huge]",
+   "ok": true
+  },
+  {
+   "id": "MCP.viewport[call:v+option:v]",
+   "ok": true,
+   "got": {
+    "width": 652,
+    "height": 369
+   },
+   "want": {
+    "width": 652,
+    "height": 369
+   }
+  },
+  {
+   "id": "MCP.viewport[call:v+option:null]",
+   "ok": true,
+   "got": {
+    "width": 1560,
+    "height": 476
+   },
+   "want": {
+    "width": 1560,
+    "height": 476
+   }
+  },
+  {
+   "id": "MCP.viewport[call:v+option:huge]",
+   "ok": true,
+   "got": {
+    "width": 512,
+    "height": 1138
+   },
+   "want": {
+    "width": 512,
+    "height": 1138
+   }
+  },
+  {
+   "id": "MCP.viewport[config:v]",
+   "ok": true,
+   "got": {
+    "width": 807,
+    "height": 828
+   },
+   "want": {
+    "width": 807,
+    "height": 828
+   }
+  },
+  {
+   "id": "MCP.viewport[call:v+config:v]",
+   "ok": true,
+   "got": {
+    "width": 859,
+    "height": 929
+   },
+   "want": {
+    "width": 859,
+    "height": 929
+   }
+  },
+  {
+   "id": "MCP.viewport[option:v+config:v]",
+   "ok": true,
+   "got": {
+    "width": 553,
+    "height": 365
+   },
+   "want": {
+    "width": 553,
+    "height": 365
+   }
+  },
+  {
+   "id": "MCP.viewport[option:null+config:v]",
+   "ok": true,
+   "got": {
+    "width": 1145,
+    "height": 328
+   },
+   "want": {
+    "width": 1145,
+    "height": 328
+   }
+  },
+  {
+   "id": "MCP.viewport[option:huge+config:v]",
+   "ok": true,
+   "got": {
+    "width": 1074,
+    "height": 925
+   },
+   "want": {
+    "width": 1074,
+    "height": 925
+   }
+  },
+  {
+   "id": "MCP.viewport[call:v+option:v+config:v]",
+   "ok": true,
+   "got": {
+    "width": 571,
+    "height": 332
+   },
+   "want": {
+    "width": 571,
+    "height": 332
+   }
+  },
+  {
+   "id": "MCP.viewport[call:v+option:null+config:v]",
+   "ok": true,
+   "got": {
+    "width": 1033,
+    "height": 800
+   },
+   "want": {
+    "width": 1033,
+    "height": 800
+   }
+  },
+  {
+   "id": "MCP.viewport[call:v+option:huge+config:v]",
+   "ok": true,
+   "got": {
+    "width": 1306,
+    "height": 1188
+   },
+   "want": {
+    "width": 1306,
+    "height": 1188
+   }
+  },
+  {
+   "id": "FILE.null.downloadDir",
+   "ok": true,
+   "got": true,
+   "want": true,
+   "detail": "ERR downloadDir must be a non-empty string"
+  },
+  {
+   "id": "FILE.odd.downloadDir=\"\"",
+   "ok": true,
+   "got": true,
+   "want": true,
+   "detail": "ERR"
+  },
+  {
+   "id": "FILE.odd.downloadDir=0",
+   "ok": true,
+   "got": true,
+   "want": true,
+   "detail": "ERR"
+  },
+  {
+   "id": "FILE.odd.downloadDir=false",
+   "ok": true,
+   "got": true,
+   "want": true,
+   "detail": "ERR"
+  },
+  {
+   "id": "FILE.odd.downloadDir=[]",
+   "ok": true,
+   "got": true,
+   "want": true,
+   "detail": "ERR"
+  },
+  {
+   "id": "FILE.odd.downloadDir={}",
+   "ok": true,
+   "got": true,
+   "want": true,
+   "detail": "ERR"
+  },
+  {
+   "id": "FILE.null.allowedDownloadRoots",
+   "ok": true,
+   "got": true,
+   "want": true,
+   "detail": "ERR allowedDownloadRoots must be an array of strings"
+  },
+  {
+   "id": "FILE.odd.allowedDownloadRoots=\"\"",
+   "ok": true,
+   "got": true,
+   "want": true,
+   "detail": "ERR"
+  },
+  {
+   "id": "FILE.odd.allowedDownloadRoots=0",
+   "ok": true,
+   "got": true,
+   "want": true,
+   "detail": "ERR"
+  },
+  {
+   "id": "FILE.odd.allowedDownloadRoots=false",
+   "ok": true,
+   "got": true,
+   "want": true,
+   "detail": "ERR"
+  },
+  {
+   "id": "FILE.odd.allowedDownloadRoots=[]",
+   "ok": true,
+   "got": true,
+   "want": true,
+   "detail": "ERR"
+  },
+  {
+   "id": "FILE.odd.allowedDownloadRoots={}",
+   "ok": true,
+   "got": true,
+   "want": true,
+   "detail": "ERR"
+  },
+  {
+   "id": "FILE.null.allowedUploadRoots",
+   "ok": true,
+   "got": true,
+   "want": true,
+   "detail": "ERR allowedUploadRoots must be an array of strings"
+  },
+  {
+   "id": "FILE.odd.allowedUploadRoots=\"\"",
+   "ok": true,
+   "got": true,
+   "want": true,
+   "detail": "ERR"
+  },
+  {
+   "id": "FILE.odd.allowedUploadRoots=0",
+   "ok": true,
+   "got": true,
+   "want": true,
+   "detail": "ERR"
+  },
+  {
+   "id": "FILE.odd.allowedUploadRoots=false",
+   "ok": true,
+   "got": true,
+   "want": true,
+   "detail": "ERR"
+  },
+  {
+   "id": "FILE.odd.allowedUploadRoots=[]",
+   "ok": true,
+   "got": true,
+   "want": true,
+   "detail": "ERR"
+  },
+  {
+   "id": "FILE.odd.allowedUploadRoots={}",
+   "ok": true,
+   "got": true,
+   "want": true,
+   "detail": "ERR"
+  },
+  {
+   "id": "FILE.null.allowedDomains",
+   "ok": true,
+   "got": true,
+   "want": true,
+   "detail": "ERR allowedDomains must be an array of strings"
+  },
+  {
+   "id": "FILE.odd.allowedDomains=\"\"",
+   "ok": true,
+   "got": true,
+   "want": true,
+   "detail": "ERR"
+  },
+  {
+   "id": "FILE.odd.allowedDomains=0",
+   "ok": true,
+   "got": true,
+   "want": true,
+   "detail": "ERR"
+  },
+  {
+   "id": "FILE.odd.allowedDomains=false",
+   "ok": true,
+   "got": true,
+   "want": true,
+   "detail": "ERR"
+  },
+  {
+   "id": "FILE.odd.allowedDomains=[]",
+   "ok": true,
+   "got": true,
+   "want": true,
+   "detail": "ERR"
+  },
+  {
+   "id": "FILE.odd.allowedDomains={}",
+   "ok": true,
+   "got": true,
+   "want": true,
+   "detail": "ERR"
+  },
+  {
+   "id": "FILE.null.dialog",
+   "ok": true,
+   "got": true,
+   "want": true,
+   "detail": "ERR dialog must be an object like {\"mode\":\"accept\"}"
+  },
+  {
+   "id": "FILE.odd.dialog=\"\"",
+   "ok": true,
+   "got": true,
+   "want": true,
+   "detail": "ERR"
+  },
+  {
+   "id": "FILE.odd.dialog=0",
+   "ok": true,
+   "got": true,
+   "want": true,
+   "detail": "ERR"
+  },
+  {
+   "id": "FILE.odd.dialog=false",
+   "ok": true,
+   "got": true,
+   "want": true,
+   "detail": "ERR"
+  },
+  {
+   "id": "FILE.odd.dialog=[]",
+   "ok": true,
+   "got": true,
+   "want": true,
+   "detail": "ERR"
+  },
+  {
+   "id": "FILE.odd.dialog={}",
+   "ok": true,
+   "got": true,
+   "want": true,
+   "detail": "ERR"
+  },
+  {
+   "id": "FILE.null.idleTimeoutMs",
+   "ok": true,
+   "got": true,
+   "want": true,
+   "detail": "ERR idleTimeoutMs must be 0 (never close idle sessions) or an integer number of milliseconds b"
+  },
+  {
+   "id": "FILE.odd.idleTimeoutMs=\"\"",
+   "ok": true,
+   "got": true,
+   "want": true,
+   "detail": "ERR"
+  },
+  {
+   "id": "FILE.odd.idleTimeoutMs=0",
+   "ok": true,
+   "got": true,
+   "want": true,
+   "detail": "LOADED {\"idleTimeoutMs\":0}"
+  },
+  {
+   "id": "FILE.odd.idleTimeoutMs=false",
+   "ok": true,
+   "got": true,
+   "want": true,
+   "detail": "ERR"
+  },
+  {
+   "id": "FILE.odd.idleTimeoutMs=[]",
+   "ok": true,
+   "got": true,
+   "want": true,
+   "detail": "ERR"
+  },
+  {
+   "id": "FILE.odd.idleTimeoutMs={}",
+   "ok": true,
+   "got": true,
+   "want": true,
+   "detail": "ERR"
+  },
+  {
+   "id": "FILE.null.viewport",
+   "ok": true,
+   "got": true,
+   "want": true,
+   "detail": "ERR viewport must be an object like {\"width\":1280,\"height\":800}"
+  },
+  {
+   "id": "FILE.odd.viewport=\"\"",
+   "ok": true,
+   "got": true,
+   "want": true,
+   "detail": "ERR"
+  },
+  {
+   "id": "FILE.odd.viewport=0",
+   "ok": true,
+   "got": true,
+   "want": true,
+   "detail": "ERR"
+  },
+  {
+   "id": "FILE.odd.viewport=false",
+   "ok": true,
+   "got": true,
+   "want": true,
+   "detail": "ERR"
+  },
+  {
+   "id": "FILE.odd.viewport=[]",
+   "ok": true,
+   "got": true,
+   "want": true,
+   "detail": "ERR"
+  },
+  {
+   "id": "FILE.odd.viewport={}",
+   "ok": true,
+   "got": true,
+   "want": true,
+   "detail": "ERR"
+  }
+ ]
+}

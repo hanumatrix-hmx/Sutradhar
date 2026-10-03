@@ -5,7 +5,7 @@
  * CLI entrypoint), which would spawn/attach to a real Chrome the moment a test imported it.
  */
 
-import type { ActionExpectation, WaitForCondition } from '@sutradhar/capability-runtime';
+import { VIEWPORT_MAX, type ActionExpectation, type WaitForCondition } from '@sutradhar/capability-runtime';
 
 export interface ParsedArgs {
   /** The subcommand, e.g. "snap", "click", "nav". `undefined` when no argument was given. */
@@ -20,6 +20,9 @@ export interface ParsedArgs {
   userAgentFlag: string | undefined;
   /** Parsed from `--allowlist-domains a.com,b.com` — undefined when the flag isn't given. */
   allowlistDomainsFlag: string[] | undefined;
+  /** FR2-14: `--allowlist-domains` was passed but yielded no domain (empty/blank/comma-only or
+   *  no value). That must be an error, never a silent "unrestricted". */
+  allowlistDomainsGivenButEmpty: boolean;
   /** Parsed from `--baseline <url>` — undefined when the flag isn't given. Used by `audit` to
    *  also run a visual compare against a known-good baseline URL in the same command. */
   baselineFlag: string | undefined;
@@ -134,12 +137,15 @@ export function parseArgs(argv: readonly string[]): ParsedArgs {
   const allowlistDomainsFlagIndex = args.indexOf('--allowlist-domains');
   const allowlistDomainsRaw =
     allowlistDomainsFlagIndex !== -1 ? args[allowlistDomainsFlagIndex + 1] : undefined;
-  const allowlistDomainsFlag = allowlistDomainsRaw
+  const allowlistDomainsList = allowlistDomainsRaw
     ? allowlistDomainsRaw
         .split(',')
         .map((d) => d.trim())
         .filter((d) => d.length > 0)
     : undefined;
+  // An empty list is "no value", never an (empty) allowlist: it must not read as "unrestricted".
+  const allowlistDomainsFlag = allowlistDomainsList?.length ? allowlistDomainsList : undefined;
+  const allowlistDomainsGivenButEmpty = allowlistDomainsFlagIndex !== -1 && !allowlistDomainsFlag?.length;
   const baselineFlagIndex = args.indexOf('--baseline');
   const baselineRaw = baselineFlagIndex !== -1 ? args[baselineFlagIndex + 1] : undefined;
   const baselineFlagGivenButInvalid = baselineFlagIndex !== -1 && (baselineRaw === undefined || baselineRaw.startsWith('--'));
@@ -158,9 +164,18 @@ export function parseArgs(argv: readonly string[]): ParsedArgs {
   const viewportFlagIndex = args.indexOf('--viewport');
   const viewportRaw = viewportFlagIndex !== -1 ? args[viewportFlagIndex + 1] : undefined;
   const viewportMatch = viewportRaw?.match(/^(\d+)x(\d+)$/);
-  const viewportFlag = viewportMatch
+  const viewportParsed = viewportMatch
     ? { width: parseInt(viewportMatch[1]!, 10), height: parseInt(viewportMatch[2]!, 10) }
     : undefined;
+  // F8: bounds are checked HERE, before any Chrome starts (Chrome's own limit is VIEWPORT_MAX).
+  const viewportFlag =
+    viewportParsed &&
+    viewportParsed.width >= 1 &&
+    viewportParsed.height >= 1 &&
+    viewportParsed.width <= VIEWPORT_MAX &&
+    viewportParsed.height <= VIEWPORT_MAX
+      ? viewportParsed
+      : undefined;
   const stateFlagIndex = args.indexOf('--state');
   const stateRaw = stateFlagIndex !== -1 ? args[stateFlagIndex + 1] : undefined;
   const VALID_STATES = new Set(['visible', 'attached', 'hidden']);
@@ -292,6 +307,7 @@ export function parseArgs(argv: readonly string[]): ParsedArgs {
     profileFlag,
     userAgentFlag,
     allowlistDomainsFlag,
+    allowlistDomainsGivenButEmpty,
     baselineFlag,
     baselineFlagGivenButInvalid,
     settle,

@@ -1,0 +1,24 @@
+[
+ {
+  "id": "M1",
+  "desc": "home walk: N2 revert (never follow the canonical cwd)",
+  "file": "packages/capability-runtime/src/project-config.ts",
+  "build": "ok",
+  "unit": {
+   "cr": 11,
+   "cli": 0,
+   "mcp": 0,
+   "sdk": 0
+  },
+  "probes": {
+   "topo": "12/450 S1=0",
+   "attackHome": "PASS 30 FAIL 1",
+   "echo": "0 bad msgs",
+   "prec": "12/735 fail (baseline 12)",
+   "failclosed": "0/170",
+   "hostileRootsAccepted": "17 (baseline 17)"
+  },
+  "restored": true,
+  "rebuild": "ok"
+ }
+]

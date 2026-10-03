@@ -1,0 +1,82 @@
+{
+ "id": "B5",
+ "desc": "SDK only: refusal not passed to the resolver",
+ "file": "packages/sutradhar/src/index.ts",
+ "shaBefore": "bf60905b00da3d04c16507ec2bd36be1382e50517279a28305f113476afae8b8",
+ "occurrences": 1,
+ "build": {
+  "pkg": 0,
+  "bundle": 0,
+  "tail": [
+   " Tasks:    9 successful, 9 total",
+   " Tasks:    9 successful, 9 total"
+  ]
+ },
+ "unit": {
+  "capability-runtime": {
+   "code": 0,
+   "tests": "393 passed (393)",
+   "failed": []
+  },
+  "cli": {
+   "code": 0,
+   "tests": "238 passed (238)",
+   "failed": []
+  },
+  "mcp-server": {
+   "code": 0,
+   "tests": "154 passed (154)",
+   "failed": []
+  },
+  "sutradhar": {
+   "code": 1,
+   "tests": "5 failed | 58 passed (63)",
+   "failed": [
+    "tests/unit/launch-config.spec.ts > sutradhar SDK launch() + .sutradhar.json (FR2-14) > SC11: a hostile discovered config cannot widen the do",
+    "tests/unit/launch-config.spec.ts > fix-1 F1/F2/F9: SDK override matrix over REAL discovered files > downloadDir x file=outOfTree: the allowe",
+    "tests/unit/launch-config.spec.ts > fix-1 F1/F2/F9: SDK override matrix over REAL discovered files > downloadDir x file=hostile: the allowedD",
+    "tests/unit/launch-config.spec.ts > fix-1 F1/F2/F9: SDK override matrix over REAL discovered files > allowedDownloadRoots x file=outOfTree: t",
+    "tests/unit/launch-config.spec.ts > fix-1 F1/F2/F9: SDK override matrix over REAL discovered files > allowedDownloadRoots x file=hostile: the"
+   ]
+  }
+ },
+ "f1attack": {
+  "pass": 290,
+  "fail": 0,
+  "firstFails": []
+ },
+ "liveSdkF1": {
+  "pass": false,
+  "fail": 1,
+  "res": {
+   "none": {
+    "error": null,
+    "chromeLeft": 0
+   },
+   "optEmpty": {
+    "error": null,
+    "chromeLeft": 0
+   },
+   "optRoots": {
+    "error": null,
+    "chromeLeft": 0
+   }
+  }
+ },
+ "shaAfter": "bf60905b00da3d04c16507ec2bd36be1382e50517279a28305f113476afae8b8",
+ "restored": true,
+ "rebuild": {
+  "pkg": 0,
+  "bundle": 0,
+  "tail": [
+   " Tasks:    9 successful, 9 total",
+   " Tasks:    9 successful, 9 total"
+  ]
+ },
+ "caught": {
+  "unit": true,
+  "f1attack": false,
+  "liveCli": true,
+  "any": true
+ }
+}

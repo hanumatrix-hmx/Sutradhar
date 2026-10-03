@@ -4,7 +4,7 @@
  * that owns one or more {@link Page} tabs.
  */
 
-import type { SutradharRuntime } from '@sutradhar/capability-runtime';
+import type { SutradharRuntime, DialogPolicy } from '@sutradhar/capability-runtime';
 import { Page } from './page.js';
 
 /** Options for {@link launch}. */
@@ -62,6 +62,33 @@ export interface LaunchOptions {
    * Directories `page.uploadFile()` may read from. Unset (the default) means unrestricted.
    */
   allowedUploadRoots?: readonly string[];
+  /**
+   * Load this `.sutradhar.json` (path relative to `process.cwd()`; `~` expands). Loaded
+   * explicitly, so it is trusted like an option (no containment/ownership checks). Relative paths
+   * INSIDE the file resolve against the file's own directory. Precedence: any option you pass >
+   * this file > the built-in default. Mutually exclusive with {@link discoverConfig}.
+   */
+  configFile?: string;
+  /**
+   * Search upward from `process.cwd()` for a `.sutradhar.json` (nearest wins; stops at a `.git`
+   * boundary or your home directory; the filesystem root is never read), like the CLI does. Default
+   * `false`: the SDK reads no config unless asked, and never reads `SUTRADHAR_*` env vars. A
+   * discovered file is treated as untrusted project content: download roots must stay inside the
+   * file's own directory. Mutually exclusive with {@link configFile}.
+   */
+  discoverConfig?: boolean;
+  /**
+   * Close the browser session after this many ms without activity (0 = never). Unset = never
+   * (unchanged). Overrides `idleTimeoutMs` from a config file.
+   */
+  idleTimeoutMs?: number;
+  /**
+   * Default native-dialog policy: `auto` (default), `accept` or `dismiss`. `report` throws a
+   * TypeError: the SDK has no way to handle a pending dialog from a Page yet, so a pending
+   * alert/confirm/prompt would hang `page.evaluate`. A `report` coming from a config file is mapped
+   * to `auto` with a warning instead.
+   */
+  dialogPolicy?: DialogPolicy;
 }
 
 /**

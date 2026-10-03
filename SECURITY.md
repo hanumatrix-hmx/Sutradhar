@@ -55,6 +55,40 @@ public internet. This document lists what's enforced by default today and what's
   `allowedDownloadRoots`/`allowedUploadRoots` to `launch()` explicitly. A library silently
   changing its sandbox based on the host application's ambient environment would be surprising.
 
+### Project config trust (`.sutradhar.json`)
+
+A `.sutradhar.json` found by searching upward from the working directory is **project content that may be hostile**
+(a cloned repository, a directory an agent `cd`ed into). Rules, each fail-closed:
+
+- Precedence is flag > env var > file > default, so a file can never override anything set explicitly, and a file only
+  fills values nobody set.
+- The search stops at a `.git` boundary (file or directory) and at your home directory, and never reads the
+  filesystem root, so a config planted in a shared parent (`C:\`, `/tmp`) cannot reach into a repository.
+- `allowedDomains` and `allowedUploadRoots` default to unrestricted, so a value from a file can only narrow access.
+  An empty array is an **error** (it would otherwise read as "no restriction"), as is any malformed value.
+- `downloadDir`/`allowedDownloadRoots` from a discovered file must resolve, through symlinks and junctions (the
+  FR2-05 canonicalisation), inside the file's own directory and outside any `.git` directory; otherwise the command
+  fails (when that file is the layer that would supply the roots; an env var or option that sets the roots replaces
+  the file's and so wins), naming `SUTRADHAR_ALLOWED_DOWNLOAD_ROOTS`, the `allowedDownloadRoots` option and
+  `SUTRADHAR_CONFIG` as the explicit ways to allow it.
+- `dialog.mode "accept"` from a discovered file is honored but announced (a CLI `Note:` on every command, an MCP
+  startup warning); a `--dialog` flag overrides it. `idleTimeoutMs: 0` can disable the idle reaper (a resource
+  issue, not a sandbox escape; the env var outranks it).
+- On POSIX a discovered file owned by another user, or writable by group/others, is refused.
+- A file loaded explicitly (`SUTRADHAR_CONFIG`, SDK `configFile`) is trusted like an environment variable.
+- **Residual risks, stated plainly.** Windows: Node cannot read file owners, so on a directory outside your home and
+  outside any repository (for example `E:\work\scratch`) an intermediate directory such as `E:\work` is searched and
+  a file there is not ownership-checked (a Windows ACL check is a logged follow-up). The containment check is
+  point-in-time: a link, or a whole root directory replaced by a junction/symlink, after the file was loaded is not re-examined: the
+  runtime re-checks each download against the resolved root list, but it canonicalises the root too, so a root that
+  was swapped for a link to somewhere else still passes (decision fix-1/F5: documented, not re-validated at use time;
+  an MCP server holds this window for its lifetime, a CLI command for one command, and exploiting it needs write
+  access to the tree while it runs). The between-command dialog helper applies only a flag-set policy, so a
+  config-supplied `accept`/`dismiss` takes effect at the next command, not while the CLI is idle. A typo in a
+  restrictive key (`allowedDomian`) only produces a warning, by decision, so read the warnings.
+- `SUTRADHAR_CONFIG=none` is an unconditional opt-out. `sutradhar doctor` and the MCP startup line show which file is
+  in effect.
+
 ## CLI dialog helper process
 
 The `sutradhar` CLI starts one small detached helper process per session (the "dialog warden") so a
