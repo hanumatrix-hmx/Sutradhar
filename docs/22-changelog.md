@@ -24,9 +24,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 Nothing yet.
 
-## [0.6.0] - unreleased
+## [0.6.0] - 2026-10-03
 
-Prepared on branch `release/0.6.0`; the date and the published-to-npm line are filled in after `npm publish`.
+Published to npm as `sutradhar@0.6.0` on 2026-10-03.
 Contents: the verification contract (FR2-07, **PARTIAL**: ships with the documented `expect.text` limits), condition
 waits and settle (FR2-08, DONE) and the `.sutradhar.json` project config (FR2-14, DONE). The action-history privacy
 work (FR2-11) did not pass its audits and is **not** in this release. Items still blocked from Field Report 2
