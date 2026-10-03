@@ -482,4 +482,13 @@ describe('N1: source-level guard - no file-derived value is interpolated into a 
     expect(read('project-config.ts')).toMatch(/from '\.\/echo\.js'/);
     expect(read('fs-roots.ts')).toMatch(/from '\.\/echo\.js'/);
   });
+
+  it('A3-1: the runtime refusals that list configured roots/domains (runtime.ts, browser-action-engine.ts) go through echoList, and echo.ts is a re-export of the ONE implementation in @sutradhar/utils', () => {
+    expect(read('runtime.ts')).toMatch(/echoList\(this\.allowedUploadRoots, true\)/);
+    expect(read('runtime.ts')).toMatch(/echoList\(this\.allowedDomains!\)/);
+    const engine = readFileSync(path.join(srcDir, '..', '..', 'browser', 'src', 'actions', 'browser-action-engine.ts'), 'utf8');
+    expect(engine.match(/echoList\(this\.allowed(Upload|Download)Roots, true\)/g)).toHaveLength(2);
+    expect(read('echo.ts')).toMatch(/from '@sutradhar\/utils'/);
+    expect(read('echo.ts')).not.toMatch(/function echo/); // no second implementation
+  });
 });

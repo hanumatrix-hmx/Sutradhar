@@ -242,3 +242,62 @@ describe('N2: the home boundary holds for every cwd topology x file location x l
     expect(d2.path).toBe(path.join(b!.S, 'top', CFG));
   });
 });
+
+// ───────────────────────── A3-2: HOME is itself a link, plus a link inside home pointing ABOVE home ─────────────────────────
+// Audit-3 mutant M4 (the above-home test compares against the LITERAL home instead of the canonical
+// one) passed every cell above, because they all use a real home path. Here homedir is a link:
+//   S/top/home/w/k   real project directory inside home
+//   S/hl             link -> S/top/home          (this is HOME, as the user spelled it)
+//   S/hl/w/k/l1      link -> S/top               (an in-home link whose target is ABOVE the real home)
+// cwd = S/hl/w/k/l1, homedir = S/hl. The real location of the cwd (S/top) is strictly above the real
+// home, so it must never be searched; a literal comparison (S/hl vs S/top) cannot see that.
+describe('A3-2: HOME is a link and an in-home link points above the real home (topology cell "E")', () => {
+  type HPlace = 'above' | 'k' | 'home' | 'none';
+  const HPLACES: HPlace[] = ['above', 'k', 'home', 'none'];
+  const expected: Record<HPlace, HPlace | undefined> = { above: undefined, k: 'k', home: 'home', none: undefined };
+  let ran = 0;
+  const skipped: LinkType[] = [];
+  for (const linkType of ['junction', 'dir'] as LinkType[]) {
+    for (const place of HPLACES) {
+      it(`E ${linkType} file@${place}`, async () => {
+        const S = path.join(tmpRoot, `e${n++}`);
+        mkdirSync(path.join(S, '.git'), { recursive: true });
+        mkdirSync(path.join(S, 'top', 'home', 'w', 'k'), { recursive: true });
+        try {
+          symlinkSync(path.join(S, 'top', 'home'), path.join(S, 'hl'), linkType);
+          symlinkSync(path.join(S, 'top'), path.join(S, 'hl', 'w', 'k', 'l1'), linkType);
+        } catch {
+          if (!skipped.includes(linkType)) skipped.push(linkType);
+          return;
+        }
+        ran++;
+        const dirOf: Record<HPlace, string | undefined> = {
+          above: path.join(S, 'top'),
+          k: path.join(S, 'top', 'home', 'w', 'k'),
+          home: path.join(S, 'top', 'home'),
+          none: undefined,
+        };
+        const d = dirOf[place];
+        if (d !== undefined) writeFileSync(path.join(d, CFG), JSON.stringify({ allowedDomains: [`${place}.test`] }));
+        const cwd = path.join(S, 'hl', 'w', 'k', 'l1');
+        const home = path.join(S, 'hl');
+        const r = await findProjectConfigPath(cwd, { homedir: home });
+        const got = r.path === undefined ? undefined : realpathSync(r.path);
+        const want = expected[place];
+        const wantPath = want === undefined ? undefined : realpathSync(path.join(dirOf[want]!, CFG));
+        const o = oracle(cwd, home);
+        const label = `E / ${linkType} / file@${place}`;
+        expect({ label, oracle: o.loaded, loader: got }).toEqual({ label, oracle: wantPath, loader: wantPath });
+        // never even looked at: nothing whose real directory is the dir above the real home
+        const above = realpathSync(path.join(S, 'top'));
+        for (const c of r.searched) expect(realpathSync(path.dirname(c)), `${label}: searched ${c}`).not.toBe(above);
+        if (got === undefined) expect(r.stoppedAt).toBe('home');
+      });
+    }
+  }
+  it('is not vacuous: the cells ran (or the link type is reported unavailable)', () => {
+    const want = (['junction', 'dir'] as LinkType[]).filter((t) => !skipped.includes(t)).length * HPLACES.length;
+    expect(ran).toBe(want);
+    expect(ran).toBeGreaterThanOrEqual(HPLACES.length); // junctions work without privilege on Windows
+  });
+});

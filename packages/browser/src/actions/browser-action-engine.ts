@@ -11,6 +11,7 @@ import { access } from 'node:fs/promises';
 import { EventBus } from '@sutradhar/events';
 import { StructuredLogger } from '@sutradhar/observability';
 import { SessionId } from '@sutradhar/contracts';
+import { echoList } from '@sutradhar/utils';
 import { Browser, CDPSession, ElementHandle, Frame, KeyInput, Page } from 'puppeteer-core';
 import { IBrowserTab } from '../session/browser-tab.js';
 import { ExecutionVerifier, failedVerification, specKeys } from '../verifier/execution-verifier.js';
@@ -280,7 +281,7 @@ export class BrowserActionEngine implements IBrowserActionEngine {
     if (hit) return;
     throw new Error(
       `Upload file "${filePath}" is outside the allowed upload directories ` +
-        `(${this.allowedUploadRoots.join(', ')})${why}.`,
+        `(${echoList(this.allowedUploadRoots, true)})${why}.`,
     );
   }
 
@@ -314,7 +315,7 @@ export class BrowserActionEngine implements IBrowserActionEngine {
 
     throw new Error(
       `downloadDir "${requested ?? resolved}" is outside the allowed download directories ` +
-        `(${this.allowedDownloadRoots.join(', ')})${why}. Pass a path under one of these, or configure more ` +
+        `(${echoList(this.allowedDownloadRoots, true)})${why}. Pass a path under one of these, or configure more ` +
         'roots (SutradharRuntimeOptions.allowedDownloadRoots; SUTRADHAR_ALLOWED_DOWNLOAD_ROOTS for the ' +
         'sutradhar-mcp server and CLI).',
     );

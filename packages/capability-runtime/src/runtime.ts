@@ -60,7 +60,7 @@ import { access, stat } from 'node:fs/promises';
 import { createSessionId, createTabId } from '@sutradhar/contracts';
 import { EventBus } from '@sutradhar/events';
 import { type StructuredLogger } from '@sutradhar/observability';
-import { RateLimiter } from '@sutradhar/utils';
+import { RateLimiter, echoList } from '@sutradhar/utils';
 import type {
   ActionExpectation,
   ActionResult,
@@ -2127,7 +2127,7 @@ export class SutradharRuntime {
     if (hit) return;
     throw new Error(
       `Upload file "${filePath}" is outside the allowed upload directories ` +
-        `(${this.allowedUploadRoots.join(', ')})${why}.`,
+        `(${echoList(this.allowedUploadRoots, true)})${why}.`,
     );
   }
 
@@ -2900,7 +2900,7 @@ export class SutradharRuntime {
       if (!allowed) {
         throw new Error(
           `Navigation to "${url}" was blocked: allowedDomains is configured and "${host}" is not in ` +
-            `the allowlist (${this.allowedDomains!.join(', ')}). This is a safety guardrail — add the ` +
+            `the allowlist (${echoList(this.allowedDomains!)}). This is a safety guardrail — add the ` +
             'domain to allowedDomains if this navigation is expected.',
         );
       }

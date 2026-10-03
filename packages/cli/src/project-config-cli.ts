@@ -17,6 +17,7 @@ import {
   fsRootsConfigLayer,
   resolveViewport,
   isLayerSet,
+  echoPath,
   type LoadedProjectConfig,
   type ConfigDiscovery,
   type ProjectConfigError,
@@ -73,18 +74,27 @@ export interface CliSettings {
 /** The single place the CLI resolves a setting that a project config can supply. */
 export function resolveCliSettings(i: CliSettingsInput): CliSettings {
   const fromCfg = cliDialogFromConfig(i.config);
+  // A3-4: `download <ref> <dir>` over a refused discovered root: the <dir> replaces the refused roots,
+  // so announce it with the same N8 note the env/option layers print (resolveFsRoots cannot see it).
+  const dirOverridesRefusal = !!i.config && isLayerSet(i.extraDownloadRoots) && i.config.downloadRefusal !== undefined;
+  const fsRoots = resolveFsRoots({
+    env: i.env,
+    config: fsRootsConfigLayer(
+      dirOverridesRefusal
+        ? { ...i.config!, resolved: { ...i.config!.resolved, allowedDownloadRoots: undefined }, downloadRefusal: undefined }
+        : i.config,
+    ),
+    platform: i.platform,
+    homedir: i.homedir,
+  });
+  if (dirOverridesRefusal) {
+    fsRoots.warnings.push(
+      `the download roots in the project config in ${echoPath(i.config!.baseDir)} were refused (outside its directory or inside .git) and are overridden by the download <dir> argument`,
+    );
+  }
   return {
     allowedDomains: resolveAllowedDomains({ flag: i.flags.allowlistDomains, env: i.env, config: i.config }),
-    fsRoots: resolveFsRoots({
-      env: i.env,
-      config: fsRootsConfigLayer(
-        i.config && isLayerSet(i.extraDownloadRoots) && i.config.downloadRefusal !== undefined
-          ? { ...i.config, resolved: { ...i.config.resolved, allowedDownloadRoots: undefined }, downloadRefusal: undefined }
-          : i.config,
-      ),
-      platform: i.platform,
-      homedir: i.homedir,
-    }),
+    fsRoots,
     viewport: resolveViewport({ flag: i.flags.viewport, state: i.state?.viewport, config: i.config }),
     dialog: resolveDialogPolicyDetailed(i.flags.dialog, i.flags.dialogText, i.state, fromCfg.policy),
     warnings: fromCfg.warnings,

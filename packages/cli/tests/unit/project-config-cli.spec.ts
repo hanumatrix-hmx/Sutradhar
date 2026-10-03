@@ -299,6 +299,24 @@ describe('fix-1 F1/F2/F8: on the CLI a layer above the file always wins (generat
     }
   }
 
+  it('A3-4: `download <ref> <dir>` over a refused discovered root announces the override (same note as env/option); a good file and no <dir> add no note', async () => {
+    for (const bad of [{ downloadDir: '../out' }, { allowedDownloadRoots: ['.git'] }]) {
+      const c = await realConfig(bad);
+      for (const env of [{}, { [DOWNLOAD_ROOTS_ENV]: ENV_DL }]) {
+        const s = resolveCliSettings({ flags: {}, env, config: c, extraDownloadRoots: [EXTRA_DL] });
+        const notes = s.fsRoots.warnings.filter((w) => /were refused .* overridden by the download <dir> argument/.test(w));
+        expect(notes, JSON.stringify({ bad, env })).toHaveLength(1);
+        expect(notes[0]).toContain('project config in');
+        expect(notes[0]!.includes('\n')).toBe(false);
+      }
+      // no <dir>: still the fail-closed refusal, no note
+      expect(() => resolveCliSettings({ flags: {}, env: {}, config: c })).toThrow();
+    }
+    const good = await realConfig({ downloadDir: './dl' });
+    const s = resolveCliSettings({ flags: {}, env: {}, config: good, extraDownloadRoots: [EXTRA_DL] });
+    expect(s.fsRoots.warnings.filter((w) => /overridden by/.test(w))).toEqual([]);
+  });
+
   it('every non-download key: flag / env / both beat a file in each state; null flags are unset (F2)', async () => {
     const files: Array<[string, object, (s: ReturnType<typeof resolveCliSettings>) => unknown, unknown, Partial<CliSettingsInput>, unknown]> = [
       ['allowedDomains', { allowedDomains: ['1'] }, (s) => s.allowedDomains.value, ['f.test'], { flags: { allowlistDomains: ['f.test'] }, env: { [ALLOWED_DOMAINS_ENV]: 'e.test' } }, ['f.test']],
