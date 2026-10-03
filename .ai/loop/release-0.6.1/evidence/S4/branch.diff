@@ -1,0 +1,651 @@
+diff --git a/packages/cli/src/cli.ts b/packages/cli/src/cli.ts
+index 4e87935..c6eee03 100644
+--- a/packages/cli/src/cli.ts
++++ b/packages/cli/src/cli.ts
+@@ -24,6 +24,7 @@ import { formatAuditText, auditNotes, auditExitCode } from './audit-output.js';
+ import { dialogOutputSink, dialogBlockedJsonDoc, printDialogBlockedJsonOnce, writeJsonStdoutOnce } from './dialog-json-routing.js';
+ import { readState, writeState, clearState, STATE_DIR, type CliState } from './state.js';
+ import { spawnDetachedChrome, killChromeTree } from './spawn-chrome.js';
++import { removeSessionTempProfile, sweepStaleTempProfiles } from './temp-profile.js';
+ import { createSessionId } from '@sutradhar/contracts';
+ import { parseArgs, dialogFlagError, expectFlagError, waitForConditionFromArgs } from './parse-args.js';
+ import { waitForOutcome } from './waitfor-output.js';
+@@ -232,6 +233,9 @@ async function spawnFreshSession(
+       printErrorAndExit((err as Error).message);
+     }
+   }
++  // GAP-315: work off temp profile dirs left behind by crashed/killed sessions. Best-effort,
++  // time-boxed, and fail-closed (see temp-profile.ts for the safety rules).
++  await sweepStaleTempProfiles().catch(() => {});
+   let spawned: Awaited<ReturnType<typeof spawnDetachedChrome>>;
+   try {
+     spawned = await spawnDetachedChrome(!headed, profileUserDataDir, userAgentFlag, viewportFlag);
+@@ -257,6 +261,8 @@ async function spawnFreshSession(
+     sessionId: attached.sessionId,
+     wsEndpoint: spawned.wsEndpoint,
+     chromePid: spawned.pid,
++    userDataDir: spawned.userDataDir,
++    tempProfile: spawned.tempProfile,
+     profileName: profileFlag,
+     viewport: viewportFlag,
+     dialogPolicy,
+@@ -407,7 +413,8 @@ async function withSession<T>(
+         `Note: previous session was unreachable (${(err as Error).message}) — starting a fresh session.`,
+       );
+       await stopWarden(STATE_DIR).catch(() => {});
+-      if (state.chromePid) killChromeTree(state.chromePid);
++      if (state.chromePid) await killChromeTree(state.chromePid);
++      await cleanupSessionTempProfile(state);
+       await clearState();
+       return spawnFreshSession(runtime, { dialogPolicy: state.dialogPolicy });
+     },
+@@ -1474,6 +1481,18 @@ async function cmdDialog(sub: string | undefined, rest: string[]): Promise<void>
+ // describeUnknownDialog moved to dialog-cli.ts (FR2-04 escalation-2, GAP-253/254) — pure logic,
+ // unit-tested there instead of only via live/process-spawn scenarios.
+ 
++/** GAP-315: removes the session's auto-created temp profile dir once its Chrome has exited
++ *  (waits with a hard timeout, retries through Windows' post-exit file locks, never touches a
++ *  dir a running process still references or a named profile). A failure only warns — `close`
++ *  still succeeds, and the next session start's stale sweep retries it. */
++async function cleanupSessionTempProfile(state: CliState, warn = false): Promise<void> {
++  if (!state.tempProfile || !state.userDataDir) return;
++  const res = await removeSessionTempProfile(state.userDataDir, state.chromePid);
++  if (!res.removed && warn) {
++    console.error(`Warning: could not remove temp profile ${state.userDataDir} (${res.reason}); it will be retried at the next session start.`);
++  }
++}
++
+ async function cmdClose() {
+   const state = await readState();
+   if (!state) {
+@@ -1552,7 +1571,8 @@ async function cmdClose() {
+     // SpawnedChrome doc comment), so for a Chrome process THIS CLI spawned, runtime.shutdown()
+     // alone would leak it. Kill the actual process (and its child renderer/GPU processes). Never
+     // attaches, so it's unaffected by closeBlocked (no 180s hang risk here either way).
+-    killChromeTree(state.chromePid);
++    await killChromeTree(state.chromePid);
++    await cleanupSessionTempProfile(state, true);
+   } else if (!closeBlocked) {
+     // FR2-04 N11: this attach WOULD hang for up to 180s against a dialog-blocked page — skipped
+     // whenever the gate reported 'blocked' above.
+diff --git a/packages/cli/src/spawn-chrome.ts b/packages/cli/src/spawn-chrome.ts
+index f9d766d..29e7379 100644
+--- a/packages/cli/src/spawn-chrome.ts
++++ b/packages/cli/src/spawn-chrome.ts
+@@ -13,9 +13,8 @@
+  */
+ import { spawn } from 'node:child_process';
+ import net from 'node:net';
+-import os from 'node:os';
+-import path from 'node:path';
+ import { BrowserLauncher } from '@sutradhar/browser';
++import { createTempProfileDir, writeOwnerMarker } from './temp-profile.js';
+ 
+ async function getFreePort(): Promise<number> {
+   return new Promise((resolve, reject) => {
+@@ -36,6 +35,11 @@ export interface SpawnedChrome {
+    *  process WE spawned, something has to actually kill it, or every "sutradhar close" leaks
+    *  the Chrome process — this PID is what `close` uses to do that. */
+   pid: number;
++  /** The `--user-data-dir` Chrome was started with. */
++  userDataDir: string;
++  /** True when {@link userDataDir} is an auto-created throwaway temp dir (no `--profile`) that
++   *  `close` must remove (GAP-315). Never true for a named profile's dir. */
++  tempProfile: boolean;
+ }
+ 
+ /** Spawns a detached Chrome with remote debugging enabled and returns its browser-level CDP
+@@ -65,7 +69,8 @@ export async function spawnDetachedChrome(
+   }
+ 
+   const port = await getFreePort();
+-  const resolvedUserDataDir = userDataDir ?? path.join(os.tmpdir(), `sutradhar-cli-${Date.now()}`);
++  const tempProfile = userDataDir === undefined;
++  const resolvedUserDataDir = userDataDir ?? (await createTempProfileDir());
+   const args = [
+     `--remote-debugging-port=${port}`,
+     `--user-data-dir=${resolvedUserDataDir}`,
+@@ -80,6 +85,9 @@ export async function spawnDetachedChrome(
+   const pid = child.pid;
+   if (!pid) throw new Error('Failed to spawn Chrome — no PID returned.');
+   child.unref();
++  // Records the owning Chrome PID so a later stale sweep can tell a dead session's dir from a
++  // live one (temp-profile.ts rule 3).
++  if (tempProfile) await writeOwnerMarker(resolvedUserDataDir, pid);
+ 
+   const deadline = Date.now() + 10_000;
+   while (Date.now() < deadline) {
+@@ -87,7 +95,7 @@ export async function spawnDetachedChrome(
+       const res = await fetch(`http://127.0.0.1:${port}/json/version`);
+       if (res.ok) {
+         const info = (await res.json()) as { webSocketDebuggerUrl?: string };
+-        if (info.webSocketDebuggerUrl) return { wsEndpoint: info.webSocketDebuggerUrl, pid };
++        if (info.webSocketDebuggerUrl) return { wsEndpoint: info.webSocketDebuggerUrl, pid, userDataDir: resolvedUserDataDir, tempProfile };
+       }
+     } catch {
+       // Chrome's DevTools HTTP endpoint isn't up yet — keep polling.
+@@ -100,10 +108,21 @@ export async function spawnDetachedChrome(
+ /** Kills a Chrome process (and its child processes — a plain `process.kill(pid)` only signals
+  *  the top-level process, leaving the renderer/GPU/utility subprocesses it spawned running as
+  *  orphans) previously started by {@link spawnDetachedChrome}. Best-effort: the process may
+- *  already be gone (killed externally, crashed) — that's not an error worth surfacing. */
+-export function killChromeTree(pid: number): void {
++ *  already be gone (killed externally, crashed) — that's not an error worth surfacing.
++ *  Resolves once the kill command itself has finished (hard timeout `timeoutMs`), so a caller
++ *  can go on to wait for the process to exit and clean up its profile dir (GAP-315). */
++export async function killChromeTree(pid: number, timeoutMs = 10_000): Promise<void> {
+   if (process.platform === 'win32') {
+-    spawn('taskkill', ['/PID', String(pid), '/T', '/F'], { stdio: 'ignore' });
++    await new Promise<void>((resolve) => {
++      const tk = spawn('taskkill', ['/PID', String(pid), '/T', '/F'], { stdio: 'ignore', windowsHide: true });
++      const timer = setTimeout(resolve, timeoutMs);
++      const done = () => {
++        clearTimeout(timer);
++        resolve();
++      };
++      tk.on('exit', done);
++      tk.on('error', done);
++    });
+   } else {
+     try {
+       process.kill(-pid, 'SIGKILL'); // negative PID targets the whole process group
+diff --git a/packages/cli/src/state.ts b/packages/cli/src/state.ts
+index 5e4e13b..6d1de60 100644
+--- a/packages/cli/src/state.ts
++++ b/packages/cli/src/state.ts
+@@ -17,6 +17,11 @@ export interface CliState {
+   /** PID of the Chrome process this CLI spawned itself (undefined if the session came from
+    *  attaching to a browser the CLI didn't start) — see spawn-chrome.ts's killChromeTree. */
+   chromePid?: number;
++  /** GAP-315: the `--user-data-dir` the CLI spawned Chrome with, and whether it is an
++   *  auto-created temp dir (no `--profile`) that `close` must remove once Chrome has exited.
++   *  Named-profile dirs are recorded with `tempProfile: false` and are never removed. */
++  userDataDir?: string;
++  tempProfile?: boolean;
+   lastUrl?: string;
+   /** The --profile name this session was launched with, if any — lets `close` persist the
+    *  current storage state into that profile before killing Chrome. See cli.ts's cmdClose for
+diff --git a/packages/cli/src/temp-profile.ts b/packages/cli/src/temp-profile.ts
+new file mode 100644
+index 0000000..76973f9
+--- /dev/null
++++ b/packages/cli/src/temp-profile.ts
+@@ -0,0 +1,288 @@
++/**
++ * @file packages/cli/src/temp-profile.ts
++ * @description GAP-315: cleanup of the throwaway Chrome user-data-dirs the CLI creates
++ * (`<os.tmpdir()>/sutradhar-cli-<epochMs>[-<suffix>]`) when no `--profile` is given.
++ *
++ * Every CLI session used to leave one of these behind (each is 50-100+ MB once Chrome has run):
++ * on 2026-10-01, 299 of them (16.9 GB) filled drive E: to 0 bytes. `close` now removes its own
++ * session's dir once Chrome has exited, and every fresh spawn sweeps stale ones left by crashed
++ * or killed sessions.
++ *
++ * Safety rules (all must hold before anything is deleted — see {@link decideRemoval}):
++ *  1. The dir is an AUTO-CREATED temp profile: its basename matches the CLI's own naming
++ *     pattern AND it sits directly in the temp root. Named `--profile` dirs never match (they
++ *     live under the ProfileManager's own root, not the temp root, and have different names).
++ *  2. The running-process scan SUCCEEDED and no process has the dir on its command line
++ *     (Chrome's renderer/GPU/utility children carry `--user-data-dir=` too). A failed scan
++ *     means "unknown", and unknown means keep.
++ *  3. The dir's owning Chrome PID (from the marker file this module writes, or Chrome's own
++ *     POSIX `SingletonLock`) is not alive.
++ *  4. Stale sweeps only: the dir was last modified more than {@link STALE_MIN_AGE_MS} ago.
++ *  5. At removal time on Windows, Chrome's own exclusive `lockfile` handle is probed first: if
++ *     it can't be deleted, some process still holds the profile open and the dir is kept.
++ */
++import { execFile } from 'node:child_process';
++import { mkdtemp, readdir, readFile, readlink, rm, stat, writeFile } from 'node:fs/promises';
++import os from 'node:os';
++import path from 'node:path';
++
++export const TEMP_PROFILE_PREFIX = 'sutradhar-cli-';
++/** `sutradhar-cli-<epochMs>` (pre-GAP-315 builds) or `sutradhar-cli-<epochMs>-<mkdtemp suffix>`. */
++const TEMP_PROFILE_NAME = /^sutradhar-cli-\d{10,}(?:-[A-Za-z0-9]{1,16})?$/;
++export const OWNER_MARKER = '.sutradhar-owner.json';
++/** A stale dir must be at least this old (mtime) before a sweep may touch it. Generous on
++ *  purpose: a live session's dir is also protected by rules 2, 3 and 5; this only guards the
++ *  window where another CLI process has created a dir but not yet spawned Chrome into it. */
++export const STALE_MIN_AGE_MS = 10 * 60_000;
++
++export interface OwnerMarker {
++  chromePid: number;
++  cliPid: number;
++  createdAt: string;
++}
++
++/** Creates a fresh, uniquely named temp profile dir. `mkdtemp` adds a random suffix, so two
++ *  sessions spawned in the same millisecond no longer share one dir. */
++export async function createTempProfileDir(tmpRoot: string = os.tmpdir()): Promise<string> {
++  return mkdtemp(path.join(tmpRoot, `${TEMP_PROFILE_PREFIX}${Date.now()}-`));
++}
++
++export async function writeOwnerMarker(dir: string, chromePid: number): Promise<void> {
++  const marker: OwnerMarker = { chromePid, cliPid: process.pid, createdAt: new Date().toISOString() };
++  await writeFile(path.join(dir, OWNER_MARKER), JSON.stringify(marker), 'utf-8').catch(() => {});
++}
++
++function norm(p: string): string {
++  const r = path.resolve(p);
++  return process.platform === 'win32' ? r.toLowerCase() : r;
++}
++
++/** Rule 1. Pure. */
++export function isAutoTempProfileDir(dir: string, tmpRoot: string): boolean {
++  if (!TEMP_PROFILE_NAME.test(path.basename(dir))) return false;
++  return norm(path.dirname(dir)) === norm(tmpRoot);
++}
++
++/** Rule 2 helper. Pure. True if any command line mentions the dir's basename as a whole token
++ *  (so `sutradhar-cli-123` is not matched by a command line naming `sutradhar-cli-1234`).
++ *  Matching the basename instead of the full path is deliberately over-inclusive: it survives
++ *  8.3 short paths, slash direction and quoting differences in how the path was passed. */
++export function commandLinesReference(dir: string, commandLines: readonly string[]): boolean {
++  const base = path.basename(dir).toLowerCase();
++  for (const raw of commandLines) {
++    const line = raw.toLowerCase();
++    let i = line.indexOf(base);
++    while (i !== -1) {
++      const next = line.charAt(i + base.length);
++      if (!/[a-z0-9_-]/.test(next)) return true;
++      i = line.indexOf(base, i + 1);
++    }
++  }
++  return false;
++}
++
++export interface RemovalFacts {
++  dir: string;
++  tmpRoot: string;
++  /** Command lines of running processes, or `null` if the scan failed (fail closed). */
++  commandLines: readonly string[] | null;
++  /** Owning Chrome PID, if one is recorded. */
++  ownerPid?: number;
++  ownerAlive: boolean;
++  /** ms since last modification. */
++  ageMs: number;
++  /** 0 for `close` (we just stopped this dir's Chrome ourselves), {@link STALE_MIN_AGE_MS} for sweeps. */
++  minAgeMs: number;
++}
++
++export type RemovalDecision =
++  | { remove: true }
++  | { remove: false; reason: 'not-auto-temp' | 'scan-unavailable' | 'in-use' | 'owner-alive' | 'too-young' };
++
++/** Rules 1-4. Pure — the unit-tested core of every deletion. */
++export function decideRemoval(f: RemovalFacts): RemovalDecision {
++  if (!isAutoTempProfileDir(f.dir, f.tmpRoot)) return { remove: false, reason: 'not-auto-temp' };
++  if (f.commandLines === null) return { remove: false, reason: 'scan-unavailable' };
++  if (commandLinesReference(f.dir, f.commandLines)) return { remove: false, reason: 'in-use' };
++  if (f.ownerAlive) return { remove: false, reason: 'owner-alive' };
++  // minAgeMs 0 means "no threshold": a just-created dir's mtime can read slightly in the future.
++  if (f.minAgeMs > 0 && f.ageMs < f.minAgeMs) return { remove: false, reason: 'too-young' };
++  return { remove: true };
++}
++
++export function isPidAlive(pid: number): boolean {
++  if (!Number.isInteger(pid) || pid <= 0) return false;
++  try {
++    process.kill(pid, 0);
++    return true;
++  } catch (err) {
++    // EPERM: exists but belongs to someone else — alive.
++    return (err as NodeJS.ErrnoException).code === 'EPERM';
++  }
++}
++
++/** Polls until `pid` is gone. Hard timeout; returns whether it actually exited. */
++export async function waitForPidExit(pid: number, timeoutMs: number, alive = isPidAlive): Promise<boolean> {
++  const deadline = performance.now() + timeoutMs;
++  while (alive(pid)) {
++    if (performance.now() >= deadline) return false;
++    await new Promise((r) => setTimeout(r, 100));
++  }
++  return true;
++}
++
++/** Command lines of every running process that mentions {@link TEMP_PROFILE_PREFIX}, or `null`
++ *  if the scan failed or timed out (callers must then keep everything). */
++export async function scanCommandLines(timeoutMs = 20_000): Promise<string[] | null> {
++  const run = (file: string, args: string[]) =>
++    new Promise<string | null>((resolve) => {
++      execFile(file, args, { timeout: timeoutMs, windowsHide: true, maxBuffer: 64 * 1024 * 1024 }, (err, stdout) =>
++        resolve(err ? null : stdout),
++      );
++    });
++  if (process.platform === 'win32') {
++    const script =
++      "$ErrorActionPreference='Stop'; " +
++      `Get-CimInstance Win32_Process -Filter "CommandLine LIKE '%${TEMP_PROFILE_PREFIX}%'" | ` +
++      "ForEach-Object { $_.CommandLine }";
++    const out = await run('powershell.exe', ['-NoProfile', '-NonInteractive', '-Command', script]);
++    return out === null ? null : out.split(/\r?\n/).filter((l) => l.includes(TEMP_PROFILE_PREFIX));
++  }
++  const out = await run('ps', ['-A', '-o', 'args=']);
++  return out === null ? null : out.split('\n').filter((l) => l.includes(TEMP_PROFILE_PREFIX));
++}
++
++/** Rule 3 input: the marker's chromePid, else (POSIX) the PID in Chrome's `SingletonLock`
++ *  symlink (`<hostname>-<pid>`). */
++export async function readOwnerPid(dir: string): Promise<number | undefined> {
++  try {
++    const m = JSON.parse(await readFile(path.join(dir, OWNER_MARKER), 'utf-8')) as Partial<OwnerMarker>;
++    if (typeof m.chromePid === 'number') return m.chromePid;
++  } catch {
++    // no marker (pre-GAP-315 dir) — fall through
++  }
++  try {
++    const target = await readlink(path.join(dir, 'SingletonLock'));
++    const pid = Number(target.slice(target.lastIndexOf('-') + 1));
++    if (Number.isInteger(pid) && pid > 0) return pid;
++  } catch {
++    // not POSIX Chrome, or no lock
++  }
++  return undefined;
++}
++
++async function gatherFacts(dir: string, tmpRoot: string, commandLines: readonly string[] | null, minAgeMs: number): Promise<RemovalFacts | undefined> {
++  let mtimeMs: number;
++  try {
++    mtimeMs = (await stat(dir)).mtimeMs;
++  } catch {
++    return undefined; // already gone
++  }
++  const ownerPid = await readOwnerPid(dir);
++  return {
++    dir,
++    tmpRoot,
++    commandLines,
++    ownerPid,
++    ownerAlive: ownerPid !== undefined && isPidAlive(ownerPid),
++    ageMs: Date.now() - mtimeMs,
++    minAgeMs,
++  };
++}
++
++function isLockError(err: unknown): boolean {
++  const code = (err as NodeJS.ErrnoException).code;
++  return code === 'EBUSY' || code === 'EPERM' || code === 'EACCES' || code === 'ENOTEMPTY';
++}
++
++/** Rule 5 + the actual delete, retried until `deadline` (performance.now() ms) because Windows
++ *  keeps file handles open briefly after Chrome exits. */
++async function removeWithRetries(dir: string, deadline: number): Promise<{ removed: boolean; error?: string }> {
++  let lastErr: unknown;
++  do {
++    try {
++      if (process.platform === 'win32') {
++        // Chrome holds `lockfile` open exclusively for the profile's whole lifetime: if it
++        // can't be removed, the profile is still open — don't start tearing the dir apart.
++        await rm(path.join(dir, 'lockfile'), { force: true });
++      }
++      await rm(dir, { recursive: true, force: true });
++      return { removed: true };
++    } catch (err) {
++      lastErr = err;
++      if (!isLockError(err)) break;
++    }
++    await new Promise((r) => setTimeout(r, 250));
++  } while (performance.now() < deadline);
++  return { removed: false, error: (lastErr as Error)?.message ?? String(lastErr) };
++}
++
++export interface CloseCleanupResult {
++  removed: boolean;
++  /** Why the dir was kept, if it was. */
++  reason?: string;
++}
++
++/**
++ * `close` path: waits for this session's Chrome to exit (hard timeout), re-checks every safety
++ * rule, then removes the dir with retries. Never throws.
++ */
++export async function removeSessionTempProfile(
++  dir: string,
++  chromePid: number | undefined,
++  opts: { tmpRoot?: string; exitTimeoutMs?: number; removeTimeoutMs?: number; scan?: typeof scanCommandLines } = {},
++): Promise<CloseCleanupResult> {
++  const tmpRoot = opts.tmpRoot ?? os.tmpdir();
++  if (!isAutoTempProfileDir(dir, tmpRoot)) return { removed: false, reason: 'not-auto-temp' };
++  if (chromePid !== undefined && !(await waitForPidExit(chromePid, opts.exitTimeoutMs ?? 10_000))) {
++    return { removed: false, reason: `Chrome (pid ${chromePid}) did not exit in time` };
++  }
++  const facts = await gatherFacts(dir, tmpRoot, await (opts.scan ?? scanCommandLines)(), 0);
++  if (!facts) return { removed: true }; // nothing there
++  const decision = decideRemoval(facts);
++  if (!decision.remove) return { removed: false, reason: decision.reason };
++  const res = await removeWithRetries(dir, performance.now() + (opts.removeTimeoutMs ?? 15_000));
++  return res.removed ? { removed: true } : { removed: false, reason: res.error };
++}
++
++export interface SweepResult {
++  removed: string[];
++  kept: { dir: string; reason: string }[];
++}
++
++/**
++ * Session-start path: removes stale auto-created temp profiles under the same rules, with the
++ * age threshold. Bounded by `budgetMs` overall (a huge backlog is worked off over several
++ * sessions rather than stalling one command). Never throws.
++ */
++export async function sweepStaleTempProfiles(
++  opts: { tmpRoot?: string; budgetMs?: number; minAgeMs?: number; scan?: typeof scanCommandLines } = {},
++): Promise<SweepResult> {
++  const tmpRoot = opts.tmpRoot ?? os.tmpdir();
++  const deadline = performance.now() + (opts.budgetMs ?? 15_000);
++  const result: SweepResult = { removed: [], kept: [] };
++  let names: string[];
++  try {
++    names = (await readdir(tmpRoot)).filter((n) => n.startsWith(TEMP_PROFILE_PREFIX));
++  } catch {
++    return result;
++  }
++  const candidates = names.map((n) => path.join(tmpRoot, n)).filter((d) => isAutoTempProfileDir(d, tmpRoot));
++  if (candidates.length === 0) return result;
++  const commandLines = await (opts.scan ?? scanCommandLines)();
++  for (const dir of candidates) {
++    if (performance.now() >= deadline) break;
++    const facts = await gatherFacts(dir, tmpRoot, commandLines, opts.minAgeMs ?? STALE_MIN_AGE_MS);
++    if (!facts) continue;
++    const decision = decideRemoval(facts);
++    if (!decision.remove) {
++      result.kept.push({ dir, reason: decision.reason });
++      continue;
++    }
++    // Short per-dir retry window: a stale dir has no Chrome that just exited.
++    const res = await removeWithRetries(dir, Math.min(deadline, performance.now() + 1_000));
++    if (res.removed) result.removed.push(dir);
++    else result.kept.push({ dir, reason: res.error ?? 'remove failed' });
++  }
++  return result;
++}
+diff --git a/packages/cli/tests/unit/temp-profile.spec.ts b/packages/cli/tests/unit/temp-profile.spec.ts
+new file mode 100644
+index 0000000..8f7cfc7
+--- /dev/null
++++ b/packages/cli/tests/unit/temp-profile.spec.ts
+@@ -0,0 +1,184 @@
++/**
++ * @file packages/cli/tests/unit/temp-profile.spec.ts
++ * @description GAP-315: the deletion safety rules for the CLI's auto-created Chrome temp
++ * profiles (`decideRemoval` and its helpers), plus the close/sweep paths against a real scratch
++ * temp root with injected process scans.
++ */
++import { mkdir, mkdtemp, rm, stat, utimes, writeFile } from 'node:fs/promises';
++import os from 'node:os';
++import path from 'node:path';
++import {
++  commandLinesReference,
++  createTempProfileDir,
++  decideRemoval,
++  isAutoTempProfileDir,
++  OWNER_MARKER,
++  readOwnerPid,
++  removeSessionTempProfile,
++  STALE_MIN_AGE_MS,
++  sweepStaleTempProfiles,
++  waitForPidExit,
++  writeOwnerMarker,
++  type RemovalFacts,
++} from '../../src/temp-profile.js';
++
++const ROOT = path.resolve(os.tmpdir(), 'root-for-rules');
++const DIR = path.join(ROOT, 'sutradhar-cli-1790798002107-AbC123');
++
++function facts(over: Partial<RemovalFacts> = {}): RemovalFacts {
++  return { dir: DIR, tmpRoot: ROOT, commandLines: [], ownerAlive: false, ageMs: STALE_MIN_AGE_MS + 1, minAgeMs: STALE_MIN_AGE_MS, ...over };
++}
++
++const exists = (p: string) => stat(p).then(() => true, () => false);
++
++describe('isAutoTempProfileDir (rule 1)', () => {
++  it('accepts legacy and mkdtemp-suffixed names directly in the temp root', () => {
++    expect(isAutoTempProfileDir(path.join(ROOT, 'sutradhar-cli-1790798002107'), ROOT)).toBe(true);
++    expect(isAutoTempProfileDir(DIR, ROOT)).toBe(true);
++  });
++  it('rejects named profiles, nested dirs, other roots and look-alikes', () => {
++    expect(isAutoTempProfileDir(path.join(os.homedir(), '.sutradhar', 'profiles', 'work'), ROOT)).toBe(false);
++    expect(isAutoTempProfileDir(path.join(ROOT, 'work'), ROOT)).toBe(false);
++    expect(isAutoTempProfileDir(path.join(ROOT, 'nested', 'sutradhar-cli-1790798002107'), ROOT)).toBe(false);
++    expect(isAutoTempProfileDir(path.join(ROOT + '-other', 'sutradhar-cli-1790798002107'), ROOT)).toBe(false);
++    expect(isAutoTempProfileDir(path.join(ROOT, 'sutradhar-cli-'), ROOT)).toBe(false);
++    expect(isAutoTempProfileDir(path.join(ROOT, 'sutradhar-cli-abc'), ROOT)).toBe(false);
++    expect(isAutoTempProfileDir(path.join(ROOT, 'sutradhar-cli-1790798002107-x', '..', '..'), ROOT)).toBe(false);
++    expect(isAutoTempProfileDir(ROOT, ROOT)).toBe(false);
++  });
++});
++
++describe('commandLinesReference (rule 2 matcher)', () => {
++  it('matches the basename as a whole token, case-insensitively, whatever the path form', () => {
++    expect(commandLinesReference(DIR, ['chrome.exe --user-data-dir=C:\\TEMP\\SUTRADHAR-CLI-1790798002107-AbC123 --type=renderer'])).toBe(true);
++    expect(commandLinesReference(DIR, ['chrome --user-data-dir="/tmp/sutradhar-cli-1790798002107-AbC123"'])).toBe(true);
++  });
++  it('does not match a longer name that merely starts with it', () => {
++    const legacy = path.join(ROOT, 'sutradhar-cli-1790798002107');
++    expect(commandLinesReference(legacy, ['chrome --user-data-dir=E:\\tmp\\sutradhar-cli-1790798002107-AbC123'])).toBe(false);
++    expect(commandLinesReference(legacy, ['chrome --user-data-dir=E:\\tmp\\sutradhar-cli-17907980021079'])).toBe(false);
++    expect(commandLinesReference(legacy, ['x sutradhar-cli-17907980021079 y --user-data-dir=E:\\tmp\\sutradhar-cli-1790798002107'])).toBe(true);
++  });
++});
++
++describe('decideRemoval', () => {
++  it('removes only when every rule holds', () => {
++    expect(decideRemoval(facts())).toEqual({ remove: true });
++  });
++  it('keeps a named/non-temp dir even when everything else says remove', () => {
++    expect(decideRemoval(facts({ dir: path.join(ROOT, 'my-profile') }))).toEqual({ remove: false, reason: 'not-auto-temp' });
++  });
++  it('fails closed when the process scan failed', () => {
++    expect(decideRemoval(facts({ commandLines: null }))).toEqual({ remove: false, reason: 'scan-unavailable' });
++  });
++  it('keeps a dir a running process has on its command line, even if the owner PID is dead and it is old', () => {
++    expect(decideRemoval(facts({ commandLines: [`chrome --user-data-dir=${DIR}`], ageMs: 1e9 }))).toEqual({ remove: false, reason: 'in-use' });
++  });
++  it('keeps a dir whose owning Chrome PID is alive', () => {
++    expect(decideRemoval(facts({ ownerPid: 123, ownerAlive: true }))).toEqual({ remove: false, reason: 'owner-alive' });
++  });
++  it('keeps a dir younger than the threshold', () => {
++    expect(decideRemoval(facts({ ageMs: STALE_MIN_AGE_MS - 1 }))).toEqual({ remove: false, reason: 'too-young' });
++    expect(decideRemoval(facts({ ageMs: 0, minAgeMs: 0 }))).toEqual({ remove: true });
++    expect(decideRemoval(facts({ ageMs: -5, minAgeMs: 0 }))).toEqual({ remove: true });
++  });
++});
++
++describe('waitForPidExit', () => {
++  it('returns false at the hard timeout for a PID that never exits', async () => {
++    const t0 = performance.now();
++    expect(await waitForPidExit(1, 300, () => true)).toBe(false);
++    expect(performance.now() - t0).toBeLessThan(5_000);
++  });
++  it('returns true once the PID is gone', async () => {
++    let n = 0;
++    expect(await waitForPidExit(1, 5_000, () => ++n < 3)).toBe(true);
++  });
++});
++
++describe('filesystem paths (scratch temp root)', () => {
++  let root: string;
++  beforeEach(async () => {
++    root = await mkdtemp(path.join(os.tmpdir(), 'gap315-spec-'));
++  });
++  afterEach(async () => {
++    await rm(root, { recursive: true, force: true });
++  });
++
++  async function oldDir(name: string): Promise<string> {
++    const d = path.join(root, name);
++    await mkdir(path.join(d, 'Default'), { recursive: true });
++    await writeFile(path.join(d, 'Default', 'Preferences'), '{}');
++    const past = new Date(Date.now() - 2 * STALE_MIN_AGE_MS);
++    await utimes(d, past, past);
++    return d;
++  }
++
++  it('createTempProfileDir makes unique, rule-1-matching dirs; the marker round-trips', async () => {
++    const a = await createTempProfileDir(root);
++    const b = await createTempProfileDir(root);
++    expect(a).not.toBe(b);
++    expect(isAutoTempProfileDir(a, root)).toBe(true);
++    await writeOwnerMarker(a, 4242);
++    expect(await readOwnerPid(a)).toBe(4242);
++  });
++
++  it('sweep removes only stale, unreferenced, dead-owner temp dirs', async () => {
++    const stale = await oldDir('sutradhar-cli-1790000000001');
++    const inUse = await oldDir('sutradhar-cli-1790000000002');
++    const liveOwner = await oldDir('sutradhar-cli-1790000000003-Zz9');
++    await writeFile(path.join(liveOwner, OWNER_MARKER), JSON.stringify({ chromePid: process.pid }));
++    const young = path.join(root, 'sutradhar-cli-1790000000004');
++    await mkdir(young);
++    const named = await oldDir('work-profile');
++    const scan = async () => [`chrome.exe --user-data-dir=${inUse} --type=gpu-process`];
++
++    const res = await sweepStaleTempProfiles({ tmpRoot: root, scan });
++
++    expect(res.removed).toEqual([stale]);
++    expect(Object.fromEntries(res.kept.map((k) => [path.basename(k.dir), k.reason]))).toEqual({
++      'sutradhar-cli-1790000000002': 'in-use',
++      'sutradhar-cli-1790000000003-Zz9': 'owner-alive',
++      'sutradhar-cli-1790000000004': 'too-young',
++    });
++    expect(await exists(stale)).toBe(false);
++    for (const d of [inUse, liveOwner, young, named]) expect(await exists(d)).toBe(true);
++  });
++
++  it('sweep deletes nothing when the process scan fails', async () => {
++    const stale = await oldDir('sutradhar-cli-1790000000001');
++    const res = await sweepStaleTempProfiles({ tmpRoot: root, scan: async () => null });
++    expect(res.removed).toEqual([]);
++    expect(await exists(stale)).toBe(true);
++  });
++
++  it('close removes its own fresh temp dir (no age threshold) once the owner is gone', async () => {
++    const d = await createTempProfileDir(root);
++    await writeFile(path.join(d, 'lockfile'), '');
++    const res = await removeSessionTempProfile(d, undefined, { tmpRoot: root, scan: async () => [] });
++    expect(res).toEqual({ removed: true });
++    expect(await exists(d)).toBe(false);
++  });
++
++  it('close never removes a dir still referenced by a running process', async () => {
++    const d = await createTempProfileDir(root);
++    const res = await removeSessionTempProfile(d, undefined, { tmpRoot: root, scan: async () => [`chrome --user-data-dir=${d}`] });
++    expect(res).toEqual({ removed: false, reason: 'in-use' });
++    expect(await exists(d)).toBe(true);
++  });
++
++  it('close never removes a named profile dir', async () => {
++    const d = await oldDir('work-profile');
++    const res = await removeSessionTempProfile(d, undefined, { tmpRoot: root, scan: async () => [] });
++    expect(res).toEqual({ removed: false, reason: 'not-auto-temp' });
++    expect(await exists(d)).toBe(true);
++  });
++
++  it('close keeps the dir if Chrome does not exit within the timeout', async () => {
++    const d = await createTempProfileDir(root);
++    const res = await removeSessionTempProfile(d, process.pid, { tmpRoot: root, exitTimeoutMs: 200, scan: async () => [] });
++    expect(res.removed).toBe(false);
++    expect(res.reason).toMatch(/did not exit in time/);
++    expect(await exists(d)).toBe(true);
++  });
++});

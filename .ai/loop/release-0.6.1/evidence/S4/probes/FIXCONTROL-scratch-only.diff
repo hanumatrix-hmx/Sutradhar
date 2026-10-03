@@ -1,0 +1,32 @@
+--- mod/temp-profile.ts	2026-10-04 04:48:40.604252700 +0530
++++ modfix/temp-profile.ts	2026-10-04 05:09:21.796996800 +0530
+@@ -22,7 +22,7 @@
+  *     it can't be deleted, some process still holds the profile open and the dir is kept.
+  */
+ import { execFile } from 'node:child_process';
+-import { mkdtemp, readdir, readFile, readlink, rm, stat, writeFile } from 'node:fs/promises';
++import { lstat, mkdtemp, readdir, readFile, readlink, rm, stat, writeFile } from 'node:fs/promises';
+ import os from 'node:os';
+ import path from 'node:path';
+ 
+@@ -146,10 +146,10 @@
+       `Get-CimInstance Win32_Process -Filter "CommandLine LIKE '%${TEMP_PROFILE_PREFIX}%'" | ` +
+       "ForEach-Object { $_.CommandLine }";
+     const out = await run('powershell.exe', ['-NoProfile', '-NonInteractive', '-Command', script]);
+-    return out === null ? null : out.split(/\r?\n/).filter((l) => l.includes(TEMP_PROFILE_PREFIX));
++    return out === null ? null : out.split(/\r?\n/).filter((l) => l.toLowerCase().includes(TEMP_PROFILE_PREFIX));
+   }
+   const out = await run('ps', ['-A', '-o', 'args=']);
+-  return out === null ? null : out.split('\n').filter((l) => l.includes(TEMP_PROFILE_PREFIX));
++  return out === null ? null : out.split('\n').filter((l) => l.toLowerCase().includes(TEMP_PROFILE_PREFIX));
+ }
+ 
+ /** Rule 3 input: the marker's chromePid, else (POSIX) the PID in Chrome's `SingletonLock`
+@@ -199,6 +199,7 @@
+  *  keeps file handles open briefly after Chrome exits. */
+ async function removeWithRetries(dir: string, deadline: number): Promise<{ removed: boolean; error?: string }> {
+   let lastErr: unknown;
++  try { const st = await lstat(dir); if (st.isSymbolicLink() || !st.isDirectory()) return { removed: false, error: "not a real directory" }; } catch (e) { return { removed: false, error: String(e) }; }
+   do {
+     try {
+       if (process.platform === 'win32') {

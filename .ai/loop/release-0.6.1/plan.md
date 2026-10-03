@@ -1,6 +1,6 @@
 # Release 0.6.1 plan (patch): bundled-dependency security fix, GAP-315 merge after audit, GAP-349, FR2-11 ledger fix, release prep
 
-Planner: Claude Opus 5.5, 2026-10-04. **Revision 7.** Review-5 approved revision 5, and revision 6 resolved its 10 MINOR
+Planner: Claude Opus 5.5, 2026-10-04. **Revision 7 + Addendum A (post-S4, final section).** Review-5 approved revision 5, and revision 6 resolved its 10 MINOR
 findings (section 12). Review-6 approved revision 6. Revision 7 resolves review-6's five MINOR findings, A-E, in section
 13. Each earlier review's resolutions are mapped in its own section:
 
@@ -354,7 +354,7 @@ C5-live(b), C5-live(c), and X1.
    - ACCEPT, or REOPEN with small fixes: go to S5.
 2. A blocking FAIL may exist in the branch only between S5 and the S6 commit that fixes it. While it does, the CLI runs
    only under the preamble, and nothing is pushed.
-3. **S8 re-runs every S4 probe** from `$EV/S4/probes.sha256`. Changes are allowed only for API adaptation, and each one
+3. *(For the S4 probes, superseded by Addendum A.5.)* **S8 re-runs every S4 probe** from `$EV/S4/probes.sha256`. Changes are allowed only for API adaptation, and each one
    must be listed in `$EV/S8/probe-diffs.md`. No assertion may be weakened. Every previously failing probe must pass.
 4. **Escalation (global rule).** Count every independent audit failure of the GAP-315/349 work (S4, S8, re-audits):
    - #1: fix it.
@@ -567,7 +567,7 @@ for v in 18 20 22; do echo "node$v=$(timeout 300 npx --yes node@$v -p process.ex
 seam, so every probe logs each path it passes to or receives from the module as `[cleanup] probe path="<abs>"`.
 `check-cleanup-paths` therefore applies to S4 as well.
 
-**WSL runtime** (Node 20.20.2). The orchestrator captures `D` from the first call's stdout and pastes it literally into
+**WSL runtime** (Node 20.20.2). *(Superseded for S6-S8 by Addendum A.6 P1/P2: self-contained calls, `MSYS_NO_PATHCONV=1`.)* The orchestrator captures `D` from the first call's stdout and pastes it literally into
 the later calls:
 ```bash
 timeout 300 wsl.exe -e sh -c 'D=$(mktemp -d) && cp "/mnt/e/AI-Cache/tmp/claude/E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/S4/mod/temp-profile.mjs" "/mnt/e/AI-Cache/tmp/claude/E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/S4/"*.mjs "$D"/ && echo "$D"'
@@ -655,7 +655,7 @@ grep -c "TS6059" "$EV/S5/spec-tsc-baseline.txt"     # must be 0 (no rootDir opti
 ```
 **AC**
 - S5-1: `git diff --name-only HEAD^1 HEAD | wc -l` = 11, all of them branch hunks.
-- S5-2: tsc is clean. cli tests = S1 + 19, 0 failures. `temp-profile.spec.ts` is in the log, and
+- S5-2 *(expected total: 262 tests in 17 files, Addendum A.5 item 7)*: tsc is clean. cli tests = S1 + 19, 0 failures. `temp-profile.spec.ts` is in the log, and
   `project-config-cli.spec.ts` passes.
 - S5-3 (C6): every `sweepStaleTempProfiles(` and `removeSessionTempProfile(` call in the specs passes `tmpRoot`.
 - S5-4: the guard line is present. The merged branch code has no seam yet, so `check-cleanup-paths` is recorded as
@@ -707,7 +707,7 @@ export const SWEEP_PER_DIR_RETRY_MS = 1_000;
 - `opts` is `{ tmpRoot?, scan?, rmFn?, deadlineAt?, deadlineMs?, isAlive? }`.
 - `isAlive` defaults to `isPidAlive`, which is the read-only `process.kill(pid, 0)`. It is the single liveness seam,
   used both by the exit wait and by the `ownerAlive` fact. S6c's G3 and G3b depend on it.
-- `exitTimeoutMs` and `removeTimeoutMs` are **removed**. The branch test "close keeps the dir if Chrome does not exit
+- *(Superseded by Addendum A.4: both options stay as optional caps clamped to the deadline; the branch test stays unchanged.)* `exitTimeoutMs` and `removeTimeoutMs` are **removed**. The branch test "close keeps the dir if Chrome does not exit
   within the timeout" moves to `deadlineMs: 300`.
 - Every phase is clamped to the remaining time (`rem`):
   - the exit wait is `min(EXIT_WAIT_CAP_MS, rem)`. It is a read-only `process.kill(pid, 0)` poll and never kills.
@@ -791,7 +791,7 @@ semantics are unchanged: it is the same program with the same arguments.
 - S6a-1: T1-T8 and T6b pass.
 - S6a-2: all 6 mutants fail.
 - S6a-3: `grep -nE "_000\b" packages/cli/src/temp-profile.ts` prints exactly the 7 constant lines.
-- S6a-4: `grep -nE "['\"](powershell(\.exe)?|taskkill(\.exe)?|ps)['\"]" packages/cli/src/*.ts | grep -v "^packages/cli/src/system-binaries.ts:"`
+- S6a-4 *(plus the live `win-plant` run on v18/v20/v22/v25, Addendum A.2 S6e-3)*: `grep -nE "['\"](powershell(\.exe)?|taskkill(\.exe)?|ps)['\"]" packages/cli/src/*.ts | grep -v "^packages/cli/src/system-binaries.ts:"`
   **prints nothing**. Any other match must be listed and justified as not being an executable invocation.
 - S6a-5: the spec typecheck passes per the S6 rules.
 - S6a-6: `check-cleanup-paths` exits 0 on the cli log, and `cleanup-lines` is greater than 0.
@@ -1000,7 +1000,7 @@ Commit: `GAP-349: spawn-failure paths (sync throw, no PID, timeout alive/exited,
 
 Commit: `GAP-315 hardening: Linux scan reads /proc (no procps dependency); macOS ps -ww`.
 
-### S6e.. - One commit per S4 blocking finding
+### S6e.. - One commit per S4 blocking finding (now specified in Addendum A.1/A.2: S6e-1..S6e-5; N2 goes into S6b)
 Each fix is minimal and comes with a regression test that fails on the S5 module and passes after the fix. Commit
 message: `GAP-315 S4-Fk: ...`. If A2 failed, the likely fix is to `lstat` the candidate first and keep any non-directory
 (`reason:'not-a-directory'`).
@@ -1401,7 +1401,7 @@ PID is dead, and `minAgeMs` is 0. Every probe prints its `reason`.
   - `lockfile` exists;
   - `rm` rejects with EBUSY or EPERM;
   - the file is still there afterwards.
-- **A4 [B] No partial delete of a live profile**, with rule 5 isolated:
+- **A4 [B] No partial delete of a live profile**, with rule 5 isolated *(criteria rewritten by Addendum A.6 P4: pre-call entry snapshot all present + lockfile + /json/version + removed:false; never removed:false alone)*:
   - `removed:false`;
   - file count and bytes unchanged;
   - `/json/version` still answers.
@@ -1474,7 +1474,7 @@ PID is dead, and `minAgeMs` is 0. Every probe prints its `reason`.
 - D1: test counts are re-derived.
 - D2: the branch's real-TEMP live run is recorded as a process finding.
 
-**Verdict rule**: any FAIL on a [B] item is blocking. Any other FAIL is blocking only if it causes data loss, a wrong
+**Verdict rule** *(plus the security category of Addendum A.6 P6: code execution, privilege misuse, or deletion outside the candidate is always blocking)*: any FAIL on a [B] item is blocking. Any other FAIL is blocking only if it causes data loss, a wrong
 kill, or an error exit. Otherwise it is recorded as a limitation.
 
 ---
@@ -1794,3 +1794,328 @@ Every finding is resolved as the reviewer proposed. All other content is unchang
 | C | S10-5 could not see the lowercase `<p50>` | The placeholder is renamed `<CLOSE_P50>`. S10-5 is now **case-insensitive** and matches **exactly the placeholder names** (`grep -niE "<(fast_uri\|qs\|hono\|hono_node\|ip_address\|close_p50\|sweep_p50\|p50)>"`), so the changelog's legitimate `<defs>`/`<ref>`/`<state>` never match. A negative control on the saved template must count 7 matches. `<SWEEP_P50>` is defined as the p50 of `phase sweep ms=` alone, with no double count. | S10 changelog template, placeholder list, S10-5 |
 | D | The G-test wrapper could drop the injected `isAlive` | The wrapper is specified as forwarding `{...opts, tmpRoot, scan}` and recording the received `opts`. G3 asserts `calls[0].opts.isAlive` **is** the fake and that the fake was **called**. New mutants **M-G7** (the product omits `isAlive`) and **M-G8** (the wrapper builds fresh opts) both fail G3. S6c-2 is now 9 mutants. | S6c tests, mutants, S6c-2, 6.3 |
 | E | Stale counts and cross-references | 6.3 GAP-349 line → "G1-G6 + G3b + 9 mutants". 1.1 and S1 now say "reviews 1-6 exist as of revision 7, plus any later round". S6c says **keep** the `killChromeTree` import (used by `kill: killChromeTree`). Section 5 O → "M-O1..M-O6" plus L12. | 1.1, S1, S6c, section 5, 6.3 |
+
+---
+
+## Addendum A (post-S4) — binding for S5-S8
+
+**Source:** `.ai/loop/release-0.6.1/evidence/S4/audit.md` (verdict **REOPEN**) and the probes in `evidence/S4/probes/`
+(`probes.sha256`, 28 files). Under section 2 rule 4 this is **GAP-315 audit failure #1**, so the action is to fix it as
+planned.
+
+If S8 then fails, that is failure #2. The rule is to **stop**: write no more code, re-derive the root cause, write
+`replan-gap315.md`, and get orchestrator approval.
+
+**Precedence.** Where this addendum conflicts with an earlier section, **the addendum wins**. The earlier sections carry
+pointer notes to it and are otherwise unchanged.
+
+### A.1 Order (supersedes the S6e placeholder in section 2 and section 4)
+```
+S5 merge (+ separate "GAP-315 merge evidence" commit)
+-> S6a (deadline, system-binary helpers, debug seam; amended by A.4)
+-> S6b (close/recovery order; now also carries N2, see A.2 "S6b amendment")
+-> S6c (GAP-349) -> S6d (POSIX /proc scan; uses the case-insensitive filter of F2)
+-> S6e commits, one each, in this order:
+     S6e-1 F1   lstat guard (covers N3)
+     S6e-2 F2   case-insensitive scan post-filter (+ scan seam)
+     S6e-3 F3   system-binary spawn coverage test + live win-plant evidence
+     S6e-4 N1   unreadable/corrupt owner marker fails CLOSED
+     S6e-5 N4   the two missing unit tests (lockfile held open; scan filter) + S4 mutant runs M2/M5
+-> S7 -> S8 (re-runs every S4 probe unmodified; see A.5)
+```
+Each S6e commit adds `$EV/S6e-<n>` by name (0.3 policy). Before committing, each one runs:
+- tsc;
+- the spec typecheck (S6 rules);
+- the cli matrix entry under the preamble;
+- `check-cleanup-paths`;
+- its own mutants.
+
+Mutants are applied and reverted with Edit, and the source sha256 must be the same before and after.
+
+### A.2 Fix specs
+
+#### S6e-1 - F1: refuse links and non-directories before touching the candidate (A2 [B]; also N3)
+- **Root cause (S4).** On Windows, the rule-5 probe `rm(path.join(dir,'lockfile'))` follows a junction or a dir-symlink
+  that is named like a profile, and deletes the victim's `lockfile`. Separately, a regular **file** named
+  `sutradhar-cli-<10+ digits>` is swept (N3).
+- **Change** (`temp-profile.ts`):
+  1. New helper `async function realDirectory(dir): Promise<boolean>`. It returns `true` only when `lstat(dir)`
+     succeeds, `!st.isSymbolicLink()` and `st.isDirectory()`. Junctions report `isSymbolicLink() === true` on Windows.
+     Any lstat error returns `false`.
+  2. `gatherFacts` calls `realDirectory` **first**: before `stat`, before reading the marker or `SingletonLock`, and
+     before any `path.join(dir, …)`. It stores the result in a new optional fact `realDir?: boolean`.
+  3. `decideRemoval`: when `f.realDir === false`, return `{ remove: false, reason: 'not-a-directory' }`. This check runs
+     after rule 1, so the reason order is `not-auto-temp`, then `not-a-directory`, then the existing rules. **When
+     `realDir` is `undefined` the behaviour is unchanged.** The S4 `wsl-port.mjs` probe builds its facts without this
+     field and must still pass.
+  4. `removeWithRetries` repeats the `realDirectory(dir)` check **immediately before** the Windows `lockfile` probe.
+     This defends against the candidate being swapped for a link between the facts and the delete. On `false` it
+     returns `{removed:false, error:'not-a-directory'}`. It never unlinks the link: a kept link is a harmless leak, and
+     never a loss.
+  5. Add the new reason to the `RemovalDecision` union and to the debug `decision` line.
+- **Tests** (`temp-profile.spec.ts`, explicit `tmpRoot`):
+  - **F1-a.** A Windows **junction** `sutradhar-cli-1700000000000-JUNC` pointing at a victim dir, created with
+    `fs.symlinkSync(victim, link, 'junction')` (no admin needed). The victim's files include `lockfile`. Run both the
+    sweep (`minAgeMs:0`, scan `[]`) and close removal. **Every victim entry, including `lockfile`, must remain.** The
+    reason must be `not-a-directory`.
+  - **F1-b.** The same with a dir-symlink (`'dir'`). If creating it fails with `EPERM`, use `it.skip`, log the reason,
+    and count the skip in the evidence. On POSIX run it as a normal symlink.
+  - **F1-c.** A regular file named `sutradhar-cli-1700000000001` is kept by both the sweep and close (N3).
+  - **F1-d.** A real dir under the same setup is still removed (positive control).
+- **Mutants**
+
+  | mutant | change | must fail |
+  |---|---|---|
+  | M-F1a | `realDirectory` always returns `true` | F1-a, F1-c |
+  | M-F1b | `lstat` replaced by `stat` (follows links) | F1-a |
+  | M-F1c | the `removeWithRetries` re-check removed, and the `gatherFacts` check moved after `path.join(dir,'lockfile')` | F1-a, via a spy that records `rm` calls on `<link>/lockfile` |
+
+- **S4 probes that must now PASS** (unmodified, HEAD module):
+  - `win-a2.mjs`: 6/6 on v18, v20, v22 and v25.
+  - Still passing: `win-a1.mjs`, `win-a3.mjs`, and `wsl/wsl-a1.mjs`, `wsl-a2.mjs`, `wsl-a3.mjs`.
+  - `win-a1`'s `OBS file-named-like-profile` line must now print `removed=false`.
+
+#### S6e-2 - F2: case-insensitive scan post-filter, plus a scan seam (A5 [B])
+- **Root cause (S4).** WQL `LIKE` is case-insensitive, but the post-filter `l.includes(TEMP_PROFILE_PREFIX)` is
+  case-sensitive. A process holding the dir as `SUTRADHAR-CLI-…` was dropped from the scan, so the dir was deleted.
+- **Change.**
+  - New signature: `scanCommandLines(timeoutMs = SCAN_TIMEOUT_MS, deps: { run?, platform?, readProc? } = {})`. The
+    first parameter and the return type are unchanged, because S4 `win-a7` calls `scanCommandLines(1)`.
+  - `run` is an injectable raw-output runner. Its default is `execFile(powershellExe(), …)`.
+  - The post-filter becomes `l.toLowerCase().includes(TEMP_PROFILE_PREFIX)` (the prefix is lower-case) on **every**
+    platform, including the S6d `/proc` reader.
+  - `commandLinesReference` already lower-cases both sides, so it does not change.
+- **Tests**
+  - **F2-a.** `run` returns raw stdout with `\r\n` line endings containing three lines: one with
+    `...--user-data-dir=C:\T\SUTRADHAR-CLI-1790000000777-ABC123`, one lower-case, and one without the prefix. The
+    result contains both prefixed lines and not the third.
+  - **F2-b.** `removeSessionTempProfile` with that scan reports `in-use` for the dir referenced in upper case.
+- **Mutants**
+
+  | mutant | change | must fail |
+  |---|---|---|
+  | M-F2 | the case-sensitive filter restored | F2-a, F2-b |
+  | M5 (from S4) | `.includes(TEMP_PROFILE_PREFIX.toUpperCase())` | F2-a |
+
+- **S4 probes that must now PASS**: `win-a5.mjs`, including its `upper` variant, on all 4 runtimes; and `win-a5case.mjs`
+  on v25.
+
+#### S6e-3 - F3: system-binary resolution, proven live (security; S4 rated it HIGH)
+- **Root cause (S4).** On Node 18 and 20, the bare name `powershell.exe` resolves from the cwd first. A planted copy in
+  the cwd was executed by the sweep, which runs at every session start.
+- **Code.** S6a already adds `powershellExe()`, `taskkillExe()` and `psBin()`. **Amendment A.4:** the helpers read
+  `process.env.SystemRoot` **on every call**, not once at module load. This step confirms coverage and adds proof.
+- **Unit test** `system-binaries.spec.ts`.
+  - Inject `run`/`spawnFn` spies into `scanCommandLines` and into `killChromeTree`. If `killChromeTree` has no seam
+    yet, add an optional trailing `spawnFn` parameter.
+  - Assert that the executable argument is absolute (`path.isAbsolute()`) and equals `powershellExe()` or
+    `taskkillExe()`.
+- **Coverage check.** Run
+  `grep -nE "\b(execFile|execFileSync|spawn|spawnSync|exec|execSync)\(" packages/cli/src/*.ts`. List every hit in
+  `$EV/S6e-3/spawn-sites.md`, and show for each that its executable argument is one of:
+  - a helper call;
+  - `process.execPath`;
+  - the resolved Chrome path;
+  - an injected seam.
+
+  No bare system-tool name is allowed.
+- **Live check.** Run `probes/win-plant.mjs` **unmodified** (its sha256 must match `probes.sha256`) against the
+  **HEAD-compiled module** (see A.5 rule 1) on v18, v20, v22 and v25. **Both `PLANT:` checks must PASS on every
+  runtime.**
+- **Mutant.** M-F3: the scan's `run` default goes back to `execFile('powershell.exe', …)`. The unit test must fail,
+  **and** `win-plant` on v18 must FAIL under the mutant. Record both.
+- **S6a AC addition** (a pointer is added in S6a). S6a-4's grep is not sufficient on its own. The live `win-plant` run
+  above is part of S6a's acceptance, and S8 re-runs it.
+
+#### S6e-4 - N1: an unreadable or corrupt owner marker fails CLOSED
+- **Root cause (S4).** For a marker such as `{"chromePid":"123"`, `readOwnerPid` returns `undefined`. That is treated
+  as "owner dead", so rule 3 fails open.
+- **Change.**
+  - New internal `readOwnerMarker(dir)` returning `{ state: 'absent' }`, `{ state: 'valid', pid }` or
+    `{ state: 'invalid' }`:
+    - `ENOENT` gives `absent`;
+    - any other read error (EACCES, EISDIR, EBUSY) gives `invalid`;
+    - a JSON parse failure gives `invalid`;
+    - a `chromePid` that is not a positive integer gives `invalid`.
+  - `readOwnerPid` keeps its exported signature and behaviour, because the S4 probes call it.
+  - `gatherFacts` sets a new optional fact `ownerState`.
+  - In `decideRemoval`:
+    - `ownerState === 'invalid'` gives `{remove:false, reason:'owner-unknown'}`;
+    - `absent` falls back to `SingletonLock`, exactly as now;
+    - `undefined` leaves the behaviour unchanged (port-probe compatibility).
+- **Tests.**
+  - N1-a: corrupt JSON.
+  - N1-b: `chromePid:"abc"`.
+  - N1-c: the marker path is a directory (EISDIR).
+
+  In N1-a, N1-b and N1-c, the dir is kept with `owner-unknown` by both the sweep and close.
+  - N1-d (positive control): no marker and no lock, and the dir is still removed.
+- **Mutant.** M-N1: `invalid` treated as `absent`. N1-a, N1-b and N1-c must fail.
+
+#### S6b amendment - N2: close and cleanup never throw on a malformed state
+This is folded into the S6b commit.
+- **`stopSpawnedChrome` guards.**
+  - It runs the cleanup only if `typeof state.userDataDir === 'string' && state.tempProfile === true`.
+  - It kills only if `Number.isInteger(state.chromePid) && state.chromePid > 0`. For any valid PID this is the same
+    kill as 0.6.0. A malformed PID is skipped with a debug line and is never passed to taskkill.
+- **Top-level try/catch in `removeSessionTempProfile` and `sweepStaleTempProfiles`.**
+  - A non-string `dir` gives `{removed:false, reason:'not-auto-temp'}`.
+  - A **rejecting scan is treated as `null`**: `scan-unavailable`, which fails closed.
+  - Any other error gives `{removed:false, reason:'error'}` plus a debug line.
+  - With these, the documented "never throws" contract is actually true.
+- **Tests**
+  - **O9.** State `{chromePid: 4242, userDataDir: 123, tempProfile: true}`. `stopSpawnedChrome` resolves, kill is
+    called once, the state is cleared, and cleanup is not called.
+  - **O10.** State `{chromePid: "12"}`. No kill, the state is cleared, and the call resolves.
+  - **T9.** `removeSessionTempProfile(123, …)` resolves with `not-auto-temp`.
+  - **T10.** A rejecting scan gives `scan-unavailable`, and the dir still exists.
+- **Mutants**
+
+  | mutant | change | must fail |
+  |---|---|---|
+  | M-O7 | the type guard removed | O9 (rejects) |
+  | M-T10 | the rejecting scan propagates | T10 |
+
+- The S6b AC now counts O1-O10 and 8 mutants. **Do not** change exit codes; S6b-4 still holds.
+
+#### S6e-5 - N4: the two missing unit tests (lockfile held; scan filter), plus S4 mutants M2 and M5
+- **N4-a (Windows only).** On POSIX use `it.skip` with the reason "rule 5 is Windows-only".
+  1. Create a profile dir containing 20 files plus `lockfile`.
+  2. Hold `lockfile` open with **FileShare.None** from a child process:
+     `powershellExe() -NoProfile -Command "$f=[IO.File]::Open($env:LOCKPATH,'Open','ReadWrite','None'); 'ready'; [Console]::In.ReadLine()"`.
+     Pass the path in env `LOCKPATH`, never in argv text (P7).
+  3. Wait for the child's `ready` line.
+  4. Call `removeSessionTempProfile` with scan `[]`, no marker, and `deadlineMs: 2000`.
+  5. Assert `removed:false`, that **every one of the 21 pre-existing entries is still present**, and that `lockfile` is
+     present.
+  6. End the child by closing its stdin, then confirm through its own handle that it has exited.
+- **N4-b.** F2-a and F2-b cover this. Add one more case: a line where the prefix appears inside an unrelated longer
+  token must still be returned. The filter is only a substring pre-filter; the word-boundary logic lives in
+  `commandLinesReference`.
+- **S4 mutant runs.**
+  - Apply S4's `probes/mutate.cjs` definitions **M2** (`/* lockfile probe removed */`) and **M5** (upper-cased filter)
+    to HEAD's `temp-profile.ts`, using the Edit procedure.
+  - The cli unit suite must **FAIL** under each one. Record the output in `$EV/S6e-5/mutants.txt`.
+  - For comparison, S4 recorded that the branch spec missed both (`spec/mutants.txt`: 19/19 passed). Under M2 the live
+    A4 run deleted 106 of 200 entries of a live profile; N4-a is the unit-level guard against that.
+  - Re-run S4's M1, M3, M4 and M6 against HEAD as well. They must still fail.
+
+### A.3 Findings accepted (no code change), with rationale
+| id | decision | rationale |
+|---|---|---|
+| N5 (elevated or other-user processes invisible to rule 2) | **accept** | Rule 2 is one of three independent guards. Rule 3 (`process.kill(pid,0)`, where EPERM = alive) covers marker dirs. Rule 5 (a held `lockfile`) covers any live Chrome or Edge on Windows. A4 proved that rule 5 alone prevents partial deletion for all 4 browser modes on all 4 runtimes. Seeing elevated processes would require elevation, which is out of scope. Documented in the CLI README limitations and in S10b. |
+| N6 (the Windows scan includes its own PowerShell line) | **accept** | Harmless. The line contains only the prefix `sutradhar-cli-%`, never a full basename, so `commandLinesReference` cannot match it. The S4 `win-a7` probe observes this property (`selfLines=1`). Filtering the line out would change probe-observed output and adds no safety. |
+| N7 (a reused marker PID keeps the dir forever) | **accept** | It fails in the safe direction: a leak, not a loss. Verifying PID ownership is part of the deferred 0.7.0 redesign (section 10). Logged in S10b as a leak gap. |
+| N3 | fixed by S6e-1 | - |
+| P-D2 | already handled | The branch's `gap315-live.mjs` is never re-run (S5). |
+
+### A.4 Amendments to S6a forced by probe compatibility
+S8 must run the S4 probes **unmodified** (A.5). The probes rely on the branch's options:
+- they call `removeSessionTempProfile(..., { removeTimeoutMs })`;
+- `win-a6.mjs` calls it with `exitTimeoutMs: 600` and expects a reason matching `/did not exit/`;
+- `wsl-port.mjs` T19 uses `exitTimeoutMs`.
+
+So S6a changes as follows:
+- **Superseded S6a bullet:** "`exitTimeoutMs` and `removeTimeoutMs` are **removed**".
+  **Instead**, both stay as optional caps, each **clamped to the overall deadline**:
+  - exit wait = `min(opts.exitTimeoutMs ?? EXIT_WAIT_CAP_MS, rem)`;
+  - rm window = `min(opts.removeTimeoutMs ?? rem, rem)`.
+- If the exit wait expires before the overall deadline, the reason stays **`Chrome (pid <n>) did not exit in time`**.
+  The reason `deadline` is used only when the overall deadline is what ran out.
+- The branch spec test "close keeps the dir if Chrome does not exit within the timeout" stays **unchanged**. It does
+  not move to `deadlineMs: 300`.
+- S6a-3's grep is unaffected, because these are option names, not `_000` literals.
+- `powershellExe()`, `taskkillExe()` and `psBin()` read `process.env.SystemRoot` at call time. A.5's `win-a7b` needs
+  this.
+- Keep exported, with the same signatures and semantics, everything the S4 probes import:
+  - `removeSessionTempProfile`, `sweepStaleTempProfiles`, `scanCommandLines`, `readOwnerPid`, `isPidAlive`;
+  - (from `wsl-port.mjs`) `commandLinesReference`, `createTempProfileDir`, `decideRemoval`, `isAutoTempProfileDir`,
+    `OWNER_MARKER`, `STALE_MIN_AGE_MS`, `waitForPidExit`, `writeOwnerMarker`.
+  - New fact fields stay optional, and `undefined` means "the old behaviour".
+
+### A.5 S8 re-run rule for the S4 probes (supersedes section 2 rule 3 for these probes)
+1. **Compile the HEAD module with bundling.** HEAD's `temp-profile.ts` imports `./system-binaries.js`, so compiling the
+   single file would leave an unresolved import:
+   `node_modules/.bin/esbuild packages/cli/src/temp-profile.ts --bundle --format=esm --platform=node --target=node18 --outfile="$SP/S8/mod/temp-profile.mjs"`.
+   Record its sha256 in every log, as S4 did.
+2. **Check the probes are unmodified.** `(cd "$EV/S4/probes" && sha256sum -c "$EV/S4/probes.sha256")` must print `OK`
+   for all 28 files. Save the output in `$EV/S8/`. The run scripts (`run-win.sh`, `run-wsl.sh`, `run-browser.sh`) are
+   among the 28. Only `TP_MODULE` changes.
+3. **Every check in every S4 probe must PASS** on every runtime it ran on at S4. There is **exactly one sanctioned
+   exception, and it needs the orchestrator's sign-off**:
+   - The two `win-a7.mjs` checks `A7 powershell unresolvable -> scan null` and `… -> close keeps` create
+     "unresolvable" by setting `PATH=''`.
+   - After F3 the scanner uses an absolute path, so an empty PATH no longer makes it unresolvable. Those two checks
+     assert the **vulnerable bare-name behaviour** and are expected to FAIL against the fixed code. Every other
+     `win-a7` check must PASS.
+   - The property they protected (an unresolvable scanner fails closed) is re-proven by a **new, additive probe**
+     `probes-s8/win-a7b.mjs`. The S8 auditor writes it and records its sha256. It sets `process.env.SystemRoot` to a
+     non-existent dir in-process, then asserts that `scanCommandLines()` is `null` and that close keeps the dir with
+     `scan-unavailable`.
+   - No other probe edit is allowed.
+4. **These must flip from FAIL to PASS:**
+   - `win-a2` (F1);
+   - `win-a5` and `win-a5case` (F2);
+   - both `PLANT:` checks in `win-plant` (F3).
+5. **Known fragility to control.** `win-a7`'s check "every line carries the prefix" is case-sensitive, but after F2 the
+   scan returns case-insensitive matches.
+   - Before S8, confirm that no stand-in from `win-a5case` (an upper-case command line) is still alive, using the
+     attribution query for `SUTRADHAR-CLI` (case-insensitive).
+   - If an unrelated upper-case holder from another session appears, record it and re-run once after it is gone.
+   - Never edit the probe.
+6. **Live browser runs** use `run-browser.sh` in all 4 modes, as in S4, with the rewritten A4 criteria of A.6 P4.
+7. **Expected test totals at S5.** S4 measured 243 tests in 16 cli files at release HEAD, so S5-2 expects **262 in 17
+   files**. Later steps add to that.
+
+### A.6 Harness corrections P1-P7 (binding for S6-S8; they override earlier wording)
+- **P1 (WSL).** Every `wsl.exe` call is **self-contained**: `mktemp -d`, copy, run, and a guarded `rm` of its own
+  `/tmp/tmp.*` dir, all **in one call**. The WSL VM idles out and wipes `/tmp` between calls.
+  - **Superseded:** the S4 text that captures `D` and pastes it into later calls.
+  - Pattern to follow: `probes/run-wsl.sh`.
+- **P2 (MSYS path conversion).** Any Git Bash command that passes a POSIX path argument starts with
+  `MSYS_NO_PATHCONV=1`. Example: a WSL `PROBE_ROOT` given to `check-cleanup-paths.mjs`. Without it, Git Bash rewrites
+  `/tmp/...` and every line becomes a false `OUTSIDE-ISO`. The wrong-root negative control is also run with it set.
+- **P3 (Git Bash `/tmp` is REAL_TEMP).** In Git Bash, `/tmp` maps to `E:/AI-Cache/tmp`, which is `REAL_TEMP`.
+  - **Never use `/tmp` in any Git Bash command or Windows-side script.** Scratch goes under `$SP` only.
+  - Before each S6-S8 harness run, `grep -n "/tmp" <harness files>` must show hits only inside `wsl.exe -e sh -c '…'`
+    strings.
+- **P4 (A4 criteria), rewritten.** "File count and bytes unchanged" is invalid on a live profile, because Chrome grows
+  it. A4 PASS requires all four of:
+  1. every entry in the **pre-call snapshot of entry paths** is still present (`missing=[]`);
+  2. `<dir>/lockfile` is present;
+  3. `/json/version` answers after the attempt;
+  4. `removed:false`.
+
+  **`removed:false` alone is never accepted.** S4 mutant M2 returned `removed:false` while deleting 106 entries.
+  Section 5 A4 and S7 L3 use this criterion.
+- **P5 (path length).** `$SP` is 160 characters. A 257-character `--user-data-dir` made Chrome exit at once at S4.
+  - Every harness keeps the `--user-data-dir` value at **≤ 200 characters**, using short ISO names (for example
+    `$SP/S7-tmp`) and short profile names (`sutradhar-cli-<ms>-A<3>`).
+  - The harness asserts the length before launching Chrome and aborts if it is too long.
+- **P6 (verdict rule: security category).** Section 5's verdict rule gains a security category: **any finding that
+  enables code execution, privilege misuse, or deletion outside the candidate is a security finding and is blocking**,
+  whatever item it belongs to. F3 is the precedent. A pointer is added in section 5.
+- **P7 (attribution hygiene).**
+  - A probed basename must not appear in the **launching command text** either: not in the shell command line, not in
+    an `sh -c` string, not in a `node -e` string. Pass it only through env or a file.
+  - The attribution assertion **excludes nothing by name**. If the launching shell appears in the matches, that is a
+    harness defect: fix the launch and re-run. Never filter it out.
+  - `win-a5case` showed 2 extra `bash.exe` hits from exactly this cause.
+
+### A.7 Updated acceptance for S8 (adds to S8 and section 5)
+- All S4 probes PASS per A.5. The `win-a7` PATH exception requires `win-a7b` to PASS **and** the orchestrator's
+  sign-off.
+- The S8 auditor re-runs the F1, F2, F3, N1, N2 and N4 unit tests and all their mutants:
+
+  | step | mutants |
+  |---|---|
+  | S6e-1 | M-F1a, M-F1b, M-F1c |
+  | S6e-2 | M-F2, M5 |
+  | S6e-3 | M-F3 |
+  | S6e-4 | M-N1 |
+  | S6b (N2) | M-O7, M-T10 |
+  | S6e-5 | M2, plus M1, M3, M4, M6 |
+
+- The live `win-plant` runs on v18, v20, v22 and v25 PASS.
+- The verdict follows the section-5 rule **plus** P6. Any security finding is blocking.
+- An S8 FAIL is GAP-315 audit failure **#2**: **stop and re-plan** (section 2 rule 4).

@@ -1,0 +1,17 @@
+# cmd: timeout 700 wsl.exe -e sh -c 'D=$(mktemp -d) && cp /mnt/e/AI-Cache/tmp/claude/E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/S4/mod/temp-profile.mjs /mnt/e/AI-Cache/tmp/claude/E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/S4/common.mjs /mnt/e/AI-Cache/tmp/claude/E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/S4/wsl/*.mjs "$D"/ && cd "$D" && sha256sum temp-profile.mjs && R=$(mktemp -d -p "$PWD") && echo PROBE_ROOT=$R && node -v && TMPDIR="$R" PROBE_ROOT="$R" TP_MODULE="$PWD/temp-profile.mjs" timeout 600 node  wsl-a7.mjs 2>&1; echo "# exit=$?"; cd /; case "$D" in /tmp/tmp.*) rm -rf -- "$D" && echo "# removed own D=$D";; *) echo REFUSE;; esac' ; start=2026-10-04T05:08:45+05:30
+2bb9570a93c9dd819ba22c2bfe03ef88ef377d9632b4ba470ccd8cdbd4542ec4  temp-profile.mjs
+PROBE_ROOT=/tmp/tmp.FdyqPwc5Rz/tmp.Rk8WL0CywY
+v20.20.2
+[wsl-guard] root=/tmp/tmp.FdyqPwc5Rz/tmp.Rk8WL0CywY
+== wsl-a7 fail closed node=v20.20.2 platform=linux tmpdir=/tmp/tmp.FdyqPwc5Rz/tmp.Rk8WL0CywY pid=921
+[cleanup] probe dir path="/tmp/tmp.FdyqPwc5Rz/tmp.Rk8WL0CywY/a7-FDlkoO/sutradhar-cli-1790000000300-AbC123"
+PASS A7 null scan sweep keeps
+PASS A7 null scan close keeps :: {"removed":false,"reason":"scan-unavailable"}
+PASS A7 scanCommandLines(1) -> null :: got=null
+PASS A7 query ran and matched nothing -> [] :: []
+PASS A7 ps unresolvable -> null :: got=null
+PASS A7 ps unresolvable -> close keeps :: {"removed":false,"reason":"scan-unavailable"}
+RESULT fails=0
+# exit=0
+# removed own D=/tmp/tmp.FdyqPwc5Rz
+# end=2026-10-04T05:08:45+05:30

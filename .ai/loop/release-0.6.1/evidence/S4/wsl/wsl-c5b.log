@@ -1,0 +1,20 @@
+# cmd: timeout 700 wsl.exe -e sh -c 'D=$(mktemp -d) && cp /mnt/e/AI-Cache/tmp/claude/E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/S4/mod/temp-profile.mjs /mnt/e/AI-Cache/tmp/claude/E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/S4/common.mjs /mnt/e/AI-Cache/tmp/claude/E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/S4/wsl/*.mjs "$D"/ && cd "$D" && sha256sum temp-profile.mjs && R=$(mktemp -d -p "$PWD") && echo PROBE_ROOT=$R && node -v && TMPDIR="$R" PROBE_ROOT="$R" TP_MODULE="$PWD/temp-profile.mjs" timeout 600 node  wsl-c5b.mjs 2>&1; echo "# exit=$?"; cd /; case "$D" in /tmp/tmp.*) rm -rf -- "$D" && echo "# removed own D=$D";; *) echo REFUSE;; esac' ; start=2026-10-04T05:08:49+05:30
+2bb9570a93c9dd819ba22c2bfe03ef88ef377d9632b4ba470ccd8cdbd4542ec4  temp-profile.mjs
+PROBE_ROOT=/tmp/tmp.DEjGS5MfCE/tmp.JR6yUFRuoV
+v20.20.2
+[wsl-guard] root=/tmp/tmp.DEjGS5MfCE/tmp.JR6yUFRuoV
+== wsl-c5b SingletonLock owner, no marker node=v20.20.2 platform=linux tmpdir=/tmp/tmp.DEjGS5MfCE/tmp.JR6yUFRuoV pid=995
+[cleanup] probe dir path="/tmp/tmp.DEjGS5MfCE/tmp.JR6yUFRuoV/c5b-4B9nXu/sutradhar-cli-1790000000500-AbC123"
+[cleanup] probe dir path="/tmp/tmp.DEjGS5MfCE/tmp.JR6yUFRuoV/c5b-4B9nXu/sutradhar-cli-1790000000501"
+PASS C5b no marker present
+INFO readOwnerPid d1=1006 d2=1006 dummy=1006
+PASS C5b live SingletonLock pid -> owner-alive (both) :: ["owner-alive","owner-alive"]
+PASS C5b close path owner-alive :: {"removed":false,"reason":"owner-alive"}
+PASS C5b dummy killed by PID
+[cleanup] probe removed path="/tmp/tmp.DEjGS5MfCE/tmp.JR6yUFRuoV/c5b-4B9nXu/sutradhar-cli-1790000000500-AbC123"
+[cleanup] probe removed path="/tmp/tmp.DEjGS5MfCE/tmp.JR6yUFRuoV/c5b-4B9nXu/sutradhar-cli-1790000000501"
+PASS C5b dead pid -> removed :: []
+RESULT fails=0
+# exit=0
+# removed own D=/tmp/tmp.DEjGS5MfCE
+# end=2026-10-04T05:08:51+05:30

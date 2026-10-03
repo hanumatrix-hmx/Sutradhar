@@ -1,0 +1,26 @@
+import os from 'node:os'; import path from 'node:path'; import fsp from 'node:fs/promises'; import { pathToFileURL } from 'node:url';
+const SPR = 'e:/ai-cache/tmp/claude/e--hmx-projects-internal-projects-pinchtab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad';
+const nrmG = (p) => path.resolve(p).split(path.sep).join('/').toLowerCase().replace(/[/]+$/, '');
+if (process.platform !== 'win32' || !nrmG(os.tmpdir()).startsWith(SPR + '/')) { console.error(`PROBE GUARD: tmpdir=${os.tmpdir()} not under scratchpad`); process.exit(97); }
+console.error(`[probe-guard] tmpdir=${nrmG(os.tmpdir())} pid=${process.pid}`);
+const TP = await import(pathToFileURL(process.env.TP_MODULE).href);
+const C = await import(new URL('./common.mjs', import.meta.url).href);
+const { P, check, done, tree, sameTree, exists, setOld, profileDir, header, sleep } = C;
+header('win-plant: bare-name powershell.exe resolution from cwd');
+const cwdDir = await fsp.mkdtemp(path.join(os.tmpdir(), 'plant-')); P('plant-cwd', cwdDir);
+const baseline = await TP.scanCommandLines(); console.log(`INFO baseline scan lines=${baseline?.length}`);
+await fsp.copyFile('C:/Windows/System32/cmd.exe', path.join(cwdDir, 'powershell.exe'));
+const prev = process.cwd(); process.chdir(cwdDir);
+const tp0 = performance.now(); const planted = await TP.scanCommandLines(); const tpms = performance.now() - tp0; process.chdir(prev); console.log(`INFO planted scan took ms=${tpms.toFixed(0)} (20000 = planted cmd.exe ran and waited on stdin until the scan timeout)`);
+console.log(`INFO scan with planted powershell.exe in cwd -> ${planted === null ? 'null' : 'array(' + planted.length + ')'}`);
+check('PLANT: scan unaffected by a powershell.exe in cwd (expected FAIL on branch; S6a powershellExe() fixes)', Array.isArray(planted) && planted.length > 0);
+const T = await fsp.mkdtemp(path.join(os.tmpdir(), 'plant-root-'));
+const dir = await profileDir(path.join(T, 'sutradhar-cli-1790000000900-AbC123'), { lockfile: false }); P('dir', dir);
+const { spawn } = await import('node:child_process');
+const sb = spawn(process.execPath, ['-e', 'setInterval(()=>{},1000)', '--', '--user-data-dir=' + dir], { stdio: 'ignore', windowsHide: true }); await sleep(1500);
+process.chdir(cwdDir); const r = await TP.removeSessionTempProfile(dir, undefined, { tmpRoot: T, removeTimeoutMs: 500 }); process.chdir(prev);
+P('close-result', dir, `removed=${r.removed} reason=${r.reason}`);
+check('PLANT: in-use stand-in dir kept when cwd holds a planted powershell.exe (expected FAIL on branch)', r.removed === false, JSON.stringify(r));
+sb.kill('SIGKILL'); const t0 = performance.now(); while (performance.now() - t0 < 15000 && sb.exitCode === null && sb.signalCode === null) await sleep(100);
+console.log(`INFO stand-in exited=${sb.exitCode !== null || sb.signalCode !== null}`);
+done();

@@ -1,0 +1,15 @@
+# cmd1: cd /tmp/tmp.xo2z9XInjS && PROBE_ROOT=/mnt/e/AI-Cache/tmp TMPDIR=/mnt/e/AI-Cache/tmp node wsl-a1.mjs
+exit=97
+# cmd2: R=$(mktemp -d -p $PWD); PROBE_ROOT=$R TMPDIR=/tmp (outside PROBE_ROOT) node wsl-a1.mjs
+exit=97
+# cmd3: PROBE_ROOT unset
+exit=97
+# cmd4: PROBE_TMPROOTS contains /mnt path
+exit=97
+# cmd5 (positive): R=$(mktemp -d -p $PWD) TMPDIR=$R PROBE_ROOT=$R TP_MODULE=$PWD/temp-profile.mjs node wsl-a1.mjs  (full A1 run, see wsl/wsl-a1.log)
+# cmd1 (stderr merged): PROBE_ROOT=/mnt/e/AI-Cache/tmp TMPDIR=/mnt/e/AI-Cache/tmp node wsl-a1.mjs 2>&1
+WSL GUARD: refusing /mnt/e/AI-Cache/tmp
+exit=97
+# cmd2 (stderr merged): PROBE_ROOT=<mktemp> TMPDIR=/tmp node wsl-a1.mjs 2>&1
+WSL GUARD: refusing /tmp
+exit=97

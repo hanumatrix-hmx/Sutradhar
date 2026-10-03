@@ -1,0 +1,11 @@
+--- mod/temp-profile.ts	2026-10-04 04:48:40.604252700 +0530
++++ modm2/temp-profile.ts	2026-10-04 05:10:55.800829400 +0530
+@@ -204,7 +204,7 @@
+       if (process.platform === 'win32') {
+         // Chrome holds `lockfile` open exclusively for the profile's whole lifetime: if it
+         // can't be removed, the profile is still open — don't start tearing the dir apart.
+-        await rm(path.join(dir, 'lockfile'), { force: true });
++        /* lockfile probe removed */
+       }
+       await rm(dir, { recursive: true, force: true });
+       return { removed: true };

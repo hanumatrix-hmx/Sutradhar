@@ -1,0 +1,7 @@
+async function attribution(base) {
+  const hits = [];
+  for (const e of await fsp.readdir('/proc')) { if (!/^[0-9]+$/.test(e)) continue; let cl; try { cl = (await fsp.readFile(`/proc/${e}/cmdline`, 'utf-8')).split(String.fromCharCode(0)).join(' '); } catch { continue; } if (cl.toLowerCase().includes(base.toLowerCase())) { let pp = '?'; try { pp = (await fsp.readFile(`/proc/${e}/stat`, 'utf-8')).split(') ')[1].split(' ')[1]; } catch {} hits.push(`${e}/${pp}`); } }
+  return hits;
+}
+const standin = (argv) => spawn(process.execPath, ['-e', 'setInterval(()=>{},1000)', '--', ...argv], { stdio: 'ignore' });
+async function stop(cp) { cp.kill('SIGKILL'); const t0 = performance.now(); while (performance.now() - t0 < 15000 && cp.exitCode === null && cp.signalCode === null) await sleep(100); return cp.exitCode !== null || cp.signalCode !== null; }

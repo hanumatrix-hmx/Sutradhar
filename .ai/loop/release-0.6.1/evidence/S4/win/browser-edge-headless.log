@@ -1,0 +1,160 @@
+# cmd: TEMP=ISO TMP=ISO TMPDIR=ISO NODE_OPTIONS=--import=file:///$SP/iso/assert-tmp.mjs SUTRADHAR_CLI_DEBUG_CLEANUP=1 TP_MODULE=$SP/S4/mod/temp-profile.mjs BROWSER_KIND=edge-headless timeout 900 node $SP/S4/win-browser.mjs; ISO=E:/AI-Cache/tmp/claude/E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/S4-tmp-beh start=2026-10-04T04:58:19+05:30
+[iso-guard] tmpdir=e:/ai-cache/tmp/claude/e--hmx-projects-internal-projects-pinchtab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/s4-tmp-beh pid=77784
+[probe-guard] tmpdir=e:/ai-cache/tmp/claude/e--hmx-projects-internal-projects-pinchtab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/s4-tmp-beh pid=77784
+== win-browser harness kind=edge-headless node=v25.0.0 platform=win32 tmpdir=E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S4-tmp-beh pid=77784
+[cleanup] probe tmpRoot path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S4-tmp-beh\r-lR6QIj"
+[cleanup] probe dir path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S4-tmp-beh\r-lR6QIj\sutradhar-cli-1791070099559-Azri"
+STARTED browser pid=76552 exe=C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe
+INFO version=Edg/154.0.4258.53
+PASS browser up
+---- child v25
+[v25] == win-a4child (A4-pre, A4, B2, A5 on a live browser) node=v25.0.0 platform=win32 tmpdir=E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S4-tmp-beh pid=64820
+[v25] [cleanup] probe dir path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S4-tmp-beh\r-lR6QIj\sutradhar-cli-1791070099559-Azri"
+[v25] [cleanup] probe tmpRoot path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S4-tmp-beh\r-lR6QIj"
+[v25] PASS PROBE_DIR under os.tmpdir()
+[v25] PASS browser answers /json/version at start
+[v25] [cleanup] probe lockfile path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S4-tmp-beh\r-lR6QIj\sutradhar-cli-1791070099559-Azri\lockfile"
+[v25] PASS A4-pre lockfile exists
+[v25] PASS A4-pre rm(lockfile) rejects EBUSY/EPERM :: code=EBUSY
+[v25] PASS A4-pre lockfile still there
+[v25] INFO churn-control count 245->247 bytes 5078724->14204721 missing=[]
+[v25] PASS A4 no marker present (isolation)
+[v25] [cleanup] probe close-result path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S4-tmp-beh\r-lR6QIj\sutradhar-cli-1791070099559-Azri" removed=false reason="EBUSY: resource busy or locked, unlink 'E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\S4-tmp-beh\\r-lR6QIj\\sutradhar-cli-1791070099559-Azri\\lockfile'"
+[v25] PASS A4 close removed:false :: {"removed":false,"reason":"EBUSY: resource busy or locked, unlink 'E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\S4-tmp-beh\\r-lR6QIj\\sutradhar-cli-1791070099559-Azri\\lockfile'"}
+[v25] PASS A4 close no file missing :: count 247->277 bytes 14204721->14473953 missing=[]
+[v25] INFO A4 close count 247->277 bytes 14204721->14473953
+[v25] PASS A4 /json/version still answers after close attempt
+[v25] [cleanup] probe sweep-kept path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S4-tmp-beh\r-lR6QIj\sutradhar-cli-1791070099559-Azri" reason="EBUSY: resource busy or locked, unlink 'E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\S4-tmp-beh\\r-lR6QIj\\sutradhar-cli-1791070099559-Azri\\lockfile'"
+[v25] PASS A4 sweep kept the live dir
+[v25] PASS A4 sweep no file missing :: count 277->277 bytes 14473953->15529755 missing=[]
+[v25] PASS A4 /json/version still answers after sweep
+[v25] INFO B2 dir ageMin=25.0
+[v25] [cleanup] probe b2-kept path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S4-tmp-beh\r-lR6QIj\sutradhar-cli-1791070099559-Azri" reason="in-use"
+[v25] PASS B2 real-scan sweep keeps backdated live dir as in-use :: ["in-use"]
+[v25] PASS B2 marker variant keeps as owner-alive :: ["owner-alive"]
+[v25] [cleanup] probe a5-close-result path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S4-tmp-beh\r-lR6QIj\sutradhar-cli-1791070099559-Azri" removed=false reason="in-use"
+[v25] PASS A5 real scan -> in-use :: {"removed":false,"reason":"in-use"}
+[v25] INFO A5 attribution hits=["76552/77784/msedge.exe","58232/76552/msedge.exe","46228/76552/msedge.exe","72652/76552/msedge.exe","72284/76552/msedge.exe","70800/76552/msedge.exe","70764/76552/msedge.exe","66640/76552/msedge.exe","75468/76552/msedge.exe","77812/76552/msedge.exe","66764/76552/msedge.exe","79512/76552/msedge.exe","48544/76552/msedge.exe","73240/76552/msedge.exe","69084/76552/identity_helper.exe","76196/76552/msedge.exe","78948/76552/msedge.exe"]
+[v25] PASS A5 attribution non-empty
+[v25] PASS A5 attribution only our browser tree :: []
+[v25] PASS A5 attribution excludes the probe
+[v25] PASS final /json/version answers
+[v25] RESULT fails=0
+[v25] [iso-guard] tmpdir=e:/ai-cache/tmp/claude/e--hmx-projects-internal-projects-pinchtab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/s4-tmp-beh pid=64820
+[v25] [probe-guard] tmpdir=e:/ai-cache/tmp/claude/e--hmx-projects-internal-projects-pinchtab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/s4-tmp-beh pid=64820
+PASS child v25 exit 0 :: status=0 signal=null
+---- child v18
+[v18] == win-a4child (A4-pre, A4, B2, A5 on a live browser) node=v18.20.8 platform=win32 tmpdir=E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S4-tmp-beh pid=71508
+[v18] [cleanup] probe dir path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S4-tmp-beh\r-lR6QIj\sutradhar-cli-1791070099559-Azri"
+[v18] [cleanup] probe tmpRoot path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S4-tmp-beh\r-lR6QIj"
+[v18] PASS PROBE_DIR under os.tmpdir()
+[v18] PASS browser answers /json/version at start
+[v18] [cleanup] probe lockfile path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S4-tmp-beh\r-lR6QIj\sutradhar-cli-1791070099559-Azri\lockfile"
+[v18] PASS A4-pre lockfile exists
+[v18] PASS A4-pre rm(lockfile) rejects EBUSY/EPERM :: code=EBUSY
+[v18] PASS A4-pre lockfile still there
+[v18] INFO churn-control count 277->278 bytes 15562935->15613045 missing=[]
+[v18] PASS A4 no marker present (isolation)
+[v18] [cleanup] probe close-result path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S4-tmp-beh\r-lR6QIj\sutradhar-cli-1791070099559-Azri" removed=false reason="EBUSY: resource busy or locked, unlink 'E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\S4-tmp-beh\\r-lR6QIj\\sutradhar-cli-1791070099559-Azri\\lockfile'"
+[v18] PASS A4 close removed:false :: {"removed":false,"reason":"EBUSY: resource busy or locked, unlink 'E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\S4-tmp-beh\\r-lR6QIj\\sutradhar-cli-1791070099559-Azri\\lockfile'"}
+[v18] PASS A4 close no file missing :: count 278->278 bytes 15613045->15617185 missing=[]
+[v18] INFO A4 close count 278->278 bytes 15613045->15617185
+[v18] PASS A4 /json/version still answers after close attempt
+[v18] [cleanup] probe sweep-kept path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S4-tmp-beh\r-lR6QIj\sutradhar-cli-1791070099559-Azri" reason="EBUSY: resource busy or locked, unlink 'E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\S4-tmp-beh\\r-lR6QIj\\sutradhar-cli-1791070099559-Azri\\lockfile'"
+[v18] PASS A4 sweep kept the live dir
+[v18] PASS A4 sweep no file missing :: count 278->295 bytes 15617185->15680633 missing=[]
+[v18] PASS A4 /json/version still answers after sweep
+[v18] INFO B2 dir ageMin=25.0
+[v18] [cleanup] probe b2-kept path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S4-tmp-beh\r-lR6QIj\sutradhar-cli-1791070099559-Azri" reason="in-use"
+[v18] PASS B2 real-scan sweep keeps backdated live dir as in-use :: ["in-use"]
+[v18] PASS B2 marker variant keeps as owner-alive :: ["owner-alive"]
+[v18] [cleanup] probe a5-close-result path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S4-tmp-beh\r-lR6QIj\sutradhar-cli-1791070099559-Azri" removed=false reason="in-use"
+[v18] PASS A5 real scan -> in-use :: {"removed":false,"reason":"in-use"}
+[v18] INFO A5 attribution hits=["76552/77784/msedge.exe","58232/76552/msedge.exe","46228/76552/msedge.exe","72652/76552/msedge.exe","72284/76552/msedge.exe","70800/76552/msedge.exe","70764/76552/msedge.exe","66640/76552/msedge.exe","75468/76552/msedge.exe","77812/76552/msedge.exe","66764/76552/msedge.exe","79512/76552/msedge.exe","48544/76552/msedge.exe","73240/76552/msedge.exe","69084/76552/identity_helper.exe","76196/76552/msedge.exe","78948/76552/msedge.exe"]
+[v18] PASS A5 attribution non-empty
+[v18] PASS A5 attribution only our browser tree :: []
+[v18] PASS A5 attribution excludes the probe
+[v18] PASS final /json/version answers
+[v18] RESULT fails=0
+[v18] [iso-guard] tmpdir=e:/ai-cache/tmp/claude/e--hmx-projects-internal-projects-pinchtab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/s4-tmp-beh pid=71508
+[v18] [probe-guard] tmpdir=e:/ai-cache/tmp/claude/e--hmx-projects-internal-projects-pinchtab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/s4-tmp-beh pid=71508
+PASS child v18 exit 0 :: status=0 signal=null
+---- child v20
+[v20] == win-a4child (A4-pre, A4, B2, A5 on a live browser) node=v20.20.2 platform=win32 tmpdir=E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S4-tmp-beh pid=78124
+[v20] [cleanup] probe dir path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S4-tmp-beh\r-lR6QIj\sutradhar-cli-1791070099559-Azri"
+[v20] [cleanup] probe tmpRoot path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S4-tmp-beh\r-lR6QIj"
+[v20] PASS PROBE_DIR under os.tmpdir()
+[v20] PASS browser answers /json/version at start
+[v20] [cleanup] probe lockfile path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S4-tmp-beh\r-lR6QIj\sutradhar-cli-1791070099559-Azri\lockfile"
+[v20] PASS A4-pre lockfile exists
+[v20] PASS A4-pre rm(lockfile) rejects EBUSY/EPERM :: code=EBUSY
+[v20] PASS A4-pre lockfile still there
+[v20] INFO churn-control count 298->298 bytes 15759824->15759932 missing=[]
+[v20] PASS A4 no marker present (isolation)
+[v20] [cleanup] probe close-result path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S4-tmp-beh\r-lR6QIj\sutradhar-cli-1791070099559-Azri" removed=false reason="EBUSY: resource busy or locked, unlink 'E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\S4-tmp-beh\\r-lR6QIj\\sutradhar-cli-1791070099559-Azri\\lockfile'"
+[v20] PASS A4 close removed:false :: {"removed":false,"reason":"EBUSY: resource busy or locked, unlink 'E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\S4-tmp-beh\\r-lR6QIj\\sutradhar-cli-1791070099559-Azri\\lockfile'"}
+[v20] PASS A4 close no file missing :: count 298->298 bytes 15759932->15760453 missing=[]
+[v20] INFO A4 close count 298->298 bytes 15759932->15760453
+[v20] PASS A4 /json/version still answers after close attempt
+[v20] [cleanup] probe sweep-kept path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S4-tmp-beh\r-lR6QIj\sutradhar-cli-1791070099559-Azri" reason="EBUSY: resource busy or locked, unlink 'E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\S4-tmp-beh\\r-lR6QIj\\sutradhar-cli-1791070099559-Azri\\lockfile'"
+[v20] PASS A4 sweep kept the live dir
+[v20] PASS A4 sweep no file missing :: count 298->298 bytes 15760453->15760453 missing=[]
+[v20] PASS A4 /json/version still answers after sweep
+[v20] INFO B2 dir ageMin=25.0
+[v20] [cleanup] probe b2-kept path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S4-tmp-beh\r-lR6QIj\sutradhar-cli-1791070099559-Azri" reason="in-use"
+[v20] PASS B2 real-scan sweep keeps backdated live dir as in-use :: ["in-use"]
+[v20] PASS B2 marker variant keeps as owner-alive :: ["owner-alive"]
+[v20] [cleanup] probe a5-close-result path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S4-tmp-beh\r-lR6QIj\sutradhar-cli-1791070099559-Azri" removed=false reason="in-use"
+[v20] PASS A5 real scan -> in-use :: {"removed":false,"reason":"in-use"}
+[v20] INFO A5 attribution hits=["76552/77784/msedge.exe","58232/76552/msedge.exe","46228/76552/msedge.exe","72652/76552/msedge.exe","72284/76552/msedge.exe","70800/76552/msedge.exe","66764/76552/msedge.exe","48544/76552/msedge.exe","73240/76552/msedge.exe","69084/76552/identity_helper.exe","76196/76552/msedge.exe","78948/76552/msedge.exe"]
+[v20] PASS A5 attribution non-empty
+[v20] PASS A5 attribution only our browser tree :: []
+[v20] PASS A5 attribution excludes the probe
+[v20] PASS final /json/version answers
+[v20] RESULT fails=0
+[v20] [iso-guard] tmpdir=e:/ai-cache/tmp/claude/e--hmx-projects-internal-projects-pinchtab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/s4-tmp-beh pid=78124
+[v20] [probe-guard] tmpdir=e:/ai-cache/tmp/claude/e--hmx-projects-internal-projects-pinchtab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/s4-tmp-beh pid=78124
+PASS child v20 exit 0 :: status=0 signal=null
+---- child v22
+[v22] == win-a4child (A4-pre, A4, B2, A5 on a live browser) node=v22.23.3 platform=win32 tmpdir=E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S4-tmp-beh pid=76604
+[v22] [cleanup] probe dir path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S4-tmp-beh\r-lR6QIj\sutradhar-cli-1791070099559-Azri"
+[v22] [cleanup] probe tmpRoot path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S4-tmp-beh\r-lR6QIj"
+[v22] PASS PROBE_DIR under os.tmpdir()
+[v22] PASS browser answers /json/version at start
+[v22] [cleanup] probe lockfile path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S4-tmp-beh\r-lR6QIj\sutradhar-cli-1791070099559-Azri\lockfile"
+[v22] PASS A4-pre lockfile exists
+[v22] PASS A4-pre rm(lockfile) rejects EBUSY/EPERM :: code=EBUSY
+[v22] PASS A4-pre lockfile still there
+[v22] INFO churn-control count 298->298 bytes 15760472->15760472 missing=[]
+[v22] PASS A4 no marker present (isolation)
+[v22] [cleanup] probe close-result path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S4-tmp-beh\r-lR6QIj\sutradhar-cli-1791070099559-Azri" removed=false reason="EBUSY: resource busy or locked, unlink 'E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\S4-tmp-beh\\r-lR6QIj\\sutradhar-cli-1791070099559-Azri\\lockfile'"
+[v22] PASS A4 close removed:false :: {"removed":false,"reason":"EBUSY: resource busy or locked, unlink 'E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\S4-tmp-beh\\r-lR6QIj\\sutradhar-cli-1791070099559-Azri\\lockfile'"}
+[v22] PASS A4 close no file missing :: count 298->298 bytes 15760472->15760832 missing=[]
+[v22] INFO A4 close count 298->298 bytes 15760472->15760832
+[v22] PASS A4 /json/version still answers after close attempt
+[v22] [cleanup] probe sweep-kept path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S4-tmp-beh\r-lR6QIj\sutradhar-cli-1791070099559-Azri" reason="EBUSY: resource busy or locked, unlink 'E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\S4-tmp-beh\\r-lR6QIj\\sutradhar-cli-1791070099559-Azri\\lockfile'"
+[v22] PASS A4 sweep kept the live dir
+[v22] PASS A4 sweep no file missing :: count 298->298 bytes 15760832->15760832 missing=[]
+[v22] PASS A4 /json/version still answers after sweep
+[v22] INFO B2 dir ageMin=25.0
+[v22] [cleanup] probe b2-kept path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S4-tmp-beh\r-lR6QIj\sutradhar-cli-1791070099559-Azri" reason="in-use"
+[v22] PASS B2 real-scan sweep keeps backdated live dir as in-use :: ["in-use"]
+[v22] PASS B2 marker variant keeps as owner-alive :: ["owner-alive"]
+[v22] [cleanup] probe a5-close-result path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S4-tmp-beh\r-lR6QIj\sutradhar-cli-1791070099559-Azri" removed=false reason="in-use"
+[v22] PASS A5 real scan -> in-use :: {"removed":false,"reason":"in-use"}
+[v22] INFO A5 attribution hits=["76552/77784/msedge.exe","58232/76552/msedge.exe","46228/76552/msedge.exe","72652/76552/msedge.exe","72284/76552/msedge.exe","70800/76552/msedge.exe","66764/76552/msedge.exe","48544/76552/msedge.exe","73240/76552/msedge.exe","76196/76552/msedge.exe","78948/76552/msedge.exe"]
+[v22] PASS A5 attribution non-empty
+[v22] PASS A5 attribution only our browser tree :: []
+[v22] PASS A5 attribution excludes the probe
+[v22] PASS final /json/version answers
+[v22] RESULT fails=0
+[v22] [iso-guard] tmpdir=e:/ai-cache/tmp/claude/e--hmx-projects-internal-projects-pinchtab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/s4-tmp-beh pid=76604
+[v22] [probe-guard] tmpdir=e:/ai-cache/tmp/claude/e--hmx-projects-internal-projects-pinchtab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/s4-tmp-beh pid=76604
+PASS child v22 exit 0 :: status=0 signal=null
+PASS browser pid exited within 15 s
+INFO browser process exit code=1 signal=null
+INFO post-kill references=0
+[cleanup] probe postkill-close-result path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S4-tmp-beh\r-lR6QIj\sutradhar-cli-1791070099559-Azri" removed=true reason=undefined
+PASS post-kill close removes the now-dead profile (positive control) :: {"removed":true}
+RESULT fails=0
+# exit=0 end=2026-10-04T04:58:45+05:30

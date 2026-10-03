@@ -1,0 +1,19 @@
+# cmd: TEMP=ISO TMP=ISO TMPDIR=ISO NODE_OPTIONS=--import=file:///$SP/iso/assert-tmp.mjs SUTRADHAR_CLI_DEBUG_CLEANUP=1 TP_MODULE=$SP/S4/mod/temp-profile.mjs timeout 600 "C:/Users/Varad M/AppData/Local/npm-cache/_npx/ebaba8b9e55fd0a9/node_modules/node/bin/node.exe" $SP/S4/win-a7.mjs ; ISO=E:/AI-Cache/tmp/claude/E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/S4-tmp-win-a7-v20 ; start=2026-10-04T05:01:42+05:30
+[iso-guard] tmpdir=e:/ai-cache/tmp/claude/e--hmx-projects-internal-projects-pinchtab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/s4-tmp-win-a7-v20 pid=69260
+[probe-guard] tmpdir=e:/ai-cache/tmp/claude/e--hmx-projects-internal-projects-pinchtab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/s4-tmp-win-a7-v20 pid=69260
+== win-a7 fail closed node=v20.20.2 platform=win32 tmpdir=E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S4-tmp-win-a7-v20 pid=69260
+[cleanup] probe dir path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S4-tmp-win-a7-v20\a7-hUrTDB\sutradhar-cli-1790000000300-AbC123"
+PASS A7 null scan sweep keeps :: ["scan-unavailable"]
+PASS A7 null scan close keeps :: {"removed":false,"reason":"scan-unavailable"}
+PASS A7 scanCommandLines(1) -> null :: got=null in 30ms
+PASS A7 real scan ran (array) :: len=47
+INFO real scan lines=47 selfLines=1 (the query's own powershell.exe matches its own filter, so a Windows scan never returns [])
+PASS A7 real scan: every line carries the prefix
+PASS A7 powershell unresolvable -> scan null :: got=null
+PASS A7 powershell unresolvable -> close keeps :: {"removed":false,"reason":"scan-unavailable"}
+[cleanup] probe dir path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S4-tmp-win-a7-v20\a7-hUrTDB\sutradhar-cli-1790000000301"
+OBS corrupt marker -> readOwnerPid=undefined (unknown owner is treated as not alive)
+OBS removeSessionTempProfile(non-string dir) throws=ERR_INVALID_ARG_TYPE
+OBS removeSessionTempProfile(rejecting scan) throws=scan boom; d3 exists=true
+RESULT fails=0
+# exit=0 end=2026-10-04T05:01:43+05:30
