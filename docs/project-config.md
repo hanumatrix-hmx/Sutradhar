@@ -36,7 +36,8 @@ repository copy).
 **CLI flag > env var > config file > built-in default.** One rule, for every key. The first layer that has a value
 wins as a whole (nothing is merged: a `--viewport` flag never takes only its width). "Not set" means `undefined`,
 `null` (JS and JSON-fed callers), an empty list, or an env var that yields no entry (unset, empty, blank, or only
-delimiters such as `;;`): the next layer down applies. An env var that holds something its parser rejects (`0`, `false`
+delimiters such as `;;`): the next layer down applies. (One stricter case: `SUTRADHAR_IDLE_TIMEOUT_MS` set to blanks is an
+error, not "not set".) An env var that holds something its parser rejects (`0`, `false`
 or `[]` for a roots variable: not an absolute path) is an **error**, never a silent fall-through. A valid env var for the
 *other* surface (say `SUTRADHAR_ALLOWED_UPLOAD_ROOTS` while the download roots come from a refused file) changes nothing
 for this one. This definition lives in one function (`isLayerSet`) that every layer and surface uses. An explicit
@@ -65,11 +66,16 @@ come from the file are re-read on every command, so editing the file takes effec
   directory, or the file a git worktree uses) is a boundary: its own `.sutradhar.json` is read and the search stops.
   If you are inside your home directory the search also stops at home (so `~/.sutradhar.json` works as a personal
   config for directories that are not repositories). The filesystem root is never read. "Inside home" is true when your
-  working directory is under home as written **or** as it really resolves, and links cannot get around it: a
-  `.sutradhar.json` whose real directory is above home is never read when you are inside home, whether the link sits
+  working directory is under home as written **or** as it really resolves, and links cannot get around it: when
+  "inside home" is true, a directory whose real location is above home is never searched, whether the link sits
   inside home pointing out or above home pointing in (when only the real path is inside home, the search follows the
   real path). If your working directory is not inside home either way, home is not involved and the plain upward
-  search applies.
+  search applies. **One spelling is not recognised as inside home:** a Windows UNC alias of a folder in home (for
+  example `\\localhost\E$\...\home\project`), because the real path keeps the UNC spelling. A working
+  directory reached that way counts as not in home, so a `.sutradhar.json` in the directory above home can be read. Using
+  this needs write access above your home directory (administrator-only on default Windows), and the file is still
+  subject to every trust rule below. An empty home directory (`USERPROFILE=""`) makes the CLI exit 1 before any browser
+  starts.
 - **SDK:** nothing is read unless you pass `launch({ discoverConfig: true })` (same search from `process.cwd()`) or
   `launch({ configFile: "path" })` (relative to `process.cwd()`). The two are mutually exclusive.
 - `SUTRADHAR_CONFIG=<absolute path>` (CLI and MCP) loads exactly that file and does no search.
@@ -95,7 +101,10 @@ come from the file are re-read on every command, so editing the file takes effec
   name or in these values. Every message built from file text, including the `~user` entries of `downloadDir`,
   `allowedDownloadRoots` and `allowedUploadRoots`, goes through one function (`echo.ts`) that also replaces NUL and
   bidi/line-separator characters, so a new message cannot echo more; a generated test runs a hostile corpus through
-  every key to keep it that way.
+  every key to keep it that way. The same function also covers the runtime refusals that list your configured roots
+  and domains (the upload and download "outside the allowed directories" errors and the navigation block): each
+  entry is capped (64 characters, 200 for a root), single-line and free of control and bidi characters, and at most 10
+  entries are listed, then "+N more". The cap only applies to the message; the real values are always what is enforced.
 - `close`, `profile` and `dialog` never load the file, so a broken file cannot stop you cleaning up. `doctor` **does** load
   the file (it prints the file in use, its warnings and each key's source, or the error) but is never blocked by it: a
   broken or refused file is reported and `doctor` still exits 0.
@@ -112,7 +121,8 @@ may only **narrow** access or change cosmetic settings, except where noted:
   `allowedDownloadRoots` option (MCP and SDK) replace the file's download roots, so the refusal does not apply; on the
   CLI `download <ref> <dir>` is an explicit grant that does the same for that command; or load the file explicitly
   (`SUTRADHAR_CONFIG=<file>`, SDK `configFile`). The check is point-in-time (see SECURITY.md). When one of these
-  replaces a refused root, a note says so (CLI `Warning:` on every command, MCP startup warning, SDK `console.warn`),
+  replaces a refused root, a note says so (CLI `Warning:` on every command, including `download <ref> <dir>`, MCP startup
+  warning, SDK `console.warn`),
   so "config: loaded" is not the whole story.
 - `dialog.mode: "accept"` is honored, never silently: the CLI prints a `Note:` on every command where it is in
   effect, MCP warns at startup and the SDK `console.warn`s at `launch()` (only for a discovered file). A `--dialog`

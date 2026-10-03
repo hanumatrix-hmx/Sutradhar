@@ -4147,3 +4147,23 @@ runtime.ts ~2130/2903); A3-2 unit-test gap (HOME-as-link plus an above-home link
 say a file above home is never read inside home, but a UNC spelling of a folder in home counts as not-in-home; A3-4 no override
 note for `download <ref> <dir>` over a refused root; A3-5/6/7 info.
 
+
+## 2026-10-03 -- FR2-14 audit-3 follow-up (minors A3-1..A3-7 closed; no behaviour change to any access decision)
+
+- **D-F3-1 (A3-1) one echo implementation, moved down a layer.** `capability-runtime` depends on `browser`, so `browser` cannot import
+  `echo.ts` from `capability-runtime`. The function now lives in `packages/utils/src/formatters/echo.ts` (`@sutradhar/utils`, already a dependency of
+  both) and `capability-runtime/src/echo.ts` is a one-line re-export (also exported from the package index, so the CLI can use `echoPath`).
+  New `echoList(items, isPath)`: at most 10 entries, each through `echo`/`echoPath`, then `+N more`. Used at the 4 sites (engine upload and
+  download refusals, runtime upload refusal, navigation block). The cap is only in the message text: the access checks still use the real
+  `allowedUploadRoots` / `allowedDownloadRoots` / `allowedDomains` (tests: a 300+ char root still enforced, a 125-char domain still allowed).
+  The doc sentence "every message built from file text goes through echo.ts" is now true, and says what it covers.
+  Guards: source-level tests in both packages (no bare `.join` of those lists in browser/capability-runtime/cli/mcp-server/sutradhar src; the
+  exact `echoList(...)` calls are present; `echo.ts` holds no second implementation).
+- **D-F3-2 (A3-2)** new topology cell E in `home-boundary.spec.ts`: HOME is a link, and an in-home link points above the REAL home. Audit mutant M4 fails
+  8 of its cells (`audit-3-followup/m4.txt`).
+- **D-F3-3 (A3-3) docs only:** a UNC alias (\\localhost\E$\...) of a folder in home counts as not-in-home; the "never read inside home" wording now says "a directory whose real location is above home is never
+  searched" and states the UNC exception and that using it needs write access above home. GAP-357.
+- **D-F3-4 (A3-4)** `download <ref> <dir>` over a refused discovered root prints a `Warning:` ("... refused ... overridden by the download <dir> argument"),
+  also when env is set too (the env note was suppressed before; now exactly one note). Test in `project-config-cli.spec.ts`.
+- **A3-5 / A3-6 / A3-7 (info):** A3-6 (blank `SUTRADHAR_IDLE_TIMEOUT_MS` is an error) and A3-7 (empty `USERPROFILE` exits 1 before any browser) are one line each in
+  `docs/project-config.md`. A3-5 (guard blind to concatenation) unchanged: the generated corpus is the backstop.

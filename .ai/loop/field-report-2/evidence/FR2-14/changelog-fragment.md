@@ -13,7 +13,8 @@
   - **Unknown keys warn** (with a "did you mean" hint). **Everything else stops the command before Chrome is touched:** malformed
     JSON (comments are not allowed), duplicate keys, wrong types or ranges, an empty array (`remove the key for no restriction`),
     a domain written as a URL/wildcard/port, a file over 64 KiB, a directory or broken/looping symlink in place of the file,
-    UTF-16 or invalid UTF-8. A UTF-8 BOM is accepted. Invalid-JSON errors are redacted; other messages echo only short single-line pieces of the file (an unknown key name, an `allowedDomains` entry, a download entry, an `idleTimeoutMs` string), each capped at 64 characters (a resolved path at 200); `dialog.promptText` and unknown-key values are never echoed.
+    UTF-16 or invalid UTF-8. A UTF-8 BOM is accepted. Invalid-JSON errors are redacted; other messages echo only short single-line pieces of the file (an unknown key name, an `allowedDomains` entry, a download entry, an `idleTimeoutMs` string), each capped at 64 characters (a resolved path at 200); `dialog.promptText` and unknown-key values are never echoed. The runtime refusals that list configured upload/download roots and allowed domains use the same function (`echoList`, in `@sutradhar/utils`): capped, single-line, control/bidi characters replaced, at most 10 entries then "+N more".
+  - **`download <ref> <dir>` over a refused discovered root** prints the same override `Warning:` as the env/option paths. A Windows UNC alias of a folder inside home counts as not-in-home (documented); `SUTRADHAR_IDLE_TIMEOUT_MS` set to blanks is an error.
   - **`SUTRADHAR_CONFIG=<absolute path>`** loads exactly that file (no search); **`SUTRADHAR_CONFIG=none`** ignores project config.
   - **`sutradhar doctor`** prints the file in use, its warnings, and the source (flag/state/env/config/default) of every key.
     The MCP server prints one stderr line at startup naming the file it loaded (or where the search stopped).
