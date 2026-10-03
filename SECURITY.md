@@ -36,7 +36,7 @@ public internet. This document lists what's enforced by default today and what's
   `SUTRADHAR_ALLOWED_UPLOAD_ROOTS` env var, if the calling LLM might act on untrusted page
   content (prompt injection) telling it to upload something sensitive — setting this env var is
   what turns the restriction on.
-- **Known limitations of the download sandbox (status: partial, on the unreleased 0.5.0 branch).**
+- **Known limitations of the download sandbox (status: partial, as of 0.6.0).**
   Path containment is verified: symlinks and junctions (including a not-yet-created target reached
   through one), trailing-dot/space path components and Unicode look-alike folding on Windows, and
   case-sensitive Windows folders are handled fail-closed. What is *not* fully verified is protection

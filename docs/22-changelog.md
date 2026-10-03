@@ -22,6 +22,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+Nothing yet.
+
+## [0.6.0] - unreleased
+
+Prepared on branch `release/0.6.0`; the date and the published-to-npm line are filled in after `npm publish`.
+Contents: the verification contract (FR2-07, **PARTIAL**: ships with the documented `expect.text` limits), condition
+waits and settle (FR2-08, DONE) and the `.sutradhar.json` project config (FR2-14, DONE). The action-history privacy
+work (FR2-11) did not pass its audits and is **not** in this release. Items still blocked from Field Report 2
+(FR2-13 behind FR2-12, FR2-15 behind FR2-01, FR2-03) are listed in `.ai/loop/field-report-2/ledger.md`.
+
 ### Added
 - **`.sutradhar.json` project config (FR2-14).** Per-project defaults for the CLI, the MCP server and (opt-in) the
   SDK: `allowedDomains`, `downloadDir`, `allowedDownloadRoots`, `allowedUploadRoots`, `dialog`, `idleTimeoutMs`,

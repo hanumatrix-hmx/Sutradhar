@@ -36,7 +36,7 @@ import {
 } from '@sutradhar/capability-runtime';
 import { Browser, type LaunchOptions } from './browser.js';
 
-export const SUTRADHAR_VERSION = '0.5.0';
+export const SUTRADHAR_VERSION = '0.6.0';
 
 /**
  * Launch a browser and return a {@link Browser} handle. Resolves once the browser process

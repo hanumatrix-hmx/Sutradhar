@@ -210,7 +210,7 @@ The warden and the exit-3 gate are new and have known gaps — read [Known limit
 
 ## Known limitations
 
-These are open, reproduced problems on the current branch (not yet released as 0.5.0), not
+These are open, reproduced problems as of 0.6.0, not
 hypothetical ones.
 
 **Native dialogs and crashed tabs**
