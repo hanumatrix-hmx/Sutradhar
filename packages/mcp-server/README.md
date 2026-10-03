@@ -14,9 +14,9 @@ Two brain modes, one server:
   objective and it navigates, clicks, types, and extracts a final answer. Best for
   multi-step tasks you'd rather not script call-by-call. Requires an LLM provider.
 
-## Tools (72: 71 `browser.*` plus `agent.runGoal`)
+## Tools (73: 72 `browser.*` plus `agent.runGoal`)
 
-Grouped here by category, matching `tools.ts`'s own section layout. `agent.runGoal` is only registered when an LLM provider is configured, so without one the server exposes the 71 `browser.*` tools.
+Grouped here by category, matching `tools.ts`'s own section layout. `agent.runGoal` is only registered when an LLM provider is configured, so without one the server exposes the 72 `browser.*` tools.
 
 **`sessionId` is optional** on every tool that takes one (70 tools; none requires it). Omit it while exactly one session is live and that session is used (the result ends with a `sessionId omitted: used "<id>" ...` note); with zero or several live sessions the call fails and lists the live ids. It never guesses. `browser.launch`, `browser.attach` and `agent.runGoal` are the exception in meaning: their optional `sessionId` is the id to create or reuse, and omitting it always creates a new session. If your session was idle-reaped or crashed and you launched another, an omitted id uses the new one (the note says so).
 
@@ -233,7 +233,7 @@ it never searches the disk itself.
 
 ## Known limitations
 
-These are open, reproduced problems on the current branch (not yet released as 0.5.0).
+These are open, reproduced problems as of 0.6.0.
 
 - **`browser.download_file` (best-effort overlap protection).** Path containment
   (`SUTRADHAR_ALLOWED_DOWNLOAD_ROOTS`/`SUTRADHAR_ALLOWED_UPLOAD_ROOTS`) is verified, including symlink,

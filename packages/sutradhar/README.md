@@ -169,7 +169,7 @@ waited for, resolves `undefined`); its verification is on `page.lastResult`. Bot
 
 ## Known limitations
 
-These are open on the current branch (0.5.0, not yet published):
+These are open as of 0.6.0:
 
 - **Downloads:** `page.download()` only writes inside `allowedDownloadRoots` (default
   `<OS temp>/sutradhar-downloads`). Do one download per browser at a time: a second overlapping
