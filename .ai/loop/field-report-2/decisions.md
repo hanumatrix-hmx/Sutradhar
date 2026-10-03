@@ -4167,3 +4167,22 @@ note for `download <ref> <dir>` over a refused root; A3-5/6/7 info.
   also when env is set too (the env note was suppressed before; now exactly one note). Test in `project-config-cli.spec.ts`.
 - **A3-5 / A3-6 / A3-7 (info):** A3-6 (blank `SUTRADHAR_IDLE_TIMEOUT_MS` is an error) and A3-7 (empty `USERPROFILE` exits 1 before any browser) are one line each in
   `docs/project-config.md`. A3-5 (guard blind to concatenation) unchanged: the generated corpus is the backstop.
+
+## 2026-10-04 -- FR2-11 HELD (record lives on branch claude/fr2-11-action-history; ledger row reconciled for 0.6.1)
+
+Master's ledger row 17 still said "SPEC". FR2-11 was actually held on 2026-10-01 after audit-4 (see the entry
+"2026-10-01 -- FR2-11 HELD after audit-4" on the branch). This 0.6.1 step reconciles ONLY the ledger row (byte-for-byte
+the branch's row) and records where the full record is. No FR2-11 code is merged into master.
+
+- Branch `claude/fr2-11-action-history`, head commit b861d3a ("FR2-11 HELD after audit-4: evidence, ledger, decision
+  record"), pushed, not an ancestor of master.
+- Full HELD entry: `git show claude/fr2-11-action-history:.ai/loop/field-report-2/decisions.md` (section
+  "2026-10-01 -- FR2-11 HELD after audit-4"). Branch ledger row:
+  `git show claude/fr2-11-action-history:.ai/loop/field-report-2/ledger.md | grep "^| FR2-11 "`.
+- Evidence that exists ONLY on that branch: `.ai/loop/field-report-2/evidence/FR2-11/` (run-1, fix-1..3, audit-1..4;
+  read with `git show claude/fr2-11-action-history:<path>` or `git ls-tree -r claude/fr2-11-action-history -- <dir>`).
+- GAP numbering collision: the branch's gaps.md uses GAP numbers in the 339..378 range that master also assigned to other
+  items. Verified collisions: GAP-349 (branch: FR2-11 run-1, invalid-timeoutMs early return has no `verification`;
+  master: FR2-14 fix-1, spawned-Chrome kill) and GAP-353 (branch: FR2-11 fix-1 over-redaction; master: FR2-14 fix-2,
+  `--viewport` maximum). If that branch is ever merged, its GAP ids must be renumbered first.
+- No FR2-11 code is merged by this change; only `.ai/loop/field-report-2/ledger.md` (row 17) and this entry change.
