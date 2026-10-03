@@ -1,0 +1,32 @@
+// Isolated MCP idle check: config idleTimeoutMs=15000 must reap (observed by chrome.exe PIDs + the reaper's own log
+// line); with SUTRADHAR_IDLE_TIMEOUT_MS=0 it must not within the same window. argv: <pkg|bundle> <scratch> <cfg|env0>
+import fs from 'node:fs';
+import path from 'node:path';
+import { createRequire } from 'node:module';
+import { fileURLToPath, pathToFileURL } from 'node:url';
+import { chromePids, until } from './obs.mjs';
+const HERE = path.dirname(fileURLToPath(import.meta.url));
+const WT = path.resolve(HERE, '../../../../../../..');
+const req = createRequire(path.join(WT, 'packages/mcp-server/package.json'));
+const { Client } = await import(pathToFileURL(req.resolve('@modelcontextprotocol/sdk/client/index.js')).href);
+const { StdioClientTransport } = await import(pathToFileURL(req.resolve('@modelcontextprotocol/sdk/client/stdio.js')).href);
+const [, , BUILD, SCR, MODE] = process.argv;
+const BIN = { pkg: path.join(WT, 'packages/mcp-server/dist/cli.js'), bundle: path.join(WT, 'packages/sutradhar/dist/mcp-cli.js') }[BUILD];
+const S = path.resolve(SCR, 'i' + BUILD[0] + MODE); fs.rmSync(S, { recursive: true, force: true });
+fs.mkdirSync(path.join(S, 'p', '.git'), { recursive: true }); fs.mkdirSync(path.join(S, 't'));
+fs.writeFileSync(path.join(S, 'p', '.sutradhar.json'), JSON.stringify({ idleTimeoutMs: 15000 }));
+const env = { ...process.env, TEMP: path.join(S, 't'), TMP: path.join(S, 't') }; for (const k of Object.keys(env)) if (/^SUTRADHAR_|^OPENROUTER|^OLLAMA/i.test(k)) delete env[k];
+if (MODE === 'env0') env.SUTRADHAR_IDLE_TIMEOUT_MS = '0';
+const tr = new StdioClientTransport({ command: process.execPath, args: [BIN], cwd: path.join(S, 'p'), env, stderr: 'pipe' });
+let se = ''; tr.stderr?.on('data', (d) => (se += d));
+const c = new Client({ name: 'idle', version: '1' }); await c.connect(tr);
+const t0 = performance.now();
+await c.callTool({ name: 'browser.launch', arguments: {} }, undefined, { timeout: 60000 });
+const before = (await chromePids(path.join(S, 't')))?.length;
+const gone = await until(async () => { const p = await chromePids(path.join(S, 't')); return p && p.length === 0; }, 90000, 1000);
+const ms = Math.round(performance.now() - t0);
+const reapLine = se.split(String.fromCharCode(10)).find((l) => l.includes('Reaping idle session')) ?? null;
+await c.callTool({ name: 'browser.shutdown_all', arguments: {} }).catch(() => {}); await c.close();
+const pass = MODE === 'cfg' ? !!gone && !!reapLine : !gone && !reapLine;
+console.log(JSON.stringify({ build: BUILD, mode: MODE, before, reaped: !!gone, msToGone: gone ? ms : null, reapLine: reapLine && reapLine.slice(0, 200), pass }));
+process.exit(0);

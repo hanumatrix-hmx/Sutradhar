@@ -54,6 +54,15 @@
   was spawned now kills that Chrome (it used to leak it, because it was not in `state.json` yet).
 - The SDK announces (`console.warn`) a discovered `dialog.mode "accept"`, as the CLI and MCP do. Single-label `allowedDomains` such as `"1"` or `"com"` are documented as suffix matches.
 
+## Fixed in the audit-2 fix cycle (fix-2)
+
+- **Every message built from file text goes through one choke point** (`echo.ts`): at most 64 characters (200 for a resolved path), single line, with control characters, NUL and bidi/line-separator controls replaced. The `~user` entries of `downloadDir`, `allowedDownloadRoots` and `allowedUploadRoots` were still echoed in full (a 20 KB entry gave a 20,335-character error; newlines gave extra lines). A generated test runs a hostile corpus (multi-line, 20 KB, `~user`, control characters, NUL, bidi, links) through every key, and a source-level guard fails when a new interpolation of file text appears outside the choke point.
+- **The home boundary now holds in both link directions.** A link ABOVE home pointing INTO home (a junction or directory symlink) used to let the search read a `.sutradhar.json` above home. Inside home (as written or as it really resolves) a directory whose real location is above home is never searched, and when only the real path is inside home the search follows the real path. Verified over the generated cross product {cwd in/out of home as written} x {cwd in/out of home really} x {file location} for junctions and symlinks.
+- **One definition of "set"** (`isLayerSet`) for every layer and surface: `undefined`, `null`, an empty list and an env var that yields no entry (empty, blank, `;;`) are unset; an env var its parser rejects (`0`, `false`, `[]`) is an error, never a fall-through; an env var for the other surface changes nothing. The override matrix now varies the env value itself (resolver 32 cells, CLI 48 cells), so the earlier audit mutants (blank env counts as set, other-surface env counts, `download <dir>` not handed to the resolver) fail the unit tests.
+- **MCP `browser.launch` `viewport` is bounded to 1..10000000** by the tool schema (a `1e9` viewport used to reach Chrome, fail there, and leave Chrome running until `shutdown_all`). A viewport at the limit (`--viewport 10000000x10000000`) still passes validation but Chrome cannot create it: the command exits 1 ("No browser session") and the Chrome it spawned is stopped.
+- **An override of a refused root is announced.** When `SUTRADHAR_ALLOWED_DOWNLOAD_ROOTS` or the `allowedDownloadRoots` option replaces a discovered file's refused download roots, the CLI (`Warning:` on every command), the MCP server (startup warning) and the SDK (`console.warn`) say so.
+- Docs: `sutradhar doctor` DOES load the file (and prints it, or the error) but is never blocked by it; `close`, `profile` and `dialog` never load it.
+
 ## Notes carried from FR2-04 / FR2-05
 
 - `--dialog report` already persists on master (FR2-04's D10 fold-in), so a later command without `--dialog` is not silently

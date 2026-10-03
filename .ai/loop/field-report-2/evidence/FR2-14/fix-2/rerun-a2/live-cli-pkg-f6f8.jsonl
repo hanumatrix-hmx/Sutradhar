@@ -1,0 +1,12 @@
+{"id":"pkg.F6.allowlist=empty","code":1,"err":"Error: --allowlist-domains needs at least one domain (e.g. --allowlist-domains example.com,internal.corp); an empty list","pass":true}
+{"id":"pkg.F6.allowlist=blank","code":1,"err":"Error: --allowlist-domains needs at least one domain (e.g. --allowlist-domains example.com,internal.corp); an empty list","pass":true}
+{"id":"pkg.F6.help","pass":true}
+{"id":"pkg.F8.fileMax+1","code":1,"err":"Error: Invalid project config E:\\AI-Cache\\tmp\\fr214f2\\pr\\lc-pkg\\cli-pkg-f6f8\\vp\\.sutradhar.json: viewport.width must be a positive integer (at most 10000000)\n","pids":0,"base0":0,"pass":true}
+{"id":"pkg.F8.file1e9","code":1,"err":"Error: Invalid project config E:\\AI-Cache\\tmp\\fr214f2\\pr\\lc-pkg\\cli-pkg-f6f8\\vp\\.sutradhar.json: viewport.width must be a positive integer (at most 10000000)\n","pids":0,"base0":0,"pass":true}
+{"id":"pkg.F8.file0","code":1,"err":"Error: Invalid project config E:\\AI-Cache\\tmp\\fr214f2\\pr\\lc-pkg\\cli-pkg-f6f8\\vp\\.sutradhar.json: viewport.width must be a positive integer (at most 10000000)\n","pids":0,"base0":0,"pass":true}
+{"id":"pkg.F8.flagMax+1","code":1,"err":"Error: --viewport must be WIDTHxHEIGHT with each side 1..10000000 (e.g. --viewport 390x844)\n","pids":0,"pass":true}
+{"id":"pkg.F8.flag1e9","code":1,"err":"Error: --viewport must be WIDTHxHEIGHT with each side 1..10000000 (e.g. --viewport 390x844)\n","pids":0,"pass":true}
+{"id":"pkg.F8.flag0","code":1,"err":"Error: --viewport must be WIDTHxHEIGHT with each side 1..10000000 (e.g. --viewport 390x844)\n","pids":0,"pass":true}
+{"id":"pkg.F8.fileAtBound","code":1,"err":"Warning: the dialog warden did not start, so dialogs left open between commands can't be handled or auto-handled. Run \"sutradhar dialog\" to check.\nFatal: No browser session \"sess_1790987811885_1\". Cal","stateAfter":true,"pidsB":0,"base0":0,"pass":true}
+{"id":"pkg.F8.noChromeLeft","leftover":[],"pass":true}
+{"summary":{"pass":11,"fail":0,"fails":[],"leftChromePids":[],"ms":15569}}

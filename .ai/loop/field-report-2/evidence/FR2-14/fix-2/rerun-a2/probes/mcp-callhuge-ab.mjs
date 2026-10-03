@@ -1,0 +1,27 @@
+// A/B: MCP browser.launch with an out-of-range viewport ARGUMENT on a given server bin. argv: <bin> <scratch>
+import fs from 'node:fs';
+import path from 'node:path';
+import { createRequire } from 'node:module';
+import { fileURLToPath, pathToFileURL } from 'node:url';
+import { chromePids } from './obs.mjs';
+const HERE = path.dirname(fileURLToPath(import.meta.url));
+const WT = path.resolve(HERE, '../../../../../../..');
+const req = createRequire(path.join(WT, 'packages/mcp-server/package.json'));
+const { Client } = await import(pathToFileURL(req.resolve('@modelcontextprotocol/sdk/client/index.js')).href);
+const { StdioClientTransport } = await import(pathToFileURL(req.resolve('@modelcontextprotocol/sdk/client/stdio.js')).href);
+const [, , BIN, SCR] = process.argv;
+const S = path.resolve(SCR); fs.rmSync(S, { recursive: true, force: true }); fs.mkdirSync(path.join(S, 'w', '.git'), { recursive: true }); fs.mkdirSync(path.join(S, 'temp'));
+const env = { ...process.env, TEMP: path.join(S, 'temp'), TMP: path.join(S, 'temp') }; for (const k of Object.keys(env)) if (/^SUTRADHAR_|^OPENROUTER|^OLLAMA/i.test(k)) delete env[k];
+const t = new StdioClientTransport({ command: process.execPath, args: [BIN], cwd: path.join(S, 'w'), env, stderr: 'pipe' });
+const c = new Client({ name: 'ab', version: '1' }); await c.connect(t);
+const call = (n, a) => c.callTool({ name: n, arguments: a }, undefined, { timeout: 60000 }).catch((e) => ({ isError: true, content: [{ text: 'THROW ' + e.message }] }));
+const r = await call('browser.launch', { viewport: { width: 1000000000, height: 1000000000 } });
+await new Promise((x) => setTimeout(x, 1500));
+const during = await chromePids(path.join(S, 'temp'));
+const list = await call('browser.list_sessions', {});
+await call('browser.shutdown_all', {}); await new Promise((x) => setTimeout(x, 2000));
+const after = await chromePids(path.join(S, 'temp'));
+await c.close(); await new Promise((x) => setTimeout(x, 2000));
+const afterExit = await chromePids(path.join(S, 'temp'));
+console.log(JSON.stringify({ bin: BIN, isError: !!r.isError, text: (r.content || []).map((x) => x.text).join(' ').slice(0, 220), sessions: (list.content || []).map((x) => x.text).join(' ').slice(0, 200), during: during?.length, afterShutdownAll: after?.length, afterExit: afterExit?.length }));
+process.exit(0);

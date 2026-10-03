@@ -1,0 +1,38 @@
+### worktree / branch / HEAD
+E:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041
+claude/fr2-14-project-config
+8325a74
+### product sources byte-identical to before the mutation phase (sha256sum -c)
+files OK: 11  not OK: 0
+### git status of product dirs (must be clean apart from committed work)
+### new specs run fresh (corpus size line, topology line)
+home-boundary cross product: 72 cells ran (plain 12, junction 30, dir-symlink 30)
+N1 corpus: 5780 documents (2 origins), 4082 errors, 826 warnings, 109 refusals (76 cannot-be-checked), 1698 loads, links=true
+ Test Files  3 passed (3)
+      Tests  121 passed (121)
+### cli spec fresh
+ Test Files  1 passed (1)
+      Tests  31 passed (31)
+### bundle contains the new code (fresh grep of the built artifacts)
+isLayerSet: index.js=8 cli-bin.js=9 mcp-cli.js=8 
+were refused: index.js=1 cli-bin.js=1 mcp-cli.js=1 
+echoPath: index.js=5 cli-bin.js=5 mcp-cli.js=5 
+canonCwd: index.js=3 cli-bin.js=3 mcp-cli.js=3 
+max(VIEWPORT_MAX): index.js=0 cli-bin.js=0 mcp-cli.js=1 
+### dist is newer than src (no stale build): newest src vs oldest bundle (epoch seconds)
+newest src 1790987514 oldest dist 1790987564 dist newer than every src: true
+### audit repros fresh (unmodified probes): f4 tilde, f3 reverse, mcp huge viewport
+lines=1
+Invalid project config E:\AI-Cache\tmp\fr214f2\fc\f4\.sutradhar.json: downloadDir "~evil?Note: using nothing. All good.?SECRET=hunter2": ~user is not supported (use ~ or an explicit path)
+  "status": "none",  "stoppedAt": "home"  "status": "none",  "stoppedAt": "home"  "status": "none",  "stoppedAt": "home"
+{"bin":"E:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/packages/mcp-server/dist/cli.js","isError":true,"text":"MCP error -32602: Input validation error: Invalid arguments for tool browser.launch: Number must be less than or equal to 10000000 at viewport.width\nNumber must be less than or equal to 10000000 at viewport.height","sessions":"MCP error -32602: Tool browser.list_se
+### probe sha256 still equal to the auditors' originals
+0
+0
+### docs claims
+doctor-does-load sentence count: 1
+### leftover Chrome from MY scratch dirs (by command-line marker, not by image name)
+8
+### disk
+E:              210G  198G   12G  95% /e
+FRESH DONE

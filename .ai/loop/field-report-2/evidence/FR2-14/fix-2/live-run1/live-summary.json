@@ -1,0 +1,39 @@
+{
+  "total": 160,
+  "passed": 159,
+  "bySurface": {
+    "cli": {
+      "pass": 69,
+      "fail": 0
+    },
+    "mcp": {
+      "pass": 15,
+      "fail": 0
+    },
+    "sdk": {
+      "pass": 14,
+      "fail": 0
+    },
+    "bundle": {
+      "pass": 50,
+      "fail": 1
+    },
+    "bundle-mcp": {
+      "pass": 8,
+      "fail": 0
+    },
+    "harness": {
+      "pass": 3,
+      "fail": 0
+    }
+  },
+  "failed": [
+    {
+      "surface": "bundle",
+      "id": "F2-N2",
+      "pass": false,
+      "observed": "threw: Error: EEXIST: file already exists, symlink 'E:\\AI-Cache\\tmp\\fr214f2\\t1\\fr2-14-ECjUBv\\f2n2\\top\\home\\p' -> 'E:\\AI-Cache\\tmp\\fr214f2\\t1\\fr2-14-ECjUBv\\f2n2\\top\\jn'\n    at async Object.symlink (node:internal/fs/promises:1009:10)\n    at async file:///E:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/tools/scenario-suite/verify-fr2-14-config.mjs:1035:5\n    "
+    }
+  ],
+  "processBaselineCount": 31
+}
