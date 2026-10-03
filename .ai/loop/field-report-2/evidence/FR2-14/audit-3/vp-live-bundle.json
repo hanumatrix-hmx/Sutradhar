@@ -1,0 +1,111 @@
+[
+ {
+  "surface": "mcp-bundle",
+  "case": "zero",
+  "rejected": true,
+  "newChrome": 0,
+  "txt": "{\"content\":[{\"type\":\"text\",\"text\":\"MCP error -32602: Input validation error: Invalid arguments for tool browser.launch: Number must be greater than 0 at viewport.width\"}],\"isError\":true}"
+ },
+ {
+  "surface": "mcp-bundle",
+  "case": "neg",
+  "rejected": true,
+  "newChrome": 0,
+  "txt": "{\"content\":[{\"type\":\"text\",\"text\":\"MCP error -32602: Input validation error: Invalid arguments for tool browser.launch: Number must be greater than 0 at viewport.width\"}],\"isError\":true}"
+ },
+ {
+  "surface": "mcp-bundle",
+  "case": "nanAsNull",
+  "rejected": true,
+  "newChrome": 0,
+  "txt": "{\"content\":[{\"type\":\"text\",\"text\":\"MCP error -32602: Input validation error: Invalid arguments for tool browser.launch: Expected number, received null at viewport.width\"}],\"isError\":true}"
+ },
+ {
+  "surface": "mcp-bundle",
+  "case": "float",
+  "rejected": true,
+  "newChrome": 0,
+  "txt": "{\"content\":[{\"type\":\"text\",\"text\":\"MCP error -32602: Input validation error: Invalid arguments for tool browser.launch: Expected integer, received float at viewport.width\"}],\"isError\":true}"
+ },
+ {
+  "surface": "mcp-bundle",
+  "case": "e9",
+  "rejected": true,
+  "newChrome": 0,
+  "txt": "{\"content\":[{\"type\":\"text\",\"text\":\"MCP error -32602: Input validation error: Invalid arguments for tool browser.launch: Number must be less than or equal to 10000000 at viewport.width\\nNumber must be "
+ },
+ {
+  "surface": "mcp-bundle",
+  "case": "over",
+  "rejected": true,
+  "newChrome": 0,
+  "txt": "{\"content\":[{\"type\":\"text\",\"text\":\"MCP error -32602: Input validation error: Invalid arguments for tool browser.launch: Number must be less than or equal to 10000000 at viewport.width\"}],\"isError\":tru"
+ },
+ {
+  "surface": "mcp-bundle",
+  "case": "str",
+  "rejected": true,
+  "newChrome": 0,
+  "txt": "{\"content\":[{\"type\":\"text\",\"text\":\"MCP error -32602: Input validation error: Invalid arguments for tool browser.launch: Expected number, received string at viewport.width\"}],\"isError\":true}"
+ },
+ {
+  "surface": "mcp-bundle",
+  "case": "positive control 800x600",
+  "rejected": false,
+  "newChromeDuring": 8
+ },
+ {
+  "surface": "mcp-bundle",
+  "case": "after shutdown_all",
+  "chromeLeft": []
+ },
+ {
+  "surface": "cli-bundle",
+  "case": "--viewport 0x5",
+  "status": 1,
+  "err": "Error: --viewport must be WIDTHxHEIGHT with each side 1..10000000 (e.g. --viewport 390x844)",
+  "chromeLeftAfterClose": []
+ },
+ {
+  "surface": "cli-bundle",
+  "case": "--viewport 5x0",
+  "status": 1,
+  "err": "Error: --viewport must be WIDTHxHEIGHT with each side 1..10000000 (e.g. --viewport 390x844)",
+  "chromeLeftAfterClose": []
+ },
+ {
+  "surface": "cli-bundle",
+  "case": "--viewport 10000001x5",
+  "status": 1,
+  "err": "Error: --viewport must be WIDTHxHEIGHT with each side 1..10000000 (e.g. --viewport 390x844)",
+  "chromeLeftAfterClose": []
+ },
+ {
+  "surface": "cli-bundle",
+  "case": "--viewport -5x5",
+  "status": 1,
+  "err": "Error: --viewport must be WIDTHxHEIGHT with each side 1..10000000 (e.g. --viewport 390x844)",
+  "chromeLeftAfterClose": []
+ },
+ {
+  "surface": "cli-bundle",
+  "case": "--viewport 1.5x5",
+  "status": 1,
+  "err": "Error: --viewport must be WIDTHxHEIGHT with each side 1..10000000 (e.g. --viewport 390x844)",
+  "chromeLeftAfterClose": []
+ },
+ {
+  "surface": "cli-bundle",
+  "case": "--viewport abcxdef",
+  "status": 1,
+  "err": "Error: --viewport must be WIDTHxHEIGHT with each side 1..10000000 (e.g. --viewport 390x844)",
+  "chromeLeftAfterClose": []
+ },
+ {
+  "surface": "cli-bundle",
+  "case": "--viewport 10000000x10000000",
+  "status": 1,
+  "err": "Warning: the dialog warden did not start, so dialogs left open between commands can't be handled or auto-handled. Run \"sutradhar dialog\" to check.\nFatal: No bro",
+  "chromeLeftAfterClose": []
+ }
+]

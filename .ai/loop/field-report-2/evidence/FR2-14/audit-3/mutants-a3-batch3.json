@@ -1,0 +1,68 @@
+[
+ {
+  "id": "M2",
+  "desc": "home walk: never skip a dir whose real location is above home",
+  "file": "packages/capability-runtime/src/project-config.ts",
+  "build": "ok",
+  "unit": {
+   "cr": 12,
+   "cli": 0,
+   "mcp": 0,
+   "sdk": 0
+  },
+  "probes": {
+   "topo": "3/450 S1=3",
+   "attackHome": "PASS 27 FAIL 4",
+   "echo": "0 bad msgs",
+   "prec": "12/735 fail (baseline 12)",
+   "failclosed": "0/170",
+   "hostileRootsAccepted": "17 (baseline 17)"
+  },
+  "restored": true,
+  "rebuild": "ok"
+ },
+ {
+  "id": "M12",
+  "desc": "N8 override note removed",
+  "file": "packages/capability-runtime/src/fs-roots.ts",
+  "build": "ok",
+  "unit": {
+   "cr": 1,
+   "cli": 0,
+   "mcp": 0,
+   "sdk": 1
+  },
+  "probes": {
+   "topo": "0/450 S1=0",
+   "attackHome": "PASS 31 FAIL 0",
+   "echo": "0 bad msgs",
+   "prec": "38/735 fail (baseline 12)",
+   "failclosed": "0/170",
+   "hostileRootsAccepted": "17 (baseline 17)"
+  },
+  "restored": true,
+  "rebuild": "ok"
+ },
+ {
+  "id": "M13",
+  "desc": "topology: stricter rule (skip everything outside home): GAP-355 alternative",
+  "file": "packages/capability-runtime/src/project-config.ts",
+  "build": "ok",
+  "unit": {
+   "cr": 2,
+   "cli": 0,
+   "mcp": 0,
+   "sdk": 0
+  },
+  "probes": {
+   "topo": "4/450 S1=0",
+   "attackHome": "PASS 31 FAIL 0",
+   "echo": "0 bad msgs",
+   "prec": "12/735 fail (baseline 12)",
+   "failclosed": "0/170",
+   "hostileRootsAccepted": "17 (baseline 17)"
+  },
+  "restored": true,
+  "rebuild": "ok"
+ }
+]

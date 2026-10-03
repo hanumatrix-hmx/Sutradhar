@@ -1,0 +1,24 @@
+[
+ {
+  "id": "M4",
+  "desc": "topology: above-home test against the LITERAL home (HOME-is-a-link revert)",
+  "file": "packages/capability-runtime/src/project-config.ts",
+  "build": "ok",
+  "unit": {
+   "cr": 0,
+   "cli": 0,
+   "mcp": 0,
+   "sdk": 0
+  },
+  "probes": {
+   "topo": "1/450 S1=1",
+   "attackHome": "PASS 31 FAIL 0",
+   "echo": "0 bad msgs",
+   "prec": "12/735 fail (baseline 12)",
+   "failclosed": "0/170",
+   "hostileRootsAccepted": "17 (baseline 17)"
+  },
+  "restored": true,
+  "rebuild": "ok"
+ }
+]

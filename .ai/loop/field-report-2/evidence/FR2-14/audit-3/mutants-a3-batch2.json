@@ -1,0 +1,216 @@
+[
+ {
+  "id": "M2",
+  "desc": "home walk: never skip a dir whose real location is above home",
+  "file": "packages/capability-runtime/src/project-config.ts",
+  "build": "TSC FAIL packages/capability-runtime: src/project-config.ts(460,37): error TS2345: Argument of type 'string | undefined' is not assignable to parameter of type 'string'.\r\n  Type 'undefined' is not assignable to type 'string'.\r\nsrc/project-config.ts(460,72): error TS2345: Argument of type 'string | undefined' is not assignable to paramet",
+  "restored": true,
+  "rebuild": "ok"
+ },
+ {
+  "id": "M3",
+  "desc": "topology: a cwd that is in home only canonically is not in home",
+  "file": "packages/capability-runtime/src/project-config.ts",
+  "build": "ok",
+  "unit": {
+   "cr": 20,
+   "cli": 0,
+   "mcp": 0,
+   "sdk": 0
+  },
+  "probes": {
+   "topo": "19/450 S1=18",
+   "attackHome": "PASS 22 FAIL 9",
+   "echo": "0 bad msgs",
+   "prec": "12/735 fail (baseline 12)",
+   "failclosed": "0/170",
+   "hostileRootsAccepted": "17 (baseline 17)"
+  },
+  "restored": true,
+  "rebuild": "ok"
+ },
+ {
+  "id": "M4",
+  "desc": "topology: above-home test against the LITERAL home (HOME-is-a-link revert)",
+  "file": "packages/capability-runtime/src/project-config.ts",
+  "build": "ok",
+  "unit": {
+   "cr": 0,
+   "cli": 0,
+   "mcp": 0,
+   "sdk": 0
+  },
+  "probes": {
+   "topo": "1/450 S1=1",
+   "attackHome": "PASS 31 FAIL 0",
+   "echo": "0 bad msgs",
+   "prec": "12/735 fail (baseline 12)",
+   "failclosed": "0/170",
+   "hostileRootsAccepted": "17 (baseline 17)"
+  },
+  "restored": true,
+  "rebuild": "ok"
+ },
+ {
+  "id": "M5",
+  "desc": "echo bypass by concatenation (invisible to the template guard)",
+  "file": "packages/capability-runtime/src/project-config.ts",
+  "build": "ok",
+  "unit": {
+   "cr": 8,
+   "cli": 0,
+   "mcp": 0,
+   "sdk": 0
+  },
+  "probes": {
+   "topo": "0/450 S1=0",
+   "attackHome": "PASS 31 FAIL 0",
+   "echo": "36 bad msgs",
+   "prec": "12/735 fail (baseline 12)",
+   "failclosed": "0/170",
+   "hostileRootsAccepted": "17 (baseline 17)"
+  },
+  "restored": true,
+  "rebuild": "ok"
+ },
+ {
+  "id": "M6",
+  "desc": "echo choke point: bidi controls no longer replaced",
+  "file": "packages/capability-runtime/src/echo.ts",
+  "build": "ok",
+  "unit": {
+   "cr": 4,
+   "cli": 0,
+   "mcp": 0,
+   "sdk": 0
+  },
+  "probes": {
+   "topo": "0/450 S1=0",
+   "attackHome": "PASS 31 FAIL 0",
+   "echo": "14 bad msgs",
+   "prec": "12/735 fail (baseline 12)",
+   "failclosed": "0/170",
+   "hostileRootsAccepted": "17 (baseline 17)"
+  },
+  "restored": true,
+  "rebuild": "ok"
+ },
+ {
+  "id": "M7",
+  "desc": "message path skipping the choke point (raw error text)",
+  "file": "packages/capability-runtime/src/project-config.ts",
+  "build": "ok",
+  "unit": {
+   "cr": 4,
+   "cli": 0,
+   "mcp": 0,
+   "sdk": 0
+  },
+  "probes": {
+   "topo": "0/450 S1=0",
+   "attackHome": "PASS 31 FAIL 0",
+   "echo": "0 bad msgs",
+   "prec": "12/735 fail (baseline 12)",
+   "failclosed": "0/170",
+   "hostileRootsAccepted": "17 (baseline 17)"
+  },
+  "restored": true,
+  "rebuild": "ok"
+ },
+ {
+  "id": "M8",
+  "desc": "site bypassing isLayerSet: option [] counts as set",
+  "file": "packages/capability-runtime/src/fs-roots.ts",
+  "build": "ok",
+  "unit": {
+   "cr": 2,
+   "cli": 0,
+   "mcp": 0,
+   "sdk": 0
+  },
+  "probes": {
+   "topo": "0/450 S1=0",
+   "attackHome": "PASS 31 FAIL 0",
+   "echo": "0 bad msgs",
+   "prec": "52/735 fail (baseline 12)",
+   "failclosed": "0/170",
+   "hostileRootsAccepted": "17 (baseline 17)"
+  },
+  "restored": true,
+  "rebuild": "ok"
+ },
+ {
+  "id": "M9",
+  "desc": "isLayerSet definition: empty list counts as set",
+  "file": "packages/capability-runtime/src/layer-set.ts",
+  "build": "ok",
+  "unit": {
+   "cr": 6,
+   "cli": 2,
+   "mcp": 1,
+   "sdk": 0
+  },
+  "probes": {
+   "topo": "0/450 S1=0",
+   "attackHome": "PASS 31 FAIL 0",
+   "echo": "0 bad msgs",
+   "prec": "73/735 fail (baseline 12)",
+   "failclosed": "0/170",
+   "hostileRootsAccepted": "17 (baseline 17)"
+  },
+  "restored": true,
+  "rebuild": "ok"
+ },
+ {
+  "id": "M10",
+  "desc": "a discovered file is trusted (no containment refusal)",
+  "file": "packages/capability-runtime/src/project-config.ts",
+  "build": "ok",
+  "unit": {
+   "cr": 21,
+   "cli": 6,
+   "mcp": 4,
+   "sdk": 6
+  },
+  "probes": {
+   "topo": "0/450 S1=0",
+   "attackHome": "PASS 30 FAIL 1",
+   "echo": "0 bad msgs",
+   "prec": "78/735 fail (baseline 12)",
+   "failclosed": "0/170",
+   "hostileRootsAccepted": "63 (baseline 17)"
+  },
+  "restored": true,
+  "rebuild": "ok"
+ },
+ {
+  "id": "M11",
+  "desc": "CLI: download <dir> strips a NON-refused file roots too",
+  "file": "packages/cli/src/project-config-cli.ts",
+  "build": "ok",
+  "unit": {
+   "cr": 0,
+   "cli": 4,
+   "mcp": 0,
+   "sdk": 0
+  },
+  "probes": {
+   "topo": "0/450 S1=0",
+   "attackHome": "PASS 31 FAIL 0",
+   "echo": "0 bad msgs",
+   "prec": "22/735 fail (baseline 12)",
+   "failclosed": "0/170",
+   "hostileRootsAccepted": "17 (baseline 17)"
+  },
+  "restored": true,
+  "rebuild": "ok"
+ },
+ {
+  "id": "M12",
+  "desc": "N8 override note removed",
+  "file": "packages/capability-runtime/src/fs-roots.ts",
+  "build": "TSC FAIL packages/capability-runtime: src/fs-roots.ts(180,63): error TS18048: 'input.config' is possibly 'undefined'.\r\n",
+  "restored": true,
+  "rebuild": "ok"
+ }
+]

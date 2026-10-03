@@ -4133,3 +4133,17 @@ Scope kept to the revised plan above; no other behaviour changed. Commits: 32fd5
 - **N6 (`createSutradharServer({allowedDomains: ''|false|0})` unrestricted) and N9 (verify-fr2-04 environment variance) are NOT changed** (info; identical on master; out of the plan's scope). GAP-354.
 - **Mutation:** 47 valid mutants run through my runner (each type-valid, exact-once, restored from the original bytes with sha256 checked, dist rebuilt): 25 of mine (choke point removed in 8 message paths, cap removed, cap widened, replacement removed, canonical walk reverted, reverse-link guard removed, pre-F3 rule, each definition of "set" reverted: blank/`;;` env, other-surface env, blank-env-to-default, blank upload env, `[]`, `null`, `firstDefined` bypass, `download <dir>` wiring, `[]` dir list, zod bound removed, N8 note removed) + audit-1 A1-A12 and audit-2 B2-B9 (re-spelled where their find text moved): 46 caught by unit tests, 1 equivalent (B13: exact-string home equality, equivalent on win32). Six first attempts were type-invalid and are listed as not counted. The auditor's own `mutants-a2.mjs` (unmodified copy; only B1's find-string re-spelled in its definitions file) re-run for B1, B10, B11: all three are now caught by the UNIT tests (they survived all 848 before).
 - **Process lesson (third time):** the audit-2 residuals were again "the case found was fixed, the property was not". This cycle each fix was written test-first as a generated property with an independent oracle, and each property test was itself run against a mutant that removes the thing it guards, including a mutant that it first MISSED (C5, B13-style swap) and which led to tightening the test, not the claim.
+
+## 2026-10-03 -- FR2-14 audit-3 ACCEPT
+
+Independent audit-3 accepted FR2-14: no path lets a discovered file widen an access decision; flag > env > file > default
+holds on CLI, MCP, SDK (723/735 generated cells exact, the other 12 differ only by a missing override note A3-4; live 34/34);
+F1 refused roots never used/merged/fallback; home boundary 1200/1200 own-oracle checks + 24/24 live; hostile roots 50 refused;
+fail-closed 170/170; 13/13 own mutants caught; no regression vs master (L13 headed flake passes 8/8 interleaved on both).
+GAP-355 ("strictly above home" rule) ruled safe. Minors to close before the PR: A3-1 docs claim "every message built from
+file text goes through echo.ts" is false (runtime upload/download refusals and the navigation-block message print config-supplied
+root/domain lists uncapped: 20,306-char multi-line message with raw U+202E; sites browser-action-engine.ts ~283/317,
+runtime.ts ~2130/2903); A3-2 unit-test gap (HOME-as-link plus an above-home link; mutant M4 survives unit tests); A3-3 docs
+say a file above home is never read inside home, but a UNC spelling of a folder in home counts as not-in-home; A3-4 no override
+note for `download <ref> <dir>` over a refused root; A3-5/6/7 info.
+
