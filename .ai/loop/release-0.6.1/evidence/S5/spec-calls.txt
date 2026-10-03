@@ -1,0 +1,6 @@
+packages/cli/tests/unit/temp-profile.spec.ts:136:    const res = await sweepStaleTempProfiles({ tmpRoot: root, scan });
+packages/cli/tests/unit/temp-profile.spec.ts:150:    const res = await sweepStaleTempProfiles({ tmpRoot: root, scan: async () => null });
+packages/cli/tests/unit/temp-profile.spec.ts:158:    const res = await removeSessionTempProfile(d, undefined, { tmpRoot: root, scan: async () => [] });
+packages/cli/tests/unit/temp-profile.spec.ts:165:    const res = await removeSessionTempProfile(d, undefined, { tmpRoot: root, scan: async () => [`chrome --user-data-dir=${d}`] });
+packages/cli/tests/unit/temp-profile.spec.ts:172:    const res = await removeSessionTempProfile(d, undefined, { tmpRoot: root, scan: async () => [] });
+packages/cli/tests/unit/temp-profile.spec.ts:179:    const res = await removeSessionTempProfile(d, process.pid, { tmpRoot: root, exitTimeoutMs: 200, scan: async () => [] });
