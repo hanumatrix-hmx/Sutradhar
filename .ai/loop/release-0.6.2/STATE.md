@@ -30,3 +30,5 @@
 - S0b/S9 done (A-1 test 5393010; version bump 0.6.2). Next: S10 changelog+docs, S10b gaps, S11 gate, S11b WebBench.
 
 - S10 done (changelog + docs, commit follows S9). Next: S10b gaps, S11 gate, S11b WebBench.
+
+- S10b done (GAP-399..413). Next: S11 gate (re-key S4 inventory first, A-2), S11b.
