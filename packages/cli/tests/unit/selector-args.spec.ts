@@ -19,6 +19,12 @@ describe('@sutradhar/cli FR2-06 selector-args', () => {
       expect(validateSelectorArgs([undefined])).toBeNull();
     });
 
+    it('I-049: "#5" and "[#5]" are accepted node ids', () => {
+      expect(validateSelectorArgs(['#5'])).toBeNull();
+      expect(validateSelectorArgs(['[#5]'])).toBeNull();
+      expect(validateSelectorArgs(['#5]'])).not.toBeNull();
+    });
+
     it('C1: names the specific bad arg among several', () => {
       const err = validateSelectorArgs(['#ok', 'a >> b']);
       expect(err).toContain('a >> b');
@@ -34,6 +40,8 @@ describe('@sutradhar/cli FR2-06 selector-args', () => {
     it('C2: returns null for undefined and a valid chain', () => {
       expect(validateFrameChain(undefined)).toBeNull();
       expect(validateFrameChain('iframe.a::iframe.b')).toBeNull();
+      expect(validateFrameChain('#7::#8')).toBeNull();
+      expect(validateFrameChain('[#7]::[#8]')).toBeNull();
     });
   });
 });

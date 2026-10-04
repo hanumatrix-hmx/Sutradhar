@@ -47,9 +47,31 @@ describe('@sutradhar/capability-runtime SutradharRuntime (logic, no browser)', (
     });
 
     it('FR2-06 R1: throws InvalidSelectorError synchronously for Playwright-style syntax', () => {
-      for (const bad of ['text=Submit', 'role=button', 'button >> text=OK', ':has-text("x")', "getByRole('x')", 'internal:role=button', '//a', '#12', '"x"']) {
+      for (const bad of ['text=Submit', 'role=button', 'button >> text=OK', ':has-text("x")', "getByRole('x')", 'internal:role=button', '//a', '"x"']) {
         expect(() => normalizeTarget(bad)).toThrow(InvalidSelectorError);
       }
+    });
+
+    it('I-049: "#N" and "[#N]" (as snap prints them) map to the node-id selector, trimmed, digits verbatim', () => {
+      expect(normalizeTarget('#5')).toBe('[data-sd-node-id="5"]');
+      expect(normalizeTarget('[#5]')).toBe('[data-sd-node-id="5"]');
+      expect(normalizeTarget(' #5 ')).toBe('[data-sd-node-id="5"]');
+      expect(normalizeTarget(' [#5] ')).toBe('[data-sd-node-id="5"]');
+      expect(normalizeTarget('5')).toBe('[data-sd-node-id="5"]');
+      expect(normalizeTarget('#05')).toBe('[data-sd-node-id="05"]');
+      expect(normalizeTarget('[#123]')).toBe('[data-sd-node-id="123"]');
+    });
+
+    it('I-049: half-bracketed forms keep the node-id-syntax hint; CSS-looking forms are untouched', () => {
+      for (const bad of ['#5]', '[#5']) {
+        expect(() => normalizeTarget(bad)).toThrow(InvalidSelectorError);
+        expect(() => normalizeTarget(bad)).toThrow(/node id/);
+      }
+      expect(normalizeTarget('#a5')).toBe('#a5');
+      expect(normalizeTarget('#\\35')).toBe('#\\35');
+      expect(normalizeTarget('div#x')).toBe('div#x');
+      expect(normalizeTarget('#5 > span')).not.toContain('data-sd-node-id');
+      expect(normalizeTarget('#5 > span')).toBe('#5 > span');
     });
 
     it('FR2-06 R1: still maps a whitespace-padded numeric id', () => {

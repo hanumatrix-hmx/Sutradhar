@@ -1913,9 +1913,9 @@ Commands:
   clicktext <text>             Click the element containing this text (from "axsnap")
   clickrole <role> [name]      Click by accessibility role, optionally narrowed by name
                                 (from "axsnap", e.g. clickrole button Submit)
-  Selectors are CSS (shadow roots crossed), a numeric id from "snap", or pierce/ xpath/ aria/
-                                text/; Playwright syntax (text=, >>, role=) is rejected — use
-                                clicktext/clickrole.
+  Selectors are CSS (shadow roots crossed), a numeric id from "snap" (7, #7 or [#7], as
+                                printed), or pierce/ xpath/ aria/ text/; Playwright syntax
+                                (text=, >>, role=) is rejected — use clicktext/clickrole.
   type <ref> <text>            Type text into an element
   press <ref> <key>            Focus an element then press a key (e.g. Enter)
   press <ref> <key> --modifiers Control,Shift

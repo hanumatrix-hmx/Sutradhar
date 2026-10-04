@@ -357,6 +357,10 @@ export function normalizeTarget(target: ElementTarget): string {
   // A pure-numeric target is interpreted as a sd-node-id stamped by the DOM semantic engine —
   // checked first (D6) so node ids never pay for the dialect scan below.
   if (/^\d+$/.test(trimmed)) return `[data-sd-node-id="${trimmed}"]`;
+  // I-049: `snap` prints ids as `[#5]`, so `#5` and `[#5]` (whole target, trimmed) are node ids too. `#<digit>` is
+  // not valid CSS, so nothing real is shadowed; `#5]`, `[#5`, `#5 > span` and `#a5` do not match and fall through.
+  const bracketed = /^#(\d+)$/.exec(trimmed) ?? /^\[#(\d+)\]$/.exec(trimmed);
+  if (bracketed) return `[data-sd-node-id="${bracketed[1]}"]`;
   assertSupportedSelectorDialect(target);
   return target;
 }

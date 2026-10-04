@@ -462,7 +462,7 @@ export function registerTools(mcpServer: McpServer, options: RegisterToolsOption
         'Elements inside an iframe are listed as `[#31 in iframe "pay" (https://…)]` (the frame\'s URL is shown on its ' +
         'first listed element, then just `[#32 in iframe "pay"]`; an unnamed frame shows its number instead). Elements ' +
         'inside an open shadow root end with `(shadow: host-tag#id)`. Ids stay globally unique across frames, so pass ' +
-        'just the number (`"31"`); when parsing, match `^\\[#(\\d+)`, not `^\\[#(\\d+)\\]`. A frame whose content could ' +
+        'just the number (`"31"`; `"#31"` and `"[#31]"`, exactly as printed, are accepted too); when parsing, match `^\\[#(\\d+)`, not `^\\[#(\\d+)\\]`. A frame whose content could ' +
         'not be read is listed as `[iframe <origin> — not inspectable] (reason)` rather than silently omitted; take the ' +
         'snapshot again, or read it with eval/extract_data + `frameSelector` (e.g. `iframe[name="pay"]`). With ' +
         'includeNodes, nodes carry `frame` and `shadowHosts` fields, and skipped frames are returned as JSON. ' +
