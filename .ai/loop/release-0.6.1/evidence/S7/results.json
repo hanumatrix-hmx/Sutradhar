@@ -1,0 +1,1402 @@
+{
+  "startedAt": "2026-10-04T01:24:03.416Z",
+  "cases": [
+    "L1",
+    "L1s",
+    "L2",
+    "L3",
+    "L4",
+    "L5a",
+    "L5b",
+    "L7",
+    "L9",
+    "L12",
+    "L12m"
+  ],
+  "iter": 10,
+  "fails": 0,
+  "results": [
+    {
+      "name": "P5: ISO leaves room for a 34-char profile name within 200 chars",
+      "ok": true,
+      "detail": "198/199"
+    },
+    {
+      "name": "ISO starts with no sutradhar-cli-* entries",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "L1 iter 1: nav exit 0",
+      "ok": true,
+      "detail": "exit=0 1335ms"
+    },
+    {
+      "name": "L1 iter 1: tempProfile true",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "L1 iter 1: (ii) dirname(userDataDir) == ISO",
+      "ok": true,
+      "detail": "dirname=e:/ai-cache/tmp/claude/e--hmx-projects-internal-projects-pinchtab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/s7"
+    },
+    {
+      "name": "L1 iter 1: --user-data-dir length <= 200 (P5)",
+      "ok": true,
+      "detail": "len=198"
+    },
+    {
+      "name": "L1 iter 1: dir exists after nav",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "L1 iter 1: close exit 0",
+      "ok": true,
+      "detail": "exit=0 1087ms"
+    },
+    {
+      "name": "L1 iter 1: dir gone after close",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "L1 iter 1: Chrome PID gone",
+      "ok": true,
+      "detail": "pid=78880"
+    },
+    {
+      "name": "L1 iter 1: debug order phase kill -> state-cleared -> phase cleanup",
+      "ok": true,
+      "detail": "idx=193,221,1226"
+    },
+    {
+      "name": "L1 iter 1: state.json absent after close",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "L1 iter 1: no new sutradhar-cli-* left in TEMP",
+      "ok": true,
+      "detail": "before=[] after=[]"
+    },
+    {
+      "name": "(i) canary dir swept by the first session start",
+      "ok": true,
+      "detail": "gone=true removed-line=true"
+    },
+    {
+      "name": "L1 iter 2: nav exit 0",
+      "ok": true,
+      "detail": "exit=0 846ms"
+    },
+    {
+      "name": "L1 iter 2: tempProfile true",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "L1 iter 2: (ii) dirname(userDataDir) == ISO",
+      "ok": true,
+      "detail": "dirname=e:/ai-cache/tmp/claude/e--hmx-projects-internal-projects-pinchtab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/s7"
+    },
+    {
+      "name": "L1 iter 2: --user-data-dir length <= 200 (P5)",
+      "ok": true,
+      "detail": "len=198"
+    },
+    {
+      "name": "L1 iter 2: dir exists after nav",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "L1 iter 2: close exit 0",
+      "ok": true,
+      "detail": "exit=0 1165ms"
+    },
+    {
+      "name": "L1 iter 2: dir gone after close",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "L1 iter 2: Chrome PID gone",
+      "ok": true,
+      "detail": "pid=82948"
+    },
+    {
+      "name": "L1 iter 2: debug order phase kill -> state-cleared -> phase cleanup",
+      "ok": true,
+      "detail": "idx=193,221,1226"
+    },
+    {
+      "name": "L1 iter 2: state.json absent after close",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "L1 iter 2: no new sutradhar-cli-* left in TEMP",
+      "ok": true,
+      "detail": "before=[] after=[]"
+    },
+    {
+      "name": "L1 iter 3: nav exit 0",
+      "ok": true,
+      "detail": "exit=0 829ms"
+    },
+    {
+      "name": "L1 iter 3: tempProfile true",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "L1 iter 3: (ii) dirname(userDataDir) == ISO",
+      "ok": true,
+      "detail": "dirname=e:/ai-cache/tmp/claude/e--hmx-projects-internal-projects-pinchtab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/s7"
+    },
+    {
+      "name": "L1 iter 3: --user-data-dir length <= 200 (P5)",
+      "ok": true,
+      "detail": "len=198"
+    },
+    {
+      "name": "L1 iter 3: dir exists after nav",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "L1 iter 3: close exit 0",
+      "ok": true,
+      "detail": "exit=0 1081ms"
+    },
+    {
+      "name": "L1 iter 3: dir gone after close",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "L1 iter 3: Chrome PID gone",
+      "ok": true,
+      "detail": "pid=78388"
+    },
+    {
+      "name": "L1 iter 3: debug order phase kill -> state-cleared -> phase cleanup",
+      "ok": true,
+      "detail": "idx=193,221,1226"
+    },
+    {
+      "name": "L1 iter 3: state.json absent after close",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "L1 iter 3: no new sutradhar-cli-* left in TEMP",
+      "ok": true,
+      "detail": "before=[] after=[]"
+    },
+    {
+      "name": "L1 iter 4: nav exit 0",
+      "ok": true,
+      "detail": "exit=0 832ms"
+    },
+    {
+      "name": "L1 iter 4: tempProfile true",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "L1 iter 4: (ii) dirname(userDataDir) == ISO",
+      "ok": true,
+      "detail": "dirname=e:/ai-cache/tmp/claude/e--hmx-projects-internal-projects-pinchtab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/s7"
+    },
+    {
+      "name": "L1 iter 4: --user-data-dir length <= 200 (P5)",
+      "ok": true,
+      "detail": "len=198"
+    },
+    {
+      "name": "L1 iter 4: dir exists after nav",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "L1 iter 4: close exit 0",
+      "ok": true,
+      "detail": "exit=0 1095ms"
+    },
+    {
+      "name": "L1 iter 4: dir gone after close",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "L1 iter 4: Chrome PID gone",
+      "ok": true,
+      "detail": "pid=79208"
+    },
+    {
+      "name": "L1 iter 4: debug order phase kill -> state-cleared -> phase cleanup",
+      "ok": true,
+      "detail": "idx=193,221,1226"
+    },
+    {
+      "name": "L1 iter 4: state.json absent after close",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "L1 iter 4: no new sutradhar-cli-* left in TEMP",
+      "ok": true,
+      "detail": "before=[] after=[]"
+    },
+    {
+      "name": "L1 iter 5: nav exit 0",
+      "ok": true,
+      "detail": "exit=0 818ms"
+    },
+    {
+      "name": "L1 iter 5: tempProfile true",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "L1 iter 5: (ii) dirname(userDataDir) == ISO",
+      "ok": true,
+      "detail": "dirname=e:/ai-cache/tmp/claude/e--hmx-projects-internal-projects-pinchtab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/s7"
+    },
+    {
+      "name": "L1 iter 5: --user-data-dir length <= 200 (P5)",
+      "ok": true,
+      "detail": "len=198"
+    },
+    {
+      "name": "L1 iter 5: dir exists after nav",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "L1 iter 5: close exit 0",
+      "ok": true,
+      "detail": "exit=0 1254ms"
+    },
+    {
+      "name": "L1 iter 5: dir gone after close",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "L1 iter 5: Chrome PID gone",
+      "ok": true,
+      "detail": "pid=83984"
+    },
+    {
+      "name": "L1 iter 5: debug order phase kill -> state-cleared -> phase cleanup",
+      "ok": true,
+      "detail": "idx=193,221,1226"
+    },
+    {
+      "name": "L1 iter 5: state.json absent after close",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "L1 iter 5: no new sutradhar-cli-* left in TEMP",
+      "ok": true,
+      "detail": "before=[] after=[]"
+    },
+    {
+      "name": "L1 iter 6: nav exit 0",
+      "ok": true,
+      "detail": "exit=0 841ms"
+    },
+    {
+      "name": "L1 iter 6: tempProfile true",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "L1 iter 6: (ii) dirname(userDataDir) == ISO",
+      "ok": true,
+      "detail": "dirname=e:/ai-cache/tmp/claude/e--hmx-projects-internal-projects-pinchtab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/s7"
+    },
+    {
+      "name": "L1 iter 6: --user-data-dir length <= 200 (P5)",
+      "ok": true,
+      "detail": "len=198"
+    },
+    {
+      "name": "L1 iter 6: dir exists after nav",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "L1 iter 6: close exit 0",
+      "ok": true,
+      "detail": "exit=0 1135ms"
+    },
+    {
+      "name": "L1 iter 6: dir gone after close",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "L1 iter 6: Chrome PID gone",
+      "ok": true,
+      "detail": "pid=81728"
+    },
+    {
+      "name": "L1 iter 6: debug order phase kill -> state-cleared -> phase cleanup",
+      "ok": true,
+      "detail": "idx=193,221,1226"
+    },
+    {
+      "name": "L1 iter 6: state.json absent after close",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "L1 iter 6: no new sutradhar-cli-* left in TEMP",
+      "ok": true,
+      "detail": "before=[] after=[]"
+    },
+    {
+      "name": "L1 iter 7: nav exit 0",
+      "ok": true,
+      "detail": "exit=0 951ms"
+    },
+    {
+      "name": "L1 iter 7: tempProfile true",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "L1 iter 7: (ii) dirname(userDataDir) == ISO",
+      "ok": true,
+      "detail": "dirname=e:/ai-cache/tmp/claude/e--hmx-projects-internal-projects-pinchtab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/s7"
+    },
+    {
+      "name": "L1 iter 7: --user-data-dir length <= 200 (P5)",
+      "ok": true,
+      "detail": "len=198"
+    },
+    {
+      "name": "L1 iter 7: dir exists after nav",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "L1 iter 7: close exit 0",
+      "ok": true,
+      "detail": "exit=0 1091ms"
+    },
+    {
+      "name": "L1 iter 7: dir gone after close",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "L1 iter 7: Chrome PID gone",
+      "ok": true,
+      "detail": "pid=83372"
+    },
+    {
+      "name": "L1 iter 7: debug order phase kill -> state-cleared -> phase cleanup",
+      "ok": true,
+      "detail": "idx=193,221,1226"
+    },
+    {
+      "name": "L1 iter 7: state.json absent after close",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "L1 iter 7: no new sutradhar-cli-* left in TEMP",
+      "ok": true,
+      "detail": "before=[] after=[]"
+    },
+    {
+      "name": "L1 iter 8: nav exit 0",
+      "ok": true,
+      "detail": "exit=0 845ms"
+    },
+    {
+      "name": "L1 iter 8: tempProfile true",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "L1 iter 8: (ii) dirname(userDataDir) == ISO",
+      "ok": true,
+      "detail": "dirname=e:/ai-cache/tmp/claude/e--hmx-projects-internal-projects-pinchtab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/s7"
+    },
+    {
+      "name": "L1 iter 8: --user-data-dir length <= 200 (P5)",
+      "ok": true,
+      "detail": "len=198"
+    },
+    {
+      "name": "L1 iter 8: dir exists after nav",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "L1 iter 8: close exit 0",
+      "ok": true,
+      "detail": "exit=0 1093ms"
+    },
+    {
+      "name": "L1 iter 8: dir gone after close",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "L1 iter 8: Chrome PID gone",
+      "ok": true,
+      "detail": "pid=82244"
+    },
+    {
+      "name": "L1 iter 8: debug order phase kill -> state-cleared -> phase cleanup",
+      "ok": true,
+      "detail": "idx=193,221,1226"
+    },
+    {
+      "name": "L1 iter 8: state.json absent after close",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "L1 iter 8: no new sutradhar-cli-* left in TEMP",
+      "ok": true,
+      "detail": "before=[] after=[]"
+    },
+    {
+      "name": "L1 iter 9: nav exit 0",
+      "ok": true,
+      "detail": "exit=0 825ms"
+    },
+    {
+      "name": "L1 iter 9: tempProfile true",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "L1 iter 9: (ii) dirname(userDataDir) == ISO",
+      "ok": true,
+      "detail": "dirname=e:/ai-cache/tmp/claude/e--hmx-projects-internal-projects-pinchtab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/s7"
+    },
+    {
+      "name": "L1 iter 9: --user-data-dir length <= 200 (P5)",
+      "ok": true,
+      "detail": "len=198"
+    },
+    {
+      "name": "L1 iter 9: dir exists after nav",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "L1 iter 9: close exit 0",
+      "ok": true,
+      "detail": "exit=0 1063ms"
+    },
+    {
+      "name": "L1 iter 9: dir gone after close",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "L1 iter 9: Chrome PID gone",
+      "ok": true,
+      "detail": "pid=73272"
+    },
+    {
+      "name": "L1 iter 9: debug order phase kill -> state-cleared -> phase cleanup",
+      "ok": true,
+      "detail": "idx=193,221,1226"
+    },
+    {
+      "name": "L1 iter 9: state.json absent after close",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "L1 iter 9: no new sutradhar-cli-* left in TEMP",
+      "ok": true,
+      "detail": "before=[] after=[]"
+    },
+    {
+      "name": "L1 iter 10: nav exit 0",
+      "ok": true,
+      "detail": "exit=0 862ms"
+    },
+    {
+      "name": "L1 iter 10: tempProfile true",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "L1 iter 10: (ii) dirname(userDataDir) == ISO",
+      "ok": true,
+      "detail": "dirname=e:/ai-cache/tmp/claude/e--hmx-projects-internal-projects-pinchtab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/s7"
+    },
+    {
+      "name": "L1 iter 10: --user-data-dir length <= 200 (P5)",
+      "ok": true,
+      "detail": "len=198"
+    },
+    {
+      "name": "L1 iter 10: dir exists after nav",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "L1 iter 10: close exit 0",
+      "ok": true,
+      "detail": "exit=0 1068ms"
+    },
+    {
+      "name": "L1 iter 10: dir gone after close",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "L1 iter 10: Chrome PID gone",
+      "ok": true,
+      "detail": "pid=74912"
+    },
+    {
+      "name": "L1 iter 10: debug order phase kill -> state-cleared -> phase cleanup",
+      "ok": true,
+      "detail": "idx=193,221,1226"
+    },
+    {
+      "name": "L1 iter 10: state.json absent after close",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "L1 iter 10: no new sutradhar-cli-* left in TEMP",
+      "ok": true,
+      "detail": "before=[] after=[]"
+    },
+    {
+      "name": "L1 timing phase kill (ms) max <= 10500",
+      "ok": true,
+      "detail": "n=10 p50=345.5 max=425"
+    },
+    {
+      "name": "L1 timing phase cleanup (ms) max <= 15500",
+      "ok": true,
+      "detail": "n=10 p50=515.5 max=599"
+    },
+    {
+      "name": "L1 timing scan max <= 4000 ms (flag for S8 if not)",
+      "ok": true,
+      "detail": "n=11 p50=495 max=574"
+    },
+    {
+      "name": "after L1: no process referencing ISO is still running",
+      "ok": true,
+      "detail": "left=none"
+    },
+    {
+      "name": "L1s TEMP really contains a space",
+      "ok": true,
+      "detail": "E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\S 7"
+    },
+    {
+      "name": "L1s iter 1: nav exit 0",
+      "ok": true,
+      "detail": "exit=0 830ms"
+    },
+    {
+      "name": "L1s iter 1: tempProfile true",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "L1s iter 1: (ii) dirname(userDataDir) == ISO",
+      "ok": true,
+      "detail": "dirname=e:/ai-cache/tmp/claude/e--hmx-projects-internal-projects-pinchtab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/s 7"
+    },
+    {
+      "name": "L1s iter 1: --user-data-dir length <= 200 (P5)",
+      "ok": true,
+      "detail": "len=199"
+    },
+    {
+      "name": "L1s iter 1: dir exists after nav",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "L1s iter 1: close exit 0",
+      "ok": true,
+      "detail": "exit=0 1098ms"
+    },
+    {
+      "name": "L1s iter 1: dir gone after close",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "L1s iter 1: Chrome PID gone",
+      "ok": true,
+      "detail": "pid=64048"
+    },
+    {
+      "name": "L1s iter 1: debug order phase kill -> state-cleared -> phase cleanup",
+      "ok": true,
+      "detail": "idx=194,222,1231"
+    },
+    {
+      "name": "L1s iter 1: state.json absent after close",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "L1s iter 1: no new sutradhar-cli-* left in TEMP",
+      "ok": true,
+      "detail": "before=[] after=[]"
+    },
+    {
+      "name": "L1s iter 2: nav exit 0",
+      "ok": true,
+      "detail": "exit=0 724ms"
+    },
+    {
+      "name": "L1s iter 2: tempProfile true",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "L1s iter 2: (ii) dirname(userDataDir) == ISO",
+      "ok": true,
+      "detail": "dirname=e:/ai-cache/tmp/claude/e--hmx-projects-internal-projects-pinchtab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/s 7"
+    },
+    {
+      "name": "L1s iter 2: --user-data-dir length <= 200 (P5)",
+      "ok": true,
+      "detail": "len=199"
+    },
+    {
+      "name": "L1s iter 2: dir exists after nav",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "L1s iter 2: close exit 0",
+      "ok": true,
+      "detail": "exit=0 1071ms"
+    },
+    {
+      "name": "L1s iter 2: dir gone after close",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "L1s iter 2: Chrome PID gone",
+      "ok": true,
+      "detail": "pid=72184"
+    },
+    {
+      "name": "L1s iter 2: debug order phase kill -> state-cleared -> phase cleanup",
+      "ok": true,
+      "detail": "idx=194,222,1231"
+    },
+    {
+      "name": "L1s iter 2: state.json absent after close",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "L1s iter 2: no new sutradhar-cli-* left in TEMP",
+      "ok": true,
+      "detail": "before=[] after=[]"
+    },
+    {
+      "name": "after L1s: no process referencing ISO is still running",
+      "ok": true,
+      "detail": "left=none"
+    },
+    {
+      "name": "L2 iter 1: nav exit 0",
+      "ok": true,
+      "detail": "exit=0 885ms"
+    },
+    {
+      "name": "L2 iter 1: tempProfile true",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "L2 iter 1: (ii) dirname(userDataDir) == ISO",
+      "ok": true,
+      "detail": "dirname=e:/ai-cache/tmp/claude/e--hmx-projects-internal-projects-pinchtab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/s7"
+    },
+    {
+      "name": "L2 iter 1: --user-data-dir length <= 200 (P5)",
+      "ok": true,
+      "detail": "len=198"
+    },
+    {
+      "name": "L2 iter 1: dir exists after nav",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "L2 iter 1: close exit 0",
+      "ok": true,
+      "detail": "exit=0 1143ms"
+    },
+    {
+      "name": "L2 iter 1: dir gone after close",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "L2 iter 1: Chrome PID gone",
+      "ok": true,
+      "detail": "pid=70044"
+    },
+    {
+      "name": "L2 iter 1: debug order phase kill -> state-cleared -> phase cleanup",
+      "ok": true,
+      "detail": "idx=193,221,1226"
+    },
+    {
+      "name": "L2 iter 1: state.json absent after close",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "L2 iter 1: no new sutradhar-cli-* left in TEMP",
+      "ok": true,
+      "detail": "before=[] after=[]"
+    },
+    {
+      "name": "L2 iter 2: nav exit 0",
+      "ok": true,
+      "detail": "exit=0 938ms"
+    },
+    {
+      "name": "L2 iter 2: tempProfile true",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "L2 iter 2: (ii) dirname(userDataDir) == ISO",
+      "ok": true,
+      "detail": "dirname=e:/ai-cache/tmp/claude/e--hmx-projects-internal-projects-pinchtab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/s7"
+    },
+    {
+      "name": "L2 iter 2: --user-data-dir length <= 200 (P5)",
+      "ok": true,
+      "detail": "len=198"
+    },
+    {
+      "name": "L2 iter 2: dir exists after nav",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "L2 iter 2: close exit 0",
+      "ok": true,
+      "detail": "exit=0 1134ms"
+    },
+    {
+      "name": "L2 iter 2: dir gone after close",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "L2 iter 2: Chrome PID gone",
+      "ok": true,
+      "detail": "pid=52600"
+    },
+    {
+      "name": "L2 iter 2: debug order phase kill -> state-cleared -> phase cleanup",
+      "ok": true,
+      "detail": "idx=193,221,1226"
+    },
+    {
+      "name": "L2 iter 2: state.json absent after close",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "L2 iter 2: no new sutradhar-cli-* left in TEMP",
+      "ok": true,
+      "detail": "before=[] after=[]"
+    },
+    {
+      "name": "L2 iter 3: nav exit 0",
+      "ok": true,
+      "detail": "exit=0 878ms"
+    },
+    {
+      "name": "L2 iter 3: tempProfile true",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "L2 iter 3: (ii) dirname(userDataDir) == ISO",
+      "ok": true,
+      "detail": "dirname=e:/ai-cache/tmp/claude/e--hmx-projects-internal-projects-pinchtab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/s7"
+    },
+    {
+      "name": "L2 iter 3: --user-data-dir length <= 200 (P5)",
+      "ok": true,
+      "detail": "len=198"
+    },
+    {
+      "name": "L2 iter 3: dir exists after nav",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "L2 iter 3: close exit 0",
+      "ok": true,
+      "detail": "exit=0 1140ms"
+    },
+    {
+      "name": "L2 iter 3: dir gone after close",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "L2 iter 3: Chrome PID gone",
+      "ok": true,
+      "detail": "pid=78676"
+    },
+    {
+      "name": "L2 iter 3: debug order phase kill -> state-cleared -> phase cleanup",
+      "ok": true,
+      "detail": "idx=193,221,1226"
+    },
+    {
+      "name": "L2 iter 3: state.json absent after close",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "L2 iter 3: no new sutradhar-cli-* left in TEMP",
+      "ok": true,
+      "detail": "before=[] after=[]"
+    },
+    {
+      "name": "after L2: no process referencing ISO is still running",
+      "ok": true,
+      "detail": "left=none"
+    },
+    {
+      "name": "L3 own Chrome is up and holds the dir",
+      "ok": true,
+      "detail": "pid=61728 port=64025"
+    },
+    {
+      "name": "L3 session 1: nav/close exit 0",
+      "ok": true,
+      "detail": "0/0"
+    },
+    {
+      "name": "L3 session 1: NEG315 survives",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "L3 session 1: the sweep logged decision reason=in-use for NEG315",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "L3 session 2: nav/close exit 0",
+      "ok": true,
+      "detail": "0/0"
+    },
+    {
+      "name": "L3 session 2: NEG315 survives",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "L3 session 2: the sweep logged decision reason=in-use for NEG315",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "L3 session 3: nav/close exit 0",
+      "ok": true,
+      "detail": "0/0"
+    },
+    {
+      "name": "L3 session 3: NEG315 survives",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "L3 session 3: the sweep logged decision reason=in-use for NEG315",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "L3 direct removeSessionTempProfile -> removed:false reason in-use",
+      "ok": true,
+      "detail": "{\"removed\":false,\"reason\":\"in-use\"}"
+    },
+    {
+      "name": "L3 P4(1) every pre-call entry still present",
+      "ok": true,
+      "detail": "pre=283 missing=[]"
+    },
+    {
+      "name": "L3 P4(2) lockfile present",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "L3 P4(3) /json/version still answers",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "L3 attribution: >=1 process references the dir, ALL are inside our Chrome tree, none is the harness",
+      "ok": true,
+      "detail": "refs=10 outsideTree="
+    },
+    {
+      "name": "L3 module scan sees the dir as referenced",
+      "ok": true,
+      "detail": "scanLines=45"
+    },
+    {
+      "name": "L3 own Chrome killed (owned) and exited within 15 s",
+      "ok": true,
+      "detail": "{\"killed\":true,\"owned\":true,\"gone\":true}"
+    },
+    {
+      "name": "L3 after the Chrome exited the same call returns removed:true and the dir is gone",
+      "ok": true,
+      "detail": "{\"removed\":true}"
+    },
+    {
+      "name": "L3: no process referencing ISO is still running",
+      "ok": true,
+      "detail": "left=none"
+    },
+    {
+      "name": "after L3: no process referencing ISO is still running",
+      "ok": true,
+      "detail": "left=none"
+    },
+    {
+      "name": "L4 nav/close exit 0",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "L4 STALE1 removed",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "L4 YOUNG1 kept",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "L4 not-sutradhar-1700000000003 kept",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "L4 sutradhar-downloads kept",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "L4 sweep log shows STALE1 removed and YOUNG1 not removed",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "L4 YOUNG1 removed by removeSessionTempProfile (test cleanup)",
+      "ok": true,
+      "detail": "{\"removed\":true}"
+    },
+    {
+      "name": "after L4: no process referencing ISO is still running",
+      "ok": true,
+      "detail": "left=none"
+    },
+    {
+      "name": "L5a exit 1",
+      "ok": true,
+      "detail": "exit=1 705ms"
+    },
+    {
+      "name": "L5a stderr/stdout mention EFTYPE",
+      "ok": true,
+      "detail": "Error: Failed to spawn Chrome (EFTYPE): spawn EFTYPE"
+    },
+    {
+      "name": "L5a created and removed lines name the same path",
+      "ok": true,
+      "detail": "created=e:/ai-cache/tmp/claude/e--hmx-projects-internal-projects-pinchtab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/s7/sutradhar-cli-1791077123802-fwi30z removed=e:/ai-cache/tmp/claude/e--hmx-projects-internal-projects-pinchtab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/s7/sutradhar-cli-1791077123802-fwi30z"
+    },
+    {
+      "name": "L5a no dir left",
+      "ok": true,
+      "detail": "after=[]"
+    },
+    {
+      "name": "after L5a: no process referencing ISO is still running",
+      "ok": true,
+      "detail": "left=none"
+    },
+    {
+      "name": "L5b exit 1",
+      "ok": true,
+      "detail": "exit=1"
+    },
+    {
+      "name": "L5b well under 10 s (< 8000 ms)",
+      "ok": true,
+      "detail": "1172ms"
+    },
+    {
+      "name": "L5b a \"Chrome exited (code N) before it was ready\" line",
+      "ok": true,
+      "detail": "Error: Chrome exited (code 9) before it was ready on port 59472."
+    },
+    {
+      "name": "L5b discard line carries alive=false (the no-kill branch) and no kill phase ran",
+      "ok": true,
+      "detail": "[cleanup] discard path=\"E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\S7\\sutradhar-cli-1791077130908-DrmkKq\" pid=79204 alive=false temp=true"
+    },
+    {
+      "name": "L5b dir created then removed, none left",
+      "ok": true,
+      "detail": "created=e:/ai-cache/tmp/claude/e--hmx-projects-internal-projects-pinchtab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/s7/sutradhar-cli-1791077130908-drmkkq removed=e:/ai-cache/tmp/claude/e--hmx-projects-internal-projects-pinchtab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/s7/sutradhar-cli-1791077130908-drmkkq"
+    },
+    {
+      "name": "after L5b: no process referencing ISO is still running",
+      "ok": true,
+      "detail": "left=none"
+    },
+    {
+      "name": "L7 mutant nav exit 0 and dir exists",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "L7 mutant close exit 0",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "L7 EXPECTED: the dir REMAINS after the mutant close (so L1 passing is due to the cleanup, not the sweep)",
+      "ok": true,
+      "detail": "dir=E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\S7\\sutradhar-cli-1791077138444-EW52Kr"
+    },
+    {
+      "name": "L7 no cleanup phase ran in the mutant close",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "L7 leftover dir removed through removeSessionTempProfile",
+      "ok": true,
+      "detail": "{\"removed\":true}"
+    },
+    {
+      "name": "L7 mutant file deleted and the real cli-bin.js sha256 unchanged",
+      "ok": true,
+      "detail": "sha=48c1756c0b7944351f9352151ab79c39d3ddc60382aa45278b3481e25a657ac4"
+    },
+    {
+      "name": "L7: no process referencing ISO is still running",
+      "ok": true,
+      "detail": "left=none"
+    },
+    {
+      "name": "after L7: no process referencing ISO is still running",
+      "ok": true,
+      "detail": "left=none"
+    },
+    {
+      "name": "L9 session up",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "L9 the CLI child was killed after state-cleared appeared (not exited by itself first)",
+      "ok": true,
+      "detail": "{\"code\":null,\"signal\":\"SIGTERM\"}"
+    },
+    {
+      "name": "L9 state.json absent or has no chromePid",
+      "ok": true,
+      "detail": "absent"
+    },
+    {
+      "name": "L9 second close reports no session and kills nothing",
+      "ok": true,
+      "detail": "exit=0 out=No active session."
+    },
+    {
+      "name": "L9 the Chrome is gone (killed by the first close before state-cleared)",
+      "ok": true,
+      "detail": "pid=78620"
+    },
+    {
+      "name": "L9 the dir is removed afterwards by removeSessionTempProfile",
+      "ok": true,
+      "detail": "{\"removed\":true}"
+    },
+    {
+      "name": "L9: no process referencing ISO is still running",
+      "ok": true,
+      "detail": "left=none"
+    },
+    {
+      "name": "after L9: no process referencing ISO is still running",
+      "ok": true,
+      "detail": "left=none"
+    },
+    {
+      "name": "L12 nav exit 0 with state",
+      "ok": true,
+      "detail": "exit=0 852ms"
+    },
+    {
+      "name": "L12 state.json rewritten without chromePid (legacy shape)",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "L12 close exit 0",
+      "ok": true,
+      "detail": "exit=0 238ms"
+    },
+    {
+      "name": "L12 close fast (< 10 s, no 180 s attach hang)",
+      "ok": true,
+      "detail": "238ms"
+    },
+    {
+      "name": "L12 \"Session closed.\" printed",
+      "ok": true,
+      "detail": "Session closed."
+    },
+    {
+      "name": "L12 the dialog really was open (close warned about it)",
+      "ok": true,
+      "detail": "Warning: a confirm dialog is open. Handle it first (\"sutradhar dialog accept|dismiss\") if you need it handled."
+    },
+    {
+      "name": "L12 state.json ABSENT",
+      "ok": true,
+      "detail": "state.json present=false"
+    },
+    {
+      "name": "L12 the legacy close did not kill the Chrome (as on master)",
+      "ok": true,
+      "detail": "pid=41568"
+    },
+    {
+      "name": "L12 own Chrome killed after the ownership check and exited",
+      "ok": true,
+      "detail": "{\"killed\":true,\"owned\":true,\"gone\":true}"
+    },
+    {
+      "name": "L12 dir removed through removeSessionTempProfile",
+      "ok": true,
+      "detail": "{\"removed\":true}"
+    },
+    {
+      "name": "L12: no process referencing ISO is still running",
+      "ok": true,
+      "detail": "left=none"
+    },
+    {
+      "name": "after L12: no process referencing ISO is still running",
+      "ok": true,
+      "detail": "left=none"
+    },
+    {
+      "name": "L12m nav exit 0 with state",
+      "ok": true,
+      "detail": "exit=0 800ms"
+    },
+    {
+      "name": "L12m state.json rewritten without chromePid (legacy shape)",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "L12m close exit 0",
+      "ok": true,
+      "detail": "exit=0 232ms"
+    },
+    {
+      "name": "L12m close fast (< 10 s, no 180 s attach hang)",
+      "ok": true,
+      "detail": "232ms"
+    },
+    {
+      "name": "L12m \"Session closed.\" printed",
+      "ok": true,
+      "detail": "Session closed."
+    },
+    {
+      "name": "L12m the dialog really was open (close warned about it)",
+      "ok": true,
+      "detail": "Warning: a confirm dialog is open. Handle it first (\"sutradhar dialog accept|dismiss\") if you need it handled."
+    },
+    {
+      "name": "L12m EXPECTED under M-O6: state.json REMAINS (L12 must fail on the mutant)",
+      "ok": true,
+      "detail": "state.json present=true"
+    },
+    {
+      "name": "L12m the legacy close did not kill the Chrome (as on master)",
+      "ok": true,
+      "detail": "pid=83352"
+    },
+    {
+      "name": "L12m own Chrome killed after the ownership check and exited",
+      "ok": true,
+      "detail": "{\"killed\":true,\"owned\":true,\"gone\":true}"
+    },
+    {
+      "name": "L12m dir removed through removeSessionTempProfile",
+      "ok": true,
+      "detail": "{\"removed\":true}"
+    },
+    {
+      "name": "L12m: no process referencing ISO is still running",
+      "ok": true,
+      "detail": "left=none"
+    },
+    {
+      "name": "L12m mutant file deleted and the real cli-bin.js sha256 unchanged",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "after L12m: no process referencing ISO is still running",
+      "ok": true,
+      "detail": "left=none"
+    }
+  ],
+  "timing": {
+    "sweep": [
+      496,
+      0,
+      0,
+      0,
+      1,
+      1,
+      0,
+      0,
+      0,
+      1,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "navScan": [
+      491
+    ],
+    "closeScan": [
+      513,
+      574,
+      492,
+      489,
+      574,
+      511,
+      497,
+      481,
+      482,
+      495,
+      488,
+      502,
+      521,
+      492,
+      509
+    ],
+    "kill": [
+      326,
+      344,
+      339,
+      366,
+      425,
+      354,
+      347,
+      359,
+      336,
+      325,
+      361,
+      320,
+      324,
+      340,
+      329
+    ],
+    "cleanup": [
+      533,
+      592,
+      511,
+      507,
+      599,
+      531,
+      517,
+      500,
+      500,
+      514,
+      508,
+      522,
+      539,
+      510,
+      527
+    ],
+    "navMs": [
+      1335,
+      846,
+      829,
+      832,
+      818,
+      841,
+      951,
+      845,
+      825,
+      862,
+      830,
+      724,
+      885,
+      938,
+      878
+    ],
+    "closeMs": [
+      1087,
+      1165,
+      1081,
+      1095,
+      1254,
+      1135,
+      1091,
+      1093,
+      1063,
+      1068,
+      1098,
+      1071,
+      1143,
+      1134,
+      1140
+    ]
+  }
+}

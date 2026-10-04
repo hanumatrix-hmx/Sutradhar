@@ -1,0 +1,115 @@
+== precheck 1: os.homedir() with USERPROFILE/HOME overridden
+E:/AI-Cache/tmp/claude/E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/S7/home
+== precheck 2: grep for write targets outside tmpdir/home/results
+tools/scenario-suite/verify-fr2-04-dialogs.mjs:58:const STATE_ROOT = path.join(R, 'state-root');
+tools/scenario-suite/verify-fr2-04-dialogs.mjs:60:await fs.mkdir(STATE_ROOT, { recursive: true });
+tools/scenario-suite/verify-fr2-04-dialogs.mjs:232:    const caseDir = path.join(STATE_ROOT, 'L0');
+tools/scenario-suite/verify-fr2-04-dialogs.mjs:260:    const caseDir = path.join(STATE_ROOT, 'L1');
+tools/scenario-suite/verify-fr2-04-dialogs.mjs:317:    const caseDir = path.join(STATE_ROOT, 'L2a');
+tools/scenario-suite/verify-fr2-04-dialogs.mjs:334:    const caseDir = path.join(STATE_ROOT, 'L2b');
+tools/scenario-suite/verify-fr2-04-dialogs.mjs:353:    const caseDir = path.join(STATE_ROOT, 'L3');
+tools/scenario-suite/verify-fr2-04-dialogs.mjs:389:    const caseDir = path.join(STATE_ROOT, 'L4a');
+tools/scenario-suite/verify-fr2-04-dialogs.mjs:409:    const caseDir = path.join(STATE_ROOT, 'L4b');
+tools/scenario-suite/verify-fr2-04-dialogs.mjs:426:    const caseDir = path.join(STATE_ROOT, 'L4c');
+tools/scenario-suite/verify-fr2-04-dialogs.mjs:451:    const caseDir = path.join(STATE_ROOT, 'L4d');
+tools/scenario-suite/verify-fr2-04-dialogs.mjs:479:    const caseDir = path.join(STATE_ROOT, 'L5');
+tools/scenario-suite/verify-fr2-04-dialogs.mjs:505:    const caseDir = path.join(STATE_ROOT, 'L6a');
+tools/scenario-suite/verify-fr2-04-dialogs.mjs:516:    const caseDir = path.join(STATE_ROOT, 'L6b');
+tools/scenario-suite/verify-fr2-04-dialogs.mjs:524:    const caseDir = path.join(STATE_ROOT, 'L6c');
+tools/scenario-suite/verify-fr2-04-dialogs.mjs:534:    const caseDir = path.join(STATE_ROOT, 'L7');
+tools/scenario-suite/verify-fr2-04-dialogs.mjs:562:    const caseDir = path.join(STATE_ROOT, 'L8');
+tools/scenario-suite/verify-fr2-04-dialogs.mjs:597:    const caseDir = path.join(STATE_ROOT, 'L9');
+tools/scenario-suite/verify-fr2-04-dialogs.mjs:626:    const caseDir = path.join(STATE_ROOT, 'L10');
+tools/scenario-suite/verify-fr2-04-dialogs.mjs:648:    const caseDir = path.join(STATE_ROOT, 'L11');
+tools/scenario-suite/verify-fr2-04-dialogs.mjs:663:    const caseDir = path.join(STATE_ROOT, 'L12');
+tools/scenario-suite/verify-fr2-04-dialogs.mjs:677:    const caseDir = path.join(STATE_ROOT, 'L13');
+tools/scenario-suite/verify-fr2-04-dialogs.mjs:690:    const caseDir = path.join(STATE_ROOT, 'N1');
+tools/scenario-suite/verify-fr2-04-dialogs.mjs:698:    const caseDir = path.join(STATE_ROOT, 'N2');
+tools/scenario-suite/verify-fr2-04-dialogs.mjs:705:    const caseDir = path.join(STATE_ROOT, 'N3');
+tools/scenario-suite/verify-fr2-04-dialogs.mjs:718:    const caseDir = path.join(STATE_ROOT, 'N4');
+tools/scenario-suite/verify-fr2-04-dialogs.mjs:725:    const caseDir = path.join(STATE_ROOT, 'N5');
+tools/scenario-suite/verify-fr2-04-dialogs.mjs:732:    const caseDir = path.join(STATE_ROOT, 'N6');
+tools/scenario-suite/verify-fr2-04-dialogs.mjs:738:    const caseDir = path.join(STATE_ROOT, 'N8');
+tools/scenario-suite/verify-fr2-04-dialogs.mjs:762:    const caseDir = path.join(STATE_ROOT, 'N9');
+tools/scenario-suite/verify-fr2-04-dialogs.mjs:789:    const caseDir = path.join(STATE_ROOT, 'N10');
+tools/scenario-suite/verify-fr2-04-dialogs.mjs:826:    const caseDir = path.join(STATE_ROOT, 'N11');
+tools/scenario-suite/verify-fr2-04-dialogs.mjs:845:    const caseDir = path.join(STATE_ROOT, 'N11b');
+tools/scenario-suite/verify-fr2-04-dialogs.mjs:877:    const caseDir = path.join(STATE_ROOT, 'N12');
+tools/scenario-suite/verify-fr2-04-dialogs.mjs:912:    const caseDir = path.join(STATE_ROOT, 'N13');
+tools/scenario-suite/verify-fr2-04-dialogs.mjs:940:    const caseDir = path.join(STATE_ROOT, 'N14');
+tools/scenario-suite/verify-fr2-04-dialogs.mjs:972:    const caseDir = path.join(STATE_ROOT, 'L15');
+tools/scenario-suite/verify-fr2-04-dialogs.mjs:1059:      const caseDir = path.join(STATE_ROOT, `GAP220-${i}`);
+tools/scenario-suite/verify-fr2-04-dialogs.mjs:1102:    const caseDir = path.join(STATE_ROOT, 'GAP221');
+tools/scenario-suite/verify-fr2-04-dialogs.mjs:1134:    const caseDir = path.join(STATE_ROOT, 'WardenDown');
+tools/scenario-suite/verify-fr2-04-dialogs.mjs:1193:    const caseDir = path.join(STATE_ROOT, 'GAP228');
+tools/scenario-suite/verify-fr2-04-dialogs.mjs:1219:    const caseDir = path.join(STATE_ROOT, 'GAP229');
+tools/scenario-suite/verify-fr2-04-dialogs.mjs:1247:    const caseDir = path.join(STATE_ROOT, 'GAP230');
+tools/scenario-suite/verify-fr2-04-dialogs.mjs:1311:    const caseDir = path.join(STATE_ROOT, 'GAP231');
+tools/scenario-suite/verify-fr2-04-dialogs.mjs:1347:  for (const dir of await fs.readdir(STATE_ROOT).catch(() => [])) {
+tools/scenario-suite/verify-fr2-04-dialogs.mjs:1348:    await cli(['close'], path.join(STATE_ROOT, dir), { capMs: 20000 }).catch(() => {});
+tools/scenario-suite/verify-fr2-04-dialogs.mjs:1362:    const goDir = path.join(STATE_ROOT, 'GateOverhead');
+grep-exit=0
+== other write-ish targets in the two scripts (results dir, evidence dir, writeFile/mkdir/rm)
+11:// override with SUTRADHAR_FR2_04_EVIDENCE_DIR to write into a real .ai/loop/... run, same
+32:const EVIDENCE_DIR =
+33:  process.env.SUTRADHAR_FR2_04_EVIDENCE_DIR ?? path.join(os.tmpdir(), `sutradhar-fr2-04-verify-${Date.now()}`);
+34:if (!process.env.SUTRADHAR_FR2_04_EVIDENCE_DIR) {
+36:    `[verify-fr2-04-dialogs] SUTRADHAR_FR2_04_EVIDENCE_DIR not set — writing evidence to a scratch ` +
+37:      `directory instead of any committed .ai/loop/ evidence: ${EVIDENCE_DIR}`,
+40:await fs.mkdir(EVIDENCE_DIR, { recursive: true });
+42:const results = [];
+47:  results.push(entry);
+52:  results.push({ case: kase, pass: true, skipped: true, reason });
+60:await fs.mkdir(STATE_ROOT, { recursive: true });
+61:await fs.mkdir(TEMP_ROOT, { recursive: true });
+509:    const ev = await cli(['eval', `confirm('fr2-04 eval ${n}')`], caseDir);
+519:    const ev = await cli(['eval', "confirm('x')", '--dialog', 'accept'], caseDir);
+851:    await fs.writeFile(path.join(caseDir, 'state.json'), JSON.stringify({ ...st, chromePid: undefined }, null, 2), 'utf-8');
+1093:    await fs.writeFile(path.join(EVIDENCE_DIR, 'gap-220-rerun.json'), JSON.stringify(perTrial, null, 2));
+1156:    // immediately — confirm() blocks the renderer synchronously (C13), so a direct (unwrapped)
+1319:    await fs.rm(path.join(caseDir, 'warden.json'), { force: true }).catch(() => {});
+1320:    await fs.writeFile(path.join(caseDir, 'warden.lock'), JSON.stringify({ pid: 999999, startedAt: Date.now() - 60000 })).catch(() => {});
+1383:  await fs.writeFile(path.join(EVIDENCE_DIR, 'gate-overhead.json'), JSON.stringify(gateOverhead, null, 2));
+1385:  await fs.writeFile(path.join(EVIDENCE_DIR, 'live-cases.jsonl'), results.map((r) => JSON.stringify(r)).join('\n') + '\n', 'utf-8');
+1389:  const skippedCount = results.filter((r) => r.skipped).length;
+1390:  const realPassCount = results.filter((r) => r.pass && !r.skipped).length;
+1391:  const failedCount = results.filter((r) => !r.pass).length;
+1392:  await fs.writeFile(
+1393:    path.join(EVIDENCE_DIR, 'live-summary.json'),
+1395:      { overallOk, total: results.length, passed: realPassCount, failed: failedCount, skipped: skippedCount, at: new Date().toISOString() },
+1403:      await fs.rm(R, { recursive: true, force: true });
+1411:      `${results.length} total), evidence: ${EVIDENCE_DIR}`,
+---
+20:// predates all of those). `SUTRADHAR_FR2_01_EVIDENCE_DIR` lets a later round redirect this
+30:// `SUTRADHAR_FR2_01_EVIDENCE_DIR` explicitly to write into a real (new, not-yet-existing) round
+32:const EVIDENCE_DIR =
+33:  process.env.SUTRADHAR_FR2_01_EVIDENCE_DIR ??
+34:  path.join(os.tmpdir(), `sutradhar-fr2-01-verify-${Date.now()}`);
+35:if (!process.env.SUTRADHAR_FR2_01_EVIDENCE_DIR) {
+37:    `[verify-fr2-01-wait-states] SUTRADHAR_FR2_01_EVIDENCE_DIR not set — writing evidence to a ` +
+38:      `scratch directory instead of any committed .ai/loop/ evidence: ${EVIDENCE_DIR}`,
+73:const results = { mcp: [], cli: [], sdk: [] };
+74:const cleanupDirs = [];
+82:  results[surface].push(entry);
+90:  await fs.writeFile(path.join(EVIDENCE_DIR, name), lines, 'utf-8');
+201:  const scratchProfile = await fs.mkdtemp(path.join(os.tmpdir(), 'fr2-01-mcp-observer-'));
+202:  cleanupDirs.push(scratchProfile);
+653:    const allErrors = results.mcp.filter((r) => r.observed?.res?.error || r.observed?.error).map((r) => r.observed.res?.error ?? r.observed.error);
+698:  const scratchStateDir = await fs.mkdtemp(path.join(os.tmpdir(), 'fr2-01-cli-state-'));
+699:  cleanupDirs.push(scratchStateDir);
+702:  const beforeTmpDirs = new Set((await fs.readdir(os.tmpdir())).filter((n) => n.startsWith('sutradhar-cli-')));
+893:  const afterTmpDirs = (await fs.readdir(os.tmpdir())).filter((n) => n.startsWith('sutradhar-cli-'));
+896:    await rmWithRetry(path.join(os.tmpdir(), d));
+901:  const stillPresent = (await fs.readdir(os.tmpdir())).filter((n) => newDirs.includes(n));
+1148:  await fs.mkdir(EVIDENCE_DIR, { recursive: true });
+1169:  await writeJsonl('live-mcp.jsonl', results.mcp);
+1170:  await writeJsonl('live-cli.jsonl', results.cli);
+1171:  await writeJsonl('live-sdk.jsonl', results.sdk);
+1180:    ...cleanupDirs,
+1181:    path.join(os.tmpdir(), 'sutradhar-cli-'),
+1182:    path.join(os.tmpdir(), 'puppeteer_dev_chrome_profile-'),
+1191:      mcp: { total: results.mcp.length, passed: results.mcp.filter((r) => r.pass).length },
+1192:      cli: { total: results.cli.length, passed: results.cli.filter((r) => r.pass).length },
+1193:      sdk: { total: results.sdk.length, passed: results.sdk.filter((r) => r.pass).length },
+1195:    cleanupDirsAttempted: cleanupDirs,
+1198:  await fs.writeFile(path.join(EVIDENCE_DIR, 'live-summary.json'), JSON.stringify(summary, null, 2), 'utf-8');

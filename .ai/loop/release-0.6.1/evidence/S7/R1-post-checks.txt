@@ -1,0 +1,27 @@
+== isolated home after R1:
+total 1
+drwxr-xr-x 1 Varad M 197609  0 2026-10-04 07:05:39.850413000 +0530 ./
+drwxr-xr-x 1 Varad M 197609  0 2026-10-04 07:05:39.849413100 +0530 ../
+drwxr-xr-x 1 Varad M 197609  0 2026-10-04 07:05:47.931330500 +0530 profiles/
+-rw-r--r-- 1 Varad M 197609 20 2026-10-04 07:05:47.923767300 +0530 profiles.json
+== real home profiles.json AFTER:
+-rw-r--r-- 1 Varad M 197609 15309 2026-10-03 09:53:38.281106000 +0530 C:/Users/Varad M/.sutradhar/profiles.json
+1a6b10f3afad49d32e024b057f95369dabdb63ca62773008ab9aeffd78652938 *C:/Users/Varad M/.sutradhar/profiles.json
+== BEFORE:
+-rw-r--r-- 1 Varad M 197609 15309 2026-10-03 09:53:38.281106000 +0530 C:/Users/Varad M/.sutradhar/profiles.json
+1a6b10f3afad49d32e024b057f95369dabdb63ca62773008ab9aeffd78652938 *C:/Users/Varad M/.sutradhar/profiles.json
+== real TEMP diff
+real TEMP identical (45)
+== R1 evidence dir:
+total 62
+drwxr-xr-x 1 Varad M 197609     0 Oct  4 07:08 ./
+drwxr-xr-x 1 Varad M 197609     0 Oct  4 07:08 ../
+-rw-r--r-- 1 Varad M 197609  2348 Oct  4 07:07 gap-220-rerun.json
+-rw-r--r-- 1 Varad M 197609   406 Oct  4 07:08 gate-overhead.json
+-rw-r--r-- 1 Varad M 197609 55106 Oct  4 07:08 live-cases.jsonl
+-rw-r--r-- 1 Varad M 197609   123 Oct  4 07:08 live-summary.json
+== N11b state dir still exists?
+home/
+sutradhar-fr2-04-verify-1791077554653/
+== procs
+processes referencing S7 dirs: 0

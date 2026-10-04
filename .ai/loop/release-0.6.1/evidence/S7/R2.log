@@ -1,0 +1,99 @@
+== R2 start 2026-10-04T07:08:58+05:30
+[iso-guard] tmpdir=e:/ai-cache/tmp/claude/e--hmx-projects-internal-projects-pinchtab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/s7 pid=35988
+[verify-fr2-01-wait-states] SUTRADHAR_FR2_01_EVIDENCE_DIR not set — writing evidence to a scratch directory instead of any committed .ai/loop/ evidence: E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S7\sutradhar-fr2-01-verify-1791077939037
+[mcp] PASS a-default-visible-toast
+[mcp] PASS a2-explicit-visible-toast
+[mcp] PASS b-attached-toast-returns-before-reveal
+[mcp] PASS c1-hidden-banner
+[mcp] PASS c2-hidden-spinner-removed
+[mcp] PASS mechanism-visible-vis-hidden
+[mcp] PASS mechanism-visible-zero-size
+[mcp] PASS mechanism-visible-shadow-toast
+[mcp] PASS manual-causality-toast-visible
+[mcp] PASS manual-causality-banner-hidden
+[mcp] PASS N1-never-visible-timeout
+[mcp] PASS N2-nonexistent-selector
+[mcp] PASS N3-stays-hidden-timeout
+[mcp] PASS N4-typo-hidden-succeeds-fast
+[mcp] PASS N8-invalid-state-schema-rejection
+[mcp] PASS N9-timeoutMs-zero-no-hang
+[mcp] PASS N5a-opacity-zero-visible-immediately
+[mcp] PASS N5b-opacity-zero-hidden-times-out
+[mcp] PASS N6-offscreen-visible-immediately
+[mcp] PASS N7-dup-first-hidden-second-visible-diagnosed
+[mcp] PASS N10-stale-node-id-after-navigation
+[mcp] PASS mechanism-visible-ancestor-hidden-child
+[mcp] PASS mechanism-visible-frame-toast
+[mcp] PASS mechanism-attached-late-waits-for-insertion
+[mcp] PASS mechanism-visible-late-waits-for-insertion
+[mcp] PASS hidden-multiframe-visible-in-iframe-does-not-succeed
+[mcp] PASS GAP-008-background-tab-visible-resolves-fast
+[mcp] PASS N11-never-the-generic-outer-message
+[cli] PASS setup-nav-manual
+[cli] PASS wait-default-visible-toast-blocks-then-resolves
+[cli] PASS GAP-008-background-tab-visible-resolves-fast
+[cli] PASS wait-attached-toast-returns-promptly
+[cli] PASS wait-hidden-banner-blocks-then-resolves
+[cli] PASS wait-hidden-spinner-blocks-then-resolves-on-removal
+[cli] PASS N-never-visible-exit1
+[cli] PASS N8-cli-state-bogus-exit1
+[cli] PASS N8-cli-state-missing-value-exit1
+[cli] PASS N-stays-hidden-exit1
+[cli] PASS teardown-close-kills-chrome
+[cli] PASS cleanup-no-leaked-profile-dirs-left-by-us
+{"timestamp":"2026-10-04T01:40:53.348Z","level":"info","message":"[BrowserLauncher] Launching browser instance","context":{"executablePath":"C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe","headless":true,"argsCount":11}}
+{"timestamp":"2026-10-04T01:40:53.544Z","level":"info","message":"[BrowserSessionManager] Created browser session sess_1791078053348_1","context":{"isIncognito":false}}
+{"timestamp":"2026-10-04T01:40:53.617Z","level":"info","message":"[BrowserActionEngine] Executing action wait_for_selector","context":{"tabId":"tab_sess_1791078053348_1_1","selector":"#toast"}}
+[sdk] PASS a-default-visible-toast
+{"timestamp":"2026-10-04T01:40:55.171Z","level":"info","message":"[BrowserActionEngine] Executing action wait_for_selector","context":{"tabId":"tab_sess_1791078053348_1_1","selector":"#toast"}}
+[sdk] PASS b-attached-toast-returns-before-reveal
+{"timestamp":"2026-10-04T01:40:55.192Z","level":"info","message":"[BrowserActionEngine] Executing action wait_for_selector","context":{"tabId":"tab_sess_1791078053348_1_1","selector":"#banner"}}
+[sdk] PASS c1-hidden-banner
+{"timestamp":"2026-10-04T01:40:56.749Z","level":"info","message":"[BrowserActionEngine] Executing action wait_for_selector","context":{"tabId":"tab_sess_1791078053348_1_1","selector":"#spinner"}}
+[sdk] PASS c2-hidden-spinner-removed
+{"timestamp":"2026-10-04T01:40:58.524Z","level":"info","message":"[BrowserActionEngine] Executing action wait_for_selector","context":{"tabId":"tab_sess_1791078053348_1_1","selector":"#toast"}}
+[sdk] PASS GAP-008-background-tab-visible-resolves-fast
+{"timestamp":"2026-10-04T01:40:58.999Z","level":"info","message":"[BrowserActionEngine] Executing action wait_for_selector","context":{"tabId":"tab_sess_1791078053348_1_1","selector":"#never"}}
+{"timestamp":"2026-10-04T01:41:00.214Z","level":"warn","message":"[BrowserActionEngine] Action wait_for_selector failed (attempt 1/3): wait_for_selector timed out after 1200ms waiting for state=visible: 1 element(s) match \"#never\" and are attached to the DOM, but none is visible (display:none, visibility:hidden, or zero width/height). Pass state \"attached\" if DOM presence is enough.","context":{}}
+{"timestamp":"2026-10-04T01:41:01.944Z","level":"warn","message":"[BrowserActionEngine] Action wait_for_selector failed (attempt 2/3): wait_for_selector timed out after 1200ms waiting for state=visible: 1 element(s) match \"#never\" and are attached to the DOM, but none is visible (display:none, visibility:hidden, or zero width/height). Pass state \"attached\" if DOM presence is enough.","context":{}}
+{"timestamp":"2026-10-04T01:41:04.155Z","level":"warn","message":"[BrowserActionEngine] Action wait_for_selector failed (attempt 3/3): wait_for_selector timed out after 1200ms waiting for state=visible: 1 element(s) match \"#never\" and are attached to the DOM, but none is visible (display:none, visibility:hidden, or zero width/height). Pass state \"attached\" if DOM presence is enough.","context":{}}
+[sdk] PASS N1-never-rejects-none-visible
+{"timestamp":"2026-10-04T01:41:04.195Z","level":"info","message":"[BrowserActionEngine] Executing action wait_for_selector","context":{"tabId":"tab_sess_1791078053348_1_1","selector":"#stays"}}
+{"timestamp":"2026-10-04T01:41:05.409Z","level":"warn","message":"[BrowserActionEngine] Action wait_for_selector failed (attempt 1/3): wait_for_selector timed out after 1200ms waiting for state=hidden: an element matching \"#stays\" is still visible.","context":{}}
+{"timestamp":"2026-10-04T01:41:07.137Z","level":"warn","message":"[BrowserActionEngine] Action wait_for_selector failed (attempt 2/3): wait_for_selector timed out after 1200ms waiting for state=hidden: an element matching \"#stays\" is still visible.","context":{}}
+{"timestamp":"2026-10-04T01:41:09.357Z","level":"warn","message":"[BrowserActionEngine] Action wait_for_selector failed (attempt 3/3): wait_for_selector timed out after 1200ms waiting for state=hidden: an element matching \"#stays\" is still visible.","context":{}}
+[sdk] PASS N3-stays-hidden-rejects
+{"timestamp":"2026-10-04T01:41:09.374Z","level":"info","message":"[BrowserActionEngine] Executing action wait_for_selector","context":{"tabId":"tab_sess_1791078053348_1_1","selector":"#toast"}}
+{"timestamp":"2026-10-04T01:41:09.374Z","level":"warn","message":"[BrowserActionEngine] Action wait_for_selector failed (attempt 1/3): Invalid wait_for_selector state \"bogus\" — expected one of: visible, attached, hidden.","context":{}}
+{"timestamp":"2026-10-04T01:41:09.888Z","level":"warn","message":"[BrowserActionEngine] Action wait_for_selector failed (attempt 2/3): Invalid wait_for_selector state \"bogus\" — expected one of: visible, attached, hidden.","context":{}}
+{"timestamp":"2026-10-04T01:41:10.894Z","level":"warn","message":"[BrowserActionEngine] Action wait_for_selector failed (attempt 3/3): Invalid wait_for_selector state \"bogus\" — expected one of: visible, attached, hidden.","context":{}}
+[sdk] PASS N8-sdk-invalid-state-rejects
+{"timestamp":"2026-10-04T01:41:11.014Z","level":"info","message":"[BrowserSession] Closed session sess_1791078053348_1","context":{"reason":"Runtime shutdown"}}
+{"timestamp":"2026-10-04T01:41:11.014Z","level":"info","message":"[BrowserSessionManager] Closed session sess_1791078053348_1","context":{"reason":"Runtime shutdown"}}
+{
+  "at": "2026-10-04T01:41:11.611Z",
+  "overallOk": true,
+  "counts": {
+    "mcp": {
+      "total": 28,
+      "passed": 28
+    },
+    "cli": {
+      "total": 12,
+      "passed": 12
+    },
+    "sdk": {
+      "total": 8,
+      "passed": 8
+    }
+  },
+  "cleanupDirsAttempted": [
+    "E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\S7\\fr2-01-mcp-observer-SWywXY",
+    "E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\S7\\fr2-01-cli-state-k8StQw"
+  ],
+  "lingeringChromeProcesses": {
+    "count": 0,
+    "matches": []
+  }
+}
+== R2 exit=0 end 2026-10-04T07:11:13+05:30
