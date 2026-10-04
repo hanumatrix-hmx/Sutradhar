@@ -1,0 +1,7 @@
+# path-log check cli matrix log vs ISO S11-tmp
+cleanup-lines=395 outside-iso=0
+exit=0
+# negative control (S1 neg log)
+OUTSIDE-ISO e:/ai-cache/tmp/sutradhar-cli-1790000000000 <= [cleanup] decision path="E:/AI-Cache/tmp/sutradhar-cli-1790000000000" reason=too-young
+cleanup-lines=1 outside-iso=1
+exit=1

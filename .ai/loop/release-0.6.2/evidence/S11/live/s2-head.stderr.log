@@ -1,0 +1,15 @@
+[iso-guard] tmpdir=e:/ai-cache/tmp/claude/e--hmx-projects-internal-projects-pinchtab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/sgt pid=44604
+[harness] BUNDLE=E:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/packages/sutradhar/dist/index.js sha256=162462793c5e0d045697f5ad05e90936150730d374b2dcc31f7ff0aa04efea21 tmpdir=e:/ai-cache/tmp/claude/e--hmx-projects-internal-projects-pinchtab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/sgt
+PASS FULL.length >= 10000 10037
+PASS S2-1 default window length 4000 4000
+PASS S2-1 totalChars == FULL.length {"totalChars":10037,"full":10037}
+PASS S2-1 truncated 
+PASS S2-1 windows concatenate to FULL exactly {"windows":3,"accLen":10037}
+PASS S2-1 windows differ (>= 3 distinct) 3
+PASS S2-1 snapshot() carries the first window + totals {"pageTextLength":4000,"pageTextTotalChars":10037,"pageTextTruncated":true,"hasPageTextError":false}
+PASS maxChars 100000 returns FULL, not truncated 
+PASS offset past end: empty, truncated, totals {"sessionId":"sess_1791137627751_1","tabId":"tab_sess_1791137627751_1_1","url":"http://127.0.0.1:51062/long?n=10000","text":"","offset":10042,"returnedChars":0,"totalChars":10037,"truncated":true,"source":"dom"}
+PASS maxChars 0 -> TypeError "maxChars must be an integer from 1 to 100000 (got 0)"
+PASS short pageText length > 200 299
+PASS short: pageTextTruncated false, total == length {"t":false,"n":299}
+LIVE-RUNTIME OK

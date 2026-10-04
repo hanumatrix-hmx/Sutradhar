@@ -1,0 +1,13 @@
+# llm recheck 00:24:56: ollama daemon
+{"version":"0.34.3"}
+{"models":[]}
+# git diff 3f0ba55..HEAD for packages/llm packages/utils:
+0
+# llm tests again
+     → [openai-compatible] HTTP 404: {"error":{"message":"model 'qwen3.5:9b' not found","type":"not_found_error","param":null,"code":null}}
+     → [ollama-local] HTTP 404: {"error":{"message":"model 'qwen3.5:9b' not found","type":"not_found_error","param":null,"code":null}}
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 5 ⎯⎯⎯⎯⎯⎯⎯
+LlmHttpError: [openai-compatible] HTTP 404: {"error":{"message":"model 'qwen3.5:9b' not found","type":"not_found_error","param":null,"code":null}}
+Serialized Error: { status: 404, bodyText: '{"error":{"message":"model \'qwen3.5:9b\' not found","type":"not_found_error","param":null,"code":null}}\n' }
+42720 wslrelay.exe  --mode 1 --vm-id {761a0a15-2137-4bf8-9f63-de6a70ec2c96} --handle 2052
+45228 com.docker.backend.exe "C:\Program Files\Docker\Docker\resources\com.docker.backend.exe" services

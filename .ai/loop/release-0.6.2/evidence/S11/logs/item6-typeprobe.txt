@@ -1,0 +1,12 @@
+# consumer type probe (record only, GAP-406) 23:42:05
+node_modules/sutradhar/dist/browser.d.ts(6,53): error TS2307: Cannot find module '@sutradhar/capability-runtime' or its corresponding type declarations.
+node_modules/sutradhar/dist/errors.d.ts(6,51): error TS2307: Cannot find module '@sutradhar/capability-runtime' or its corresponding type declarations.
+node_modules/sutradhar/dist/index.d.ts(35,72): error TS2307: Cannot find module '@sutradhar/capability-runtime' or its corresponding type declarations.
+node_modules/sutradhar/dist/index.d.ts(37,398): error TS2307: Cannot find module '@sutradhar/capability-runtime' or its corresponding type declarations.
+node_modules/sutradhar/dist/page.d.ts(7,215): error TS2307: Cannot find module '@sutradhar/capability-runtime' or its corresponding type declarations.
+node_modules/sutradhar/dist/page.d.ts(40,43): error TS2307: Cannot find module '@sutradhar/capability-runtime' or its corresponding type declarations.
+probe.ts(1,45): error TS1479: The current file is a CommonJS module whose imports will produce 'require' calls; however, the referenced file is an ECMAScript module and cannot be imported with 'require'. Consider writing a dynamic 'import("sutradhar")' call instead.
+  To convert this file to an ECMAScript module, change its file extension to '.mts' or create a local package.json file with `{ "type": "module" }`.
+tsc-exit=2
+35:export type { DialogPolicy, DialogPolicyMode, ProjectConfigFile } from '@sutradhar/capability-runtime';
+37:export { SutradharRuntime, PageTextReadError, formatPageTextMarker, DEFAULT_PAGE_TEXT_MAX_CHARS, MAX_PAGE_TEXT_CHARS, type PageTextResult, type SnapshotResult, ProfileManager, type ProfileInfo, type StorageState, type AuditReport, type DownloadResult, type ActionExpectation, type ActionResult, type WaitForCondition, type SettleSpec, type VerificationResultDto, type VerificationEvidence, } from '@sutradhar/capability-runtime';

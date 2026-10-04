@@ -1,0 +1,518 @@
+{
+  "mode": "head",
+  "cliSha256": "f221f536b9655e5580752adf8189145b9c4d8bb7ed2108633c89f923f5cae346",
+  "checks": {
+    "S6-3 no session: \"text\" -> exit 1, stderr is exactly the hint line, no Fatal:, stdout empty, no state.json/warden.json": {
+      "ok": true,
+      "detail": {
+        "args": "text",
+        "code": 1,
+        "stderrLines": [
+          "Error: no active browser session — \"text\" needs an open page and does not start one. Start a session with: sutradhar nav <url>"
+        ],
+        "stdoutEmpty": true,
+        "exact": true,
+        "noFatal": true,
+        "stateFiles": []
+      }
+    },
+    "S6-3 no session: \"snap\" -> exit 1, stderr is exactly the hint line, no Fatal:, stdout empty, no state.json/warden.json": {
+      "ok": true,
+      "detail": {
+        "args": "snap",
+        "code": 1,
+        "stderrLines": [
+          "Error: no active browser session — \"snap\" needs an open page and does not start one. Start a session with: sutradhar nav <url>"
+        ],
+        "stdoutEmpty": true,
+        "exact": true,
+        "noFatal": true,
+        "stateFiles": []
+      }
+    },
+    "S6-3 no session: \"axsnap\" -> exit 1, stderr is exactly the hint line, no Fatal:, stdout empty, no state.json/warden.json": {
+      "ok": true,
+      "detail": {
+        "args": "axsnap",
+        "code": 1,
+        "stderrLines": [
+          "Error: no active browser session — \"axsnap\" needs an open page and does not start one. Start a session with: sutradhar nav <url>"
+        ],
+        "stdoutEmpty": true,
+        "exact": true,
+        "noFatal": true,
+        "stateFiles": []
+      }
+    },
+    "S6-3 no session: \"click 1\" -> exit 1, stderr is exactly the hint line, no Fatal:, stdout empty, no state.json/warden.json": {
+      "ok": true,
+      "detail": {
+        "args": "click 1",
+        "code": 1,
+        "stderrLines": [
+          "Error: no active browser session — \"click\" needs an open page and does not start one. Start a session with: sutradhar nav <url>"
+        ],
+        "stdoutEmpty": true,
+        "exact": true,
+        "noFatal": true,
+        "stateFiles": []
+      }
+    },
+    "S6-3 no session: \"type 1 x\" -> exit 1, stderr is exactly the hint line, no Fatal:, stdout empty, no state.json/warden.json": {
+      "ok": true,
+      "detail": {
+        "args": "type 1 x",
+        "code": 1,
+        "stderrLines": [
+          "Error: no active browser session — \"type\" needs an open page and does not start one. Start a session with: sutradhar nav <url>"
+        ],
+        "stdoutEmpty": true,
+        "exact": true,
+        "noFatal": true,
+        "stateFiles": []
+      }
+    },
+    "S6-3 no session: \"press 1 Enter\" -> exit 1, stderr is exactly the hint line, no Fatal:, stdout empty, no state.json/warden.json": {
+      "ok": true,
+      "detail": {
+        "args": "press 1 Enter",
+        "code": 1,
+        "stderrLines": [
+          "Error: no active browser session — \"press\" needs an open page and does not start one. Start a session with: sutradhar nav <url>"
+        ],
+        "stdoutEmpty": true,
+        "exact": true,
+        "noFatal": true,
+        "stateFiles": []
+      }
+    },
+    "S6-3 no session: \"screenshot\" -> exit 1, stderr is exactly the hint line, no Fatal:, stdout empty, no state.json/warden.json": {
+      "ok": true,
+      "detail": {
+        "args": "screenshot",
+        "code": 1,
+        "stderrLines": [
+          "Error: no active browser session — \"screenshot\" needs an open page and does not start one. Start a session with: sutradhar nav <url>"
+        ],
+        "stdoutEmpty": true,
+        "exact": true,
+        "noFatal": true,
+        "stateFiles": []
+      }
+    },
+    "S6-3 no session: \"eval 1\" -> exit 1, stderr is exactly the hint line, no Fatal:, stdout empty, no state.json/warden.json": {
+      "ok": true,
+      "detail": {
+        "args": "eval 1",
+        "code": 1,
+        "stderrLines": [
+          "Error: no active browser session — \"eval\" needs an open page and does not start one. Start a session with: sutradhar nav <url>"
+        ],
+        "stdoutEmpty": true,
+        "exact": true,
+        "noFatal": true,
+        "stateFiles": []
+      }
+    },
+    "S6-3 no session: \"tabs\" -> exit 1, stderr is exactly the hint line, no Fatal:, stdout empty, no state.json/warden.json": {
+      "ok": true,
+      "detail": {
+        "args": "tabs",
+        "code": 1,
+        "stderrLines": [
+          "Error: no active browser session — \"tabs\" needs an open page and does not start one. Start a session with: sutradhar nav <url>"
+        ],
+        "stdoutEmpty": true,
+        "exact": true,
+        "noFatal": true,
+        "stateFiles": []
+      }
+    },
+    "S6-3 no session: \"waitfor 1000 --text x\" -> exit 1, stderr is exactly the hint line, no Fatal:, stdout empty, no state.json/warden.json": {
+      "ok": true,
+      "detail": {
+        "args": "waitfor 1000 --text x",
+        "code": 1,
+        "stderrLines": [
+          "Error: no active browser session — \"waitfor\" needs an open page and does not start one. Start a session with: sutradhar nav <url>"
+        ],
+        "stdoutEmpty": true,
+        "exact": true,
+        "noFatal": true,
+        "stateFiles": []
+      }
+    },
+    "S6-3 no session: \"scroll\" -> exit 1, stderr is exactly the hint line, no Fatal:, stdout empty, no state.json/warden.json": {
+      "ok": true,
+      "detail": {
+        "args": "scroll",
+        "code": 1,
+        "stderrLines": [
+          "Error: no active browser session — \"scroll\" needs an open page and does not start one. Start a session with: sutradhar nav <url>"
+        ],
+        "stdoutEmpty": true,
+        "exact": true,
+        "noFatal": true,
+        "stateFiles": []
+      }
+    },
+    "S6-3 no session: \"grant http://127.0.0.1:57389 clipboard-read\" -> exit 1, stderr is exactly the hint line, no Fatal:, stdout empty, no state.json/warden.json": {
+      "ok": true,
+      "detail": {
+        "args": "grant http://127.0.0.1:57389 clipboard-read",
+        "code": 1,
+        "stderrLines": [
+          "Error: no active browser session — \"grant\" needs an open page and does not start one. Start a session with: sutradhar nav <url>"
+        ],
+        "stdoutEmpty": true,
+        "exact": true,
+        "noFatal": true,
+        "stateFiles": []
+      }
+    },
+    "S6-3 no session: \"getclipboard\" -> exit 1, stderr is exactly the hint line, no Fatal:, stdout empty, no state.json/warden.json": {
+      "ok": true,
+      "detail": {
+        "args": "getclipboard",
+        "code": 1,
+        "stderrLines": [
+          "Error: no active browser session — \"getclipboard\" needs an open page and does not start one. Start a session with: sutradhar nav <url>"
+        ],
+        "stdoutEmpty": true,
+        "exact": true,
+        "noFatal": true,
+        "stateFiles": []
+      }
+    },
+    "S6-3 no session: \"newtab\" -> exit 1, stderr is exactly the hint line, no Fatal:, stdout empty, no state.json/warden.json": {
+      "ok": true,
+      "detail": {
+        "args": "newtab",
+        "code": 1,
+        "stderrLines": [
+          "Error: no active browser session — \"newtab\" needs an open page and does not start one. Start a session with: sutradhar nav <url>"
+        ],
+        "stdoutEmpty": true,
+        "exact": true,
+        "noFatal": true,
+        "stateFiles": []
+      }
+    },
+    "S6-3 no session: \"audit\" -> exit 1, stderr is exactly the hint line, no Fatal:, stdout empty, no state.json/warden.json": {
+      "ok": true,
+      "detail": {
+        "args": "audit",
+        "code": 1,
+        "stderrLines": [
+          "Error: no active browser session — \"audit\" needs an open page and does not start one. Start a session with: sutradhar nav <url>"
+        ],
+        "stdoutEmpty": true,
+        "exact": true,
+        "noFatal": true,
+        "stateFiles": []
+      }
+    },
+    "S6-3 no session: \"snap --json\" -> exit 1, stderr is exactly the hint line, no Fatal:, stdout empty, no state.json/warden.json": {
+      "ok": true,
+      "detail": {
+        "args": "snap --json",
+        "code": 1,
+        "stderrLines": [
+          "Error: no active browser session — \"snap\" needs an open page and does not start one. Start a session with: sutradhar nav <url>"
+        ],
+        "stdoutEmpty": true,
+        "exact": true,
+        "noFatal": true,
+        "stateFiles": []
+      }
+    },
+    "S6-3 afterwards: no sutradhar-cli-* under ISO": {
+      "ok": true,
+      "detail": []
+    },
+    "S6-3 afterwards: the CIM attribution query for the ISO basename returns 0 Chrome processes": {
+      "ok": true,
+      "detail": []
+    },
+    "S6-4 nav <url> from no state launches (exit 0, state.json appears)": {
+      "ok": true,
+      "detail": {
+        "code": 0,
+        "out": "Navigated to http://127.0.0.1:57389/short\nTitle: Short page\nVerificati"
+      }
+    },
+    "state.userDataDir <= 200 chars and dirname == ISO": {
+      "ok": true,
+      "detail": {
+        "len": 199
+      }
+    },
+    "S6-3 state present: `text` right after `nav` is unchanged (exit 0, > 200 chars, no hint)": {
+      "ok": true,
+      "detail": {
+        "code": 0,
+        "len": 300
+      }
+    },
+    "close after nav: exit 0 and state.json gone": {
+      "ok": true,
+      "detail": {
+        "code": 0
+      }
+    },
+    "S6-3 smoke: nav, close, then `text` -> exit 1 with the hint, nothing launched": {
+      "ok": true,
+      "detail": {
+        "code": 1,
+        "lines": [
+          "Error: no active browser session — \"text\" needs an open page and does not start one. Start a session with: sutradhar nav <url>"
+        ]
+      }
+    },
+    "S6-4 newtab <url> from no state launches (exit 0, state.json appears)": {
+      "ok": true,
+      "detail": {
+        "code": 0,
+        "out": "New tab tab_sess_1791137747286_1_2 opened at http://127.0.0.1:57389/short\n"
+      }
+    },
+    "S6-4 tabs then lists the new tab URL": {
+      "ok": true,
+      "detail": "  tab_sess_1791137747286_1_1  New tab  chrome://new-tab-page/\n* tab_sess_1791137747286_1_2  Short page  http://127.0.0.1:57389/short\n"
+    },
+    "close after newtab": {
+      "ok": true
+    },
+    "S6-4 audit <url> from no state launches and runs (exit 0)": {
+      "ok": true,
+      "detail": {
+        "code": 0,
+        "out": "URL: http://127.0.0.1:57389/short\nTitle: Short page\nScreenshot: E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects"
+      }
+    },
+    "close after audit: state.json gone": {
+      "ok": true
+    },
+    "S6-4 compare <a> <b> from no state launches and runs (exit 0)": {
+      "ok": true,
+      "detail": {
+        "code": 0,
+        "out": "http://127.0.0.1:57389/short vs http://127.0.0.1:57389/hist/a\nDiff: 4945 / 480000 pixels (1.03%)\nDiff image: E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Pro"
+      }
+    },
+    "close after compare: state.json gone": {
+      "ok": true
+    },
+    "no state.json left in any state dir at the end": {
+      "ok": true,
+      "detail": []
+    },
+    "path-log check exit 0 (>= 1 [cleanup] line, none outside ISO)": {
+      "ok": true,
+      "detail": {
+        "exit": 0,
+        "out": [
+          "cleanup-lines=40 outside-iso=0"
+        ]
+      }
+    },
+    "attribution query: no Chrome with the ISO basename left at the end": {
+      "ok": true,
+      "detail": []
+    },
+    "no timed-out CLI call": {
+      "ok": true
+    }
+  },
+  "negatives": [
+    {
+      "args": "text",
+      "code": 1,
+      "stderrLines": [
+        "Error: no active browser session — \"text\" needs an open page and does not start one. Start a session with: sutradhar nav <url>"
+      ],
+      "stdoutEmpty": true,
+      "exact": true,
+      "noFatal": true,
+      "stateFiles": []
+    },
+    {
+      "args": "snap",
+      "code": 1,
+      "stderrLines": [
+        "Error: no active browser session — \"snap\" needs an open page and does not start one. Start a session with: sutradhar nav <url>"
+      ],
+      "stdoutEmpty": true,
+      "exact": true,
+      "noFatal": true,
+      "stateFiles": []
+    },
+    {
+      "args": "axsnap",
+      "code": 1,
+      "stderrLines": [
+        "Error: no active browser session — \"axsnap\" needs an open page and does not start one. Start a session with: sutradhar nav <url>"
+      ],
+      "stdoutEmpty": true,
+      "exact": true,
+      "noFatal": true,
+      "stateFiles": []
+    },
+    {
+      "args": "click 1",
+      "code": 1,
+      "stderrLines": [
+        "Error: no active browser session — \"click\" needs an open page and does not start one. Start a session with: sutradhar nav <url>"
+      ],
+      "stdoutEmpty": true,
+      "exact": true,
+      "noFatal": true,
+      "stateFiles": []
+    },
+    {
+      "args": "type 1 x",
+      "code": 1,
+      "stderrLines": [
+        "Error: no active browser session — \"type\" needs an open page and does not start one. Start a session with: sutradhar nav <url>"
+      ],
+      "stdoutEmpty": true,
+      "exact": true,
+      "noFatal": true,
+      "stateFiles": []
+    },
+    {
+      "args": "press 1 Enter",
+      "code": 1,
+      "stderrLines": [
+        "Error: no active browser session — \"press\" needs an open page and does not start one. Start a session with: sutradhar nav <url>"
+      ],
+      "stdoutEmpty": true,
+      "exact": true,
+      "noFatal": true,
+      "stateFiles": []
+    },
+    {
+      "args": "screenshot",
+      "code": 1,
+      "stderrLines": [
+        "Error: no active browser session — \"screenshot\" needs an open page and does not start one. Start a session with: sutradhar nav <url>"
+      ],
+      "stdoutEmpty": true,
+      "exact": true,
+      "noFatal": true,
+      "stateFiles": []
+    },
+    {
+      "args": "eval 1",
+      "code": 1,
+      "stderrLines": [
+        "Error: no active browser session — \"eval\" needs an open page and does not start one. Start a session with: sutradhar nav <url>"
+      ],
+      "stdoutEmpty": true,
+      "exact": true,
+      "noFatal": true,
+      "stateFiles": []
+    },
+    {
+      "args": "tabs",
+      "code": 1,
+      "stderrLines": [
+        "Error: no active browser session — \"tabs\" needs an open page and does not start one. Start a session with: sutradhar nav <url>"
+      ],
+      "stdoutEmpty": true,
+      "exact": true,
+      "noFatal": true,
+      "stateFiles": []
+    },
+    {
+      "args": "waitfor 1000 --text x",
+      "code": 1,
+      "stderrLines": [
+        "Error: no active browser session — \"waitfor\" needs an open page and does not start one. Start a session with: sutradhar nav <url>"
+      ],
+      "stdoutEmpty": true,
+      "exact": true,
+      "noFatal": true,
+      "stateFiles": []
+    },
+    {
+      "args": "scroll",
+      "code": 1,
+      "stderrLines": [
+        "Error: no active browser session — \"scroll\" needs an open page and does not start one. Start a session with: sutradhar nav <url>"
+      ],
+      "stdoutEmpty": true,
+      "exact": true,
+      "noFatal": true,
+      "stateFiles": []
+    },
+    {
+      "args": "grant http://127.0.0.1:57389 clipboard-read",
+      "code": 1,
+      "stderrLines": [
+        "Error: no active browser session — \"grant\" needs an open page and does not start one. Start a session with: sutradhar nav <url>"
+      ],
+      "stdoutEmpty": true,
+      "exact": true,
+      "noFatal": true,
+      "stateFiles": []
+    },
+    {
+      "args": "getclipboard",
+      "code": 1,
+      "stderrLines": [
+        "Error: no active browser session — \"getclipboard\" needs an open page and does not start one. Start a session with: sutradhar nav <url>"
+      ],
+      "stdoutEmpty": true,
+      "exact": true,
+      "noFatal": true,
+      "stateFiles": []
+    },
+    {
+      "args": "newtab",
+      "code": 1,
+      "stderrLines": [
+        "Error: no active browser session — \"newtab\" needs an open page and does not start one. Start a session with: sutradhar nav <url>"
+      ],
+      "stdoutEmpty": true,
+      "exact": true,
+      "noFatal": true,
+      "stateFiles": []
+    },
+    {
+      "args": "audit",
+      "code": 1,
+      "stderrLines": [
+        "Error: no active browser session — \"audit\" needs an open page and does not start one. Start a session with: sutradhar nav <url>"
+      ],
+      "stdoutEmpty": true,
+      "exact": true,
+      "noFatal": true,
+      "stateFiles": []
+    },
+    {
+      "args": "snap --json",
+      "code": 1,
+      "stderrLines": [
+        "Error: no active browser session — \"snap\" needs an open page and does not start one. Start a session with: sutradhar nav <url>"
+      ],
+      "stdoutEmpty": true,
+      "exact": true,
+      "noFatal": true,
+      "stateFiles": []
+    }
+  ],
+  "isoCliDirsLeft": [],
+  "realTemp": {
+    "before": 5,
+    "after": 5,
+    "vanished": []
+  },
+  "pathCheck": {
+    "exit": 0,
+    "out": [
+      "cleanup-lines=40 outside-iso=0"
+    ]
+  },
+  "allPass": true
+}

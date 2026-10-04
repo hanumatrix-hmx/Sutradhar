@@ -1,0 +1,291 @@
+{
+  "surface": "mcp",
+  "capturedAt": "2026-10-04T18:50:15.465Z",
+  "protocolVerification": {
+    "serverInfo": {
+      "name": "sutradhar",
+      "version": "0.6.2"
+    },
+    "toolCount": 74
+  },
+  "results": [
+    {
+      "id": "UC-01",
+      "title": "Bot detection surface",
+      "surface": "mcp",
+      "success": true,
+      "ms": 3701,
+      "detail": {
+        "totalRows": 58,
+        "failedRows": [],
+        "uaRow": "User Agent (Old) Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/154.0.0.0 Safari/537.36",
+        "headlessLeaksInUA": true,
+        "unexpectedFailures": [],
+        "allRows": [
+          "Test Name Result",
+          "User Agent (Old) Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/154.0.0.0 Safari/537.36",
+          "WebDriver (New) missing (passed)",
+          "WebDriver Advanced passed",
+          "Chrome (New) present (passed)",
+          "Permissions (New) prompt",
+          "Plugins Length (Old) 5",
+          "Plugins is of type PluginArray passed",
+          "Languages (Old) en-GB,en-US,en",
+          "WebGL Vendor Canvas has no webgl context",
+          "WebGL Renderer Canvas has no webgl context",
+          "Broken Image Dimensions 16x16",
+          "PHANTOM_UA ok { \"userAgent\": \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/154.0.0.0 Safari/537.36\" }",
+          "PHANTOM_PROPERTIES ok { \"attributesFound\": [ false, false, false ] }",
+          "PHANTOM_ETSL ok { \"etsl\": 33 }",
+          "PHANTOM_LANGUAGE ok { \"languages\": [ \"en-GB\", \"en-US\", \"en\" ] }",
+          "PHANTOM_WEBSOCKET ok {}",
+          "MQ_SCREEN ok {}",
+          "PHANTOM_OVERFLOW ok { \"depth\": 11560, \"errorMessage\": \"Maximum call stack size exceeded\", \"errorName\": \"RangeError\", \"errorStacklength\": 846 }",
+          "PHANTOM_WINDOW_HEIGHT ok { \"wInnerHeight\": 705, \"wOuterHeight\": 800, \"wOuterWidth\": 1280, \"wInnerWidth\": 1264, \"wScreenX\": 10, \"wPageXOffset\": 0, \"wPageYOffset\": 0, \"cWidth\": 1248, \"cHeight\": 1561, \"sWidth\": 800, \"sHeight\": 600, \"sAvailWidth\": 800, \"sAvailHeight\": 600, \"sColorDepth\": 24, \"sPixelDepth\": 24, \"wDevicePixelRatio\": 1 }",
+          "HEADCHR_UA FAIL { \"userAgent\": \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/154.0.0.0 Safari/537.36\" }",
+          "HEADCHR_CHROME_OBJ ok {}",
+          "HEADCHR_PERMISSIONS ok {}",
+          "HEADCHR_PLUGINS ok { \"plugins\": [ \"PDF Viewer::Portable Document Format::internal-pdf-viewer::__application/pdf~pdf~Portable Document Format,text/pdf~pdf~Portable Document Format\", \"Chrome PDF Viewer::Portable Document Format::internal-pdf-viewer::__application/pdf~pdf~Portable Document Format,text/pdf~pdf~Portable Document Format\", \"Chromium PDF Viewer::Portable Document Format::internal-pdf-viewer::__application/pdf~pdf~Portable Document Format,text/pdf~pdf~Portable Document Format\", \"Microsoft Edge PDF Viewer::Portable Document Format::internal-pdf-viewer::__application/pdf~pdf~Portable Document Format,text/pdf~pdf~Portable Document Format\", \"WebKit built-in PDF::Portable Document Format::internal-pdf-viewer::__application/pdf~pdf~Portable Document Format,text/pdf~pdf~Portable Document Format\" ] }",
+          "HEADCHR_IFRAME ok {}",
+          "CHR_DEBUG_TOOLS ok {}",
+          "SELENIUM_DRIVER ok { \"attributesFound\": [ false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false ] }",
+          "CHR_BATTERY ok {}",
+          "CHR_MEMORY FAIL {}",
+          "TRANSPARENT_PIXEL ok { \"0\": 0, \"1\": 0, \"2\": 0, \"3\": 0 }",
+          "SEQUENTUM ok {}",
+          "VIDEO_CODECS ok { \"h264\": \"probably\" }",
+          "navigator.cookieEnabled true",
+          "navigator.doNotTrack null",
+          "navigator.msDoNotTrack undefined",
+          "navigator.sendBeacon",
+          "navigator.cookieEnabled true",
+          "navigator.userAgent Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/154.0.0.0 Safari/537.36",
+          "navigator.appName Netscape",
+          "navigator.vendor Google Inc.",
+          "navigator.appCodeName Mozilla",
+          "navigator.getUserMedia",
+          "navigator.sayswho undefined",
+          "navigator.javaEnabled false",
+          "navigator.plugins {\"0\":{\"0\":{},\"1\":{}},\"1\":{\"0\":{},\"1\":{}},\"2\":{\"0\":{},\"1\":{}},\"3\":{\"0\":{},\"1\":{}},\"4\":{\"0\":{},\"1\":{}}}",
+          "screen.width 800",
+          "screen.height 600",
+          "screen.colorDepth 24",
+          "navigator.language en-GB",
+          "navigator.loadPurpose undefined",
+          "navigator.platform Win32",
+          "navigator.mediaDevices audioinput: id = audiooutput: id =",
+          "navigator.getBattery details Charging: true Level: 1",
+          "Canvas1 Hash: 1118196126",
+          "Canvas2 Hash: 1118196126",
+          "Canvas3 (iframe sandbox) Hash: 1118196126",
+          "Canvas4 (iframe sandbox) Hash: 1118196126",
+          "Canvas5 (iframe) Hash: 1118196126"
+        ]
+      },
+      "error": null
+    },
+    {
+      "id": "UC-02",
+      "title": "CAPTCHA grounding (not solving)",
+      "surface": "mcp",
+      "success": true,
+      "ms": 3218,
+      "detail": {
+        "foundInDefaultSnapshot": true,
+        "foundInAxSnapshot": true,
+        "snapshotExcerpt": "URL: https://www.google.com/recaptcha/api2/demo\nTitle: ReCAPTCHA demo\nInteractive elements (8):\n[#1] label \"First Name\"\n[#3] label \"Last Name\"\n[#5] label \"Email\"\n[#8] label \"Red\"\n[#10] label \"Green\"\n[#13] input \"Submit\" value=\"Submit\"\n[#15 in iframe \"a-qq1ymvfw5f8a\" (https://www.google.com/recaptcha/api2/anchor)] span role=checkbox\n[#16 in iframe \"a-qq1ymvfw5f8a\"] label \"I'm not a robot\" role=presentation\n\nPage text:\nSample Form with ReCAPTCHA\nFirst Name\nLast Name\nEmail\n\nPick your favorite color:\n\nRed\nGreen",
+        "axExcerpt": "URL: https://www.google.com/recaptcha/api2/demo\nTitle: ReCAPTCHA demo\n\nAccessible elements (6):\n[textbox] \"First Name\"\n[textbox] \"Last Name\"\n[textbox] \"Email\"\n[radio] \"Red\"\n[radio] \"Green\"\n[button] \"Submit\""
+      },
+      "error": null
+    },
+    {
+      "id": "UC-03",
+      "title": "Auth + session persistence",
+      "surface": "mcp",
+      "success": true,
+      "ms": 6415,
+      "detail": {
+        "mcpProfileNameParamExists": false,
+        "note": "browser.launch MCP tool schema exposes only {sessionId, initialUrl, headless} — no profileName param, unlike SutradharRuntime.launch() itself. The named-profile mechanism this scenario asks for is unreachable from the MCP surface as currently exposed.",
+        "loginStep": {
+          "loggedIn": true,
+          "sessionStorageKeysAfterLogin": []
+        },
+        "freshSessionStep": {
+          "currentUrlAfterFreshSession": "https://www.saucedemo.com/",
+          "survivedLogin": false
+        },
+        "honestResult": "Login state did NOT survive a fresh MCP session, as expected: saucedemo uses sessionStorage, no profile was (or could be) requested via MCP, and each browser.launch call gets its own ephemeral browser data dir."
+      },
+      "error": null
+    },
+    {
+      "id": "UC-04",
+      "title": "Canvas blindness (Google Maps)",
+      "surface": "mcp",
+      "success": true,
+      "ms": 4826,
+      "detail": {
+        "searchInputGroundable": true,
+        "zoomControlsGroundable": true,
+        "snapshotExcerpt": "URL: https://www.google.com/maps/@18.5761792,73.7378304,14z?entry=ttu&g_ep=EgoyMDI2MDkzMC4wIKXMDSoASAFQAw%3D%3D\nTitle: Google Maps\nInteractive elements (35):\n[#2] label \"Search Google Maps\"\n[#3] input role=combobox label=\"Search Google Maps\"\n[#4] button \"Search\"\n[#5] button \"Directions\"\n[#7] button \"Heavy traffic in this area\nMuch slower than usual\n\"\n[#8] button \"\nRestaurants\"\n[#9] button \"\nHotels\"\n[#10] button \"\nThings to do\"\n[#11] button \"\nMuseums\"\n[#12] button \"\nTransit\"\n[#13] button \"\nPharmacies\"\n[#14] button \"\nATMs\"\n[#15] button \"Next page\"\n[#16] button \"Menu\"\n[#17] button \"\nSaved\"\n[#19] button \"\nGet app\"\n[#21] a \"Google apps\" role=button\n[#22] a \"Sign in\"\n[#25] button \"Show Your Location\"\n[#28] button \"Zoom in\"\n[#33] button \"Zoom out\"\n[#34] button \"Browse Street View images\"\n[#35] button \"Show imagery\"\n[#36] label\n[#39] label \"Layers\"\n[#40] button\n[#72] button \"India\"\n[#73] button \"Terms\"\n[#74] button \"Privacy\"\n[#75] button \"Send Product Feedback\"\n[#76] button \"1 km\"\n[#77] label \"1 km\"\n[#80] div \"\n\" role=clickable\n[#81] div \"\" role=clickable\n[#82] div \" Layers\" role=clickable\n\nPage text:\nSearch Google Maps\n\n\nHinjawadi\n23°\nHeavy traffic in this area\nMuch slower",
+        "canvasNote": "Map tiles/markers render into a <canvas> — expected to be opaque to DOM-based grounding, same as every DOM-reading tool. Not attempting pixel-level reads."
+      },
+      "error": null
+    },
+    {
+      "id": "UC-05",
+      "title": "Long 10+ step flow",
+      "surface": "mcp",
+      "success": true,
+      "ms": 3232,
+      "detail": {
+        "landedUser": "/inventory.html",
+        "typedValues": {
+          "first": "Ada",
+          "last": "Lovelace",
+          "postal": "10001"
+        },
+        "typedValuesLandedCorrectly": true,
+        "summary": {
+          "subtotal": "Item total: $7.99",
+          "tax": "Tax: $0.64",
+          "total": "Total: $8.63"
+        },
+        "subtotal": 7.99,
+        "tax": 0.64,
+        "total": 8.63,
+        "computedTotal": 8.63,
+        "mathChecksOut": true,
+        "confirmationText": "Thank you for your order!",
+        "reachedConfirmation": true
+      },
+      "error": null
+    },
+    {
+      "id": "UC-06",
+      "title": "Modals + dynamic content",
+      "surface": "mcp",
+      "success": false,
+      "ms": 30374,
+      "detail": null,
+      "error": "browser.navigate → MCP isError: navigate failed: Navigation timeout of 30000 ms exceeded"
+    },
+    {
+      "id": "UC-07",
+      "title": "Cross-origin iframe (TinyMCE)",
+      "surface": "mcp",
+      "success": true,
+      "ms": 3210,
+      "detail": {
+        "toolbarButtonsListedInSnapshot": false,
+        "snapshotExcerpt": "URL: https://www.tiny.cloud/docs/tinymce/latest/basic-example/\nTitle: Basic example | TinyMCE Documentation\nInteractive elements (69):\n[#1] a\n[#2] button \"Search (Ctrl+K)\"\n[#4] a \"Home\"\n[#5] a \"Pricing\"\n[#6] a \"Language Packs\"\n[#7] a \"Log In\"\n[#8] a \"Get Free API Key\"\n[#9] a \"Get TinyMCE\"\n[#11] a \"TinyMCE Documentation\"\n[#12] button\n[#13] a \"Getting started\"\n[#96] button\n[#97] a \"How-to guides\"\n[#206] button\n[#207] a \"Examples\"\n[#208] button\n[#209] a \"General examples\"\n[#210] a \"Basic example\"\n[#211] a \"Full-featured demo including Open Source features\"\n[#212] a \"Full-featured demo Including Open Source and Premium features\"\n[#213] a \"Classic editor mode\"\n[#214] a \"Inline editor\"\n[#215] a \"Distraction-free editor\"\n[#216] button\n[#217] a \"Integration examples\"\n[#219] button\n[#220] a \"Skins ",
+        "typedIntoContentEditableBody": true,
+        "readback": "Welcome to the TinyMCE editor demo!\n\nMeet TinyMCE, the Internet's most battle-tested rich text editor with over 60 features including: Advanced formatting, Export to and from Word and PDF, Accessibility and spelling checkers, Mentions and comments, and an AI assistant.\n\nSutradhar MCP baseline test.﻿\n\n⭐️ Popular features (including paid subscription plugins)\nCollaborate with @Mentions, discuss using Comments and review changes using Suggested Edits and keep an audit trail with Revision history.\nPaste from MS Word and retain formatting. You can even import Word documents! \nPower your email editor with Merge tags and Inline CSS output.\nHit the highest standards with Spell Checker, Accessibility Checker, Advanced Typography and Link Checker.\n\n🖖 Get TinyMCE\nTinyMCE meets all your architecture requirements.\nCloud\tSign-up for free\tAlways up to date, easy to maintain\nSelf-hosted\tLet's talk\tWith enterprise level support\nOpen source\tDownload today\tAvailable under the GPLv2+ license\nWhy TinyMCE 👀\nOut-of-the-box features save dev time. From tables and spell checking to full collaboration and accessibility compliance, TinyMCE offers features you’d otherwise spend months building.\nBuilt to scale with you. TinyMCE powers applications with millions of users. Its performance, reliability, and architecture are built for scale, from early MVPs to global platforms.\nWorks where you build. Whether you're using React, Vue, Angular, or vanilla JavaScript—or embedding it in SaaS platforms or internal tools—TinyMCE integrates smoothly into your stack.\nNo one has been doing this longer. You benefit from 20+ years of stability, security, feature, accessibility, documentation improvements, and enterprise support services.\n\n❤️ Go build something today",
+        "typeError": null
+      },
+      "error": null
+    },
+    {
+      "id": "UC-08",
+      "title": "File download",
+      "surface": "mcp",
+      "success": false,
+      "ms": 30372,
+      "detail": null,
+      "error": "browser.navigate → MCP isError: navigate failed: Navigation timeout of 30000 ms exceeded"
+    },
+    {
+      "id": "UC-09",
+      "title": "Multi-tab / popup",
+      "surface": "mcp",
+      "success": false,
+      "ms": 30359,
+      "detail": null,
+      "error": "browser.navigate → MCP isError: navigate failed: Navigation timeout of 30000 ms exceeded"
+    },
+    {
+      "id": "UC-10",
+      "title": "Prompt injection exposure",
+      "surface": "mcp",
+      "success": true,
+      "ms": 3228,
+      "detail": {
+        "surfacedVerbatimInSnapshot": false,
+        "surfacedVerbatimInEval": false,
+        "snapshotPageTextExcerpt": "URL: file:///E:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/tools/scenario-suite/fixtures/prompt-injection.html\nTitle: Prompt Injection Test Page\nInteractive elements (1):\n[#3] button \"Mark Resolved\"\n\nPage text:\nReal Support Ticket #4471\n\nMy order hasn't arrived yet, please help. Order number is SD-88213, placed 5 days ago.\n\nMark Resolved",
+        "evalBodyText": "Real Support Ticket #4471\n\nMy order hasn't arrived yet, please help. Order number is SD-88213, placed 5 days ago.\n\nMark Resolved",
+        "note": "Deliberately no sanitization — reporting exactly what the surface returns, per Scope decisions in the remediation plan (prompt-injection sanitization is out of scope)."
+      },
+      "error": null
+    },
+    {
+      "id": "UC-11",
+      "title": "Token efficiency",
+      "surface": "mcp",
+      "success": true,
+      "ms": 3217,
+      "detail": {
+        "snapshotChars": 2892,
+        "rawHtmlLength": 21257,
+        "ratio": 0.136,
+        "snapshotIsSmallerFraction": true
+      },
+      "error": null
+    },
+    {
+      "id": "UC-12",
+      "title": "Outcome verification after a state-changing action",
+      "surface": "mcp",
+      "success": true,
+      "ms": 3219,
+      "detail": {
+        "clickReportedSuccess": true,
+        "independentState": {
+          "badge": "1",
+          "buttonText": "Remove"
+        },
+        "badgeCorrect": true,
+        "buttonFlippedToRemove": true
+      },
+      "error": null
+    },
+    {
+      "id": "UC-13",
+      "title": "Speed",
+      "surface": "mcp",
+      "success": true,
+      "ms": 3209,
+      "detail": {
+        "launchMs": 231,
+        "stepTimesMs": [
+          2,
+          2,
+          3,
+          3,
+          2,
+          2,
+          5,
+          3,
+          2,
+          3
+        ],
+        "avgStepMs": 3,
+        "stepDescription": "10x browser.snapshot round trips over the JSON-RPC/stdio transport (protocol overhead included)."
+      },
+      "error": null
+    },
+    {
+      "id": "UC-14",
+      "title": "Accessibility-only grounding (no CSS-selectable name)",
+      "surface": "mcp",
+      "success": true,
+      "ms": 3243,
+      "detail": {
+        "actionResult": "ACTION TRIGGERED: archive",
+        "correct": true
+      },
+      "error": null
+    }
+  ]
+}

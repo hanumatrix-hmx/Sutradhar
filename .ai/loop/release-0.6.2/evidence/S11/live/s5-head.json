@@ -1,0 +1,228 @@
+{
+  "mode": "head",
+  "cliSha256": "f221f536b9655e5580752adf8189145b9c4d8bb7ed2108633c89f923f5cae346",
+  "bundleSha256": "162462793c5e0d045697f5ad05e90936150730d374b2dcc31f7ff0aa04efea21",
+  "mcpSha256": "008bc6b6a8226f47738d3bd8a087f131c646f4d2af310cb499252b27b2fd9440",
+  "checks": {
+    "cli nav exit 0": {
+      "ok": true,
+      "detail": "Navigated to http://127.0.0.1:64008/nodeid\nTitle: Nodeid pag"
+    },
+    "state.userDataDir <= 200 chars and dirname == ISO": {
+      "ok": true,
+      "detail": {
+        "len": 199
+      }
+    },
+    "cli snap lists Go, Name input, the iframe and the in-frame button with ids": {
+      "ok": true,
+      "detail": {
+        "ids": {
+          "go": "1",
+          "inp": "2",
+          "ifr": "3",
+          "fgo": "4"
+        },
+        "snap": [
+          "Interactive elements (4):",
+          "[#1] button \"Go\"",
+          "[#2] input \"Name\"",
+          "[#3] iframe role=clickable",
+          "[#4 in iframe \"fr\" (http://127.0.0.1:64008/nodeid-frame)] button \"Frame Go\"",
+          ""
+        ]
+      }
+    },
+    "cli counter starts at 0 (independent read via eval)": {
+      "ok": true,
+      "detail": 0
+    },
+    "S5-2 cli click \"#<go>\" exit 0 and __goClicks == 1": {
+      "ok": true,
+      "detail": {
+        "code": 0,
+        "out": "Clicked #1\nVerification: verified (confidence 0.90) — 'click' has a built-in pos"
+      }
+    },
+    "S5-2 cli click \"[#<go>]\" exit 0 and __goClicks == 2": {
+      "ok": true,
+      "detail": {
+        "code": 0,
+        "out": "Clicked [#1]\nVerification: verified (confidence 0.90) — 'click' has a built-in p"
+      }
+    },
+    "S5-2 control: cli click <bare number> still works (== 3)": {
+      "ok": true,
+      "detail": {
+        "code": 0
+      }
+    },
+    "S5-2 cli type \"#<input>\" hello -> value hello": {
+      "ok": true,
+      "detail": {
+        "code": 0,
+        "v1": "hello"
+      }
+    },
+    "S5-2 cli type \"[#<input>]\" world -> value world": {
+      "ok": true,
+      "detail": {
+        "code": 0,
+        "v2": "world"
+      }
+    },
+    "S5-2 cli eval --frame \"#<iframe>\" -> iframe title (non-empty, differs from the top title)": {
+      "ok": true,
+      "detail": {
+        "f1": "Frame Title",
+        "f0": "Frame Title"
+      }
+    },
+    "S5-2 cli eval --frame \"[#<iframe>]\" -> same iframe title": {
+      "ok": true,
+      "detail": {
+        "f2": "Frame Title"
+      }
+    },
+    "S5-2 cli click \"#<in-frame button>\" exit 0 and the frame counter == 1": {
+      "ok": true,
+      "detail": {
+        "code": 0,
+        "out": "Clicked #4\nVerification: verified (confidence 0.90) — 'click' has a built-in pos"
+      }
+    },
+    "S5 negative: \"#N]\" still rejected with the node-id hint (exit 1), counter unchanged": {
+      "ok": true,
+      "detail": {
+        "code": 1,
+        "stderr": [
+          "Error: Invalid selector \"#1]\" — this looks like a snapshot node id; pass just the number, e.g. \"1\". Use standard CSS or a snapshot node id (e.g. \"12\"); Puppeteer's pierce/, xpath/, aria/ and text/ prefixes also work for element actions. Playwright-style selectors (text=, role=, >>, :has-text(), getBy*(), internal:) are not supported: to target by visible text or accessible role/name, use click_by_text, click_by_role or type_by_label (CLI: clicktext, clickrole), or take a snapshot and use a node id.",
+          ""
+        ]
+      }
+    },
+    "S5 negative: \"[#N\" still rejected with the node-id hint (exit 1)": {
+      "ok": true,
+      "detail": {
+        "code": 1
+      }
+    },
+    "mcp snapshot lists the ids": {
+      "ok": true,
+      "detail": {
+        "go": "1",
+        "inp": "2",
+        "ifr": "3",
+        "fgo": "4"
+      }
+    },
+    "S5-2 mcp browser.click {target:\"#<go>\"} succeeds and __goClicks == 1": {
+      "ok": true,
+      "detail": {
+        "isError": false,
+        "text": "{\n  \"success\": true,\n  \"actionType\": \"click\",\n  \"executionTimeMs\": 57,\n  \"curren"
+      }
+    },
+    "S5-2 mcp browser.click {target:\"[#<go>]\"} succeeds and __goClicks == 2": {
+      "ok": true,
+      "detail": {
+        "isError": false
+      }
+    },
+    "S5-2 mcp browser.eval frameSelector \"#<iframe>\" -> iframe title": {
+      "ok": true,
+      "detail": {
+        "r3": "{\n  \"result\": \"Frame Title\"\n}",
+        "r3b": "{\n  \"result\": \"Frame Title\"\n}"
+      }
+    },
+    "S5 negative mcp: \"#N]\" rejected (isError, node-id hint), counter unchanged": {
+      "ok": true,
+      "detail": {
+        "text": "click failed: Invalid selector \"#1]\" — this looks like a snapshot node id; pass just the number, e.g. \"1\". Use standard CSS or a snapshot node id (e.g. \"12\"); P"
+      }
+    },
+    "mcp shutdown_all": {
+      "ok": true
+    },
+    "mcp child exited": {
+      "ok": true
+    },
+    "sdk snapshot lists the ids": {
+      "ok": true,
+      "detail": {
+        "go": "1",
+        "inp": "2",
+        "ifr": "3",
+        "fgo": "4"
+      }
+    },
+    "S5-2 sdk page.click(\"#<go>\") -> __goClicks == 1": {
+      "ok": true
+    },
+    "S5-2 sdk page.click(\"[#<go>]\") -> __goClicks == 2": {
+      "ok": true
+    },
+    "S5-2 sdk page.evaluate(expr, \"#<iframe>\") -> iframe title": {
+      "ok": true,
+      "detail": "Frame Title"
+    },
+    "S5 negative sdk: \"#N]\" rejects with the node-id hint, counter unchanged": {
+      "ok": true,
+      "detail": "Invalid selector \"#1]\" — this looks like a snapshot node id; pass just the number, e.g. \"1\". Use standard CSS or a snapshot node id (e.g. \"12\"); Puppeteer's pie"
+    },
+    "cli close: state.json removed": {
+      "ok": true
+    },
+    "path-log check exit 0 (>= 1 [cleanup] line, none outside ISO)": {
+      "ok": true,
+      "detail": {
+        "exit": 0,
+        "out": [
+          "cleanup-lines=10 outside-iso=0"
+        ]
+      }
+    },
+    "attribution query: no Chrome with the ISO basename left": {
+      "ok": true,
+      "detail": []
+    },
+    "no timed-out CLI call": {
+      "ok": true
+    }
+  },
+  "ids": {
+    "go": "1",
+    "inp": "2",
+    "ifr": "3",
+    "fgo": "4"
+  },
+  "close": {
+    "code": 0
+  },
+  "mcpIds": {
+    "go": "1",
+    "inp": "2",
+    "ifr": "3",
+    "fgo": "4"
+  },
+  "sdkIds": {
+    "go": "1",
+    "inp": "2",
+    "ifr": "3",
+    "fgo": "4"
+  },
+  "isoCliDirsLeft": [],
+  "realTemp": {
+    "before": 5,
+    "after": 5,
+    "vanished": []
+  },
+  "pathCheck": {
+    "exit": 0,
+    "out": [
+      "cleanup-lines=10 outside-iso=0"
+    ]
+  },
+  "allPass": true
+}
