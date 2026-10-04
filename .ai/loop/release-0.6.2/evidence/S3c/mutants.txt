@@ -1,0 +1,18 @@
+BASELINE exit=0 tests=6 passed (6)
+M-048n KILLED exit=1 (2 failed | 4 passed (6)) restored-sha-equal=true :: page.text drops tabId
+    FAIL  tests/unit/page-text.spec.ts > page.text() > delegates to runtime.readTextWindow with the session id, THIS page tab id and the exact options (M-048n: tabId must not
+    FAIL  tests/unit/page-text.spec.ts > page.text() > with no options passes undefined (the runtime default window applies)
+M-048n2 KILLED exit=1 (2 failed | 4 passed (6)) restored-sha-equal=true :: page.text drops the options
+    FAIL  tests/unit/page-text.spec.ts > page.text() > delegates to runtime.readTextWindow with the session id, THIS page tab id and the exact options (M-048n: tabId must not
+    FAIL  tests/unit/page-text.spec.ts > page.text() > with no options passes undefined (the runtime default window applies)
+M-048n3 KILLED exit=1 (1 failed | 5 passed (6)) restored-sha-equal=true :: page.text swallows a read failure into an empty result
+    FAIL  tests/unit/page-text.spec.ts > page.text() > propagates a rejection unchanged (PageTextReadError, TypeError for invalid options)
+M-048o KILLED exit=1 (2 failed | 4 passed (6)) restored-sha-equal=true :: formatPageTextMarker not re-exported
+    FAIL  tests/unit/page-text.spec.ts > page-text exports (M-048o) > exports PageTextReadError, formatPageTextMarker and the constants from the SDK entry point
+    FAIL  tests/unit/page-text.spec.ts > page-text exports (M-048o) > formatPageTextMarker renders the shared marker (SDK form: no continue hint)
+M-048o2 KILLED exit=1 (2 failed | 4 passed (6)) restored-sha-equal=true :: PageTextReadError not re-exported
+    FAIL  tests/unit/page-text.spec.ts > page-text exports (M-048o) > exports PageTextReadError, formatPageTextMarker and the constants from the SDK entry point
+    FAIL  tests/unit/page-text.spec.ts > page-text exports (M-048o) > PageTextReadError is identified by name and carries the source
+M-048o3 KILLED exit=1 (1 failed | 5 passed (6)) restored-sha-equal=true :: MAX_PAGE_TEXT_CHARS not re-exported
+    FAIL  tests/unit/page-text.spec.ts > page-text exports (M-048o) > exports PageTextReadError, formatPageTextMarker and the constants from the SDK entry point
+SUMMARY mutants=6 survivors=0

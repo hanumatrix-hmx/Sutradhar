@@ -140,6 +140,11 @@ export {
 } from './page.js';
 export {
   SutradharRuntime,
+  PageTextReadError,
+  formatPageTextMarker,
+  DEFAULT_PAGE_TEXT_MAX_CHARS,
+  MAX_PAGE_TEXT_CHARS,
+  type PageTextResult,
   type SnapshotResult,
   ProfileManager,
   type ProfileInfo,

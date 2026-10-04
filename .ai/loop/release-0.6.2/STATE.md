@@ -16,3 +16,5 @@
 - S3a done after Addendum A (committed). Next: S3b.
 
 - S3b done (committed). Next: S3c (SDK page.text()).
+
+- S3c done (committed). Next: S4 (I-047), not started by this builder.
