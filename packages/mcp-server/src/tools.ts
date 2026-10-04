@@ -13,7 +13,7 @@
 import { z } from 'zod';
 import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import type { ActionExpectation, SettleSpec, SutradharRuntime } from '@sutradhar/capability-runtime';
-import { buildAuditReport, VIEWPORT_MAX } from '@sutradhar/capability-runtime';
+import { buildAuditReport, formatPageTextMarker, MCP_MAX_PAGE_TEXT_CHARS, VIEWPORT_MAX } from '@sutradhar/capability-runtime';
 import type { AgentCore } from '@sutradhar/agent';
 import { createGoalId } from '@sutradhar/contracts';
 import { WAIT_HIDDEN_CONFIRMED_VISIBLE_FRAGMENT, WAIT_HIDDEN_HARD_FAILURE_PREFIX } from '@sutradhar/browser';
@@ -487,10 +487,14 @@ export function registerTools(mcpServer: McpServer, options: RegisterToolsOption
         'something you can see is interactive. Note: some libraries attach the listener to a CONTAINER (event ' +
         'delegation), not each item — if so, this finds the container, and a real child selector (e.g. ' +
         '\':nth-child(N)\' on that container) still works for browser.drag_and_drop even though the child itself ' +
-        'has no listener, since the delegated handler still receives the bubbled event.',
+        'has no listener, since the delegated handler still receives the bubbled event. ' +
+        'textMaxChars (default 2000, max 40000) sizes the `Page text:` window; when the page has more text a final ' +
+        '`[page text truncated: showing characters 0-N of TOTAL. ...]` line says so — read the rest with ' +
+        'browser.get_page_text (offset/maxChars) instead of assuming the text you got is the whole page.',
       inputSchema: {
         sessionId: z.string(),
         tabId: z.string().optional(),
+        textMaxChars: z.number().int().min(1).max(MCP_MAX_PAGE_TEXT_CHARS).optional(),
         maxElements: z.number().int().positive().optional(),
         includeNodes: z.boolean().optional(),
         noText: z.boolean().optional(),
@@ -498,13 +502,14 @@ export function registerTools(mcpServer: McpServer, options: RegisterToolsOption
         scanEventListeners: z.boolean().optional(),
       },
     },
-    async ({ sessionId, tabId, maxElements, includeNodes, noText, idsOnly, scanEventListeners }) => {
+    async ({ sessionId, tabId, textMaxChars, maxElements, includeNodes, noText, idsOnly, scanEventListeners }) => {
       try {
         const snap = await runtime.snapshot(sessionId, tabId, maxElements, {
           includeNodes,
           noText,
           idsOnly,
           scanEventListeners,
+          textMaxChars: textMaxChars ?? 2000,
         });
         // Return as readable text rather than JSON — the model parses the listing directly.
         // `snap.interactiveElements` already embeds its own "URL/Title/Interactive elements
@@ -517,16 +522,61 @@ export function registerTools(mcpServer: McpServer, options: RegisterToolsOption
           snap.nodes && snap.skippedFrames && snap.skippedFrames.length > 0
             ? `\n\nSkipped frames (JSON):\n${JSON.stringify(snap.skippedFrames)}`
             : '';
+        // I-048: `snap.pageText` is already the requested window (never the whole page silently): say so when it is not
+        // the whole page, and report a failed text read instead of showing an empty block. Both fields are optional so a
+        // result from an older runtime renders as before.
+        const textMarker =
+          snap.pageTextTruncated && typeof snap.pageTextTotalChars === 'number'
+            ? formatPageTextMarker(
+                { offset: 0, returnedChars: snap.pageText.length, totalChars: snap.pageTextTotalChars, truncated: true },
+                `Continue with browser.get_page_text offset=${snap.pageText.length}, or raise textMaxChars (max ${MCP_MAX_PAGE_TEXT_CHARS})`,
+              )
+            : null;
+        const textBlock =
+          `Page text:\n${snap.pageText}` +
+          (textMarker ? `\n${textMarker}` : '') +
+          (snap.pageTextError ? `\nPage text unavailable: ${snap.pageTextError}` : '');
         return {
           content: [
             {
               type: 'text' as const,
-              text: `${snap.interactiveElements}\n\nPage text:\n${snap.pageText.slice(0, 2000)}${nodesBlock}${skippedFramesBlock}`,
+              text: `${snap.interactiveElements}\n\n${textBlock}${nodesBlock}${skippedFramesBlock}`,
             },
           ],
         };
       } catch (e) {
         return errorResult(`snapshot failed: ${(e as Error).message}`);
+      }
+    },
+  );
+
+  server.registerTool(
+    'browser.get_page_text',
+    {
+      description:
+        'Read the visible text of the active page in windows, with the total length, so a long page can be read in ' +
+        'full. Returns the text from character `offset` (default 0) for up to `maxChars` characters (default 4000), ' +
+        'followed by a final `[page text ...]` marker line when this is not the whole page, which names the next ' +
+        'offset to pass. browser.snapshot only carries the first window of the text. maxChars is capped at ' +
+        '40000 because MCP clients enforce an output limit on a single tool result (e.g. Claude Code ' +
+        'defaults to about 25k tokens); page with offset instead of asking for more. A PDF page is read from its ' +
+        'parsed text; if the text cannot be read the call returns an error with the reason (never empty text).',
+      inputSchema: {
+        sessionId: z.string(),
+        tabId: z.string().optional(),
+        offset: z.number().int().min(0).optional(),
+        maxChars: z.number().int().min(1).max(MCP_MAX_PAGE_TEXT_CHARS).optional(),
+      },
+    },
+    async ({ sessionId, tabId, offset, maxChars }) => {
+      try {
+        const r = await runtime.readTextWindow(sessionId, tabId, { offset: offset ?? 0, maxChars: maxChars ?? 4000 });
+        const marker = formatPageTextMarker(r, `Continue with browser.get_page_text offset=${r.offset + r.returnedChars}`);
+        return { content: [{ type: 'text' as const, text: marker ? `${r.text}\n${marker}` : r.text }] };
+      } catch (e) {
+        // PageTextReadError is matched by name (the class is duplicated into each bundle), like ProjectConfigError.
+        const reason = (e as Error).message;
+        return errorResult((e as Error).name === 'PageTextReadError' ? `page text read failed: ${reason}` : `get_page_text failed: ${reason}`);
       }
     },
   );

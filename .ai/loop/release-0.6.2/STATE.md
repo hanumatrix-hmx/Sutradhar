@@ -14,3 +14,5 @@
 - Addendum A.1 follow-ups for later steps: S10b gap (bundled PDF extraction, PROB-052, both fix options); S10 changelog "Known limitations": PDF text unavailable in bundled builds, `text` on a PDF now exits 1 with the PROB-052 message (was empty line + exit 0).
 
 - S3a done after Addendum A (committed). Next: S3b.
+
+- S3b done (committed). Next: S3c (SDK page.text()).
