@@ -1,0 +1,54 @@
+{
+  "_source": "https://raw.githubusercontent.com/Halluminate/WebBench/main/webbenchfinal.csv",
+  "_note": "Sample 11 — 8 fresh READ-heavy tasks across 8 new domains, picked via a local Python CSV filter (WebFetch truncated the full ~2600-row CSV and also failed to honor domain exclusions on the first two attempts, so this run downloaded the raw CSV directly and filtered exactly against tools/webbench/tested-domains.txt). Run purpose: build the post-fix completion-rate picture after Milestone 92's field-report remediation batch (viewport SDK/CLI parity, wsEndpoint reconnect, leak warning, CLI flag-safety).",
+  "tasks": [
+    {
+      "id": 380,
+      "startingUrl": "https://www.diy.com",
+      "category": "READ",
+      "task": "Using diy.com's search feature, search for \"cordless drill\" and list the names, prices, and availability statuses of the top 5 results.\nOnly use http://diy.com to achieve the task. Don't go to any other site. The task is achievable with just navigation from this site."
+    },
+    {
+      "id": 383,
+      "startingUrl": "https://www.dreamstime.com/",
+      "category": "READ",
+      "task": "Browse the Dreamstime Public Domain collection and extract the names of all available image categories listed on the page.\nOnly use http://dreamstime.com to achieve the task. Don't go to any other site. The task is achievable with just navigation from this site."
+    },
+    {
+      "id": 389,
+      "startingUrl": "https://www.dw.com",
+      "category": "READ",
+      "task": "Navigate to the Culture category and list the titles of the first four articles featured.\nOnly use http://dw.com to achieve the task. Don't go to any other site. The task is achievable with just navigation from this site."
+    },
+    {
+      "id": 392,
+      "startingUrl": "https://www.ea.com",
+      "category": "READ",
+      "task": "Use the EA sports section to locate the EA Sports FC page and list the primary features and benefits highlighted on that page.\nOnly use http://ea.com to achieve the task. Don't go to any other site. The task is achievable with just navigation from this site."
+    },
+    {
+      "id": 395,
+      "startingUrl": "https://www.eater.com",
+      "category": "READ",
+      "task": "Navigate to the Eater.com homepage and list the titles of the top 5 featured articles displayed.\nOnly use http://eater.com to achieve the task. Don't go to any other site. The task is achievable with just navigation from this site."
+    },
+    {
+      "id": 398,
+      "startingUrl": "https://www.eatingwell.com",
+      "category": "READ",
+      "task": "Use the search bar to find a grilled salmon recipe and report its total cooking time along with its main ingredients.\nOnly use http://eatingwell.com to achieve the task. Don't go to any other site. The task is achievable with just navigation from this site."
+    },
+    {
+      "id": 416,
+      "startingUrl": "https://www.elle.com",
+      "category": "READ",
+      "task": "Navigate to the ELLE.com homepage and list the titles of the top 5 featured articles currently displayed.\nOnly use http://elle.com to achieve the task. Don't go to any other site. The task is achievable with just navigation from this site."
+    },
+    {
+      "id": 419,
+      "startingUrl": "https://en.wikipedia.org/wiki/Main_Page",
+      "category": "READ",
+      "task": "Check the 'In the news' section on the main page and name the first two current events mentioned.\nOnly use http://en.wikipedia.org/ to achieve the task. Don't go to any other site. The task is achievable with just navigation from this site."
+    }
+  ]
+}

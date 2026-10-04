@@ -1,0 +1,553 @@
+{
+  "_source": "inputs/webbenchfinal.csv = https://raw.githubusercontent.com/Halluminate/WebBench/main/webbenchfinal.csv (repo HEAD ea7a1628443321363989f354401f0653e0cba6f4, MIT, 818409 bytes, 2647 rows, fetched 2026-10-04)",
+  "_inputs_sha256": {
+    "webbenchfinal.csv": "fd5311a38bdb6f941e8f544150735656c114d76fbfb17193da973d5de0165217",
+    "tested-domains.snapshot.txt": "434ff9d14c424dbf0a1ab0217b45944dc7e5bf44ab29a3acff10d326417dbe20",
+    "historical-tasks/tasks.json": "7b920d725fc0d591c8462c318bb85e48e19ffcbe33c1caba9ab036e43bb4a2d8",
+    "historical-tasks/tasks-sample2.json": "73c77fc366b8e6ca8e187e7f817b63b923ae2d902f099b9289f39d3d90ebe7e3",
+    "historical-tasks/tasks-sample3.json": "82c811a61dc884856774aee361d151ea089a28feb8c5e85b9c548bb5606f01d3",
+    "historical-tasks/tasks-sample4.json": "fa2090709017495807d2a0e4e5e39993509c79816442286766d49dc7e28bc788",
+    "historical-tasks/tasks-sample5.json": "3531b6842e15f5a97eb4e4e8ee13441314431930a950cca27a352afd67660bff",
+    "historical-tasks/tasks-sample6.json": "6554a19a2eedd7687893e5d936c521d863b65c315df6c1b1ab37dde9a7ec2b7b",
+    "historical-tasks/tasks-sample7.json": "b9e63a40d151fbc8d5cc1b85c1fdf790865164f20db2fe914b113461acbeaa4f",
+    "historical-tasks/tasks-sample8.json": "c9890a10f9ba3149c58c271fb2c8fddb76103ffd7710cc0aca4233fdb430957c",
+    "historical-tasks/tasks-sample9.json": "b3d41babc0a48c5f81eedaadd58728666834dbc784fee04a916bbd5188a3f6f8",
+    "historical-tasks/tasks-sample10.json": "dddd0543a65727a8df5bc257f61b6f0fad41e586a3dde4be19cd0e382e82a1dc",
+    "historical-tasks/tasks-sample11.json": "150363a3738ae4d9782c85ab2a4c0d02f0ec33f3ec16da057fdc216d7bd8b7a6",
+    "historical-tasks/tasks-sample12.json": "34076178c48c80f3d935d679ea12dc7e36f5b8c34f7a4ed06c30876442f27c86",
+    "historical-tasks/tasks-sample13.json": "374972800c5a058188ae8b5c532f5640f92a644e39aa073adc4e78e5049618da"
+  },
+  "_seed": "sutradhar-webbench-2026-10-04",
+  "_rule": "see protocol.md section 2",
+  "_excluded_sha256": "3da40a4bae1071e7ed85026f3f109239b86881d5281a69b666ea70ecf5203f98",
+  "_excluded": [
+    "acehardware.com",
+    "agoda.com",
+    "airbnb.com",
+    "alamy.com",
+    "alberta.ca",
+    "alibaba.com",
+    "aliexpress.com",
+    "aljazeera.com",
+    "allrecipes.com",
+    "alltrails.com",
+    "amazon.com",
+    "aol.com",
+    "apa.org",
+    "apartments.com",
+    "apkpure.com",
+    "apnews.com",
+    "apple.com",
+    "archive.org",
+    "asos.com",
+    "asus.com",
+    "bandcamp.com",
+    "barnesandnoble.com",
+    "barrons.com",
+    "bbb.org",
+    "bbc.com",
+    "berkeley.edu",
+    "bestbuy.com",
+    "betterhealth.vic.gov.au",
+    "billboard.com",
+    "biomedcentral.com",
+    "booking.com",
+    "britannica.com",
+    "buzzfeed.com",
+    "ca.gov",
+    "cambridge.org",
+    "canada.ca",
+    "caranddriver.com",
+    "cars.com",
+    "cbr.com",
+    "cbs.com",
+    "cbsnews.com",
+    "cbssports.com",
+    "cdc.gov",
+    "clevelandclinic.org",
+    "cnbc.com",
+    "cnet.com",
+    "collider.com",
+    "collinsdictionary.com",
+    "columbia.edu",
+    "commonsensemedia.org",
+    "cosmopolitan.com",
+    "coursera.org",
+    "craigslist.org",
+    "crunchbase.com",
+    "crunchyroll.com",
+    "deadline.com",
+    "delish.com",
+    "deviantart.com",
+    "dickssportinggoods.com",
+    "dictionary.com",
+    "digg.com",
+    "diy.com",
+    "dreamstime.com",
+    "drugs.com",
+    "dw.com",
+    "ea.com",
+    "eater.com",
+    "eatingwell.com",
+    "ebay.com",
+    "economist.com",
+    "edx.org",
+    "elle.com",
+    "encyclopedia.com",
+    "eonline.com",
+    "epa.gov",
+    "espn.com",
+    "esquire.com",
+    "etsy.com",
+    "euronews.com",
+    "eventbrite.com",
+    "expedia.com",
+    "facebook.com",
+    "fandango.com",
+    "fandom.com",
+    "fastcompany.com",
+    "fda.gov",
+    "firstcry.com",
+    "flickr.com",
+    "flipkart.com",
+    "fodors.com",
+    "food.com",
+    "food52.com",
+    "foodandwine.com",
+    "forbes.com",
+    "ford.com",
+    "fortune.com",
+    "foxnews.com",
+    "foxsports.com",
+    "freepik.com",
+    "frontiersin.org",
+    "gamerant.com",
+    "gamespot.com",
+    "gamesradar.com",
+    "geeksforgeeks.org",
+    "genius.com",
+    "georgia.gov",
+    "howstuffworks.com",
+    "huffpost.com",
+    "ign.com",
+    "indiatimes.com",
+    "instructables.com",
+    "khanacademy.org",
+    "livescience.com",
+    "lonelyplanet.com",
+    "macys.com",
+    "merriam-webster.com",
+    "nasa.gov",
+    "nps.gov",
+    "pcgamer.com",
+    "rottentomatoes.com",
+    "stackoverflow.com",
+    "timeanddate.com",
+    "wikipedia.org",
+    "worldatlas.com"
+  ],
+  "primary": [
+    {
+      "id": 1172,
+      "startingUrl": "https://msu.edu",
+      "category": "READ",
+      "task": "Search for information on academic support services (like tutoring or counseling) and list the names of the services mentioned.\nOnly use http://msu.edu to achieve the task. Don't go to any other site. The task is achievable with just navigation from this site."
+    },
+    {
+      "id": 2388,
+      "startingUrl": "https://www.bing.com",
+      "category": "READ",
+      "task": "Search Bing for the latest news on the \"Tech Industry\" by filtering results from the past 24 hours, then list the titles of the top 5 articles.\nOnly use https://www.bing.com to achieve the task. Don't go to any other site. The task is achievable with just navigation from this site."
+    },
+    {
+      "id": 2253,
+      "startingUrl": "https://european-union.europa.eu/index_en",
+      "category": "READ",
+      "task": "Access the integrated EUR-Lex search tool, search for “data protection”, and list the titles of the first three documents returned.\nOnly use https://european-union.europa.eu/index_en to achieve the task. Don't go to any other site. The task is achievable with just navigation from this site."
+    },
+    {
+      "id": 1661,
+      "startingUrl": "https://stackexchange.com",
+      "category": "READ",
+      "task": "Visit the Meta site of StackExchange and list the titles of the 3 most recent community discussion topics.\nOnly use http://stackexchange.com to achieve the task. Don't go to any other site. The task is achievable with just navigation from this site."
+    },
+    {
+      "id": 751,
+      "startingUrl": "https://www.harpersbazaar.com",
+      "category": "READ",
+      "task": "Search for the article on \"Spring Fashion Trends\" and extract the names of the five luxury brands mentioned in it.\nOnly use http://harpersbazaar.com to achieve the task. Don't go to any other site. The task is achievable with just navigation from this site."
+    },
+    {
+      "id": 1492,
+      "startingUrl": "https://www.science.org",
+      "category": "READ",
+      "task": "Locate the FAQ related to copyright restrictions on PDF downloads and extract the answer that details which formats are permitted.\nOnly use http://science.org to achieve the task. Don't go to any other site. The task is achievable with just navigation from this site."
+    },
+    {
+      "id": 1946,
+      "startingUrl": "https://www.unesco.org/en",
+      "category": "READ",
+      "task": "Use the website’s search function to look for \"heritage conservation\" documents and present the titles of the first four results.\nOnly use http://unesco.org to achieve the task. Don't go to any other site. The task is achievable with just navigation from this site."
+    },
+    {
+      "id": 1837,
+      "startingUrl": "https://www.tiktok.com/explore",
+      "category": "READ",
+      "task": "Visit Mr. Beast’s profile and record the engagement metrics (likes and comments) on their three most-viewed videos.\nOnly use http://tiktok.com to achieve the task. Don't go to any other site. The task is achievable with just navigation from this site."
+    },
+    {
+      "id": 1379,
+      "startingUrl": "https://www.polygon.com",
+      "category": "READ",
+      "task": "Navigate to the \"Guides\" section and give me the 5 most popular guides title and url.\nOnly use http://polygon.com to achieve the task. Don't go to any other site. The task is achievable with just navigation from this site."
+    },
+    {
+      "id": 1266,
+      "startingUrl": "https://www.nytimes.com",
+      "category": "READ",
+      "task": "Search for the most recent article on climate change and provide its headline.\nOnly use http://nytimes.com to achieve the task. Don't go to any other site. The task is achievable with just navigation from this site."
+    },
+    {
+      "id": 2554,
+      "startingUrl": "https://www.johnlewis.com",
+      "category": "READ",
+      "task": "Go to the product detail page for the “John Lewis & Partners Simplicity Electric Kettel” and list its specifications such as capacity and wattage.\nOnly use https://www.johnlewis.com/ to achieve the task. Don't go to any other site. The task is achievable with just navigation from this site."
+    },
+    {
+      "id": 2215,
+      "startingUrl": "https://www.yellowpages.com",
+      "category": "READ",
+      "task": "Use the search filters to display health clinic listings in Miami, FL and note two business’s average user rating.\nOnly use http://yellowpages.com to achieve the task. Don't go to any other site. The task is achievable with just navigation from this site."
+    },
+    {
+      "id": 929,
+      "startingUrl": "https://www.justdial.com",
+      "category": "READ",
+      "task": "Search for reputed plumber services in Mumbai and list the names, phone numbers, and addresses of the top 5 verified listings.\nOnly use http://justdial.com to achieve the task. Don't go to any other site. The task is achievable with just navigation from this site."
+    },
+    {
+      "id": 781,
+      "startingUrl": "https://www.homedepot.com",
+      "category": "READ",
+      "task": "Search for \"cordless drill\" on Home Depot’s website, filter the results by the DEWALT brand, and list the top 5 products based on customer ratings.\nOnly use http://homedepot.com to achieve the task. Don't go to any other site. The task is achievable with just navigation from this site."
+    },
+    {
+      "id": 1236,
+      "startingUrl": "https://www.nordstrom.com",
+      "category": "READ",
+      "task": "Navigate to the \"Under $100\" section in the Women's Handbags category and record the names, prices, and availability of the first three items.\nOnly use http://nordstrom.com to achieve the task. Don't go to any other site. The task is achievable with just navigation from this site."
+    },
+    {
+      "id": 1940,
+      "startingUrl": "https://umich.edu",
+      "category": "READ",
+      "task": "Search for “undergraduate admissions requirements” on the website and summarize three key criteria mentioned.\nOnly use http://umich.edu to achieve the task. Don't go to any other site. The task is achievable with just navigation from this site."
+    },
+    {
+      "id": 1979,
+      "startingUrl": "https://www.usa.gov",
+      "category": "READ",
+      "task": "Search \"Benefits & Services\"  on USA.gov and list the categories of government services available.\nOnly use http://usa.gov to achieve the task. Don't go to any other site. The task is achievable with just navigation from this site."
+    },
+    {
+      "id": 2687,
+      "startingUrl": "https://www.uptodown.com/mac",
+      "category": "READ",
+      "task": "Locate the \"PUBG Mobile\" app page, read its detailed description and technical specifications, and summarize the two most recent update log entries.\nOnly use https://www.uptodown.com/mac to achieve the task. Don't go to any other site. The task is achievable with just navigation from this site."
+    },
+    {
+      "id": 1925,
+      "startingUrl": "https://www.ucla.edu",
+      "category": "READ",
+      "task": "Visit the sustainability initiatives page on the site and extract three main sustainability goals outlined by UCLA.\nOnly use http://ucla.edu to achieve the task. Don't go to any other site. The task is achievable with just navigation from this site."
+    },
+    {
+      "id": 2561,
+      "startingUrl": "https://www.kayak.com",
+      "category": "READ",
+      "task": "Look up the current hotel price trends in Rome, Italy, for a stay during the first week of October and provide the lowest forecasted rate.\nOnly use https://www.kayak.com/ to achieve the task. Don't go to any other site. The task is achievable with just navigation from this site."
+    },
+    {
+      "id": 2336,
+      "startingUrl": "https://tenor.com",
+      "category": "READ",
+      "task": "Use the search bar to search for GIFs related to \"celebration\" and list the titles or hashtags of the first 5 results.\nOnly use https://tenor.com/ to achieve the task. Don't go to any other site. The task is achievable with just navigation from this site."
+    },
+    {
+      "id": 1789,
+      "startingUrl": "https://www.theguardian.com/us",
+      "category": "READ",
+      "task": "Show me the Film section. Make a list of the top 5 highest rated reviews and provide a two sentence description of the premise of each film.\nOnly use http://theguardian.com to achieve the task. Don't go to any other site. The task is achievable with just navigation from this site."
+    },
+    {
+      "id": 1517,
+      "startingUrl": "https://us.shein.com/?ref=www&rep=dir&ret=us",
+      "category": "READ",
+      "task": "Search for reviews on a \"denim jacket\" and record the text and star ratings of the first 3 customer reviews.\nOnly use http://shein.com to achieve the task. Don't go to any other site. The task is achievable with just navigation from this site."
+    },
+    {
+      "id": 1371,
+      "startingUrl": "https://www.playstation.com/en-us",
+      "category": "READ",
+      "task": "Locate the product details for \"Horizon Forbidden West\" and extract the release date, developer, and price information.\nOnly use http://playstation.com to achieve the task. Don't go to any other site. The task is achievable with just navigation from this site."
+    },
+    {
+      "id": 1434,
+      "startingUrl": "https://www.redfin.com",
+      "category": "READ",
+      "task": "Access the property valuation tool and check the estimated home value for a \"3560 Nashville Hwy\" property; record the valuation along with the estimate's date.\nOnly use http://redfin.com to achieve the task. Don't go to any other site. The task is achievable with just navigation from this site."
+    },
+    {
+      "id": 696,
+      "startingUrl": "https://www.goal.com/en-us",
+      "category": "READ",
+      "task": "Search for the latest match report on Manchester United and list the headline of the report.\nOnly use http://goal.com to achieve the task. Don't go to any other site. The task is achievable with just navigation from this site."
+    },
+    {
+      "id": 1329,
+      "startingUrl": "https://www.pennmedicine.org",
+      "category": "READ",
+      "task": "Access the contact information page and extract the email addresses provided for administrative customer support.\nOnly use http://pennmedicine.org to achieve the task. Don't go to any other site. The task is achievable with just navigation from this site."
+    },
+    {
+      "id": 2582,
+      "startingUrl": "https://www.msdmanuals.com",
+      "category": "READ",
+      "task": "Use the search bar to locate the \"Hypertension\" article and list the first three risk factors mentioned.\nOnly use https://www.msdmanuals.com/ to achieve the task. Don't go to any other site. The task is achievable with just navigation from this site."
+    },
+    {
+      "id": 982,
+      "startingUrl": "https://www.lawinsider.com",
+      "category": "READ",
+      "task": "Search for \"Non-Disclosure Agreement\" contracts and list the contract titles and effective dates for the first five results.\nOnly use http://lawinsider.com to achieve the task. Don't go to any other site. The task is achievable with just navigation from this site."
+    },
+    {
+      "id": 2218,
+      "startingUrl": "https://www.yelp.com",
+      "category": "READ",
+      "task": "Return the phone number of \"Joe's Pizza\" in Manhattan\nOnly use http://yelp.com to achieve the task. Don't go to any other site. The task is achievable with just navigation from this site."
+    }
+  ],
+  "reserve": [
+    {
+      "id": 1414,
+      "startingUrl": "https://www.realsimple.com",
+      "category": "READ",
+      "task": "Navigate to the \"Organizing\" section under Home on Real Simple and list the titles of the 5 most recent articles.\nOnly use http://realsimple.com to achieve the task. Don't go to any other site. The task is achievable with just navigation from this site."
+    },
+    {
+      "id": 1310,
+      "startingUrl": "https://www.osu.edu",
+      "category": "READ",
+      "task": "Find a list of undergraduate programs offered at Ohio State.\nOnly use http://osu.edu to achieve the task. Don't go to any other site. The task is achievable with just navigation from this site."
+    },
+    {
+      "id": 2330,
+      "startingUrl": "https://streeteasy.com",
+      "category": "READ",
+      "task": "Locate the latest NYC rental market trends article on StreetEasy and list three prominent trends mentioned in it.\nOnly use https://streeteasy.com/ to achieve the task. Don't go to any other site. The task is achievable with just navigation from this site."
+    },
+    {
+      "id": 981,
+      "startingUrl": "https://www.latimes.com",
+      "category": "READ",
+      "task": "Browse the entertainment section and list the top three celebrity news headlines along with their publication dates.\nOnly use http://latimes.com to achieve the task. Don't go to any other site. The task is achievable with just navigation from this site."
+    },
+    {
+      "id": 2501,
+      "startingUrl": "https://www.express.co.uk",
+      "category": "READ",
+      "task": "Use the search bar on Express to locate articles related to “COVID-19 updates” and output the titles along with publication timestamps of the first 5 results.\nOnly use https://www.express.co.uk/ to achieve the task. Don't go to any other site. The task is achievable with just navigation from this site."
+    },
+    {
+      "id": 1703,
+      "startingUrl": "https://stardewvalleywiki.com/Stardew_Valley_Wiki",
+      "category": "READ",
+      "task": "When was the site first published?\nOnly use http://stardewvalleywiki.com to achieve the task. Don't go to any other site. The task is achievable with just navigation from this site."
+    }
+  ],
+  "retest": [
+    {
+      "id": 597,
+      "startingUrl": "https://www.frontiersin.org",
+      "category": "READ",
+      "task": "Find a highly cited article on the website about artificial intelligence in healthcare and retrieve its publication date and DOI.\nOnly use http://frontiersin.org to achieve the task. Don't go to any other site. The task is achievable with just navigation from this site."
+    },
+    {
+      "id": 41,
+      "startingUrl": "https://www.aliexpress.us/?gatewayAdapt=glo2usa&_randl_shipto=US",
+      "category": "READ",
+      "task": "Find me black leather belts for men and return the number of reviews\nOnly use http://aliexpress.com to achieve the task. Don't go to any other site. The task is achievable with just navigation from this site."
+    },
+    {
+      "id": 192,
+      "startingUrl": "https://www.ca.gov",
+      "category": "READ",
+      "task": "Navigate to ca.gov and search for “disaster preparedness” resources; then provide the URL of the guide that includes wildfire safety instructions.\nOnly use http://ca.gov to achieve the task. Don't go to any other site. The task is achievable with just navigation from this site."
+    },
+    {
+      "id": 392,
+      "startingUrl": "https://www.ea.com",
+      "category": "READ",
+      "task": "Use the EA sports section to locate the EA Sports FC page and list the primary features and benefits highlighted on that page.\nOnly use http://ea.com to achieve the task. Don't go to any other site. The task is achievable with just navigation from this site."
+    },
+    {
+      "id": 568,
+      "startingUrl": "https://www.ford.com",
+      "category": "READ",
+      "task": "Search for the Ford F-150 model and extract its towing capacity and payload specifications from the product overview page.\nOnly use http://ford.com to achieve the task. Don't go to any other site. The task is achievable with just navigation from this site."
+    },
+    {
+      "id": 1691,
+      "startingUrl": "https://stackoverflow.com/questions",
+      "category": "READ",
+      "task": "Navigate to a popular question on debugging techniques in Java and list all the tags associated with it.\nOnly use http://stackoverflow.com to achieve the task. Don't go to any other site. The task is achievable with just navigation from this site."
+    }
+  ],
+  "out_of_scope_drawn": [
+    {
+      "id": 2088,
+      "startingUrl": "https://www.wikidata.org/wiki/Wikidata:Main_Page",
+      "category": "CREATE",
+      "task": "Identify an incorrect \"occupation\" (P106) statement on a Wikidata item.\nOnly use http://wikidata.org to achieve the task. Don't go to any other site. The task is achievable with just navigation from this site.",
+      "reason": "CREATE",
+      "beforeLastPrimary": true
+    },
+    {
+      "id": 729,
+      "startingUrl": "https://www.grubhub.com",
+      "category": "CREATE",
+      "task": "Place an order for a 10-piece chicken bucket with mashed potatoes from \"KFC\". Pick one side order at random, and add this to the order. \nOnly use http://grubhub.com to achieve the task. Don't go to any other site. The task is achievable with just navigation from this site.",
+      "reason": "CREATE",
+      "beforeLastPrimary": true
+    },
+    {
+      "id": 991,
+      "startingUrl": "https://letterboxd.com",
+      "category": "CREATE",
+      "task": "Create a new diary entry for the film \"Parasite,\" assign it a 4-star rating, and include a brief review of its plot.\nOnly use http://letterboxd.com to achieve the task. Don't go to any other site. The task is achievable with just navigation from this site.",
+      "reason": "CREATE",
+      "beforeLastPrimary": true
+    },
+    {
+      "id": 1472,
+      "startingUrl": "https://resy.com",
+      "category": "UPDATE",
+      "task": "Make a reservation at \"Tacombi - Williamsburg\" for 7:00 PM on a given night. Modify your \"Tacombi - Williamsburg\" reservation by changing the dinner time from 7:00 PM to 8:00 PM.\nOnly use http://resy.com/ to achieve the task. Don't go to any other site. The task is achievable with just navigation from this site.",
+      "reason": "UPDATE",
+      "beforeLastPrimary": true
+    },
+    {
+      "id": 2292,
+      "startingUrl": "https://poshmark.com",
+      "category": "READ",
+      "task": "Access your sales dashboard and read the latest monthly sales summary, noting the number of items sold, average price, and total earnings.\nOnly use https://poshmark.com/ to achieve the task. Don't go to any other site. The task is achievable with just navigation from this site.",
+      "reason": "manual: requires logged-in seller dashboard (\"your sales dashboard\")",
+      "beforeLastPrimary": true
+    },
+    {
+      "id": 829,
+      "startingUrl": "https://www.ikea.com",
+      "category": "DELETE",
+      "task": "Add the \"FLÄRDFULL rug\" to your favorites, subsequently remove it, and verify that it no longer appears in your favorites list.\nOnly use http://ikea.com to achieve the task. Don't go to any other site. The task is achievable with just navigation from this site.",
+      "reason": "DELETE",
+      "beforeLastPrimary": true
+    },
+    {
+      "id": 2195,
+      "startingUrl": "https://x.com",
+      "category": "UPDATE",
+      "task": "Log in to your account and update your display name from your current username to \"TechGuru.\"\nOnly use http://x.com to achieve the task. Don't go to any other site. The task is achievable with just navigation from this site.",
+      "reason": "UPDATE",
+      "beforeLastPrimary": true
+    },
+    {
+      "id": 1017,
+      "startingUrl": "https://www.linkedin.com",
+      "category": "CREATE",
+      "task": "Comment on a recent article posted by Google, ensuring that your comment has a positive and professional connotation.\nOnly use http://linkedin.com to achieve the task. Don't go to any other site. The task is achievable with just navigation from this site.",
+      "reason": "CREATE",
+      "beforeLastPrimary": true
+    },
+    {
+      "id": 694,
+      "startingUrl": "https://www.glassdoor.com/index.htm",
+      "category": "UPDATE",
+      "task": "Log in to your Glassdoor account, post a review for the firm \"Accenture.\" Then find the review you posted for \"Accenture\", and update the text to add further insights about career growth opportunities.\nOnly use http://glassdoor.com to achieve the task. Don't go to any other site. The task is achievable with just navigation from this site.",
+      "reason": "UPDATE",
+      "beforeLastPrimary": true
+    },
+    {
+      "id": 2368,
+      "startingUrl": "https://www.bbcgoodfood.com",
+      "category": "DELETE",
+      "task": "Log in, post a comment under a grilled chicken recipe, then delete that comment. \nOnly use https://www.bbcgoodfood.com/ to achieve the task. Don't go to any other site. The task is achievable with just navigation from this site.",
+      "reason": "DELETE",
+      "beforeLastPrimary": true
+    },
+    {
+      "id": 1734,
+      "startingUrl": "https://www.studocu.com",
+      "category": "DELETE",
+      "task": "Log in to your account, add the document \"Sample Lecture Notes\" to your favorites list, then remove it and verify that it no longer appears in your favorites.\nOnly use http://studocu.com to achieve the task. Don't go to any other site. The task is achievable with just navigation from this site.",
+      "reason": "DELETE",
+      "beforeLastPrimary": true
+    },
+    {
+      "id": 808,
+      "startingUrl": "https://www.housebeautiful.com",
+      "category": "UPDATE",
+      "task": "Access your account settings and modify your newsletter interests by adding \"sustainable living\" to your current selections.\nOnly use http://housebeautiful.com to achieve the task. Don't go to any other site. The task is achievable with just navigation from this site.",
+      "reason": "UPDATE",
+      "beforeLastPrimary": true
+    },
+    {
+      "id": 1215,
+      "startingUrl": "https://www.newegg.com",
+      "category": "UPDATE",
+      "task": "Log in to your Newegg account and modify your email notification preferences to receive promotional emails on a weekly basis instead of daily.\nOnly use http://newegg.com to achieve the task. Don't go to any other site. The task is achievable with just navigation from this site.",
+      "reason": "UPDATE",
+      "beforeLastPrimary": true
+    },
+    {
+      "id": 1719,
+      "startingUrl": "https://store.steampowered.com",
+      "category": "CREATE",
+      "task": "Draft and submit a feedback post on the Steam forums suggesting improvements to the library management interface.\nOnly use http://steampowered.com to achieve the task. Don't go to any other site. The task is achievable with just navigation from this site.",
+      "reason": "CREATE",
+      "beforeLastPrimary": true
+    },
+    {
+      "id": 712,
+      "startingUrl": "https://www.goodhousekeeping.com",
+      "category": "UPDATE",
+      "task": "Access your user profile on GoodHousekeeping.com and change your display name to \"HomeChef101,\" then save the changes.\nOnly use http://goodhousekeeping.com to achieve the task. Don't go to any other site. The task is achievable with just navigation from this site.",
+      "reason": "UPDATE",
+      "beforeLastPrimary": true
+    },
+    {
+      "id": 2136,
+      "startingUrl": "https://www.wired.com",
+      "category": "UPDATE",
+      "task": "Access your account settings on Wired.com and update your newsletter preferences to receive only the \"Technology\" and \"Culture\" newsletters.\nOnly use http://wired.com to achieve the task. Don't go to any other site. The task is achievable with just navigation from this site.",
+      "reason": "UPDATE",
+      "beforeLastPrimary": false
+    },
+    {
+      "id": 910,
+      "startingUrl": "https://www.jagranjosh.com",
+      "category": "CREATE",
+      "task": "Register for exam alerts by filling out the subscription form with your contact details, ensuring you select both email and SMS notifications.\nOnly use http://jagranjosh.com to achieve the task. Don't go to any other site. The task is achievable with just navigation from this site.",
+      "reason": "CREATE",
+      "beforeLastPrimary": false
+    },
+    {
+      "id": 1605,
+      "startingUrl": "https://open.spotify.com",
+      "category": "FILE_MANIPULATION",
+      "task": "Login and find out how to request extended streaming data, and follow the steps to request this data. \nOnly use http://spotify.com to achieve the task. Don't go to any other site. The task is achievable with just navigation from this site.",
+      "reason": "FILE_MANIPULATION",
+      "beforeLastPrimary": false
+    }
+  ]
+}

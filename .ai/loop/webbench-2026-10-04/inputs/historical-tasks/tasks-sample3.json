@@ -1,0 +1,90 @@
+{
+  "_source": "https://github.com/Halluminate/WebBench (webbenchfinal.csv), fetched 2026-08-13",
+  "_note": "Third sample, sized larger (14 tasks) to tighten the completion-rate estimate from samples 1-2 (5/15 so far). Mostly READ (WebBench's largest category) across major e-commerce/media/travel sites not touched before, deliberately including several with known real-world bot-protection reputations (Amazon, Best Buy) to keep the sample honest rather than cherry-picked toward easy targets. One CREATE task (add-to-cart on AliExpress) chosen specifically because it's safe/reversible and needs no login or real personal data -- WRITE-category tasks requiring login or submitting real data to a business (newsletter signups, account creation) were deliberately excluded on ethical/scope grounds, not because they'd be hard. IDs match the dataset's own row IDs.",
+  "tasks": [
+    {
+      "id": 21,
+      "startingUrl": "https://www.airbnb.com",
+      "category": "READ",
+      "task": "Filter properties in Chicago by those offering free cancellation for a one-week stay in August, then list the first five options with their prices.\nOnly use http://airbnb.com to achieve the task. Don't go to any other site. The task is achievable with just navigation from this site."
+    },
+    {
+      "id": 29,
+      "startingUrl": "https://www.alamy.com",
+      "category": "READ",
+      "task": "Search for 'Red Flowers' and report how many results there are.\nOnly use http://alamy.com to achieve the task. Don't go to any other site. The task is achievable with just navigation from this site."
+    },
+    {
+      "id": 33,
+      "startingUrl": "https://www.alibaba.com",
+      "category": "READ",
+      "task": "Search for \"smartphones\" on Alibaba and note how many listings are available.\nOnly use http://alibaba.com to achieve the task. Don't go to any other site. The task is achievable with just navigation from this site."
+    },
+    {
+      "id": 41,
+      "startingUrl": "https://www.aliexpress.us/?gatewayAdapt=glo2usa&_randl_shipto=US",
+      "category": "READ",
+      "task": "Find me black leather belts for men and return the number of reviews.\nOnly use http://aliexpress.com to achieve the task. Don't go to any other site. The task is achievable with just navigation from this site."
+    },
+    {
+      "id": 36,
+      "startingUrl": "https://www.aliexpress.us/?gatewayAdapt=glo2usa&_randl_shipto=US",
+      "category": "CREATE",
+      "task": "Search for 'Bluetooth speakers', filter to only show items shipped from USA, and then find my one with 4.0+ review score and bluetooth 5.0. Add it to my cart.\nOnly use http://aliexpress.com to achieve the task. Don't go to any other site. The task is achievable with just navigation from this site."
+    },
+    {
+      "id": 81,
+      "startingUrl": "https://www.amazon.com",
+      "category": "READ",
+      "task": "Find the product page for \"Amazon Basics AA Batteries\" and record the pack size and pricing information.\nOnly use http://amazon.com to achieve the task. Don't go to any other site. The task is achievable with just navigation from this site."
+    },
+    {
+      "id": 114,
+      "startingUrl": "https://www.asos.com",
+      "category": "READ",
+      "task": "Search for \"summer tote bag\" using the search bar and list the first 5 results including their prices and available color options.\nOnly use http://asos.com to achieve the task. Don't go to any other site. The task is achievable with just navigation from this site."
+    },
+    {
+      "id": 139,
+      "startingUrl": "https://www.bbb.org",
+      "category": "READ",
+      "task": "Search for any companies on bbb.org and output the BBB rating of the first business listed in the results.\nOnly use http://bbb.org to achieve the task. Don't go to any other site. The task is achievable with just navigation from this site."
+    },
+    {
+      "id": 155,
+      "startingUrl": "https://www.bestbuy.com",
+      "category": "READ",
+      "task": "Search for \"Apple MacBook Pro 16-inch\" on Best Buy and list the first 5 product specifications from the product detail page.\nOnly use http://bestbuy.com/ to achieve the task. Don't go to any other site. The task is achievable with just navigation from this site."
+    },
+    {
+      "id": 172,
+      "startingUrl": "https://www.booking.com",
+      "category": "READ",
+      "task": "Search for 8 review score or above hotels in Manhattan, New York for next weekend with free cancellation, free Wi-Fi, and breakfast included. Compare at least four options and pick the one closest to the Empire State Building.\nOnly use http://booking.com to achieve the task. Don't go to any other site. The task is achievable with just navigation from this site."
+    },
+    {
+      "id": 212,
+      "startingUrl": "https://www.cars.com",
+      "category": "READ",
+      "task": "Find and display the detailed specifications, including fuel type and VIN, for the 2020 Toyota Camry offered by a local dealer in Dallas, TX.\nOnly use http://cars.com to achieve the task. Don't go to any other site. The task is achievable with just navigation from this site."
+    },
+    {
+      "id": 238,
+      "startingUrl": "https://www.cnbc.com",
+      "category": "READ",
+      "task": "Find the \"Markets\" section on CNBC.com and list the current performance numbers for the Dow Jones, Nasdaq, and S&P 500 indices.\nOnly use http://cnbc.com to achieve the task. Don't go to any other site. The task is achievable with just navigation from this site."
+    },
+    {
+      "id": 246,
+      "startingUrl": "https://www.cnet.com",
+      "category": "READ",
+      "task": "Find an article about upcoming video game consoles and extract the names of the products discussed.\nOnly use http://cnet.com to achieve the task. Don't go to any other site. The task is achievable with just navigation from this site."
+    },
+    {
+      "id": 258,
+      "startingUrl": "https://collider.com",
+      "category": "READ",
+      "task": "Navigate to Collider's \"Reviews\" section and extract the headline, film title, and overall rating from the most recent review article.\nOnly use http://collider.com to achieve the task. Don't go to any other site. The task is achievable with just navigation from this site."
+    }
+  ]
+}
