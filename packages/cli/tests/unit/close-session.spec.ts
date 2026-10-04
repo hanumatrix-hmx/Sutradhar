@@ -174,7 +174,14 @@ describe('stopSpawnedChrome (close/recovery order)', () => {
       expect(cb).toBeGreaterThan(-1);
       const cbBlock = extractBlock(elseBlock, cb);
       const clearAt = elseBlock.indexOf('clearState(');
-      expect(clearAt).toBeGreaterThan(cb + cbBlock.length - 1);
+      // `cb` is the index of the `if` keyword, NOT of the block's `{` (19 characters later), and
+      // `cbBlock` starts at that `{`. Measure the block's closing `}` from the `{` itself; measured
+      // from `cb` it lands 19 characters early and a clear placed as the LAST statement of the
+      // block would be wrongly accepted (S8 F-S8-1).
+      const cbOpen = elseBlock.indexOf('{', cb);
+      const cbClose = cbOpen + cbBlock.length - 1;
+      expect(elseBlock[cbClose]).toBe('}');
+      expect(clearAt).toBeGreaterThan(cbClose);
     });
   });
 
