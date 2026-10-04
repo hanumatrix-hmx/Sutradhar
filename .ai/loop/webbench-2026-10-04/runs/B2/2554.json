@@ -1,0 +1,19 @@
+{
+  "id": 2554,
+  "slot": "B2",
+  "attempts": ["a1", "a2"],
+  "startedAt": "2026-10-04T10:26:18Z",
+  "endedAt": "2026-10-04T10:26:31Z",
+  "answerFields": [],
+  "shortList": null,
+  "classification": "EXTERNAL-BLOCK",
+  "subflag": "protocol",
+  "disclosure": "nav to https://www.johnlewis.com failed on both attempts with net::ERR_HTTP2_PROTOCOL_ERROR (exit 1); the browser showed its own error page. No site content was ever loaded. No curl control run (not in the brief's list of ids for needsCurlControl).",
+  "toolDefects": [],
+  "blockEvidence": {"logSeq": 9, "excerpt": "This site can’t be reached The web page at https://www.johnlewis.com/ might be temporarily down or it may have moved permanently to a new web address. ERR_HTTP2_PROTOCOL_ERROR"},
+  "driftChecks": [],
+  "probe": null,
+  "uncitedValue": null,
+  "needsCurlControl": false,
+  "notes": "a1 nav seq 1 exit 1; a1 text seq 3. a2 nav seq 7 exit 1; a2 text seq 9. Could be an edge-level deny of this client (HTTP/2 reset) or a Sutradhar/Chrome transport issue; not distinguishable without a control."
+}

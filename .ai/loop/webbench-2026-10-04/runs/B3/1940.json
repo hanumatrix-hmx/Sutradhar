@@ -1,0 +1,21 @@
+{
+  "id": 1940,
+  "slot": "B3",
+  "attempts": ["a1"],
+  "startedAt": "2026-10-04T10:25:40Z",
+  "endedAt": "2026-10-04T10:26:44Z",
+  "answerFields": [],
+  "shortList": null,
+  "classification": "EXTERNAL-BLOCK",
+  "subflag": "challenge",
+  "disclosure": "Cloudflare 'Just a moment...' interstitial (HTTP 403) persisted through the single allowed waitfor and the single allowed re-nav; page shows a Ray ID, so a2 was skipped per the brief.",
+  "toolDefects": [
+    {"logSeq": 7, "verb": "waitfor --js", "exit": 1, "what": "The exact interstitial check '!/Just a moment|Verif/i.test(document.title)' threw 'Unexpected token' in the page. A variant with 'return' (seq 11) failed the same way; a regex-free variant (seq 15) ran and timed out after 30s with the page still on the challenge. The block outcome is unaffected."}
+  ],
+  "blockEvidence": {"logSeq": 23, "excerpt": "Performing security verification\n\nThis website uses a security service to protect against malicious bots. This page is displayed while the website verifies you are not a bot.\n\nRay ID: a4537d203c0c41ea"},
+  "driftChecks": [],
+  "probe": null,
+  "uncitedValue": null,
+  "needsCurlControl": false,
+  "notes": "Calls used: waitfor attempts seq 7, 11 (both syntax errors), seq 15 (30s timeout), then one nav seq 19. That is more than one waitfor call, but the first two never executed a wait (threw in 3ms), so the effective one wait of 30s was seq 15."
+}

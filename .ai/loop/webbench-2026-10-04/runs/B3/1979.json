@@ -1,0 +1,23 @@
+{
+  "id": 1979,
+  "slot": "B3",
+  "attempts": ["a1"],
+  "startedAt": "2026-10-04T10:26:44Z",
+  "endedAt": "2026-10-04T10:28:37Z",
+  "answerFields": [
+    {"field": "category", "value": "Food assistance", "logSeq": 37, "excerpt": "Food assistance\n\nGet nutritious food through SNAP (food stamps), WIC for women, infants, and children, and emergency food assistance."},
+    {"field": "category", "value": "Health insurance", "logSeq": 37, "excerpt": "Health insurance\n\nGet information about Medicaid, CHIP, Medicare, the ACA Health Insurance Marketplace, and COBRA."},
+    {"field": "category", "value": "Housing help", "logSeq": 37, "excerpt": "Housing help\n\nLearn about rental and buyer assistance programs. Find emergency housing and avoid eviction."}
+  ],
+  "shortList": null,
+  "classification": "AGENT-FAIL",
+  "subflag": "substitution",
+  "disclosure": "Site search for 'Benefits & Services' (search.usa.gov, seq 31) returned 72 article results with no category list. I then navigated directly to www.usa.gov/benefits (the Government benefits topic page, seq 37) and read its sub-categories. That is my substitution for the search step, not one of the interpretation rules, so it is not counted as COMPLETED. The values shown are what that page lists.",
+  "toolDefects": [],
+  "blockEvidence": null,
+  "driftChecks": [],
+  "probe": null,
+  "uncitedValue": null,
+  "needsCurlControl": false,
+  "notes": "Earlier guessed URL /search?query=... returned 404 (seq 9). The homepage topic list (seq 5) also lists top-level service categories such as Voting and elections, Complaints, Disability services, Education, Health. Search results page had no category facets (seq 31, 49)."
+}

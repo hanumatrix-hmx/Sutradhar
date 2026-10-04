@@ -1,0 +1,19 @@
+{
+  "id": 1492,
+  "slot": "B1",
+  "attempts": ["a1", "a2"],
+  "startedAt": "2026-10-04T10:31:40Z",
+  "endedAt": "2026-10-04T10:34:30Z",
+  "answerFields": [],
+  "shortList": null,
+  "classification": "EXTERNAL-BLOCK",
+  "subflag": "challenge",
+  "disclosure": "Cloudflare 'Just a moment...' / 'Performing security verification' interstitial (HTTP 403) on a1 and a2; never solved or clicked. On a2 the corrected interstitial wait (MSYS_NO_PATHCONV=1) ran the full 30s and the page stayed on the challenge (seq 19).",
+  "toolDefects": [],
+  "blockEvidence": {"logSeq": 21, "excerpt": "Performing security verification\n\nThis website uses a security service to protect against malicious bots. This page is displayed while the website verifies you are not a bot."},
+  "driftChecks": [],
+  "probe": null,
+  "uncitedValue": null,
+  "needsCurlControl": false,
+  "notes": "a1 seq 7 --js wait was mangled by Git Bash path conversion (argument rewritten), not a Sutradhar defect; a1 seq 11 substituted a --text wait (timed out). Same interstitial text at a1 seq 9 and a2 seq 17."
+}

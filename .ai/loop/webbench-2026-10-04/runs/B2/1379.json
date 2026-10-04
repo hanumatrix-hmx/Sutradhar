@@ -1,0 +1,19 @@
+{
+  "id": 1379,
+  "slot": "B2",
+  "attempts": ["a1"],
+  "startedAt": "2026-10-04T10:24:55Z",
+  "endedAt": "2026-10-04T10:25:38Z",
+  "answerFields": [],
+  "shortList": null,
+  "classification": "TASK-INVALID",
+  "subflag": "drift",
+  "disclosure": "Polygon's Guides page (/guides/) lists guides as a recency-ordered feed (a 'LATEST' label, '2 DAYS AGO' timestamps) with no popularity ranking, 'most popular' or 'trending' label, or sort control. Text grep for popular/trending/most on the Guides page (seq 11) and the homepage (seq 17) found nothing relevant. I did not substitute the latest or featured guides for 'most popular'.",
+  "toolDefects": [],
+  "blockEvidence": null,
+  "driftChecks": [11, 17],
+  "probe": null,
+  "uncitedValue": null,
+  "needsCurlControl": false,
+  "notes": "Weak drift: the only checks were the Guides page and the homepage; I did not try site search or the Guides submenu hubs (Subnautica 2, Forza Horizon 6, Pokemon Go). A stricter reviewer might call this AGENT-FAIL/partial or an interpretation gap. seq 13 (links on Guides page) also showed no popularity construct."
+}

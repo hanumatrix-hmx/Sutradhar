@@ -1,0 +1,19 @@
+{
+  "id": 929,
+  "slot": "B3",
+  "attempts": ["a1", "a2"],
+  "startedAt": "2026-10-04T10:24:00Z",
+  "endedAt": "2026-10-04T10:24:13Z",
+  "answerFields": [],
+  "shortList": null,
+  "classification": "EXTERNAL-BLOCK",
+  "subflag": "protocol",
+  "disclosure": "Both attempts failed on the first nav with net::ERR_HTTP2_PROTOCOL_ERROR; the page stayed on chrome-error://chromewebdata (href seq 3 and seq 9). No site content was ever loaded.",
+  "toolDefects": [],
+  "blockEvidence": {"logSeq": 7, "excerpt": "Fatal: net::ERR_HTTP2_PROTOCOL_ERROR at https://www.justdial.com"},
+  "driftChecks": [],
+  "probe": null,
+  "uncitedValue": null,
+  "needsCurlControl": false,
+  "notes": "a1 seq 1 and a2 seq 7 identical HTTP2 protocol error. Both attempts closed and --check-clean returned clean:true."
+}

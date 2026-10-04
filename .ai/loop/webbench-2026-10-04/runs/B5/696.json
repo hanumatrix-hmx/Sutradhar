@@ -1,0 +1,19 @@
+{
+  "id": 696,
+  "slot": "B5",
+  "attempts": ["a1"],
+  "startedAt": "2026-10-04T10:32:54Z",
+  "endedAt": "2026-10-04T10:34:17Z",
+  "answerFields": [],
+  "shortList": null,
+  "classification": "TASK-INVALID",
+  "subflag": "drift",
+  "disclosure": "",
+  "toolDefects": [],
+  "blockEvidence": {"logSeq": 0, "excerpt": ""},
+  "driftChecks": [30, 34],
+  "probe": null,
+  "uncitedValue": null,
+  "needsCurlControl": false,
+  "notes": "Goal.com has no site search: /en-us/search?q=... returned HTTP 410 with empty title (seq 30) and the homepage has zero search inputs/search-labelled elements (seq 34 count=0). Navigation route: team page (seq 18 text) and latest result page Fulham 1-1 Man Utd 20 Sept 2026 (seq 24/26 text) show scoreboard, key events and stats but no item labelled as a match report; related articles (Arbeloa charged by FA..., Owen labels Rashford..., seq 28 links) are opinion/news, not reports. Judgement call: could arguably be AGENT-FAIL/partial if a grader thinks the Fulham match page is the report; I did not pick a headline to avoid substitution. Process notes: at seq 5-6 and again at seq 9-10 region I chained a second drive.mjs call in one shell command (a usage-error --check-clean, and a refused bogus verb 'find-search-placeholder' at seq ~9); neither touched the page. Click 72 failed exit 1 (seq 5, element occluded by collapsed nav menu), not relied on."
+}

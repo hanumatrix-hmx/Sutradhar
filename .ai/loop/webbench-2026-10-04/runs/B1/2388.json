@@ -1,0 +1,28 @@
+{
+  "id": 2388,
+  "slot": "B1",
+  "attempts": ["a1"],
+  "startedAt": "2026-10-04T10:25:16Z",
+  "endedAt": "2026-10-04T10:28:27Z",
+  "answerFields": [
+    {"field": "article_title", "value": "New AI task force to report on risks of technology after public and industry concerns", "logSeq": 41, "excerpt": "New AI task force to report on risks of technology after public and industry concerns"},
+    {"field": "article_title", "value": "India needs its own AI safety framework, not a copy of US pact: Industry experts", "logSeq": 41, "excerpt": "India needs its own AI safety framework, not a copy of US pact: Industry experts"},
+    {"field": "article_title", "value": "The tech industry’s aggressive push to integrate AI into schools is turning into a disaster", "logSeq": 41, "excerpt": "The tech industry’s aggressive push to integrate AI into schools is turning into a disaster"},
+    {"field": "article_title", "value": "Tech News", "logSeq": 41, "excerpt": "turning into a disaster\n---\nTech News\n---\nSouth Korean president orders probe into data leaks across financial industry"},
+    {"field": "article_title", "value": "South Korean president orders probe into data leaks across financial industry", "logSeq": 41, "excerpt": "South Korean president orders probe into data leaks across financial industry"}
+  ],
+  "shortList": null,
+  "classification": "COMPLETED",
+  "subflag": "strict",
+  "disclosure": "Searched 'Tech Industry' on bing.com web search, then used the News vertical (nav to bing.com/news/search?q=Tech+Industry, because the NEWS tab click opened a second tab) and the 'Past 24 hours' filter (page showed 'Past 24 hours' label, seq 39). Top 5 in page order as shown (default 'Best match' ordering); 4th item's own title is literally 'Tech News' (Indiatimes).",
+  "toolDefects": [
+    {"logSeq": 35, "verb": "click", "exit": 1, "what": "click on 'Past 24 hours' filter link reported timeout after 15000ms, but the filter was applied (URL gained qft interval, page showed Past 24 hours). False failure with effect present."},
+    {"logSeq": 17, "verb": "click", "exit": 4, "what": "NEWS tab click with --expect-url-changed reported URL unchanged because Bing opened the news page in a separate tab (confirmed via tabs, seq 25); effect was present in another tab."}
+  ],
+  "blockEvidence": null,
+  "driftChecks": [],
+  "probe": null,
+  "uncitedValue": null,
+  "needsCurlControl": false,
+  "notes": "Second click timeout at seq 31 on Date button also no visible error. Results at the time of reading may change."
+}

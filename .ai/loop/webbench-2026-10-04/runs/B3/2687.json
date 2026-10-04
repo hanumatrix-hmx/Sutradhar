@@ -1,0 +1,19 @@
+{
+  "id": 2687,
+  "slot": "B3",
+  "attempts": ["a1"],
+  "startedAt": "2026-10-04T10:28:37Z",
+  "endedAt": "2026-10-04T10:31:16Z",
+  "answerFields": [],
+  "shortList": null,
+  "classification": "TASK-INVALID",
+  "subflag": "drift",
+  "disclosure": "The startingUrl /mac automatically redirected to /windows (seq 1; no Mac edition shown). Site search 'PUBG Mobile' (seq 57) listed 'PUBG Mobile (GameLoop)' first; its app page (seq 63) has a description and info/download table but no update log or changelog section. The app's /windows/versions URL redirects back to the app page (seq 71), and no versions/changelog links exist (seq 69).",
+  "toolDefects": [],
+  "blockEvidence": null,
+  "driftChecks": [63, 71],
+  "probe": null,
+  "uncitedValue": null,
+  "needsCurlControl": false,
+  "notes": "I clicked 'CONTINUE' on an Uptodown language-switch banner (Spanish to English), not a consent dialog. One accidental click on the header div #2 opened a login page (seq 39); nothing was submitted. App page is on pubg-mobile-tencent-gaming-buddy.en.uptodown.com, reached by clicking a search result; wrapper allowed a nav to that subdomain."
+}

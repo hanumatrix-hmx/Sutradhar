@@ -1,0 +1,19 @@
+{
+  "id": 1517,
+  "slot": "B4",
+  "attempts": ["a1"],
+  "startedAt": "2026-10-04T10:36:50Z",
+  "endedAt": "2026-10-04T10:37:12Z",
+  "answerFields": [],
+  "shortList": null,
+  "classification": "EXTERNAL-BLOCK",
+  "subflag": "edge-deny",
+  "disclosure": "Homepage loaded (seq 1). Navigating to the search URL us.shein.com/pdsearch/denim%20jacket/ was redirected to a risk deny page with a reference id (risk-id E4923176984579806336); text shows STATUS: 403. a2 skipped per brief (reference-id deny page). Note: I reached search by a guessed URL rather than the on-page search box, which may have contributed to the deny.",
+  "toolDefects": [],
+  "blockEvidence": {"logSeq": 5, "excerpt": "STATUS: 403"},
+  "driftChecks": [],
+  "probe": null,
+  "uncitedValue": null,
+  "needsCurlControl": false,
+  "notes": "Deny URL: https://us.shein.com/risk/action/limit?risk-id=E4923176984579806336 (seq 3)."
+}

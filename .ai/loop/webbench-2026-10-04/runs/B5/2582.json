@@ -1,0 +1,19 @@
+{
+  "id": 2582,
+  "slot": "B5",
+  "attempts": ["a1"],
+  "startedAt": "2026-10-04T10:35:56Z",
+  "endedAt": "2026-10-04T10:37:56Z",
+  "answerFields": [],
+  "shortList": null,
+  "classification": "AGENT-FAIL",
+  "subflag": "partial",
+  "disclosure": "",
+  "toolDefects": [],
+  "blockEvidence": {"logSeq": 0, "excerpt": ""},
+  "driftChecks": [],
+  "probe": null,
+  "uncitedValue": null,
+  "needsCurlControl": false,
+  "notes": "Rejected cookies (seq 9), chose Consumer Version, searched 'Hypertension' via the search bar (seq 15-17); first matching result is 'High Blood Pressure (Hypertension)' (seq 21). The article (text seq 27-31) has no section or text labelled 'risk factors'; a Causes paragraph (seq 31 line 37) lists 'Obesity, a sedentary lifestyle, stress, smoking, and excessive amounts of alcohol or sodium' and a demographic paragraph lists older age / Black race / obesity; picking three would be my interpretation, not a site-shown mapping, so I reported none. I did not find a Professional-Version article titled plain 'Hypertension' (professional search seq 33-39 showed Medications for Hypertension / Pulmonary Hypertension first); possible the Professional article has an Etiology/risk list I did not reach, so this is an agent-side miss, not proven drift. Error: click 12 occluded by cookie banner at seq 5 (exit 1), resolved by rejecting cookies. Used direct nav to /professional/SearchResults?query=Hypertension (seq 33) rather than the search bar for that edition. Went over the 40-call soft limit slightly (about 45 calls)."
+}

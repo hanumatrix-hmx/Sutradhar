@@ -1,0 +1,19 @@
+{
+  "id": 1691,
+  "slot": "B6",
+  "attempts": ["a1", "a2"],
+  "startedAt": "2026-10-04T10:41:12Z",
+  "endedAt": "2026-10-04T10:43:09Z",
+  "answerFields": [],
+  "shortList": null,
+  "classification": "EXTERNAL-BLOCK",
+  "subflag": "edge-deny",
+  "disclosure": "The /questions list loaded after the Cloudflare 'Just a moment' interstitial (waitfor INTERSTITIAL_JS, seq 3, condition met; text seq 5 showed the newest-questions list). Every path toward a Java question was then refused: site search redirected to a 'Human verification' CAPTCHA page (seq 7, 9; not solved), and tag pages returned an IP-block page (a1 seq 11/13 for /questions/tagged/java+debugging; a2 seq 33/35 after clicking the java tag link from /tags). a2 in a fresh session reproduced the same pattern. No question or tag data was readable.",
+  "toolDefects": [],
+  "blockEvidence": {"logSeq": 35, "excerpt": "Access Denied This IP address 58.84.62.28 has been blocked from access to our services. If you believe this to be in error, please contact us at team@stackexchange.com. Method: block"},
+  "driftChecks": [],
+  "probe": {"result": "pass", "logSeq": 3, "detail": "INTERSTITIAL_JS waitfor exit 0 on a1 (seq 3) and a2 (seq 19), both 'Condition met after 1ms'; content did render (a1 seq 5 text). The block came later, as a CAPTCHA on search and an IP-block 403 on tag pages."},
+  "uncitedValue": null,
+  "needsCurlControl": false,
+  "notes": "Did not solve the CAPTCHA. Did not retry the search URL. The tagged-page nav (a1 seq 11) was a different URL from the search, not a bypass attempt. clicktext 'Tags' (seq 21) and clickrole 'java' (seq 27) failed exit 1 (occluded / no visible element); worked around with clickrole 'Tags' and a CSS click on the tag link."
+}

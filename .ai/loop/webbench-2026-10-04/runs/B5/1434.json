@@ -1,0 +1,19 @@
+{
+  "id": 1434,
+  "slot": "B5",
+  "attempts": ["a1", "a2"],
+  "startedAt": "2026-10-04T10:32:16Z",
+  "endedAt": "2026-10-04T10:32:42Z",
+  "answerFields": [],
+  "shortList": null,
+  "classification": "EXTERNAL-BLOCK",
+  "subflag": "challenge",
+  "disclosure": "",
+  "toolDefects": [],
+  "blockEvidence": {"logSeq": 9, "excerpt": "Our usage behavior algorithm thinks you might be a robot."},
+  "driftChecks": [],
+  "probe": null,
+  "uncitedValue": null,
+  "needsCurlControl": false,
+  "notes": "Both attempts redirected to ratelimited.redfin.com (HTTP 429, 'Are You a Robot?'). a1 text at seq 3, a2 text at seq 9. Process note: at seq 5-6 I accidentally put a second drive.mjs call (--check-clean without slot args, usage error, exit 2) in the same shell command as close; no browser effect. No arguments were path-mangled."
+}

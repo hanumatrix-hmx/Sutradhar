@@ -1,0 +1,19 @@
+{
+  "id": 568,
+  "slot": "B6",
+  "attempts": ["a1"],
+  "startedAt": "2026-10-04T10:40:51Z",
+  "endedAt": "2026-10-04T10:41:06Z",
+  "answerFields": [],
+  "shortList": null,
+  "classification": "EXTERNAL-BLOCK",
+  "subflag": "edge-deny",
+  "disclosure": "nav to https://www.ford.com committed with HTTP 403 and an Akamai-style Access Denied page carrying a reference id; per brief a2 skipped for reference-id deny pages.",
+  "toolDefects": [],
+  "blockEvidence": {"logSeq": 3, "excerpt": "Access Denied You don't have permission to access \"http://www.ford.com/\" on this server. Reference #18.25f9da17.1791110450.22cee3b4"},
+  "driftChecks": [],
+  "probe": {"result": "not-exercised", "logSeq": 1, "detail": "nav did not fail with net:: (it returned HTTP 403 deny page), so the curl control condition did not arise."},
+  "uncitedValue": null,
+  "needsCurlControl": false,
+  "notes": "Closed (seq 5) and check-clean clean."
+}

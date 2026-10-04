@@ -1,0 +1,19 @@
+{
+  "id": 2218,
+  "slot": "B5",
+  "attempts": ["a1", "a2"],
+  "startedAt": "2026-10-04T10:39:43Z",
+  "endedAt": "2026-10-04T10:40:12Z",
+  "answerFields": [],
+  "shortList": null,
+  "classification": "EXTERNAL-BLOCK",
+  "subflag": "captcha",
+  "disclosure": "",
+  "toolDefects": [],
+  "blockEvidence": {"logSeq": 11, "excerpt": "[[\"https://www.yelp.com/\",403],[\"https://ct.captcha-delivery.com/c.js\",0],[\"https://geo.captcha-delivery.com/captcha/?initialCid=..."},
+  "driftChecks": [],
+  "probe": null,
+  "uncitedValue": null,
+  "needsCurlControl": false,
+  "notes": "Both attempts: nav returned HTTP 403, title 'yelp.com', empty page text (a1 text seq 3 empty), and the status log shows a DataDome captcha-delivery.com challenge (a1 seq 5, a2 seq 11). Did not interact with the challenge."
+}

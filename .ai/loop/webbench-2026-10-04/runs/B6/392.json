@@ -1,0 +1,19 @@
+{
+  "id": 392,
+  "slot": "B6",
+  "attempts": ["a1", "a2"],
+  "startedAt": "2026-10-04T10:40:26Z",
+  "endedAt": "2026-10-04T10:40:44Z",
+  "answerFields": [],
+  "shortList": null,
+  "classification": "EXTERNAL-BLOCK",
+  "subflag": "protocol",
+  "disclosure": "PROVISIONAL pending the orchestrator's curl control (needsCurlControl=true). If curl to https://www.ea.com/ succeeds with a normal HTTP code while the CLI fails twice, reclassify as SUTRADHAR-FAIL (nav verb failure).",
+  "toolDefects": [],
+  "blockEvidence": {"logSeq": 5, "excerpt": "Fatal: net::ERR_HTTP2_PROTOCOL_ERROR at https://www.ea.com"},
+  "driftChecks": [],
+  "probe": {"result": "not-exercised", "logSeq": 5, "detail": "nav failed on both attempts with net::ERR_HTTP2_PROTOCOL_ERROR (a1 seq 1, a2 seq 5, each in a fresh session, exit 1); curl control left to the orchestrator."},
+  "uncitedValue": null,
+  "needsCurlControl": true,
+  "notes": "No page content was ever loaded (page ended on chromewebdata), so no reads were possible. a1 closed (seq 3) and check-clean clean before a2; a2 closed (seq 7) and check-clean clean."
+}

@@ -1,0 +1,19 @@
+{
+  "id": 1789,
+  "slot": "B4",
+  "attempts": ["a1"],
+  "startedAt": "2026-10-04T10:34:40Z",
+  "endedAt": "2026-10-04T10:36:41Z",
+  "answerFields": [],
+  "shortList": null,
+  "classification": "AGENT-FAIL",
+  "subflag": "evidence-rule",
+  "disclosure": "Film section (site link /film redirects to /uk/film) and Film + Reviews listing (/film+tone/reviews, 27,173 results) were read. Star ratings on the listing and on the article page are graphical only: text (seq 19, seq 37) contains no rating, and attrs probes for aria-label/title/class/data-rating (seq 21, 23, 31) returned nothing usable. Ratings were only visible in a screenshot (seq 29). Ranking the highest rated reviews would additionally need scanning many listing pages; only page 1 was viewed. No film/premise values were cited via page-reading evidence.",
+  "toolDefects": [],
+  "blockEvidence": {"logSeq": 0, "excerpt": ""},
+  "driftChecks": [],
+  "probe": null,
+  "uncitedValue": {"value": "You Can See Everything review: 5 stars (only 5-star review visible on listing page 1)", "logSeq": 29},
+  "needsCurlControl": false,
+  "notes": "Consent banner appeared; clicked 'No, thank you' (seq 27). My own nav to /film redirected to /uk/film (the site's own Film link on the /us page is /film); not an edition choice by me. Not proven that stars lack a DOM text alternative that other selectors might expose."
+}
