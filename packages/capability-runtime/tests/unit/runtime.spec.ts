@@ -1517,7 +1517,7 @@ describe('@sutradhar/capability-runtime SutradharRuntime.snapshot — FR2-09 ski
     vi.spyOn(runtime as any, 'resolveTab').mockReturnValue({ tab: fakeTab });
     vi.spyOn(runtime as any, 'requirePage').mockReturnValue({});
     vi.spyOn((runtime as any).domEngine, 'buildGraph').mockResolvedValue(graph);
-    vi.spyOn(runtime as any, 'readPageText').mockResolvedValue('');
+    vi.spyOn(runtime as any, 'pageTextWindow').mockResolvedValue({ text: '', offset: 0, totalChars: 0, source: 'dom' });
 
     const withNodes = await runtime.snapshot('s1', undefined, undefined, { includeNodes: true });
     expect(withNodes.skippedFrames).toEqual(skipped);

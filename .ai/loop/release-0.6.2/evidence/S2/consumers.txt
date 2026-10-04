@@ -1,0 +1,107 @@
+apps\server\src\routes\browser-routes.ts:282:    let pageText = '';
+apps\server\src\routes\browser-routes.ts:284:      pageText = (await tab.page.evaluate(() => {
+apps\server\src\routes\browser-routes.ts:302:      pageText = '';
+apps\server\src\routes\browser-routes.ts:311:      pageText,
+packages\browser\tests\unit\selector-dialect.spec.ts:84:      ['"Submit"', 'quoted-text'],
+packages\browser\tests\unit\selector-dialect.spec.ts:85:      ["'Submit'", 'quoted-text'],
+packages\cli\tests\unit\parse-args.spec.ts:138:    const noText = parseArgs(['snap', '--no-text']);
+packages\cli\tests\unit\parse-args.spec.ts:285:    const result = parseArgs(['dialog', 'accept', 'some', 'text']);
+packages\cli\tests\unit\parse-args.spec.ts:287:    expect(result.cleanArgs).toEqual(['accept', 'some', 'text']);
+packages\cli\tests\unit\parse-args.spec.ts:377:    expect(expectFlagError(parseArgs(['click', '#a', '--expect-text']))).toBe(
+packages\cli\tests\unit\parse-args.spec.ts:409:    expect(parseArgs(['waitfor', '--text']).waitForFlagError).toMatch(/--text needs a value/);
+packages\cli\tests\unit\parse-args.spec.ts:456:    const r = parseArgs(['snap', '--no-text']);
+packages\sutradhar\tests\unit\api.spec.ts:363:    expect(err.failed).toEqual(['text']);
+packages\browser\tests\unit\execution-verifier.spec.ts:295:    expect(failedVerification('boom', ['text'])).toEqual(viaVerifier);
+tools\scenario-suite\verify-fr2-08-conditions.mjs:966:    const c = await cli(['waitfor', '--text']);
+tools\scenario-suite\verify-fr2-07-verification.mjs:1257:    const b = await cli(['click', '#noop', '--expect-text']);
+tools\scenario-suite\verify-fr2-06-selectors.mjs:283:    ['data-text', '[data-text="text=Submit"]', 'attr-text'],
+packages\browser\tests\unit\browser-action-engine.spec.ts:306:    // continuous phrase and correctly appeared in snapshot's own pageText. `contains(text(),
+tools\scenario-suite\run-sdk.mjs:536:    const inSnapshotPageText = snap.pageText.includes(injectedPhrase);
+tools\scenario-suite\run-sdk.mjs:540:      snapshotPageText: snap.pageText,
+tools\scenario-suite\run-sdk.mjs:545:        ? 'Injected text is present verbatim in the normal snapshot pageText (innerText-based).'
+tools\scenario-suite\run-sdk.mjs:546:        : 'Injected text is display:none, so innerText-based pageText excludes it (real browser rendering behavior) — but raw textContent (eval) still surfaces it verbatim, confirming no sanitization exists at that layer.',
+tools\scenario-suite\run-mcp.mjs:351:    // pageText where "Close" legitimately appears as visible body text) so this doesn't produce
+tools\scenario-suite\run-mcp.mjs:353:    const interactiveSection = snapText.split('Page text:')[0];
+tools\scenario-suite\run-cli.mjs:157:  const textRes = runCli(['text']);
+tools\scenario-suite\run-cli.mjs:223:  const afterLoginText = runCli(['text']);
+tools\scenario-suite\run-cli.mjs:229:  const afterRelaunchText = runCli(['text']);
+tools\scenario-suite\run-cli.mjs:312:  const inventoryText = runCli(['text']);
+tools\scenario-suite\run-cli.mjs:376:    checkoutStep2Text = runCli(['text']);
+tools\scenario-suite\run-cli.mjs:386:    confirmationText = runCli(['text']);
+tools\scenario-suite\run-cli.mjs:445:  const dynText = runCli(['text']);
+tools\scenario-suite\run-cli.mjs:475:  const typeAttempt = runCli(['type', '.tox-edit-area__iframe', 'Sutradhar CLI baseline test text']);
+tools\scenario-suite\run-cli.mjs:559:  const textAfter = runCli(['text']); // fresh attach must honor the persisted active tab
+tools\scenario-suite\run-cli.mjs:588:  const text = runCli(['text']);
+tools\scenario-suite\run-cli.mjs:704:  const text = runCli(['text']);
+tools\engine-comparison\measure-snapshot-cost.mjs:39:        pageTextChars: snap.pageText.length,
+tools\engine-comparison\measure-snapshot-cost.mjs:40:        pageTextApproxTokens: approxTokens(snap.pageText),
+packages\cli\src\cli.ts:841:    console.log(snap.pageText);
+packages\agent\src\core\agent-prompt.ts:168:    text: typeof o['text'] === 'string' ? (o['text'] as string) : undefined,
+packages\agent\src\core\agent-loop.ts:260:      const pageText = await extractVisibleText(tab);
+packages\agent\src\core\agent-loop.ts:261:      const observation = `${formatGraphForLlm(graph)}\n\n# Visible page text (excerpt)\n${pageText}`;
+packages\capability-runtime\tests\unit\extract-data.spec.ts:136:    expect(result).toEqual({ ok: true, data: { a: ['opt2'], b: ['notes text'] } });
+packages\browser\src\actions\browser-action-engine.ts:842:        // continuous phrase and correctly appears in `snapshot`'s own pageText). `contains(.,
+packages\capability-runtime\tests\unit\page-text.spec.ts:307:  it('snapshot() stays tolerant: pageText "" + pageTextError, zero totals, not truncated', async () => {
+packages\capability-runtime\tests\unit\page-text.spec.ts:312:    expect(s.pageText).toBe('');
+packages\capability-runtime\tests\unit\page-text.spec.ts:313:    expect(s.pageTextTotalChars).toBe(0);
+packages\capability-runtime\tests\unit\page-text.spec.ts:314:    expect(s.pageTextTruncated).toBe(false);
+packages\capability-runtime\tests\unit\page-text.spec.ts:315:    expect(s.pageTextError).toMatch(/Execution context was destroyed/);
+packages\capability-runtime\tests\unit\page-text.spec.ts:318:  it('snapshot() success: window of 4000 by default, totals, no pageTextError key', async () => {
+packages\capability-runtime\tests\unit\page-text.spec.ts:323:    expect(s.pageText).toBe(TEXT_10K.slice(0, 4000));
+packages\capability-runtime\tests\unit\page-text.spec.ts:324:    expect(s.pageTextTotalChars).toBe(10499);
+packages\capability-runtime\tests\unit\page-text.spec.ts:325:    expect(s.pageTextTruncated).toBe(true);
+packages\capability-runtime\tests\unit\page-text.spec.ts:326:    expect('pageTextError' in s).toBe(false);
+packages\capability-runtime\tests\unit\page-text.spec.ts:328:    expect(s2.pageText).toBe(TEXT_10K.slice(0, 5000));
+packages\capability-runtime\tests\unit\page-text.spec.ts:336:    expect(s.pageText).toBe('short text');
+packages\capability-runtime\tests\unit\page-text.spec.ts:337:    expect(s.pageTextTruncated).toBe(false);
+packages\capability-runtime\tests\unit\page-text.spec.ts:338:    expect(s.pageTextTotalChars).toBe(10);
+packages\capability-runtime\tests\unit\page-text.spec.ts:386:  it('snapshot() of a PDF windows the parsed text (source of pageText is the PDF, not the viewer DOM)', async () => {
+packages\capability-runtime\tests\unit\page-text.spec.ts:392:    expect(s.pageText).toBe('q'.repeat(4000));
+packages\capability-runtime\tests\unit\page-text.spec.ts:393:    expect(s.pageTextTotalChars).toBe(6000);
+packages\capability-runtime\tests\unit\page-text.spec.ts:394:    expect(s.pageTextTruncated).toBe(true);
+packages\capability-runtime\tests\unit\page-text.spec.ts:398:describe('snapshot() calls pageTextWindow (the renamed private reader)', () => {
+packages\capability-runtime\tests\unit\page-text.spec.ts:399:  it('fails if snapshot() stops using pageTextWindow(tab, {offset:0, maxChars})', async () => {
+packages\capability-runtime\tests\unit\page-text.spec.ts:405:    const spy = vi.spyOn(runtime as any, 'pageTextWindow').mockResolvedValue({ text: 'MOCKED', offset: 0, totalChars: 6, source: 'dom' });
+packages\capability-runtime\tests\unit\page-text.spec.ts:409:    expect(s.pageText).toBe('MOCKED');
+packages\capability-runtime\tests\unit\page-text.spec.ts:410:    expect(s.pageTextTotalChars).toBe(6);
+packages\capability-runtime\tests\unit\page-text.spec.ts:411:    expect(s.pageTextTruncated).toBe(false);
+packages\capability-runtime\tests\unit\runtime.spec.ts:1411:    expect(result).toEqual({ v: ['typed'], t: ['text'] });
+packages\capability-runtime\tests\unit\runtime.spec.ts:1520:    vi.spyOn(runtime as any, 'pageTextWindow').mockResolvedValue({ text: '', offset: 0, totalChars: 0, source: 'dom' });
+packages\capability-runtime\tests\unit\runtime.spec.ts:2508:    expect(Object.keys((r.output as any).conditions)).toEqual(['text']);
+packages\capability-runtime\tests\unit\runtime.spec.ts:2515:    expect(r.verification?.evidence.checks.map((c) => c.check)).toEqual(['wait_for.text']);
+packages\mcp-server\tests\unit\tools.spec.ts:640:      pageText: '',
+packages\mcp-server\tests\unit\tools.spec.ts:665:      pageText: '',
+packages\mcp-server\tests\unit\tools.spec.ts:686:      pageText: '',
+packages\mcp-server\src\tools.ts:460:        'of every interactive element stamped with a numeric [#id] (e.g. `[#7] button "Search"`), plus `pageText` ' +
+packages\mcp-server\src\tools.ts:524:              text: `${snap.interactiveElements}\n\nPage text:\n${snap.pageText.slice(0, 2000)}${nodesBlock}${skippedFramesBlock}`,
+packages\capability-runtime\src\types.ts:194:   *  The raw text: it never contains the truncation marker. Empty when the read failed (see `pageTextError`). */
+packages\capability-runtime\src\types.ts:195:  pageText: string;
+packages\capability-runtime\src\types.ts:196:  /** I-048: the FULL length of the page text, so a truncated `pageText` is detectable. 0 when the read failed. */
+packages\capability-runtime\src\types.ts:197:  pageTextTotalChars: number;
+packages\capability-runtime\src\types.ts:198:  /** I-048: true when `pageText` is not the whole page text (`pageTextTotalChars` > its length). */
+packages\capability-runtime\src\types.ts:199:  pageTextTruncated: boolean;
+packages\capability-runtime\src\types.ts:201:  pageTextError?: string;
+packages\capability-runtime\src\runtime.ts:115:  pageTextFailureReason,
+packages\capability-runtime\src\runtime.ts:733:      /** I-048: size of the page-text window in `pageText` (default {@link DEFAULT_PAGE_TEXT_MAX_CHARS}). */
+packages\capability-runtime\src\runtime.ts:746:    let pageText = '';
+packages\capability-runtime\src\runtime.ts:747:    let pageTextTotalChars = 0;
+packages\capability-runtime\src\runtime.ts:748:    let pageTextTruncated = false;
+packages\capability-runtime\src\runtime.ts:749:    let pageTextError: string | undefined;
+packages\capability-runtime\src\runtime.ts:751:      const w = await this.pageTextWindow(tab, { offset: 0, maxChars: textMaxChars });
+packages\capability-runtime\src\runtime.ts:752:      pageText = w.text;
+packages\capability-runtime\src\runtime.ts:753:      pageTextTotalChars = w.totalChars;
+packages\capability-runtime\src\runtime.ts:754:      pageTextTruncated = isPageTextTruncated(w.offset, w.text.length, w.totalChars);
+packages\capability-runtime\src\runtime.ts:756:      pageTextError = pageTextFailureReason(err);
+packages\capability-runtime\src\runtime.ts:765:      pageText,
+packages\capability-runtime\src\runtime.ts:766:      pageTextTotalChars,
+packages\capability-runtime\src\runtime.ts:767:      pageTextTruncated,
+packages\capability-runtime\src\runtime.ts:768:      ...(pageTextError !== undefined ? { pageTextError } : {}),
+packages\capability-runtime\src\runtime.ts:789:    const w = await this.pageTextWindow(tab, { offset, maxChars });
+packages\capability-runtime\src\runtime.ts:3019:  private async pageTextWindow(
+packages\capability-runtime\src\runtime.ts:3032:      throw new PageTextReadError('dom', pageTextFailureReason(err), err);
+packages\capability-runtime\src\runtime.ts:3037:      const full = await this.readPdfText(page, tab.url);
+packages\capability-runtime\src\runtime.ts:3045:      throw new PageTextReadError('dom', pageTextFailureReason(err), err);
+packages\capability-runtime\src\runtime.ts:3058:  private async readPdfText(
+packages\capability-runtime\src\runtime.ts:3081:      throw new PageTextReadError('pdf', pageTextFailureReason(err), err);
+packages\capability-runtime\src\page-text.ts:34:export function pageTextFailureReason(err: unknown): string {
+packages\frontend\src\runtime\api\client.ts:81:  readonly pageText: string;

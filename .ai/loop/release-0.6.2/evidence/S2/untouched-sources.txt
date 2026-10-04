@@ -1,0 +1,15 @@
+$ git diff --stat -- <wait_for/expect.text/extract/audit/block-detector sources>
+(empty above = untouched)
+$ git diff --stat (all)
+ packages/capability-runtime/src/index.ts           |   9 ++
+ packages/capability-runtime/src/runtime.ts         | 127 ++++++++++++++++++---
+ packages/capability-runtime/src/types.ts           |  35 +++++-
+ .../capability-runtime/tests/unit/runtime.spec.ts  |   2 +-
+ 4 files changed, 152 insertions(+), 21 deletions(-)
+ M packages/capability-runtime/src/index.ts
+ M packages/capability-runtime/src/runtime.ts
+ M packages/capability-runtime/src/types.ts
+ M packages/capability-runtime/tests/unit/runtime.spec.ts
+?? .ai/loop/release-0.6.2/evidence/S2/
+?? packages/capability-runtime/src/page-text.ts
+?? packages/capability-runtime/tests/unit/page-text.spec.ts

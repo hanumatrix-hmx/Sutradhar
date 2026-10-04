@@ -72,6 +72,7 @@ import type {
   LiveSessionInfo,
   LiveSessionsView,
   NavigateResult,
+  PageTextResult,
   PdfResult,
   SnapshotResult,
   ScreenshotResult,
@@ -107,6 +108,25 @@ import {
 } from './audit/site-audit.js';
 import { compareScreenshots, type VisualCompareResult } from './audit/visual-compare.js';
 import { buildAxSnapshot, type AxSnapshotResult } from './snapshot/ax-snapshot.js';
+import {
+  PageTextReadError,
+  isPageTextTruncated,
+  pageTextFailureReason,
+  pageWindowInPage,
+  toPageTextResult,
+  validatePageTextOptions,
+  windowPageText,
+  type RawTextWindow,
+} from './page-text.js';
+
+/** What the private page-text reader returns: the raw window plus where it came from. */
+interface PageTextWindow {
+  text: string;
+  /** Effective start offset. */
+  offset: number;
+  totalChars: number;
+  source: 'dom' | 'pdf';
+}
 
 /**
  * Standard Chrome DevTools network-throttling profiles, for {@link SutradharRuntime.emulateNetwork}.
@@ -704,8 +724,16 @@ export class SutradharRuntime {
     sessionId: string,
     tabId?: string,
     maxElements?: number,
-    options?: { includeNodes?: boolean; noText?: boolean; idsOnly?: boolean; scanEventListeners?: boolean },
+    options?: {
+      includeNodes?: boolean;
+      noText?: boolean;
+      idsOnly?: boolean;
+      scanEventListeners?: boolean;
+      /** I-048: size of the page-text window in `pageText` (default {@link DEFAULT_PAGE_TEXT_MAX_CHARS}). */
+      textMaxChars?: number;
+    },
   ): Promise<SnapshotResult> {
+    const { maxChars: textMaxChars } = validatePageTextOptions({ maxChars: options?.textMaxChars });
     const { tab } = this.resolveTab(sessionId, tabId);
     this.requirePage(tab); // fail early if no real browser
     const graph = await this.domEngine.buildGraph(tab, { scanEventListeners: options?.scanEventListeners });
@@ -713,7 +741,19 @@ export class SutradharRuntime {
       noText: options?.noText,
       idsOnly: options?.idsOnly,
     });
-    const pageText = await this.readPageText(tab);
+    // A composite read: a text failure must not fail the element listing, so it is reported (additively) instead.
+    let pageText = '';
+    let pageTextTotalChars = 0;
+    let pageTextTruncated = false;
+    let pageTextError: string | undefined;
+    try {
+      const w = await this.pageTextWindow(tab, { offset: 0, maxChars: textMaxChars });
+      pageText = w.text;
+      pageTextTotalChars = w.totalChars;
+      pageTextTruncated = isPageTextTruncated(w.offset, w.text.length, w.totalChars);
+    } catch (err) {
+      pageTextError = pageTextFailureReason(err);
+    }
     return {
       sessionId,
       tabId: tab.id,
@@ -722,8 +762,39 @@ export class SutradharRuntime {
       interactiveElements,
       elementCount: graph.nodes.length,
       pageText,
+      pageTextTotalChars,
+      pageTextTruncated,
+      ...(pageTextError !== undefined ? { pageTextError } : {}),
       ...(options?.includeNodes ? { nodes: graph.nodes, skippedFrames: graph.skippedFrames } : {}),
     };
+  }
+
+  /**
+   * I-048: reads one window of the page's visible text plus the totals, so a long page can be read in full by
+   * paging (`offset += returnedChars`). `snapshot()` only ever carries the first window.
+   *
+   * Rejects with {@link PageTextReadError} when the read fails (DOM evaluate rejected, a PDF that cannot be
+   * fetched or parsed) — never an empty result for a failed read. Invalid `offset`/`maxChars` throw
+   * `TypeError` before any browser round trip.
+   */
+  public async readTextWindow(
+    sessionId: string,
+    tabId?: string,
+    opts?: { offset?: number; maxChars?: number },
+  ): Promise<PageTextResult> {
+    const { offset, maxChars } = validatePageTextOptions(opts);
+    const { tab } = this.resolveTab(sessionId, tabId);
+    const page = this.requirePage(tab);
+    const w = await this.pageTextWindow(tab, { offset, maxChars });
+    let url = tab.url;
+    try {
+      const live = (page as { url?: () => string }).url?.();
+      if (typeof live === 'string' && live) url = live;
+    } catch {
+      /* keep the cached url */
+    }
+    const raw: RawTextWindow = { total: w.totalChars, start: w.offset, slice: w.text };
+    return toPageTextResult({ sessionId, tabId: tab.id, url, source: w.source, window: raw, requestedOffset: offset });
   }
 
   /**
@@ -2941,31 +3012,48 @@ export class SutradharRuntime {
     }
   }
 
-  private async readPageText(tab: IBrowserTab): Promise<string> {
+  /** I-048: reads a window of the page text (DOM, or the parsed text of a PDF) with the full total. Throws
+   *  {@link PageTextReadError} on failure; callers decide whether that is fatal (`readTextWindow`) or tolerated
+   *  (`snapshot()`). */
+  private async pageTextWindow(
+    tab: IBrowserTab,
+    opts: { offset: number; maxChars: number },
+  ): Promise<PageTextWindow> {
     const page = this.requirePage(tab);
+    let isPdf: boolean;
     try {
       // Chrome's built-in PDF viewer renders the document inside an isolated
       // extension-hosted guestview, not the top document's DOM — `document.body.innerText`
       // is genuinely empty there (confirmed live, not a truncation artifact), so a direct
       // navigation to a .pdf URL returns zero text via the normal path. See PROB-009.
-      const isPdf = (await page.evaluate(
-        () => document.contentType === 'application/pdf',
-      )) as boolean;
-      if (isPdf) {
-        const pdfText = await this.readPdfText(page, tab.url);
-        if (pdfText) return pdfText;
-      }
-      // Best-effort visible text excerpt (mirrors the server's snapshot endpoint).
-      return (await page.evaluate(() => document.body?.innerText?.slice(0, 4000) ?? '')) as string;
-    } catch {
-      return '';
+      isPdf = (await page.evaluate(() => document.contentType === 'application/pdf')) as boolean;
+    } catch (err) {
+      throw new PageTextReadError('dom', pageTextFailureReason(err), err);
     }
+    if (isPdf) {
+      // Never fall back to the viewer's (empty) DOM text: a PDF that fails to read is an error, one that parses to
+      // empty text is a legitimate empty result.
+      const full = await this.readPdfText(page, tab.url);
+      const w = windowPageText(full, opts.offset, opts.maxChars);
+      return { text: w.slice, offset: w.start, totalChars: w.total, source: 'pdf' };
+    }
+    let raw: RawTextWindow;
+    try {
+      raw = (await page.evaluate(pageWindowInPage, opts.offset, opts.maxChars)) as RawTextWindow;
+    } catch (err) {
+      throw new PageTextReadError('dom', pageTextFailureReason(err), err);
+    }
+    if (!raw || typeof raw.total !== 'number' || typeof raw.start !== 'number' || typeof raw.slice !== 'string') {
+      throw new PageTextReadError('dom', 'the page returned an unexpected text payload');
+    }
+    return { text: raw.slice, offset: raw.start, totalChars: raw.total, source: 'dom' };
   }
 
-  /** Extracts real text from a PDF the session navigated directly to (see PROB-009). Fetches the
+  /** Extracts the FULL real text from a PDF the session navigated directly to (see PROB-009). Fetches the
    *  PDF's own bytes through the page's `fetch` (reuses cookies/session, so an authenticated PDF
    *  works the same as a public one) and parses them with `pdf-parse` — Chrome's native viewer
-   *  never exposes the document's text through the DOM at all, so there is no DOM-reading fix. */
+   *  never exposes the document's text through the DOM at all, so there is no DOM-reading fix.
+   *  Throws {@link PageTextReadError} (`source: 'pdf'`) when the bytes cannot be fetched or parsed. */
   private async readPdfText(
     page: ReturnType<SutradharRuntime['requirePage']>,
     url: string,
@@ -2973,6 +3061,7 @@ export class SutradharRuntime {
     try {
       const base64 = (await page.evaluate(async (pdfUrl: string) => {
         const res = await fetch(pdfUrl);
+        if (!res.ok) throw new Error(`fetching the PDF returned HTTP ${res.status}`);
         const buf = await res.arrayBuffer();
         let binary = '';
         const bytes = new Uint8Array(buf);
@@ -2983,12 +3072,12 @@ export class SutradharRuntime {
       const parser = new PDFParse({ data: Buffer.from(base64, 'base64') });
       try {
         const result = await parser.getText();
-        return result.text.slice(0, 4000);
+        return result.text;
       } finally {
         await parser.destroy();
       }
-    } catch {
-      return '';
+    } catch (err) {
+      throw new PageTextReadError('pdf', pageTextFailureReason(err), err);
     }
   }
 
