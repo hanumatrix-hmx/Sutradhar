@@ -1,0 +1,26 @@
+== real
+PASS S10-1 headings :: ["[0.6.1] - unreleased","Security","Fixed","Changed"]
+PASS S10-1 order: [Unreleased] < 0.6.1 < 0.6.0
+PASS S10-3 GHSA set equals S1 shipped set, count 6 :: S1=5jgf-p345-68v8,f65p-4m7j-42xc,fph4-wmhf-6fwf,hrr3-gc8f-f4qj,jqff-g426-hqxp,qw65-cvwx-89v3 changelog=5jgf-p345-68v8,f65p-4m7j-42xc,fph4-wmhf-6fwf,hrr3-gc8f-f4qj,jqff-g426-hqxp,qw65-cvwx-89v3
+PASS S10-3 S1 inventory: shipped advisories: 6
+PASS S10-4 constants :: kill=10000 cleanup=15000 sweep=15000 stale=600000
+PASS S10-4 changelog says about 10 s / about 15 s / 15 s sweep / 10 minutes
+PASS S10-4 p50 source: S7 README
+PASS S10-5 no placeholder left in docs/22-changelog.md
+PASS S10-5 negative control: template has 7 placeholders (the pattern can match)
+PASS S10-2 no "as of 0.6.0" / "Status (0.6.0)" left
+PASS S10-2 README heading
+exit=0
+== mutant (one GHSA dropped + a placeholder left in)
+PASS S10-1 headings :: ["[0.6.1] - unreleased","Security","Fixed","Changed"]
+PASS S10-1 order: [Unreleased] < 0.6.1 < 0.6.0
+FAIL S10-3 GHSA set equals S1 shipped set, count 6 :: S1=5jgf-p345-68v8,f65p-4m7j-42xc,fph4-wmhf-6fwf,hrr3-gc8f-f4qj,jqff-g426-hqxp,qw65-cvwx-89v3 changelog=5jgf-p345-68v8,f65p-4m7j-42xc,fph4-wmhf-6fwf,jqff-g426-hqxp,qw65-cvwx-89v3
+PASS S10-3 S1 inventory: shipped advisories: 6
+PASS S10-4 constants :: kill=10000 cleanup=15000 sweep=15000 stale=600000
+PASS S10-4 changelog says about 10 s / about 15 s / 15 s sweep / 10 minutes
+PASS S10-4 p50 source: S7 README
+FAIL S10-5 no placeholder left in docs/22-changelog.md
+PASS S10-5 negative control: template has 7 placeholders (the pattern can match)
+PASS S10-2 no "as of 0.6.0" / "Status (0.6.0)" left
+PASS S10-2 README heading
+exit=1
