@@ -1,0 +1,981 @@
+{
+  "mode": "head",
+  "churn": "k=8&ms=25",
+  "cli": "E:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/packages/sutradhar/dist/cli-bin.js",
+  "cliSha256": "1fb886d187c3ced784f4f1e0ea2de0adc8842ea7568b8115ccf64e59dc779881",
+  "bundle": "E:\\HMX_Projects\\Internal_Projects\\PinchTab\\.claude\\worktrees\\project-understanding-696041\\packages\\sutradhar\\dist\\index.js",
+  "bundleSha256": "e47a4f9ddedd61d28bd3f814c740f44cc8650f5d7aa06d4e04daa46b72dd87fc",
+  "checks": {
+    "state.userDataDir <= 200 chars and dirname == ISO": {
+      "ok": true,
+      "detail": {
+        "udd": "E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\S4t\\sutradhar-cli-1791128185751-6Wh6Jw",
+        "len": 199
+      }
+    },
+    "L1 churn really happened (window.__recreated > 100 after every run)": {
+      "ok": true
+    },
+    "L2 churn really happened (window.__recreated > 100 after every run)": {
+      "ok": true
+    },
+    "L3 churn really happened (window.__recreated > 100 after every run)": {
+      "ok": true
+    },
+    "L4 churn really happened (window.__recreated > 100 after every run)": {
+      "ok": true
+    },
+    "S4-3 L1 HEAD: 10/10 runs exit 1 with \"No visible element found\" and no \"detached Frame\"": {
+      "ok": true,
+      "detail": {
+        "clean": 10,
+        "detached": 0
+      }
+    },
+    "S4-4 L2 HEAD: 10/10 succeed, __clicks.late === 1, t1-t0 > 1000 ms (loop path past the head start)": {
+      "ok": true,
+      "detail": {
+        "success": 10,
+        "ms": [
+          3599,
+          3472,
+          3630,
+          3597,
+          2950,
+          3038,
+          3108,
+          3056,
+          2982,
+          2944
+        ],
+        "late": [
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1
+        ],
+        "errs": []
+      }
+    },
+    "S4-5 L3 HEAD: 30/30 snapshots (20 SDK + 10 CLI) list Button 1..5": {
+      "ok": true,
+      "detail": {
+        "complete": 30,
+        "total": 30
+      }
+    },
+    "S4-6 L4 HEAD: type on an absent input never reports \"detached Frame\" (5/5)": {
+      "ok": true,
+      "detail": [
+        "Type failed: No element found for selector: #absent-input",
+        "Type failed: No element found for selector: #absent-input",
+        "Type failed: No element found for selector: #absent-input",
+        "Type failed: No element found for selector: #absent-input",
+        "Type failed: No element found for selector: #absent-input"
+      ]
+    },
+    "close: state.json removed": {
+      "ok": true
+    },
+    "path-log check exit 0 (>= 1 [cleanup] line, none outside ISO)": {
+      "ok": true,
+      "detail": {
+        "exit": 0,
+        "out": [
+          "cleanup-lines=110 outside-iso=0"
+        ]
+      }
+    },
+    "no timed-out CLI call": {
+      "ok": true
+    }
+  },
+  "current": {
+    "label": "head",
+    "churn": "k=8&ms=25",
+    "cliBin": "E:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/packages/sutradhar/dist/cli-bin.js",
+    "bundle": "E:\\HMX_Projects\\Internal_Projects\\PinchTab\\.claude\\worktrees\\project-understanding-696041\\packages\\sutradhar\\dist\\index.js",
+    "L1": {
+      "runs": [
+        {
+          "run": 1,
+          "navCode": 0,
+          "clickCode": 1,
+          "detached": false,
+          "noVisible": true,
+          "recreated": 6792,
+          "closeCode": 0,
+          "msg": "Click failed: No visible element found for selector: #absent"
+        },
+        {
+          "run": 2,
+          "navCode": 0,
+          "clickCode": 1,
+          "detached": false,
+          "noVisible": true,
+          "recreated": 6664,
+          "closeCode": 0,
+          "msg": "Click failed: No visible element found for selector: #absent"
+        },
+        {
+          "run": 3,
+          "navCode": 1,
+          "clickCode": 1,
+          "detached": false,
+          "noVisible": true,
+          "recreated": 30200,
+          "closeCode": 0,
+          "msg": "Click failed: No visible element found for selector: #absent"
+        },
+        {
+          "run": 4,
+          "navCode": 0,
+          "clickCode": 1,
+          "detached": false,
+          "noVisible": true,
+          "recreated": 6744,
+          "closeCode": 0,
+          "msg": "Click failed: No visible element found for selector: #absent"
+        },
+        {
+          "run": 5,
+          "navCode": 0,
+          "clickCode": 1,
+          "detached": false,
+          "noVisible": true,
+          "recreated": 6600,
+          "closeCode": 0,
+          "msg": "Click failed: No visible element found for selector: #absent"
+        },
+        {
+          "run": 6,
+          "navCode": 0,
+          "clickCode": 1,
+          "detached": false,
+          "noVisible": true,
+          "recreated": 6704,
+          "closeCode": 0,
+          "msg": "Click failed: No visible element found for selector: #absent"
+        },
+        {
+          "run": 7,
+          "navCode": 0,
+          "clickCode": 1,
+          "detached": false,
+          "noVisible": true,
+          "recreated": 6832,
+          "closeCode": 0,
+          "msg": "Click failed: No visible element found for selector: #absent"
+        },
+        {
+          "run": 8,
+          "navCode": 0,
+          "clickCode": 1,
+          "detached": false,
+          "noVisible": true,
+          "recreated": 6720,
+          "closeCode": 0,
+          "msg": "Click failed: No visible element found for selector: #absent"
+        },
+        {
+          "run": 9,
+          "navCode": 0,
+          "clickCode": 1,
+          "detached": false,
+          "noVisible": true,
+          "recreated": 6760,
+          "closeCode": 0,
+          "msg": "Click failed: No visible element found for selector: #absent"
+        },
+        {
+          "run": 10,
+          "navCode": 0,
+          "clickCode": 1,
+          "detached": false,
+          "noVisible": true,
+          "recreated": 6928,
+          "closeCode": 0,
+          "msg": "Click failed: No visible element found for selector: #absent"
+        }
+      ],
+      "detachedRuns": 0,
+      "cleanRuns": 10,
+      "churnOk": true
+    },
+    "L2": {
+      "runs": [
+        {
+          "run": 1,
+          "ok": true,
+          "detached": false,
+          "late": 1,
+          "ms": 3599,
+          "over1000": true,
+          "recreated": 1184
+        },
+        {
+          "run": 2,
+          "ok": true,
+          "detached": false,
+          "late": 1,
+          "ms": 3472,
+          "over1000": true,
+          "recreated": 1208
+        },
+        {
+          "run": 3,
+          "ok": true,
+          "detached": false,
+          "late": 1,
+          "ms": 3630,
+          "over1000": true,
+          "recreated": 1248
+        },
+        {
+          "run": 4,
+          "ok": true,
+          "detached": false,
+          "late": 1,
+          "ms": 3597,
+          "over1000": true,
+          "recreated": 1232
+        },
+        {
+          "run": 5,
+          "ok": true,
+          "detached": false,
+          "late": 1,
+          "ms": 2950,
+          "over1000": true,
+          "recreated": 3856
+        },
+        {
+          "run": 6,
+          "ok": true,
+          "detached": false,
+          "late": 1,
+          "ms": 3038,
+          "over1000": true,
+          "recreated": 992
+        },
+        {
+          "run": 7,
+          "ok": true,
+          "detached": false,
+          "late": 1,
+          "ms": 3108,
+          "over1000": true,
+          "recreated": 1008
+        },
+        {
+          "run": 8,
+          "ok": true,
+          "detached": false,
+          "late": 1,
+          "ms": 3056,
+          "over1000": true,
+          "recreated": 992
+        },
+        {
+          "run": 9,
+          "ok": true,
+          "detached": false,
+          "late": 1,
+          "ms": 2982,
+          "over1000": true,
+          "recreated": 968
+        },
+        {
+          "run": 10,
+          "ok": true,
+          "detached": false,
+          "late": 1,
+          "ms": 2944,
+          "over1000": true,
+          "recreated": 984
+        }
+      ],
+      "successRuns": 10,
+      "failedRuns": 0,
+      "detachedRuns": 0,
+      "churnOk": true
+    },
+    "L3sdkRecreated": 240,
+    "L3": {
+      "sdk": [
+        {
+          "i": 1,
+          "complete": true,
+          "elementCount": 6
+        },
+        {
+          "i": 2,
+          "complete": true,
+          "elementCount": 6
+        },
+        {
+          "i": 3,
+          "complete": true,
+          "elementCount": 13
+        },
+        {
+          "i": 4,
+          "complete": true,
+          "elementCount": 14
+        },
+        {
+          "i": 5,
+          "complete": true,
+          "elementCount": 12
+        },
+        {
+          "i": 6,
+          "complete": true,
+          "elementCount": 6
+        },
+        {
+          "i": 7,
+          "complete": true,
+          "elementCount": 14
+        },
+        {
+          "i": 8,
+          "complete": true,
+          "elementCount": 12
+        },
+        {
+          "i": 9,
+          "complete": true,
+          "elementCount": 12
+        },
+        {
+          "i": 10,
+          "complete": true,
+          "elementCount": 6
+        },
+        {
+          "i": 11,
+          "complete": true,
+          "elementCount": 12
+        },
+        {
+          "i": 12,
+          "complete": true,
+          "elementCount": 6
+        },
+        {
+          "i": 13,
+          "complete": true,
+          "elementCount": 13
+        },
+        {
+          "i": 14,
+          "complete": true,
+          "elementCount": 6
+        },
+        {
+          "i": 15,
+          "complete": true,
+          "elementCount": 6
+        },
+        {
+          "i": 16,
+          "complete": true,
+          "elementCount": 6
+        },
+        {
+          "i": 17,
+          "complete": true,
+          "elementCount": 6
+        },
+        {
+          "i": 18,
+          "complete": true,
+          "elementCount": 6
+        },
+        {
+          "i": 19,
+          "complete": true,
+          "elementCount": 14
+        },
+        {
+          "i": 20,
+          "complete": true,
+          "elementCount": 12
+        }
+      ],
+      "cliSnaps": [
+        {
+          "i": 1,
+          "code": 0,
+          "complete": true,
+          "zero": false,
+          "head": "Interactive elements (5):"
+        },
+        {
+          "i": 2,
+          "code": 0,
+          "complete": true,
+          "zero": false,
+          "head": "Interactive elements (5):"
+        },
+        {
+          "i": 3,
+          "code": 0,
+          "complete": true,
+          "zero": false,
+          "head": "Interactive elements (5):"
+        },
+        {
+          "i": 4,
+          "code": 0,
+          "complete": true,
+          "zero": false,
+          "head": "Interactive elements (5):"
+        },
+        {
+          "i": 5,
+          "code": 0,
+          "complete": true,
+          "zero": false,
+          "head": "Interactive elements (5):"
+        },
+        {
+          "i": 6,
+          "code": 0,
+          "complete": true,
+          "zero": false,
+          "head": "Interactive elements (5):"
+        },
+        {
+          "i": 7,
+          "code": 0,
+          "complete": true,
+          "zero": false,
+          "head": "Interactive elements (5):"
+        },
+        {
+          "i": 8,
+          "code": 0,
+          "complete": true,
+          "zero": false,
+          "head": "Interactive elements (5):"
+        },
+        {
+          "i": 9,
+          "code": 0,
+          "complete": true,
+          "zero": false,
+          "head": "Interactive elements (5):"
+        },
+        {
+          "i": 10,
+          "code": 0,
+          "complete": true,
+          "zero": false,
+          "head": "Interactive elements (5):"
+        }
+      ],
+      "degradedSdk": 0,
+      "degradedCli": 0,
+      "completeAll": 30,
+      "total": 30,
+      "churnOk": true,
+      "cliRecreated": 34640
+    },
+    "L4": {
+      "runs": [
+        {
+          "run": 1,
+          "code": 1,
+          "detached": false,
+          "noVisible": true,
+          "msg": "Type failed: No element found for selector: #absent-input"
+        },
+        {
+          "run": 2,
+          "code": 1,
+          "detached": false,
+          "noVisible": true,
+          "msg": "Type failed: No element found for selector: #absent-input"
+        },
+        {
+          "run": 3,
+          "code": 1,
+          "detached": false,
+          "noVisible": true,
+          "msg": "Type failed: No element found for selector: #absent-input"
+        },
+        {
+          "run": 4,
+          "code": 1,
+          "detached": false,
+          "noVisible": true,
+          "msg": "Type failed: No element found for selector: #absent-input"
+        },
+        {
+          "run": 5,
+          "code": 1,
+          "detached": false,
+          "noVisible": true,
+          "msg": "Type failed: No element found for selector: #absent-input"
+        }
+      ],
+      "detachedRuns": 0,
+      "churnOk": true
+    }
+  },
+  "result": {
+    "label": "head",
+    "churn": "k=8&ms=25",
+    "cliBin": "E:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/packages/sutradhar/dist/cli-bin.js",
+    "bundle": "E:\\HMX_Projects\\Internal_Projects\\PinchTab\\.claude\\worktrees\\project-understanding-696041\\packages\\sutradhar\\dist\\index.js",
+    "L1": {
+      "runs": [
+        {
+          "run": 1,
+          "navCode": 0,
+          "clickCode": 1,
+          "detached": false,
+          "noVisible": true,
+          "recreated": 6792,
+          "closeCode": 0,
+          "msg": "Click failed: No visible element found for selector: #absent"
+        },
+        {
+          "run": 2,
+          "navCode": 0,
+          "clickCode": 1,
+          "detached": false,
+          "noVisible": true,
+          "recreated": 6664,
+          "closeCode": 0,
+          "msg": "Click failed: No visible element found for selector: #absent"
+        },
+        {
+          "run": 3,
+          "navCode": 1,
+          "clickCode": 1,
+          "detached": false,
+          "noVisible": true,
+          "recreated": 30200,
+          "closeCode": 0,
+          "msg": "Click failed: No visible element found for selector: #absent"
+        },
+        {
+          "run": 4,
+          "navCode": 0,
+          "clickCode": 1,
+          "detached": false,
+          "noVisible": true,
+          "recreated": 6744,
+          "closeCode": 0,
+          "msg": "Click failed: No visible element found for selector: #absent"
+        },
+        {
+          "run": 5,
+          "navCode": 0,
+          "clickCode": 1,
+          "detached": false,
+          "noVisible": true,
+          "recreated": 6600,
+          "closeCode": 0,
+          "msg": "Click failed: No visible element found for selector: #absent"
+        },
+        {
+          "run": 6,
+          "navCode": 0,
+          "clickCode": 1,
+          "detached": false,
+          "noVisible": true,
+          "recreated": 6704,
+          "closeCode": 0,
+          "msg": "Click failed: No visible element found for selector: #absent"
+        },
+        {
+          "run": 7,
+          "navCode": 0,
+          "clickCode": 1,
+          "detached": false,
+          "noVisible": true,
+          "recreated": 6832,
+          "closeCode": 0,
+          "msg": "Click failed: No visible element found for selector: #absent"
+        },
+        {
+          "run": 8,
+          "navCode": 0,
+          "clickCode": 1,
+          "detached": false,
+          "noVisible": true,
+          "recreated": 6720,
+          "closeCode": 0,
+          "msg": "Click failed: No visible element found for selector: #absent"
+        },
+        {
+          "run": 9,
+          "navCode": 0,
+          "clickCode": 1,
+          "detached": false,
+          "noVisible": true,
+          "recreated": 6760,
+          "closeCode": 0,
+          "msg": "Click failed: No visible element found for selector: #absent"
+        },
+        {
+          "run": 10,
+          "navCode": 0,
+          "clickCode": 1,
+          "detached": false,
+          "noVisible": true,
+          "recreated": 6928,
+          "closeCode": 0,
+          "msg": "Click failed: No visible element found for selector: #absent"
+        }
+      ],
+      "detachedRuns": 0,
+      "cleanRuns": 10,
+      "churnOk": true
+    },
+    "L2": {
+      "runs": [
+        {
+          "run": 1,
+          "ok": true,
+          "detached": false,
+          "late": 1,
+          "ms": 3599,
+          "over1000": true,
+          "recreated": 1184
+        },
+        {
+          "run": 2,
+          "ok": true,
+          "detached": false,
+          "late": 1,
+          "ms": 3472,
+          "over1000": true,
+          "recreated": 1208
+        },
+        {
+          "run": 3,
+          "ok": true,
+          "detached": false,
+          "late": 1,
+          "ms": 3630,
+          "over1000": true,
+          "recreated": 1248
+        },
+        {
+          "run": 4,
+          "ok": true,
+          "detached": false,
+          "late": 1,
+          "ms": 3597,
+          "over1000": true,
+          "recreated": 1232
+        },
+        {
+          "run": 5,
+          "ok": true,
+          "detached": false,
+          "late": 1,
+          "ms": 2950,
+          "over1000": true,
+          "recreated": 3856
+        },
+        {
+          "run": 6,
+          "ok": true,
+          "detached": false,
+          "late": 1,
+          "ms": 3038,
+          "over1000": true,
+          "recreated": 992
+        },
+        {
+          "run": 7,
+          "ok": true,
+          "detached": false,
+          "late": 1,
+          "ms": 3108,
+          "over1000": true,
+          "recreated": 1008
+        },
+        {
+          "run": 8,
+          "ok": true,
+          "detached": false,
+          "late": 1,
+          "ms": 3056,
+          "over1000": true,
+          "recreated": 992
+        },
+        {
+          "run": 9,
+          "ok": true,
+          "detached": false,
+          "late": 1,
+          "ms": 2982,
+          "over1000": true,
+          "recreated": 968
+        },
+        {
+          "run": 10,
+          "ok": true,
+          "detached": false,
+          "late": 1,
+          "ms": 2944,
+          "over1000": true,
+          "recreated": 984
+        }
+      ],
+      "successRuns": 10,
+      "failedRuns": 0,
+      "detachedRuns": 0,
+      "churnOk": true
+    },
+    "L3sdkRecreated": 240,
+    "L3": {
+      "sdk": [
+        {
+          "i": 1,
+          "complete": true,
+          "elementCount": 6
+        },
+        {
+          "i": 2,
+          "complete": true,
+          "elementCount": 6
+        },
+        {
+          "i": 3,
+          "complete": true,
+          "elementCount": 13
+        },
+        {
+          "i": 4,
+          "complete": true,
+          "elementCount": 14
+        },
+        {
+          "i": 5,
+          "complete": true,
+          "elementCount": 12
+        },
+        {
+          "i": 6,
+          "complete": true,
+          "elementCount": 6
+        },
+        {
+          "i": 7,
+          "complete": true,
+          "elementCount": 14
+        },
+        {
+          "i": 8,
+          "complete": true,
+          "elementCount": 12
+        },
+        {
+          "i": 9,
+          "complete": true,
+          "elementCount": 12
+        },
+        {
+          "i": 10,
+          "complete": true,
+          "elementCount": 6
+        },
+        {
+          "i": 11,
+          "complete": true,
+          "elementCount": 12
+        },
+        {
+          "i": 12,
+          "complete": true,
+          "elementCount": 6
+        },
+        {
+          "i": 13,
+          "complete": true,
+          "elementCount": 13
+        },
+        {
+          "i": 14,
+          "complete": true,
+          "elementCount": 6
+        },
+        {
+          "i": 15,
+          "complete": true,
+          "elementCount": 6
+        },
+        {
+          "i": 16,
+          "complete": true,
+          "elementCount": 6
+        },
+        {
+          "i": 17,
+          "complete": true,
+          "elementCount": 6
+        },
+        {
+          "i": 18,
+          "complete": true,
+          "elementCount": 6
+        },
+        {
+          "i": 19,
+          "complete": true,
+          "elementCount": 14
+        },
+        {
+          "i": 20,
+          "complete": true,
+          "elementCount": 12
+        }
+      ],
+      "cliSnaps": [
+        {
+          "i": 1,
+          "code": 0,
+          "complete": true,
+          "zero": false,
+          "head": "Interactive elements (5):"
+        },
+        {
+          "i": 2,
+          "code": 0,
+          "complete": true,
+          "zero": false,
+          "head": "Interactive elements (5):"
+        },
+        {
+          "i": 3,
+          "code": 0,
+          "complete": true,
+          "zero": false,
+          "head": "Interactive elements (5):"
+        },
+        {
+          "i": 4,
+          "code": 0,
+          "complete": true,
+          "zero": false,
+          "head": "Interactive elements (5):"
+        },
+        {
+          "i": 5,
+          "code": 0,
+          "complete": true,
+          "zero": false,
+          "head": "Interactive elements (5):"
+        },
+        {
+          "i": 6,
+          "code": 0,
+          "complete": true,
+          "zero": false,
+          "head": "Interactive elements (5):"
+        },
+        {
+          "i": 7,
+          "code": 0,
+          "complete": true,
+          "zero": false,
+          "head": "Interactive elements (5):"
+        },
+        {
+          "i": 8,
+          "code": 0,
+          "complete": true,
+          "zero": false,
+          "head": "Interactive elements (5):"
+        },
+        {
+          "i": 9,
+          "code": 0,
+          "complete": true,
+          "zero": false,
+          "head": "Interactive elements (5):"
+        },
+        {
+          "i": 10,
+          "code": 0,
+          "complete": true,
+          "zero": false,
+          "head": "Interactive elements (5):"
+        }
+      ],
+      "degradedSdk": 0,
+      "degradedCli": 0,
+      "completeAll": 30,
+      "total": 30,
+      "churnOk": true,
+      "cliRecreated": 34640
+    },
+    "L4": {
+      "runs": [
+        {
+          "run": 1,
+          "code": 1,
+          "detached": false,
+          "noVisible": true,
+          "msg": "Type failed: No element found for selector: #absent-input"
+        },
+        {
+          "run": 2,
+          "code": 1,
+          "detached": false,
+          "noVisible": true,
+          "msg": "Type failed: No element found for selector: #absent-input"
+        },
+        {
+          "run": 3,
+          "code": 1,
+          "detached": false,
+          "noVisible": true,
+          "msg": "Type failed: No element found for selector: #absent-input"
+        },
+        {
+          "run": 4,
+          "code": 1,
+          "detached": false,
+          "noVisible": true,
+          "msg": "Type failed: No element found for selector: #absent-input"
+        },
+        {
+          "run": 5,
+          "code": 1,
+          "detached": false,
+          "noVisible": true,
+          "msg": "Type failed: No element found for selector: #absent-input"
+        }
+      ],
+      "detachedRuns": 0,
+      "churnOk": true
+    }
+  },
+  "realTemp": {
+    "before": 4,
+    "after": 4,
+    "vanished": []
+  },
+  "pathCheck": {
+    "exit": 0,
+    "out": [
+      "cleanup-lines=110 outside-iso=0"
+    ]
+  },
+  "allPass": true
+}

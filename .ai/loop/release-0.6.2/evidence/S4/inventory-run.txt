@@ -1,0 +1,61 @@
+### S4-1a PRE-FIX inventory (HEAD tree from git archive: E:/AI-Cache/tmp/claude/E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/r062/S4/pre-tree)
+sites=207 rows=207 missing=0 extra=0 duplicates=0 unclassified=0 unsafe=11
+CHECK-INVENTORY OK
+exit=0
+pre-fix UNSAFE rows: 11
+ browser/src/actions/browser-action-engine.ts:1729:9 
+ browser/src/actions/browser-action-engine.ts:1742:7 
+ browser/src/actions/browser-action-engine.ts:1774:11 
+ browser/src/dom/dom-semantic-engine.ts:392:29 
+ browser/src/verifier/post-conditions.ts:631:26 
+ browser/src/verifier/post-conditions.ts:647:38 
+ browser/src/verifier/post-conditions.ts:1197:29 
+ browser/src/verifier/post-conditions.ts:1548:38 
+ browser/src/verifier/post-conditions.ts:1735:32 
+ browser/src/verifier/post-conditions.ts:1743:26 
+ capability-runtime/src/runtime.ts:2141:73 
+
+### S4-1b POST-FIX inventory (working tree)
+sites=210 rows=210 missing=0 extra=0 duplicates=0 unclassified=0 unsafe=0
+CHECK-INVENTORY OK
+exit=0
+
+### negative control 1: md copy with one row removed -> exit 1
+sites=210 rows=209 missing=1 extra=0 duplicates=0 unclassified=0 unsafe=0
+MISSING packages/browser/src/actions/browser-action-engine.ts:1778:12
+CHECK-INVENTORY FAILED
+exit=1
+
+### negative control 2: md copy with an extra fake row -> exit 1
+sites=210 rows=211 missing=0 extra=1 duplicates=0 unclassified=0 unsafe=0
+EXTRA packages/browser/src/fake.ts:1:1
+CHECK-INVENTORY FAILED
+exit=1
+
+### negative control 3: unclassified row -> exit 1
+sites=210 rows=210 missing=0 extra=0 duplicates=0 unclassified=10 unsafe=0
+CHECK-INVENTORY FAILED
+exit=1
+
+### documented-limitation control: .call/.apply/.bind calls are NOT seen by list-sites.mjs
+sites: 1 in 1 files (methods: 49, rg=C:/Program Files/ZCode/resources/tools/ripgrep/rg.exe)
+listed keys:
+packages/browser/src/limit.ts:2:39 .evaluate(
+(line 1 col ~48 = the .call form is absent; only line 2 .evaluate( is listed)
+blind-spot scan on the limitation copy (must find the .call form, exit 1):
+blind-spot hits: 1
+packages/browser/src/limit.ts:1:39 .evaluate.call(
+exit=1
+
+### blind spot on the REAL post-fix tree: must be 0 hits (exit 0)
+self-test OK: regex matches frame.$$eval( / x.$( / multi-line .waitForSelector( ; no match on dotless $eval( ; rg keys per call (two on one line = two keys)
+blind-spot hits: 0
+exit=0
+
+### method list covers both Puppeteer versions
+root 0: puppeteer-core 25.5.0 (E:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041
+root 1: puppeteer-core 25.12.0 (E:/AI-Cache/tmp/claude/E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-proj
+union: 49 names
+self-check OK: all 27 section-1.3 names present
+diff of per-version lists (25.5.0 vs 25.12.0):
+identical (49 names each)

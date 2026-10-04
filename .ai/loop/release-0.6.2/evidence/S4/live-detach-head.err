@@ -1,0 +1,23 @@
+[iso-guard] tmpdir=e:/ai-cache/tmp/claude/e--hmx-projects-internal-projects-pinchtab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/s4t pid=84664
+[harness] MODE=head LEVELS=L1,L2,L3,L4 CHURN=k=8&ms=25 RUNS=10 SNAPS=20 CLISNAPS=10 TYPES=5 NO_MUTANTS=0
+[harness] CLI=E:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/packages/sutradhar/dist/cli-bin.js sha256=1fb886d187c3ced784f4f1e0ea2de0adc8842ea7568b8115ccf64e59dc779881
+[harness] BUNDLE=E:\HMX_Projects\Internal_Projects\PinchTab\.claude\worktrees\project-understanding-696041\packages\sutradhar\dist\index.js sha256=e47a4f9ddedd61d28bd3f814c740f44cc8650f5d7aa06d4e04daa46b72dd87fc ISO=E:/AI-Cache/tmp/claude/E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/S4t tmpdir=e:/ai-cache/tmp/claude/e--hmx-projects-internal-projects-pinchtab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/s4t
+[iso-guard] tmpdir=e:/ai-cache/tmp/claude/e--hmx-projects-internal-projects-pinchtab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/s4t pid=61716
+[harness] fixture pid=61716 url=http://127.0.0.1:63700
+PASS state.userDataDir <= 200 chars and dirname == ISO {"udd":"E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\S4t\\sutradhar-cli-1791128185751-6Wh6Jw","len":199}
+[L1] detachedRuns=0/10 cleanRuns=10/10 recreated=6792,6664,30200,6744,6600,6704,6832,6720,6760,6928
+[L2] success=10/10 failed=0 detached=0 ms=3599,3472,3630,3597,2950,3038,3108,3056,2982,2944
+[L3] degraded sdk=0/20 cli=0/10
+[L4] detachedRuns=0/5
+PASS L1 churn really happened (window.__recreated > 100 after every run)
+PASS L2 churn really happened (window.__recreated > 100 after every run)
+PASS L3 churn really happened (window.__recreated > 100 after every run)
+PASS L4 churn really happened (window.__recreated > 100 after every run)
+PASS S4-3 L1 HEAD: 10/10 runs exit 1 with "No visible element found" and no "detached Frame" {"clean":10,"detached":0}
+PASS S4-4 L2 HEAD: 10/10 succeed, __clicks.late === 1, t1-t0 > 1000 ms (loop path past the head start) {"success":10,"ms":[3599,3472,3630,3597,2950,3038,3108,3056,2982,2944],"late":[1,1,1,1,1,1,1,1,1,1],"errs":[]}
+PASS S4-5 L3 HEAD: 30/30 snapshots (20 SDK + 10 CLI) list Button 1..5 {"complete":30,"total":30}
+PASS S4-6 L4 HEAD: type on an absent input never reports "detached Frame" (5/5) ["Type failed: No element found for selector: #absent-input","Type failed: No element found for selector: #absent-input","Type failed: No element found for selector: #absent-input","Type failed: No element found for selector: #absent-input","Type failed: No element found for selector: #absent-input"]
+PASS close: state.json removed
+PASS path-log check exit 0 (>= 1 [cleanup] line, none outside ISO) {"exit":0,"out":["cleanup-lines=110 outside-iso=0"]}
+PASS no timed-out CLI call
+LIVE-DETACH OK

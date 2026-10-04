@@ -1,0 +1,102 @@
+{
+  "calls": [
+    {
+      "n": 1,
+      "args": [
+        "nav",
+        "https://www.kayak.com",
+        "--settle"
+      ],
+      "code": 0,
+      "stdoutHead": "Navigated to https://www.kayak.com/ | Title: Search Flights, Hotels & Rental Cars | KAYAK | Verification: verified (confidence 0.90) — 'navigate' verified: a new do",
+      "stderr": ""
+    },
+    {
+      "n": 2,
+      "args": [
+        "nav",
+        "https://www.kayak.com/stays",
+        "--settle"
+      ],
+      "code": 1,
+      "stdoutHead": "",
+      "stderr": "Fatal: net::ERR_ABORTED at https://www.kayak.com/stays"
+    },
+    {
+      "n": 3,
+      "args": [
+        "snap"
+      ],
+      "code": 0,
+      "stdoutHead": "URL: https://www.kayak.com/ | Title: Search Flights, Hotels & Rental Cars | KAYAK | Interactive elements (94): | [#2] div \"Open main navigation\" role=button | [#3] a \"G",
+      "stderr": ""
+    },
+    {
+      "n": 4,
+      "args": [
+        "click",
+        "35"
+      ],
+      "code": 1,
+      "stdoutHead": "Click failed: No visible element found for selector: [data-sd-node-id=\"35\"] — the page navigated since the last snapshot (or none has been taken yet this docume",
+      "stderr": ""
+    },
+    {
+      "n": 5,
+      "args": [
+        "snap"
+      ],
+      "code": 0,
+      "stdoutHead": "URL: https://www.kayak.com/ | Title: Search Flights, Hotels & Rental Cars | KAYAK | Interactive elements (65): | [#2] div \"Open main navigation\" role=button | [#3] a \"G",
+      "stderr": ""
+    },
+    {
+      "n": 6,
+      "args": [
+        "type",
+        "173",
+        "Rome"
+      ],
+      "code": 0,
+      "stdoutHead": "Typed into 173 | Verification: verified (confidence 0.90) — 'type' has a built-in post-condition check (verified inside the action itself before it could report s",
+      "stderr": ""
+    },
+    {
+      "n": 7,
+      "args": [
+        "text"
+      ],
+      "code": 0,
+      "stdoutHead": "Skip to main content | USD | Find the right flight from 100s of sites. | Flights | Stays | Cars | Packages | Round-trip | One-way | Multi-city | Mumbai (BOM) | Departure | – | Return | 1 a",
+      "stderr": ""
+    },
+    {
+      "n": 8,
+      "args": [
+        "close"
+      ],
+      "code": 0,
+      "stdoutHead": "Session closed. | ",
+      "stderr": ""
+    }
+  ],
+  "verdict": "SUPPORTING-PASS",
+  "snap1Head": "URL: https://www.kayak.com/\nTitle: Search Flights, Hotels & Rental Cars | KAYAK\nInteractive elements (94):\n[#2] div \"Open main navigation\" role=button\n[#3] a \"Go to the kayak homepage\"\n[#4] div \"Select language\" role=button\n[#5] div \"Open Trips drawer\" role=button\n[#6] div \"Sign in\" role=button\n[#23] li \"Flights\" role=menuitem\n[#24] a \"Search for flights\"\n[#25] li \"Stays\" role=menuitem\n[#26] a \"Search for stays\"\n[#27] li \"Cars\" role=menuitem\n[#28] a \"Search for cars\"\n[#29] li \"Packages\" role=menuitem\n[#30] a \"Search for packages\"\n[#31] div \"Trip type Round-trip\" role=combobox\n[#32] div \"0 bags",
+  "cityId": "35",
+  "cityLine": "[#35] div \"Swap origin and destination",
+  "destId": "173",
+  "destLine": "[#173] a \"Search",
+  "textHead": "Skip to main content\nUSD\nFind the right flight from 100s of sites.\nFlights\nStays\nCars\nPackages\nRound-trip\nOne-way\nMulti-city\nMumbai (BOM)\nDeparture\n–\nReturn\n1 adult, Economy, 0 bags\nSearch\nHoliday travel, unwrapped.\nHere's what you need to know if you're flying this season (consider it an early gift).\nFeeling festive yet?\nPlanning. Minus the pain.\nKAYAK and Discover Puerto Rico have your back. Use",
+  "snap2Head": "URL: https://www.kayak.com/\nTitle: Search Flights, Hotels & Rental Cars | KAYAK\nInteractive elements (65):\n[#2] div \"Open main navigation\" role=button\n[#3] a \"Go to the kayak homepage\"\n[#4] div \"Open Trips drawer\" role=button\n[#5] div \"Sign in\" role=button\n[#172] li \"Flights\" role=menuitem\n[#173] a \"Search for flights\"\n[#174] li \"Stays\" role=menuitem\n[#175] a \"Search for stays\"\n[#176] li \"Cars\" role=menuitem\n[#177] a \"Search for cars\"\n[#178] li \"Packages\" role=menuitem\n[#179] a \"Search for packages\"\n[#180] div \"Round-trip\" role=radio\n[#181] div \"One-way\" role=radio\n[#182] div \"Multi-city\" role",
+  "clickCode": 1,
+  "detachedAnywhere": false,
+  "zeroWithText": false,
+  "blocked": false,
+  "pathCheck": {
+    "exit": 0,
+    "out": [
+      "cleanup-lines=10 outside-iso=0"
+    ]
+  },
+  "timedOut": false
+}

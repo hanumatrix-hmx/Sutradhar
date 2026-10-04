@@ -32,6 +32,7 @@ import {
 import { SD_GENERATION_ATTR, SD_CURRENT_GENERATION_ATTR, SD_FINGERPRINT_ATTR } from '../dom/dom-semantic-engine.js';
 import { defaultDownloadRoot, findContainingRoot, isPathWithinRoot } from './path-containment.js';
 import { acquireDownloadLock } from './download-lock.js';
+import { frameCall } from './frame-call.js';
 import { waitForPageSettle } from './page-settle.js';
 import {
   ActionParams,
@@ -1725,9 +1726,10 @@ export class BrowserActionEngine implements IBrowserActionEngine {
 
     if (targets.length === 1) {
       const only = targets[0]!;
-      return only
-        .waitForSelector(fullSelector, { visible: options.visible, timeout: timeoutMs })
-        .catch(() => null);
+      // I-047: frameCall turns Puppeteer's SYNCHRONOUS detached-frame throw into a rejection, so the `.catch` sees it.
+      return frameCall(only, (f) =>
+        f.waitForSelector(fullSelector, { visible: options.visible, timeout: timeoutMs }),
+      ).catch(() => null);
     }
 
     // Give the main frame a head start before racing every frame. A generic selector (e.g.
@@ -1738,9 +1740,9 @@ export class BrowserActionEngine implements IBrowserActionEngine {
     // timeout first; only if it doesn't have the element do the other frames get raced.
     const mainFrame = page.mainFrame();
     const mainFrameTimeoutMs = Math.min(timeoutMs, 1000);
-    const mainFrameMatch = await mainFrame
-      .waitForSelector(fullSelector, { visible: options.visible, timeout: mainFrameTimeoutMs })
-      .catch(() => null);
+    const mainFrameMatch = await frameCall(mainFrame, (f) =>
+      f.waitForSelector(fullSelector, { visible: options.visible, timeout: mainFrameTimeoutMs }),
+    ).catch(() => null);
     if (mainFrameMatch) return mainFrameMatch;
 
     const remainingTimeoutMs = Math.max(timeoutMs - mainFrameTimeoutMs, 0);
@@ -1770,12 +1772,14 @@ export class BrowserActionEngine implements IBrowserActionEngine {
       for (const frame of ordered) {
         const remaining = deadline - Date.now();
         if (remaining <= 0) return null;
-        const match = await frame
-          .waitForSelector(fullSelector, {
+        // I-047: a frame captured at pass start can detach while an earlier frame is probed; its
+        // waitForSelector then throws synchronously. frameCall makes that a rejection -> "no match this pass".
+        const match = await frameCall(frame, (f) =>
+          f.waitForSelector(fullSelector, {
             visible: options.visible,
             timeout: Math.min(probeTimeoutMs, remaining),
-          })
-          .catch(() => null);
+          }),
+        ).catch(() => null);
         if (match) return match;
       }
     }

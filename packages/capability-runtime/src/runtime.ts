@@ -2138,7 +2138,11 @@ export class SutradharRuntime {
     const arm = await observeUploadTargets(tab);
     let fileChooser: Awaited<ReturnType<typeof page.waitForFileChooser>>;
     try {
-      [fileChooser] = await Promise.all([page.waitForFileChooser(), page.click(selector)]);
+      // I-047: `Page.click` delegates to the main frame's throwIfDetached-wrapped `click`, which throws SYNCHRONOUSLY
+      // when that frame is detached. As a bare array element the throw would escape BEFORE `Promise.all` attached its
+      // handlers, leaving `waitForFileChooser()` abandoned (its later timeout would be an unhandled rejection). Run the
+      // click in an async scope so a synchronous throw is an ordinary rejection that `Promise.all` and the catch below handle.
+      [fileChooser] = await Promise.all([page.waitForFileChooser(), (async () => page.click(selector))()]);
     } catch (e) {
       await removeUploadListener(arm);
       const msg = (e as Error)?.message ?? String(e);

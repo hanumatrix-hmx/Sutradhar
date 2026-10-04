@@ -1,0 +1,985 @@
+{
+  "mode": "neg",
+  "churn": "k=8&ms=25",
+  "cli": "E:/AI-Cache/tmp/claude/E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/v061/inst/node_modules/sutradhar/dist/cli-bin.js",
+  "cliSha256": "9858726a291e844e1f84089b18310e90379140e2dfabf7b2fda80eb550b5c59b",
+  "bundle": "E:/AI-Cache/tmp/claude/E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/v061/inst/node_modules/sutradhar/dist/index.js",
+  "bundleSha256": "ddaaa00191710fc772db1c93a14e469381f0a40020de930ffae198834fd8db19",
+  "checks": {
+    "state.userDataDir <= 200 chars and dirname == ISO": {
+      "ok": true,
+      "detail": {
+        "udd": "E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\N4t\\sutradhar-cli-1791128665460-YjwnrJ",
+        "len": 199
+      }
+    },
+    "L1 churn really happened (window.__recreated > 100 after every run)": {
+      "ok": true
+    },
+    "L2 churn really happened (window.__recreated > 100 after every run)": {
+      "ok": true
+    },
+    "L3 churn really happened (window.__recreated > 100 after every run)": {
+      "ok": true
+    },
+    "L4 churn really happened (window.__recreated > 100 after every run)": {
+      "ok": true
+    },
+    "NEG061 L1 recorded (validity needs >= 1 detached failure)": {
+      "ok": true,
+      "detail": {
+        "detachedRuns": 10,
+        "cleanRuns": 0,
+        "sample": [
+          "Click failed: Attempted to use detached Frame '5C117A809325D4891530EDF28583D3DD'.",
+          "Click failed: Attempted to use detached Frame '0A0C7B31E4668D356E0D4F8CCC74FFF3'."
+        ]
+      }
+    },
+    "NEG061 L2 recorded": {
+      "ok": true,
+      "detail": {
+        "success": 10,
+        "failed": 0,
+        "detached": 0,
+        "errs": []
+      }
+    },
+    "NEG061 L3 recorded (validity needs >= 1 degraded result)": {
+      "ok": true,
+      "detail": {
+        "degradedSdk": 20,
+        "degradedCli": 10,
+        "sample": [
+          {
+            "i": 1,
+            "complete": false,
+            "elementCount": 0
+          },
+          {
+            "i": 2,
+            "complete": false,
+            "elementCount": 0
+          },
+          {
+            "i": 1,
+            "code": 0,
+            "complete": false,
+            "zero": true,
+            "head": "Interactive elements (0):"
+          },
+          {
+            "i": 2,
+            "code": 0,
+            "complete": false,
+            "zero": true,
+            "head": "Interactive elements (0):"
+          }
+        ]
+      }
+    },
+    "NEG061 L4 recorded": {
+      "ok": true,
+      "detail": {
+        "detachedRuns": 5
+      }
+    },
+    "close: state.json removed": {
+      "ok": true
+    },
+    "path-log check exit 0 (>= 1 [cleanup] line, none outside ISO)": {
+      "ok": true,
+      "detail": {
+        "exit": 0,
+        "out": [
+          "cleanup-lines=110 outside-iso=0"
+        ]
+      }
+    },
+    "no timed-out CLI call": {
+      "ok": true
+    }
+  },
+  "current": {
+    "label": "neg",
+    "churn": "k=8&ms=25",
+    "cliBin": "E:/AI-Cache/tmp/claude/E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/v061/inst/node_modules/sutradhar/dist/cli-bin.js",
+    "bundle": "E:/AI-Cache/tmp/claude/E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/v061/inst/node_modules/sutradhar/dist/index.js",
+    "L1": {
+      "runs": [
+        {
+          "run": 1,
+          "navCode": 0,
+          "clickCode": 1,
+          "detached": true,
+          "noVisible": false,
+          "recreated": 3072,
+          "closeCode": 0,
+          "msg": "Click failed: Attempted to use detached Frame '5C117A809325D4891530EDF28583D3DD'."
+        },
+        {
+          "run": 2,
+          "navCode": 0,
+          "clickCode": 1,
+          "detached": true,
+          "noVisible": false,
+          "recreated": 3064,
+          "closeCode": 0,
+          "msg": "Click failed: Attempted to use detached Frame '0A0C7B31E4668D356E0D4F8CCC74FFF3'."
+        },
+        {
+          "run": 3,
+          "navCode": 0,
+          "clickCode": 1,
+          "detached": true,
+          "noVisible": false,
+          "recreated": 3192,
+          "closeCode": 0,
+          "msg": "Click failed: Attempted to use detached Frame 'A0EB661C025DDF4180D0572C0A4A941D'."
+        },
+        {
+          "run": 4,
+          "navCode": 0,
+          "clickCode": 1,
+          "detached": true,
+          "noVisible": false,
+          "recreated": 2912,
+          "closeCode": 0,
+          "msg": "Click failed: Attempted to use detached Frame '1549BABCC3CD95B50AF41ECE1E198663'."
+        },
+        {
+          "run": 5,
+          "navCode": 0,
+          "clickCode": 1,
+          "detached": true,
+          "noVisible": false,
+          "recreated": 2984,
+          "closeCode": 0,
+          "msg": "Click failed: Attempted to use detached Frame 'C02C94D8727D1066A605F86A26429FC0'."
+        },
+        {
+          "run": 6,
+          "navCode": 0,
+          "clickCode": 1,
+          "detached": true,
+          "noVisible": false,
+          "recreated": 2952,
+          "closeCode": 0,
+          "msg": "Click failed: Attempted to use detached Frame '81723960EDD9C913D57DA4FD414053C2'."
+        },
+        {
+          "run": 7,
+          "navCode": 0,
+          "clickCode": 1,
+          "detached": true,
+          "noVisible": false,
+          "recreated": 3240,
+          "closeCode": 0,
+          "msg": "Click failed: Attempted to use detached Frame 'CD5709D202028F6D4D578C01D556F43C'."
+        },
+        {
+          "run": 8,
+          "navCode": 1,
+          "clickCode": 1,
+          "detached": true,
+          "noVisible": false,
+          "recreated": 12712,
+          "closeCode": 0,
+          "msg": "Click failed: Attempted to use detached Frame '9869C5A7A850548E6FB0905BD3B5D365'."
+        },
+        {
+          "run": 9,
+          "navCode": 0,
+          "clickCode": 1,
+          "detached": true,
+          "noVisible": false,
+          "recreated": 3192,
+          "closeCode": 0,
+          "msg": "Click failed: Attempted to use detached Frame '1494510188244E7AA078867C4AE29A4A'."
+        },
+        {
+          "run": 10,
+          "navCode": 0,
+          "clickCode": 1,
+          "detached": true,
+          "noVisible": false,
+          "recreated": 3688,
+          "closeCode": 0,
+          "msg": "Click failed: Attempted to use detached Frame 'D70611097A3444AA190BBA520118F06D'."
+        }
+      ],
+      "detachedRuns": 10,
+      "cleanRuns": 0,
+      "churnOk": true
+    },
+    "L2": {
+      "runs": [
+        {
+          "run": 1,
+          "ok": true,
+          "detached": false,
+          "late": 1,
+          "ms": 3050,
+          "over1000": true,
+          "recreated": 1056
+        },
+        {
+          "run": 2,
+          "ok": true,
+          "detached": false,
+          "late": 1,
+          "ms": 3227,
+          "over1000": true,
+          "recreated": 1080
+        },
+        {
+          "run": 3,
+          "ok": true,
+          "detached": false,
+          "late": 1,
+          "ms": 3232,
+          "over1000": true,
+          "recreated": 1056
+        },
+        {
+          "run": 4,
+          "ok": true,
+          "detached": false,
+          "late": 1,
+          "ms": 2967,
+          "over1000": true,
+          "recreated": 968
+        },
+        {
+          "run": 5,
+          "ok": true,
+          "detached": false,
+          "late": 1,
+          "ms": 3452,
+          "over1000": true,
+          "recreated": 1208
+        },
+        {
+          "run": 6,
+          "ok": true,
+          "detached": false,
+          "late": 1,
+          "ms": 3429,
+          "over1000": true,
+          "recreated": 1176
+        },
+        {
+          "run": 7,
+          "ok": true,
+          "detached": false,
+          "late": 1,
+          "ms": 3428,
+          "over1000": true,
+          "recreated": 1184
+        },
+        {
+          "run": 8,
+          "ok": true,
+          "detached": false,
+          "late": 1,
+          "ms": 3395,
+          "over1000": true,
+          "recreated": 1176
+        },
+        {
+          "run": 9,
+          "ok": true,
+          "detached": false,
+          "late": 1,
+          "ms": 3449,
+          "over1000": true,
+          "recreated": 1192
+        },
+        {
+          "run": 10,
+          "ok": true,
+          "detached": false,
+          "late": 1,
+          "ms": 3456,
+          "over1000": true,
+          "recreated": 1192
+        }
+      ],
+      "successRuns": 10,
+      "failedRuns": 0,
+      "detachedRuns": 0,
+      "churnOk": true
+    },
+    "L3sdkRecreated": 256,
+    "L3": {
+      "sdk": [
+        {
+          "i": 1,
+          "complete": false,
+          "elementCount": 0
+        },
+        {
+          "i": 2,
+          "complete": false,
+          "elementCount": 0
+        },
+        {
+          "i": 3,
+          "complete": false,
+          "elementCount": 0
+        },
+        {
+          "i": 4,
+          "complete": false,
+          "elementCount": 0
+        },
+        {
+          "i": 5,
+          "complete": false,
+          "elementCount": 0
+        },
+        {
+          "i": 6,
+          "complete": false,
+          "elementCount": 0
+        },
+        {
+          "i": 7,
+          "complete": false,
+          "elementCount": 0
+        },
+        {
+          "i": 8,
+          "complete": false,
+          "elementCount": 0
+        },
+        {
+          "i": 9,
+          "complete": false,
+          "elementCount": 0
+        },
+        {
+          "i": 10,
+          "complete": false,
+          "elementCount": 0
+        },
+        {
+          "i": 11,
+          "complete": false,
+          "elementCount": 0
+        },
+        {
+          "i": 12,
+          "complete": false,
+          "elementCount": 0
+        },
+        {
+          "i": 13,
+          "complete": false,
+          "elementCount": 0
+        },
+        {
+          "i": 14,
+          "complete": false,
+          "elementCount": 0
+        },
+        {
+          "i": 15,
+          "complete": false,
+          "elementCount": 0
+        },
+        {
+          "i": 16,
+          "complete": false,
+          "elementCount": 0
+        },
+        {
+          "i": 17,
+          "complete": false,
+          "elementCount": 0
+        },
+        {
+          "i": 18,
+          "complete": false,
+          "elementCount": 0
+        },
+        {
+          "i": 19,
+          "complete": false,
+          "elementCount": 0
+        },
+        {
+          "i": 20,
+          "complete": false,
+          "elementCount": 0
+        }
+      ],
+      "cliSnaps": [
+        {
+          "i": 1,
+          "code": 0,
+          "complete": false,
+          "zero": true,
+          "head": "Interactive elements (0):"
+        },
+        {
+          "i": 2,
+          "code": 0,
+          "complete": false,
+          "zero": true,
+          "head": "Interactive elements (0):"
+        },
+        {
+          "i": 3,
+          "code": 0,
+          "complete": false,
+          "zero": true,
+          "head": "Interactive elements (0):"
+        },
+        {
+          "i": 4,
+          "code": 0,
+          "complete": false,
+          "zero": true,
+          "head": "Interactive elements (0):"
+        },
+        {
+          "i": 5,
+          "code": 0,
+          "complete": false,
+          "zero": true,
+          "head": "Interactive elements (0):"
+        },
+        {
+          "i": 6,
+          "code": 0,
+          "complete": false,
+          "zero": true,
+          "head": "Interactive elements (0):"
+        },
+        {
+          "i": 7,
+          "code": 0,
+          "complete": false,
+          "zero": true,
+          "head": "Interactive elements (0):"
+        },
+        {
+          "i": 8,
+          "code": 0,
+          "complete": false,
+          "zero": true,
+          "head": "Interactive elements (0):"
+        },
+        {
+          "i": 9,
+          "code": 0,
+          "complete": false,
+          "zero": true,
+          "head": "Interactive elements (0):"
+        },
+        {
+          "i": 10,
+          "code": 0,
+          "complete": false,
+          "zero": true,
+          "head": "Interactive elements (0):"
+        }
+      ],
+      "degradedSdk": 20,
+      "degradedCli": 10,
+      "completeAll": 0,
+      "total": 30,
+      "churnOk": true,
+      "cliRecreated": 16936
+    },
+    "L4": {
+      "runs": [
+        {
+          "run": 1,
+          "code": 1,
+          "detached": true,
+          "noVisible": false,
+          "msg": "Type failed: Attempted to use detached Frame '3E4C34E17A3A08912C6905EC200958DC'."
+        },
+        {
+          "run": 2,
+          "code": 1,
+          "detached": true,
+          "noVisible": false,
+          "msg": "Type failed: Attempted to use detached Frame '63A83FAC4C0CA956E7ECA90D270465B5'."
+        },
+        {
+          "run": 3,
+          "code": 1,
+          "detached": true,
+          "noVisible": false,
+          "msg": "Type failed: Attempted to use detached Frame '3C73EA473334FAD43D9AFB314CC460B6'."
+        },
+        {
+          "run": 4,
+          "code": 1,
+          "detached": true,
+          "noVisible": false,
+          "msg": "Type failed: Attempted to use detached Frame '1A89C6566944A2F2774D5CAC93E910DE'."
+        },
+        {
+          "run": 5,
+          "code": 1,
+          "detached": true,
+          "noVisible": false,
+          "msg": "Type failed: Attempted to use detached Frame 'E58ADA890EAADCAB645D84C48C48A176'."
+        }
+      ],
+      "detachedRuns": 5,
+      "churnOk": true
+    }
+  },
+  "result": {
+    "label": "neg",
+    "churn": "k=8&ms=25",
+    "cliBin": "E:/AI-Cache/tmp/claude/E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/v061/inst/node_modules/sutradhar/dist/cli-bin.js",
+    "bundle": "E:/AI-Cache/tmp/claude/E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/v061/inst/node_modules/sutradhar/dist/index.js",
+    "L1": {
+      "runs": [
+        {
+          "run": 1,
+          "navCode": 0,
+          "clickCode": 1,
+          "detached": true,
+          "noVisible": false,
+          "recreated": 3072,
+          "closeCode": 0,
+          "msg": "Click failed: Attempted to use detached Frame '5C117A809325D4891530EDF28583D3DD'."
+        },
+        {
+          "run": 2,
+          "navCode": 0,
+          "clickCode": 1,
+          "detached": true,
+          "noVisible": false,
+          "recreated": 3064,
+          "closeCode": 0,
+          "msg": "Click failed: Attempted to use detached Frame '0A0C7B31E4668D356E0D4F8CCC74FFF3'."
+        },
+        {
+          "run": 3,
+          "navCode": 0,
+          "clickCode": 1,
+          "detached": true,
+          "noVisible": false,
+          "recreated": 3192,
+          "closeCode": 0,
+          "msg": "Click failed: Attempted to use detached Frame 'A0EB661C025DDF4180D0572C0A4A941D'."
+        },
+        {
+          "run": 4,
+          "navCode": 0,
+          "clickCode": 1,
+          "detached": true,
+          "noVisible": false,
+          "recreated": 2912,
+          "closeCode": 0,
+          "msg": "Click failed: Attempted to use detached Frame '1549BABCC3CD95B50AF41ECE1E198663'."
+        },
+        {
+          "run": 5,
+          "navCode": 0,
+          "clickCode": 1,
+          "detached": true,
+          "noVisible": false,
+          "recreated": 2984,
+          "closeCode": 0,
+          "msg": "Click failed: Attempted to use detached Frame 'C02C94D8727D1066A605F86A26429FC0'."
+        },
+        {
+          "run": 6,
+          "navCode": 0,
+          "clickCode": 1,
+          "detached": true,
+          "noVisible": false,
+          "recreated": 2952,
+          "closeCode": 0,
+          "msg": "Click failed: Attempted to use detached Frame '81723960EDD9C913D57DA4FD414053C2'."
+        },
+        {
+          "run": 7,
+          "navCode": 0,
+          "clickCode": 1,
+          "detached": true,
+          "noVisible": false,
+          "recreated": 3240,
+          "closeCode": 0,
+          "msg": "Click failed: Attempted to use detached Frame 'CD5709D202028F6D4D578C01D556F43C'."
+        },
+        {
+          "run": 8,
+          "navCode": 1,
+          "clickCode": 1,
+          "detached": true,
+          "noVisible": false,
+          "recreated": 12712,
+          "closeCode": 0,
+          "msg": "Click failed: Attempted to use detached Frame '9869C5A7A850548E6FB0905BD3B5D365'."
+        },
+        {
+          "run": 9,
+          "navCode": 0,
+          "clickCode": 1,
+          "detached": true,
+          "noVisible": false,
+          "recreated": 3192,
+          "closeCode": 0,
+          "msg": "Click failed: Attempted to use detached Frame '1494510188244E7AA078867C4AE29A4A'."
+        },
+        {
+          "run": 10,
+          "navCode": 0,
+          "clickCode": 1,
+          "detached": true,
+          "noVisible": false,
+          "recreated": 3688,
+          "closeCode": 0,
+          "msg": "Click failed: Attempted to use detached Frame 'D70611097A3444AA190BBA520118F06D'."
+        }
+      ],
+      "detachedRuns": 10,
+      "cleanRuns": 0,
+      "churnOk": true
+    },
+    "L2": {
+      "runs": [
+        {
+          "run": 1,
+          "ok": true,
+          "detached": false,
+          "late": 1,
+          "ms": 3050,
+          "over1000": true,
+          "recreated": 1056
+        },
+        {
+          "run": 2,
+          "ok": true,
+          "detached": false,
+          "late": 1,
+          "ms": 3227,
+          "over1000": true,
+          "recreated": 1080
+        },
+        {
+          "run": 3,
+          "ok": true,
+          "detached": false,
+          "late": 1,
+          "ms": 3232,
+          "over1000": true,
+          "recreated": 1056
+        },
+        {
+          "run": 4,
+          "ok": true,
+          "detached": false,
+          "late": 1,
+          "ms": 2967,
+          "over1000": true,
+          "recreated": 968
+        },
+        {
+          "run": 5,
+          "ok": true,
+          "detached": false,
+          "late": 1,
+          "ms": 3452,
+          "over1000": true,
+          "recreated": 1208
+        },
+        {
+          "run": 6,
+          "ok": true,
+          "detached": false,
+          "late": 1,
+          "ms": 3429,
+          "over1000": true,
+          "recreated": 1176
+        },
+        {
+          "run": 7,
+          "ok": true,
+          "detached": false,
+          "late": 1,
+          "ms": 3428,
+          "over1000": true,
+          "recreated": 1184
+        },
+        {
+          "run": 8,
+          "ok": true,
+          "detached": false,
+          "late": 1,
+          "ms": 3395,
+          "over1000": true,
+          "recreated": 1176
+        },
+        {
+          "run": 9,
+          "ok": true,
+          "detached": false,
+          "late": 1,
+          "ms": 3449,
+          "over1000": true,
+          "recreated": 1192
+        },
+        {
+          "run": 10,
+          "ok": true,
+          "detached": false,
+          "late": 1,
+          "ms": 3456,
+          "over1000": true,
+          "recreated": 1192
+        }
+      ],
+      "successRuns": 10,
+      "failedRuns": 0,
+      "detachedRuns": 0,
+      "churnOk": true
+    },
+    "L3sdkRecreated": 256,
+    "L3": {
+      "sdk": [
+        {
+          "i": 1,
+          "complete": false,
+          "elementCount": 0
+        },
+        {
+          "i": 2,
+          "complete": false,
+          "elementCount": 0
+        },
+        {
+          "i": 3,
+          "complete": false,
+          "elementCount": 0
+        },
+        {
+          "i": 4,
+          "complete": false,
+          "elementCount": 0
+        },
+        {
+          "i": 5,
+          "complete": false,
+          "elementCount": 0
+        },
+        {
+          "i": 6,
+          "complete": false,
+          "elementCount": 0
+        },
+        {
+          "i": 7,
+          "complete": false,
+          "elementCount": 0
+        },
+        {
+          "i": 8,
+          "complete": false,
+          "elementCount": 0
+        },
+        {
+          "i": 9,
+          "complete": false,
+          "elementCount": 0
+        },
+        {
+          "i": 10,
+          "complete": false,
+          "elementCount": 0
+        },
+        {
+          "i": 11,
+          "complete": false,
+          "elementCount": 0
+        },
+        {
+          "i": 12,
+          "complete": false,
+          "elementCount": 0
+        },
+        {
+          "i": 13,
+          "complete": false,
+          "elementCount": 0
+        },
+        {
+          "i": 14,
+          "complete": false,
+          "elementCount": 0
+        },
+        {
+          "i": 15,
+          "complete": false,
+          "elementCount": 0
+        },
+        {
+          "i": 16,
+          "complete": false,
+          "elementCount": 0
+        },
+        {
+          "i": 17,
+          "complete": false,
+          "elementCount": 0
+        },
+        {
+          "i": 18,
+          "complete": false,
+          "elementCount": 0
+        },
+        {
+          "i": 19,
+          "complete": false,
+          "elementCount": 0
+        },
+        {
+          "i": 20,
+          "complete": false,
+          "elementCount": 0
+        }
+      ],
+      "cliSnaps": [
+        {
+          "i": 1,
+          "code": 0,
+          "complete": false,
+          "zero": true,
+          "head": "Interactive elements (0):"
+        },
+        {
+          "i": 2,
+          "code": 0,
+          "complete": false,
+          "zero": true,
+          "head": "Interactive elements (0):"
+        },
+        {
+          "i": 3,
+          "code": 0,
+          "complete": false,
+          "zero": true,
+          "head": "Interactive elements (0):"
+        },
+        {
+          "i": 4,
+          "code": 0,
+          "complete": false,
+          "zero": true,
+          "head": "Interactive elements (0):"
+        },
+        {
+          "i": 5,
+          "code": 0,
+          "complete": false,
+          "zero": true,
+          "head": "Interactive elements (0):"
+        },
+        {
+          "i": 6,
+          "code": 0,
+          "complete": false,
+          "zero": true,
+          "head": "Interactive elements (0):"
+        },
+        {
+          "i": 7,
+          "code": 0,
+          "complete": false,
+          "zero": true,
+          "head": "Interactive elements (0):"
+        },
+        {
+          "i": 8,
+          "code": 0,
+          "complete": false,
+          "zero": true,
+          "head": "Interactive elements (0):"
+        },
+        {
+          "i": 9,
+          "code": 0,
+          "complete": false,
+          "zero": true,
+          "head": "Interactive elements (0):"
+        },
+        {
+          "i": 10,
+          "code": 0,
+          "complete": false,
+          "zero": true,
+          "head": "Interactive elements (0):"
+        }
+      ],
+      "degradedSdk": 20,
+      "degradedCli": 10,
+      "completeAll": 0,
+      "total": 30,
+      "churnOk": true,
+      "cliRecreated": 16936
+    },
+    "L4": {
+      "runs": [
+        {
+          "run": 1,
+          "code": 1,
+          "detached": true,
+          "noVisible": false,
+          "msg": "Type failed: Attempted to use detached Frame '3E4C34E17A3A08912C6905EC200958DC'."
+        },
+        {
+          "run": 2,
+          "code": 1,
+          "detached": true,
+          "noVisible": false,
+          "msg": "Type failed: Attempted to use detached Frame '63A83FAC4C0CA956E7ECA90D270465B5'."
+        },
+        {
+          "run": 3,
+          "code": 1,
+          "detached": true,
+          "noVisible": false,
+          "msg": "Type failed: Attempted to use detached Frame '3C73EA473334FAD43D9AFB314CC460B6'."
+        },
+        {
+          "run": 4,
+          "code": 1,
+          "detached": true,
+          "noVisible": false,
+          "msg": "Type failed: Attempted to use detached Frame '1A89C6566944A2F2774D5CAC93E910DE'."
+        },
+        {
+          "run": 5,
+          "code": 1,
+          "detached": true,
+          "noVisible": false,
+          "msg": "Type failed: Attempted to use detached Frame 'E58ADA890EAADCAB645D84C48C48A176'."
+        }
+      ],
+      "detachedRuns": 5,
+      "churnOk": true
+    }
+  },
+  "realTemp": {
+    "before": 4,
+    "after": 4,
+    "vanished": []
+  },
+  "pathCheck": {
+    "exit": 0,
+    "out": [
+      "cleanup-lines=110 outside-iso=0"
+    ]
+  },
+  "allPass": true
+}
