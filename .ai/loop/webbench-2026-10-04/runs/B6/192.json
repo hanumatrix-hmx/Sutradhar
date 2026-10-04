@@ -1,0 +1,21 @@
+{
+  "id": 192,
+  "slot": "B6",
+  "attempts": ["a1"],
+  "startedAt": "2026-10-04T10:36:40Z",
+  "endedAt": "2026-10-04T10:40:15Z",
+  "answerFields": [
+    {"field": "guide_url", "value": "https://www.listoscalifornia.org/disaster-readiness/wildfires/", "logSeq": 63, "excerpt": "WILDFIRES <https://www.listoscalifornia.org/disaster-readiness/wildfires/>"}
+  ],
+  "shortList": null,
+  "classification": "COMPLETED",
+  "subflag": "interpreted, linked-org",
+  "disclosure": "Weak completion, flag for review. Site search 'disaster preparedness' on ca.gov (page 1 and page 2). No ca.gov-hosted result mentioned wildfire: 'Prepare your home for a disaster' (seq 23) is earthquake-only; Cal OES 'Planning & Preparedness' (seq 41 grep) has no 'wildfire'; aging.ca.gov tip sheets returned a site error page (seq 31). Page-2 result 'Be Disaster Ready, California - Listos California' links to http://ready.ca.gov/ (seq 69) which, when clicked (seq 59), landed on listoscalifornia.org (wrapper warned: outside task's site). That page shows 'WILDFIRE PREPAREDNESS. TIPS HERE' and links to the wildfires guide (seq 61, 63). The answer URL is therefore NOT on ca.gov; treated as a state-program (Listos California / Cal OES) site reached by a click from a ca.gov result, i.e. linked-org. If the verifier judges listoscalifornia.org not same-organisation, downgrade to AGENT-FAIL/substitution. Page text of the wildfires guide itself was not opened, so 'includes wildfire safety instructions' rests on the link label and the page-level headings.",
+  "toolDefects": [],
+  "blockEvidence": {"logSeq": 0, "excerpt": ""},
+  "driftChecks": [],
+  "probe": {"result": "pass", "logSeq": 15, "detail": "First query 'parking' (typed seq 5, Enter seq 7; snap seq 9 shows value=\"parking\"). Then type into the results-page input [#19] 'disaster preparedness' (seq 11), Enter (seq 13). snap seq 15 shows URL q=disaster+preparedness and input value=\"disaster preparedness\", no 'parking' residue, results are disaster results."},
+  "uncitedValue": null,
+  "needsCurlControl": false,
+  "notes": "Process slips: seqs 49/51 (href then count) were chained in one shell command, contrary to the brief. startedAt is approximate (I did not run date at the start of this task; value is the time between task 41 end and the first call). 'back' printed 'undefined' (exit 0) but navigated correctly. clickrole link 'Planning & Preparedness' failed exit 1 (seq 35, no visible element), clicktext worked. clicktext 'Page 2' failed (seq 45); used snap id 71 click instead. Task 192 used ~35 calls."
+}

@@ -1,0 +1,58 @@
+{
+  "bundle": "E:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/packages/sutradhar/dist/index.js",
+  "bundleSha256": "5cbe7445840e819861cdf23fff6b74c09014e5510568327a85daee72139438a7",
+  "checks": {
+    "FULL via page.evaluate, L >= 10000": {
+      "ok": true,
+      "detail": 10037
+    },
+    "S3c-1 page.text() fields": {
+      "ok": true,
+      "detail": {
+        "keys": [
+          "sessionId",
+          "tabId",
+          "url",
+          "text",
+          "offset",
+          "returnedChars",
+          "totalChars",
+          "truncated",
+          "source"
+        ]
+      }
+    },
+    "S3c-1 result text never contains the marker": {
+      "ok": true
+    },
+    "S3c-1 paging concatenation == page.evaluate FULL, windows differ": {
+      "ok": true,
+      "detail": {
+        "windows": 3
+      }
+    },
+    "S3c-2 page.snapshot() additive fields": {
+      "ok": true,
+      "detail": {
+        "total": 10037,
+        "trunc": true
+      }
+    },
+    "S3c-3 /long-emoji: no window ends on a lone high or starts on a lone low surrogate; paging at 4 sizes reproduces the text": {
+      "ok": true,
+      "detail": []
+    },
+    "S3c-4 {maxChars:0} -> TypeError": {
+      "ok": true,
+      "detail": "maxChars must be an integer from 1 to 100000 (got 0)"
+    },
+    "attribution query: no Chrome with the ISO basename after browser.close()": {
+      "ok": true,
+      "detail": []
+    }
+  },
+  "hasText": "function",
+  "L": 10037,
+  "emojiLength": 12000,
+  "allPass": true
+}

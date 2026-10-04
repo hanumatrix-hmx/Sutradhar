@@ -1,0 +1,148 @@
+{
+  "suites": [
+    {
+      "pkg": "cli",
+      "files": [
+        "tests/unit/history-output.spec.ts",
+        "tests/unit/help-text.spec.ts",
+        "tests/unit/session-flow.spec.ts"
+      ]
+    },
+    {
+      "pkg": "browser",
+      "files": [
+        "tests/unit/post-conditions.spec.ts"
+      ]
+    }
+  ],
+  "mutants": [
+    {
+      "id": "M-NAVa",
+      "note": "back mapped to goForward",
+      "file": "packages/cli/src/history-output.ts",
+      "count": 1,
+      "find": "o.verb === 'back'\n        ? await runtime.goBack(sessionId, undefined, o.expect, o.settle)\n        : o.verb === 'forward'\n          ? await runtime.goForward(sessionId, undefined, o.expect, o.settle)",
+      "repl": "o.verb === 'back'\n        ? await runtime.goForward(sessionId, undefined, o.expect, o.settle)\n        : o.verb === 'forward'\n          ? await runtime.goForward(sessionId, undefined, o.expect, o.settle)"
+    },
+    {
+      "id": "M-NAVa2",
+      "note": "forward mapped to goBack",
+      "file": "packages/cli/src/history-output.ts",
+      "count": 1,
+      "find": "? await runtime.goForward(sessionId, undefined, o.expect, o.settle)\n          : await runtime.reload(",
+      "repl": "? await runtime.goBack(sessionId, undefined, o.expect, o.settle)\n          : await runtime.reload("
+    },
+    {
+      "id": "M-NAVb",
+      "note": "edge printed as \"Navigated back\"",
+      "file": "packages/cli/src/history-output.ts",
+      "count": 1,
+      "find": "      case 'edge':\n        stdout.push(edgeLine());",
+      "repl": "      case 'edge':\n        stdout.push(`Navigated ${verb} to ${result.url}`);"
+    },
+    {
+      "id": "M-NAVb2",
+      "note": "edge exits 0",
+      "file": "packages/cli/src/history-output.ts",
+      "count": 1,
+      "find": "if (outcome === 'edge') return 1;",
+      "repl": "if (outcome === 'edge') return 0;"
+    },
+    {
+      "id": "M-NAVd",
+      "note": "no-history detected by loaderId (document observed != new-document => edge)",
+      "file": "packages/cli/src/history-output.ts",
+      "count": 1,
+      "find": "if (checks.some((c) => c.check === `${t}.history-edge`)) return 'edge';",
+      "repl": "if (!checks.some((c) => c.check === `${t}.document` && c.observed === 'new-document')) return 'edge';"
+    },
+    {
+      "id": "M-NAVe",
+      "note": "--expect-* failure outranks the edge",
+      "file": "packages/cli/src/history-output.ts",
+      "count": 1,
+      "find": "  if (outcome === 'edge') return 1;\n  if (expectGiven && failedExpectations(verification).length > 0) return EXIT_EXPECTATION_FAILED;",
+      "repl": "  if (expectGiven && failedExpectations(verification).length > 0) return EXIT_EXPECTATION_FAILED;\n  if (outcome === 'edge') return 1;"
+    },
+    {
+      "id": "M-NAVf",
+      "note": "edge detected from the verdict reason text",
+      "file": "packages/cli/src/history-output.ts",
+      "count": 1,
+      "find": "if (checks.some((c) => c.check === `${t}.history-edge`)) return 'edge';",
+      "repl": "if (/no (forward )?history entry/.test(verification?.reason ?? '')) return 'edge';"
+    },
+    {
+      "id": "M-NAVf2",
+      "note": "edge detected from expected === -1",
+      "file": "packages/cli/src/history-output.ts",
+      "count": 1,
+      "find": "if (checks.some((c) => c.check === `${t}.history-edge`)) return 'edge';",
+      "repl": "if (checks.some((c) => c.check === `${t}.history-index` && c.expected === -1)) return 'edge';"
+    },
+    {
+      "id": "M-NAVg",
+      "note": "probe emits the edge check on not-moved too",
+      "file": "packages/browser/src/verifier/post-conditions.ts",
+      "count": 1,
+      "find": "    } else {\n      outcome = 'fail';\n      reason = `the history index did not move (still ${before.index})`;",
+      "repl": "    } else {\n      checks.push({ check: `${t}.history-edge`, outcome: 'fail', expected: 'a history entry in this direction', observed: `index ${before.index} of ${before.count}` });\n      outcome = 'fail';\n      reason = `the history index did not move (still ${before.index})`;"
+    },
+    {
+      "id": "M-NAVg2",
+      "note": "probe never emits the edge check",
+      "file": "packages/browser/src/verifier/post-conditions.ts",
+      "count": 1,
+      "find": "      checks.push({\n        check: `${t}.history-edge`,\n        outcome: 'fail',\n        expected: 'a history entry in this direction',\n        observed: `index ${before.index} of ${before.count}`,\n      });\n      outcome = 'fail';",
+      "repl": "      outcome = 'fail';"
+    },
+    {
+      "id": "M-NAVg3",
+      "note": "edge check placed BEFORE the history-index check",
+      "file": "packages/browser/src/verifier/post-conditions.ts",
+      "count": 1,
+      "find": "    checks.push({ check: doc, outcome: newDoc || sameDoc ? 'pass' : 'fail', observed: docObserved });\n    checks.push({\n      check: `${t}.history-index`,",
+      "repl": "    checks.push({ check: doc, outcome: newDoc || sameDoc ? 'pass' : 'fail', observed: docObserved });\n    if (edge) checks.push({ check: `${t}.history-edge`, outcome: 'fail', expected: 'a history entry in this direction', observed: `index ${before.index} of ${before.count}` });\n    checks.push({\n      check: `${t}.history-index`,"
+    },
+    {
+      "id": "M-NAVh",
+      "note": "a rejecting verb is swallowed (error not propagated)",
+      "file": "packages/cli/src/history-output.ts",
+      "count": 1,
+      "find": "    throw err;\n  }\n  if (cancelled()) return cancelLines(result.url);",
+      "repl": "    return { stdout: [], stderr: [], exitCode: 0, outcome: 'unconfirmed' };\n  }\n  if (cancelled()) return cancelLines(result.url);"
+    },
+    {
+      "id": "M-NAVc-unit",
+      "note": "dismissed-beforeunload detection disabled (reload/back under --dialog dismiss time out as Fatal)",
+      "file": "packages/cli/src/history-output.ts",
+      "count": 1,
+      "find": "const cancelled = (): boolean => dismissedBeforeunloadSince(runtime.getDialogHistory(sessionId), o.startedAt);",
+      "repl": "const cancelled = (): boolean => false;"
+    },
+    {
+      "id": "M-NAVi",
+      "note": "cancel detection ignores startedAt (an old dismissal counts)",
+      "file": "packages/cli/src/dialog-cli.ts",
+      "count": 1,
+      "find": "h.handledAt && Date.parse(h.handledAt) >= since,\n  );\n}\n\n/** True only for",
+      "repl": "h.handledAt && Date.parse(h.handledAt) >= 0,\n  );\n}\n\n/** True only for"
+    },
+    {
+      "id": "M-NAVj",
+      "note": "unconfirmed (probe not-run) printed as a successful move",
+      "file": "packages/cli/src/history-output.ts",
+      "count": 1,
+      "find": "  if (!idx) return 'unconfirmed';\n  if (idx.outcome === 'pass') return 'moved';\n  if (idx.outcome === 'fail') return 'not-moved';\n  return 'unconfirmed';",
+      "repl": "  if (!idx) return 'unconfirmed';\n  if (idx.outcome === 'pass') return 'moved';\n  if (idx.outcome === 'fail') return 'not-moved';\n  return 'moved';"
+    },
+    {
+      "id": "M-NAVk",
+      "note": "launch table: back is launch-capable",
+      "file": "packages/cli/src/session-flow.ts",
+      "count": 1,
+      "find": "    default:\n      return false;",
+      "repl": "    case 'back':\n      return true;\n    default:\n      return false;"
+    }
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "id": 1371,
+  "slot": "B4",
+  "attempts": ["a1"],
+  "startedAt": "2026-10-04T10:37:20Z",
+  "endedAt": "2026-10-04T10:38:00Z",
+  "answerFields": [
+    {"field": "release_date", "value": "02/18/2022", "logSeq": 9, "excerpt": "$49.99\nAdd to Cart\nReleased 02/18/2022\nOffline play enabled"},
+    {"field": "price", "value": "$49.99", "logSeq": 9, "excerpt": "65.5K ratings\n$49.99\nAdd to Cart\nReleased 02/18/2022"}
+  ],
+  "shortList": null,
+  "classification": "AGENT-FAIL",
+  "subflag": "partial",
+  "disclosure": "The product page (reached via the site's own search results, then /en-us/games/horizon-forbidden-west/) shows no field labelled developer. It shows only 'Sony Interactive Entertainment' under the title (a publisher credit in PlayStation's layout) and, in an editorial quote, 'Guerrilla' as maker of the earlier hit; neither is an explicit developer statement for this game, so developer is not reported and no substitution is made. Release date and price (Standard Edition $49.99) are cited.",
+  "toolDefects": [],
+  "blockEvidence": {"logSeq": 0, "excerpt": ""},
+  "driftChecks": [],
+  "probe": null,
+  "uncitedValue": null,
+  "needsCurlControl": false,
+  "notes": "Page text under title (seq 9): 'Horizon Forbidden West\\nSony Interactive Entertainment\\nAvailable on'. Orchestrator may judge whether that counts as the developer; I treated it as unverified."
+}

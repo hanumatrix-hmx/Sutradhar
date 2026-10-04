@@ -14,7 +14,47 @@
  * `runGuarded`'s own try/self-heal boundary by construction — see `withSessionFlow`'s body.
  */
 
+/**
+ * I-051: raised when a command that cannot start a browser finds no session. `main().catch` matches it by `name` (the
+ * `ProjectConfigError` pattern) and prints exactly `Error: <message>`, exit 1, nothing on stdout.
+ */
+export class NoSessionError extends Error {
+  public constructor(verb: string | undefined) {
+    super(noSessionMessage(verb));
+    this.name = 'NoSessionError';
+  }
+}
+
+/** The one-line explanation printed (after `Error: `) when a non-launching verb finds no session. */
+export function noSessionMessage(verb: string | undefined): string {
+  return `no active browser session \u2014 "${verb ?? ''}" needs an open page and does not start one. Start a session with: sutradhar nav <url>`;
+}
+
+/**
+ * I-051: may this invocation start a browser when none is running? Only `nav <url>`, `newtab <url>`, `audit <url>` and
+ * `compare <urlA> <urlB>` (every one of them names a page to open). Everything else — snap, text, click, back, tabs, grant,
+ * newtab/audit without a url, ... — reads or acts on an existing page and must not silently launch a blank browser.
+ * `args` are the verb's positional arguments (flags already removed).
+ */
+export function isLaunchCapable(verb: string | undefined, args: readonly (string | undefined)[]): boolean {
+  const given = (i: number): boolean => typeof args[i] === 'string' && args[i]!.length > 0;
+  switch (verb) {
+    case 'nav':
+    case 'newtab':
+    case 'audit':
+      return given(0);
+    case 'compare':
+      return given(0) && given(1);
+    default:
+      return false;
+  }
+}
+
 export interface SessionFlowDeps<T> {
+  /** I-051: when there is NO prior state, may this command start a browser? `false` -> `noSession()` is thrown instead. */
+  readonly mayLaunch: boolean;
+  /** I-051: the error thrown when there is no prior state and `mayLaunch` is false (a `NoSessionError`). */
+  readonly noSession: () => Error;
   /** Reads persisted CLI state; `undefined` means "no prior session". */
   readonly readState: () => Promise<unknown>;
   /** No prior state: spawns a brand-new session and returns its id. */
@@ -48,6 +88,7 @@ export async function withSessionFlow<T>(deps: SessionFlowDeps<T>): Promise<T> {
 
   let sessionId: string;
   if (!state) {
+    if (!deps.mayLaunch) throw deps.noSession(); // I-051: BEFORE spawnFresh/afterAttach/fn — nothing is launched or written
     sessionId = await deps.spawnFresh();
     await deps.afterAttach(sessionId, true);
     return deps.fn(sessionId);

@@ -1,0 +1,27 @@
+[iso-guard] tmpdir=e:/ai-cache/tmp/claude/e--hmx-projects-internal-projects-pinchtab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/a8t pid=101088
+[harness] MODE=head CLI=E:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/packages/sutradhar/dist/cli-bin.js sha256=f221f536b9655e5580752adf8189145b9c4d8bb7ed2108633c89f923f5cae346
+[harness] BUNDLE=E:\HMX_Projects\Internal_Projects\PinchTab\.claude\worktrees\project-understanding-696041\packages\sutradhar\dist\index.js sha256=7c528f4c3bef9053e60c46e46c43fbf255e0d50f0539175a2f74793922172e54 NO_MUTANTS=1 ISO=E:/AI-Cache/tmp/claude/E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/A8t tmpdir=e:/ai-cache/tmp/claude/e--hmx-projects-internal-projects-pinchtab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/a8t
+[iso-guard] tmpdir=e:/ai-cache/tmp/claude/e--hmx-projects-internal-projects-pinchtab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/a8t pid=104792
+[harness] fixture pid=104792 url=http://127.0.0.1:50582
+PASS a nav exit 0 {"code":0,"out":"Navigated to http://127.0.0.1:50582/long?n=10000\nTitle: Long page\nVerification: "}
+PASS a state.userDataDir <= 200 chars and dirname == ISO {"udd":"E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\A8t\\sutradhar-cli-1791132622211-UTW5ID","len":199}
+PASS a L >= 10000 and FULL.length == L {"L":10037,"full":10037}
+PASS b text = FULL[0:4000] + newline + marker A (stdout), exit 0 {"code":0,"len":4104,"tail":"stuvwxyz0123456\nL000096 ab\n[page text truncated: showing characters 0-4000 of 10037. Continue with: sutradhar text --offset 4000]\n"}
+PASS b marker is on stdout, not stderr "[iso-guard] tmpdir=e:/ai-cache/tmp/claude/e--hmx-projects-internal-projects-pinchtab--claude-worktre"
+PASS c windows concatenate to FULL exactly {"windows":3,"accLen":10037}
+PASS c L >= 10000, >= 3 windows, windows differ {"windows":3}
+PASS c last marker is B naming the end "[page text: showing characters 8000-10037 of 10037 (end)]"
+PASS d --max-chars 100000 = FULL, no marker {"len":10038}
+PASS d offset past end = empty window + marker C, exit 0 "\n[page text: offset 10042 is past the end; the page text has 10037 characters]\n"
+PASS e --json parses; fields equal (b); no marker line {"keys":["sessionId","tabId","url","text","offset","returnedChars","totalChars","truncated","source"]}
+PASS h invalid flags mid-session: exit 1, message, state.json unchanged, no new sutradhar-cli-* under ISO [{"args":"text --offset -1","code":1,"stderr":"[iso-guard] tmpdir=e:/ai-cache/tmp/claude/e--hmx-projects-internal-projects-pinchtab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/a8t pid=85684","stdoutEmpty":true,"stateUnchanged":true,"noNewCliDir":tru
+PASS i text does not re-stamp ids (G1 non-null, G1 == G2, E1 == E2) {"label":"head","G1":"1791132626747","G2":"1791132626747","E1":"1791132626747","E2":"1791132626747","ok":true}
+PASS i control: a second snap changes G (the read detects a re-stamp) {"G1":"1791132626747","G3":"1791132628161"}
+PASS f short page text: exit 0, length > 200, no marker {"len":300}
+PASS g2 bundled text on /pdf: exit 1, stdout empty, clear PROB-052 message (not the raw DOMMatrix error), no Fatal: {"nav":0,"code":1,"stdout":"","errLine":"Error: text read failed: the PDF text could not be extracted: PDF text extraction is not available in this build (PROB-052): the bundled PDF reader needs the optional native module @napi-rs/canvas, which this package does not ship. Download the PDF and read i
+PASS g2 plain text mode: also exit 1, empty stdout {"code":1,"stdout":""}
+PASS j read failure: exit 3 (dialog-blocked) or exit 1 "Error: text read failed:", never exit 0 with empty stdout {"evalCode":0,"code":3,"stdout":"dialogPending: {\"type\":\"alert\",\"message\":\"x\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:50582/long?n=10000\"}\n","stderr":["[iso-guard] tmpdir=e:/ai-cache/tmp/claude/e--hmx-projects-internal-projects-pinchtab--claude-worktrees-project-understanding-6960
+PASS close: state.json removed
+PASS path-log check exit 0 (>= 1 [cleanup] line, none outside ISO) {"exit":0,"out":["cleanup-lines=10 outside-iso=0"]}
+PASS no timed-out CLI call
+LIVE-CLI-TEXT OK

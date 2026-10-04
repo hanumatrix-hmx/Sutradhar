@@ -1,0 +1,17 @@
+[iso-guard] tmpdir=e:/ai-cache/tmp/claude/e--hmx-projects-internal-projects-pinchtab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/sgt pid=15920
+[harness] MCP=E:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/packages/sutradhar/dist/mcp-cli.js sha256=008bc6b6a8226f47738d3bd8a087f131c646f4d2af310cb499252b27b2fd9440 tmpdir=e:/ai-cache/tmp/claude/e--hmx-projects-internal-projects-pinchtab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/sgt
+PASS launch
+PASS FULL via browser.eval, L >= 10000 10037
+PASS S3b-1 tools/list includes browser.get_page_text 74
+PASS S3b-2 snapshot Page text block = FULL[0:2000] + marker naming get_page_text offset=2000 {"len":2142,"tail":"klmnopqr\n[page text truncated: showing characters 0-2000 of 10037. Continue with browser.get_page_text offset=2000, or raise textMaxChars (max 40000)]"}
+PASS S3b-2 textMaxChars 5000 = FULL[0:5000] + marker {"len":5142}
+PASS S3b-3 get_page_text paged to marker B: concatenation == FULL, windows differ {"windows":3,"acc":10037}
+PASS S3b-3 last marker is (end) "[page text: showing characters 8000-10037 of 10037 (end)]"
+PASS S3b maxChars 40001 -> schema error (isError / JSON-RPC error, no text window) {"isError":true,"text":"MCP error -32602: Input validation error: Invalid arguments for tool browser.get_page_text: Number must be less than or equal to 40000 at maxChars"}
+PASS S3b snapshot textMaxChars 40001 -> schema error "MCP error -32602: Input validation error: Invalid arguments for tool browser.snapshot: Number must be less than or equal"
+PASS S3b maxChars 40000 accepted: whole page, no marker {"len":10037}
+PASS S3b-4 /short snapshot text length > 200, no marker 299
+PASS shutdown_all
+PASS server child exited
+PASS no Chrome with the ISO basename left []
+LIVE-MCP-TEXT OK

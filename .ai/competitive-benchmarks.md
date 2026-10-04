@@ -16,6 +16,8 @@ them, not vibes.
 
 ## Where things actually stand, 2026-08-17 — a synthesis of the evidence below
 
+> **Correction, 2026-10-04 (Milestone 100):** the completion figures quoted in this synthesis and in `CLAUDE.md` (15/29, 79/130, "0 Sutradhar-attributable failures") are self-judged historical numbers. The clean deduplicated baseline is strict 59/107 (55.1%) and lenient 71/107 (66.4%) on in-scope tasks, and the first pre-registered, blind-verified run (published 0.6.1 CLI) scored 6/29 strict (20.7%, CI 9.8 to 38.4) with 13/30 externally blocked and 0 Sutradhar-attributable failures after adjudication. Two different measurements; see the Milestone 100 entry in the iteration log below and `tools/webbench/claude-direct-run-2026-10-04.md`.
+
 The evidence in this doc has accumulated across ~20 milestones and several independent
 comparison runs; nobody had stepped back to state the combined conclusion plainly in one place
 until now. Read this section, then the detail below backs each claim with a real run.
@@ -289,6 +291,31 @@ findings:
 ## Iteration log
 
 Append-only. Newest first.
+
+### 2026-10-04 — Milestone 100: fourteenth WebBench sample, first PRE-REGISTERED and BLIND-VERIFIED run (published 0.6.1 CLI): 6/29 strict (20.7%), 13/30 externally blocked, 9 agent failures, 0 Sutradhar failures — and the August headline is corrected
+
+This is a different kind of number from samples 1-13, and the two must not be merged. Samples 1-13 were hand-picked, self-judged by the driving agent, and counted disclosed substitutions and mid-run-fixed bugs as completions. This run used a frozen protocol (`.ai/loop/webbench-2026-10-04/protocol.md`, four independent review rounds), seeded domain selection with 124 prior domains excluded, a logging wrapper so every answer value must be a verbatim substring of a logged page-reading call, a blind Opus verifier with three checker-passing canaries (all caught), and orchestrator adjudication in which an unresolved dispute takes the less favourable class. Full report with per-task table, CIs, re-tests and false-pass analysis: `tools/webbench/claude-direct-run-2026-10-04.md`.
+
+**Results (30 primary tasks, 29 in scope):** COMPLETED 7 (6 strict, 1 interpreted), EXTERNAL-BLOCK 13 (43.3%), AGENT-FAIL 9, TASK-INVALID 1, SUTRADHAR-FAIL 0.
+
+| Metric | October 2026 | Clean August baseline | Difference (Newcombe 95%) |
+|---|---|---|---|
+| H1 strict / in-scope | 6/29 = 20.7% [9.8, 38.4] | 59/107 = 55.1% [45.7, 64.2] | -34.5 pp [-48.6, -14.4] |
+| H1-lenient | 7/29 = 24.1% [12.2, 42.1] | 71/107 = 66.4% [57.0, 74.6] | -42.2 pp [-56.7, -21.9] |
+| H2 strict / (in-scope - EXT) | 6/16 = 37.5% [18.5, 61.4] | 59/71 = 83.1% [72.7, 90.1] | -45.6 pp [-65.9, -19.6] |
+| H2-lenient | 7/16 = 43.8% [23.1, 66.8] | 71/71 = 100% [94.9, 100] | -56.3 pp [-76.9, -32.6] |
+
+**Why it is much lower (details in the report, section 3.3).** Stricter evidence rules and blind verification versus August's lenient counting; different, seeded, harder domains (43% external blocks vs 31%, a difference that is not statistically distinguishable); the CLI surface at an 800x600 viewport; Sonnet drivers under a restrictive wrapper; and confirmed Sutradhar defects that plausibly contributed without changing the adjudicated classes (D2 silent 4000-character truncation behind the reads for 1379, 2687, 982 and likely 2582, 1371; D1 detached Frame on 2561). On the drivers' own pre-verification classes H1 would have been 5/26 = 19.2%, so adjudication explains little of the gap. The drop persists after removing external blocks (H2), so blocks do not explain it. Four things changed at once (domains, Chrome, surface, rules), so **no part of the gap is attributable to 0.6.1**, and the run does not show 0.6.1 is worse than the August builds.
+
+**Corrected headline for the benchmark record.**
+- *Historical (samples 1-13, self-judged, hand-picked):* 130 attempts, 79 reported completions (13 flagged by their own reports as interpretation, substitution or partial), 41 external blocks, 3 login tasks, 7 target-gone. After removing 11 non-dataset tasks (sample 7), the invented cbs.com task (sample 5) and 1 duplicate: **117 unique dataset tasks, strict 59/107 (55.1%), lenient 71/107 (66.4%) on in-scope tasks**. Sample 5 had 6 wrong ids. The "0 Sutradhar-attributable failures" came from fixing a bug mid-run and then counting the task completed (S3 T36, S13 T597); under a frozen-build rule those two would have been failures.
+- *Pre-registered, blind-verified, published 0.6.1 CLI, 2026-10-04:* the table above. 0 Sutradhar-attributable failures after adjudication, with 4 confirmed defects (PROB-047 to PROB-050) and 1 usability defect (PROB-051).
+- The "15/29" figure in `CLAUDE.md` is the state after sample 3 and includes 3 login tasks and 1 drift task among its "14 anti-bot/auth blocks"; proposed replacement text is in the report's Appendix A (CLAUDE.md not edited).
+- The 47-task head-to-head against Playwright, Puppeteer and pinchtab (samples 1-5) contains 1 invented task (cbs.com). It has not been re-run without it.
+
+**Re-tests:** PROB-044 and the type-append bug both PASS live on 0.6.1; ea.com's HTTP/2 error has a curl control (200 HTTP/1.1), so it is an external client-fingerprint block by the pre-registered mapping, not a Sutradhar failure; PROB-043 is not probeable through the CLI. See `.ai/browsing-capability-loop.md` Milestone 100.
+
+**Not done / unverified.** No agent-level benchmark with an independent LLM. No head-to-head against Playwright/Puppeteer/pinchtab on these 30 tasks, so this run makes no competitor claim. 3 of 13 blocks were replayed independently; 2554 and 929 (`ERR_HTTP2_PROTOCOL_ERROR`) have no control.
 
 ### 2026-08-18 — Milestone 96: thirteenth WebBench sample (5/12), combined total now 79/130 (60.8%) — a real bug found and fixed live (PROB-044), completion rate dipped on an unusually bot-wall-heavy draw
 

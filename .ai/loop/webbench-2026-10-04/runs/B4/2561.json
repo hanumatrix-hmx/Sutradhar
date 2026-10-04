@@ -1,0 +1,19 @@
+{
+  "id": 2561,
+  "slot": "B4",
+  "attempts": ["a1", "a2"],
+  "startedAt": "2026-10-04T10:29:00Z",
+  "endedAt": "2026-10-04T10:33:39Z",
+  "answerFields": [],
+  "shortList": null,
+  "classification": "AGENT-FAIL",
+  "subflag": "partial",
+  "disclosure": "No price-trend or forecast value was read. Search could not be submitted: destination typeahead text was typed (modal input) but no suggestion was selected, so Kayak showed 'An error occurred while trying to perform your search: Please enter a city, hotel name, or landmark' (screenshot seq 91, not evidence). Dismiss button click refused as occluded (seq 93). Direct URL nav to /hotels/Rome,Italy/... redirected to /stays; /Rome-Hotels.html gave net::ERR_ABORTED (a2 seq 57).",
+  "toolDefects": [],
+  "blockEvidence": {"logSeq": 0, "excerpt": ""},
+  "driftChecks": [],
+  "probe": null,
+  "uncitedValue": null,
+  "needsCurlControl": false,
+  "notes": "a1: clicks/types on /stays failed with 'detached Frame' errors (seqs 33,37,47,49) and click on #28 occluded (seq 27). Possible Sutradhar defects (occlusion false positives, detached frame) but not proven by a control, so not classified SUTRADHAR-FAIL. Brief says '#12' refs but wrapper requires bare number ('12'); the '#23' form errored (seq 9). No argument began with '/', so no MSYS path mangling affected this task. Date ambiguity: default dates were Oct 11-18; first-week window not set."
+}

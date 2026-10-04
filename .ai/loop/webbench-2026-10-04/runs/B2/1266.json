@@ -1,0 +1,19 @@
+{
+  "id": 1266,
+  "slot": "B2",
+  "attempts": ["a1", "a2"],
+  "startedAt": "2026-10-04T10:25:44Z",
+  "endedAt": "2026-10-04T10:26:12Z",
+  "answerFields": [],
+  "shortList": null,
+  "classification": "EXTERNAL-BLOCK",
+  "subflag": "captcha",
+  "disclosure": "Both attempts: HTTP 403 on the homepage, empty page text, only an iframe from geo.captcha-delivery.com (DataDome) with a 'Contact support.' button. Did not interact with the captcha.",
+  "toolDefects": [],
+  "blockEvidence": {"logSeq": 17, "excerpt": "[[\"https://www.nytimes.com/\",403],[\"https://ct.captcha-delivery.com/c.js\",0],[\"https://geo.captcha-delivery.com/captcha/?initialCid=..."},
+  "driftChecks": [],
+  "probe": null,
+  "uncitedValue": null,
+  "needsCurlControl": false,
+  "notes": "a1 evidence: seq 7 (status 403 + captcha-delivery), seq 9 (snap shows only captcha iframe button), seq 5 (text empty). a2: seq 13 nav 403, seq 15 text empty, seq 17 status."
+}

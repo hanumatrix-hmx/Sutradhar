@@ -190,8 +190,15 @@ export interface SnapshotResult {
   interactiveElements: string;
   /** Number of interactive elements discovered. */
   elementCount: number;
-  /** Visible body text excerpt, best-effort. */
+  /** Visible body text window (offset 0, `textMaxChars` characters, default {@link DEFAULT_PAGE_TEXT_MAX_CHARS}).
+   *  The raw text: it never contains the truncation marker. Empty when the read failed (see `pageTextError`). */
   pageText: string;
+  /** I-048: the FULL length of the page text, so a truncated `pageText` is detectable. 0 when the read failed. */
+  pageTextTotalChars: number;
+  /** I-048: true when `pageText` is not the whole page text (`pageTextTotalChars` > its length). */
+  pageTextTruncated: boolean;
+  /** I-048: present only when the text read failed (`snapshot()` tolerates it; `readTextWindow` rejects instead). */
+  pageTextError?: string;
   /** The structured element data `interactiveElements` was itself rendered from — present only
    *  when the caller opts in via `snapshot(sessionId, tabId, maxElements, { includeNodes: true })`.
    *  Lets a caller consume real per-element fields (boundingBox, confidence, isEnabled, ...)
@@ -204,6 +211,32 @@ export interface SnapshotResult {
    *  silently dropped; see `SemanticNode.frame`/`shadowHosts` for per-node frame/shadow
    *  context on `nodes` itself. */
   skippedFrames?: readonly SkippedFrame[];
+}
+
+/** I-048: default page-text window (characters). Unchanged from the pre-0.6.2 hard cap, so no token-budget change. */
+export const DEFAULT_PAGE_TEXT_MAX_CHARS = 4000;
+/** I-048: runtime/CLI/SDK per-call ceiling for `maxChars`; larger values are rejected. */
+export const MAX_PAGE_TEXT_CHARS = 100_000;
+/** I-048: MCP ceiling for `maxChars`/`textMaxChars` (client output limits, e.g. Claude Code's 25k-token default). */
+export const MCP_MAX_PAGE_TEXT_CHARS = 40_000;
+
+/** Result of {@link SutradharRuntime.readTextWindow}: one window of the page text plus the totals. */
+export interface PageTextResult {
+  sessionId: string;
+  tabId: string;
+  url: string;
+  /** The window. Never contains the truncation marker (see `formatPageTextMarker`). */
+  text: string;
+  /** Effective start (UTF-16 code units, i.e. JS string indices). May be one less than requested when the requested
+   *  offset landed inside a surrogate pair. */
+  offset: number;
+  /** `text.length`. May be `maxChars + 1` when the window was extended to keep a surrogate pair whole. */
+  returnedChars: number;
+  /** Full length of the page text. */
+  totalChars: number;
+  /** `offset > 0 || offset + returnedChars < totalChars` (and false for an empty page). */
+  truncated: boolean;
+  source: 'dom' | 'pdf';
 }
 
 /** Result of {@link SutradharRuntime.click} and {@link SutradharRuntime.type}. */
@@ -324,6 +357,10 @@ export function normalizeTarget(target: ElementTarget): string {
   // A pure-numeric target is interpreted as a sd-node-id stamped by the DOM semantic engine —
   // checked first (D6) so node ids never pay for the dialect scan below.
   if (/^\d+$/.test(trimmed)) return `[data-sd-node-id="${trimmed}"]`;
+  // I-049: `snap` prints ids as `[#5]`, so `#5` and `[#5]` (whole target, trimmed) are node ids too. `#<digit>` is
+  // not valid CSS, so nothing real is shadowed; `#5]`, `[#5`, `#5 > span` and `#a5` do not match and fall through.
+  const bracketed = /^#(\d+)$/.exec(trimmed) ?? /^\[#(\d+)\]$/.exec(trimmed);
+  if (bracketed) return `[data-sd-node-id="${bracketed[1]}"]`;
   assertSupportedSelectorDialect(target);
   return target;
 }

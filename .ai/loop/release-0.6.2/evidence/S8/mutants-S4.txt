@@ -1,0 +1,35 @@
+BASELINE browser exit=0 tests=13 passed (13)
+BASELINE runtime exit=0 tests=1 passed (1)
+M-047a KILLED exit=1 (3 failed | 10 passed (13)) restored-sha-equal=true :: resolveElement loop wrapper reverted
+    killed by: I-047 resolveElement (browser-action-engine) > U1 loop path: main has no match, A is probed and detaches B, C 
+    killed by: I-047 resolveElement (browser-action-engine) > U2 loop path, no match anywhere, frames detaching every pass ->
+    killed by: I-047 resolveElement (browser-action-engine) > U4 head start: main detached at call time -> falls into the loo
+M-047b KILLED exit=1 (1 failed | 12 passed (13)) restored-sha-equal=true :: buildGraph wrapper reverted
+    killed by: I-047 buildGraph (dom-semantic-engine) > U5: main scraped 5 nodes; child X detaches while main is scraped -> 5
+M-047c KILLED exit=1 (12 failed | 1 passed (13)) restored-sha-equal=true :: frameCall non-async (op(f).catch(e => { throw e }))
+    killed by: I-047 frame-detach containment: control > frameCall turns a synchronous throw into a rejection and passes a va
+    killed by: I-047 resolveElement (browser-action-engine) > U1 loop path: main has no match, A is probed and detaches B, C 
+    killed by: I-047 resolveElement (browser-action-engine) > U2 loop path, no match anywhere, frames detaching every pass ->
+    killed by: I-047 resolveElement (browser-action-engine) > U3 single-frame path: the only frame is detached by the time of
+M-047d KILLED exit=1 (1 failed | 12 passed (13)) restored-sha-equal=true :: single-frame path reverted
+    killed by: I-047 resolveElement (browser-action-engine) > U3 single-frame path: the only frame is detached by the time of
+M-047e KILLED exit=1 (1 failed | 12 passed (13)) restored-sha-equal=true :: head start reverted
+    killed by: I-047 resolveElement (browser-action-engine) > U4 head start: main detached at call time -> falls into the loo
+M-047f KILLED exit=1 (1 failed | 12 passed (13)) restored-sha-equal=true :: per-frame catch clears allNodes
+    killed by: I-047 buildGraph (dom-semantic-engine) > U5: main scraped 5 nodes; child X detaches while main is scraped -> 5
+M-047h KILLED exit=1 (1 failed | 12 passed (13)) restored-sha-equal=true :: post-conditions disposeKeyObservation (631)
+    killed by: I-047 post-conditions > U6a disposeKeyObservation ("never throws"): detached frame -> resolves
+M-047i KILLED exit=1 (1 failed | 12 passed (13)) restored-sha-equal=true :: post-conditions finishKeyObservation (647)
+    killed by: I-047 post-conditions > U6b finishKeyObservation: detached frame -> resolves with a verdict (postError recorde
+M-047j KILLED exit=1 (1 failed | 12 passed (13)) restored-sha-equal=true :: post-conditions NavigationProbe.finish status read (1197)
+    killed by: I-047 post-conditions > U6f NavigationProbe.finish: the status read on a detached main frame is dropped, finis
+M-047k KILLED exit=1 (1 failed | 12 passed (13)) restored-sha-equal=true :: post-conditions finishPointObservation (1548)
+    killed by: I-047 post-conditions > U6c finishPointObservation: detached frame -> resolves with navigated=true (isContextD
+M-047l KILLED exit=1 (1 failed | 12 passed (13)) restored-sha-equal=true :: post-conditions observeUploadTargets (1735)
+    killed by: I-047 post-conditions > U6d observeUploadTargets: main frame detached -> resolves {error}, never throws
+M-047m KILLED exit=1 (1 failed | 12 passed (13)) restored-sha-equal=true :: post-conditions removeUploadListener (1743)
+    killed by: I-047 post-conditions > U6e removeUploadListener ("best-effort cleanup", never throws): detached frame -> reso
+M-047g KILLED exit=1 (1 failed (1)) restored-sha-equal=true :: runtime uploadFileViaTrigger page.click reverted to a bare array element
+    killed by: I-047 uploadFileViaTrigger: synchronous detached-frame throw from page.click > rejects with the detached error
+SUMMARY mutants=13 killed=13 survivors=0
+rc=0

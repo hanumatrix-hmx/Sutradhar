@@ -33,6 +33,7 @@ import { readFile, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { formatAuditText, auditNotes, auditExitCode } from './audit-output.js';
 import { dialogOutputSink, dialogBlockedJsonDoc, printDialogBlockedJsonOnce, writeJsonStdoutOnce } from './dialog-json-routing.js';
+import { runTextCommand } from './text-output.js';
 import { readState, writeState, clearState, STATE_DIR, type CliState } from './state.js';
 import { spawnDetachedChrome, killChromeTree, discardSpawnedProfile } from './spawn-chrome.js';
 import { attachOrDiscard } from './spawn-session.js';
@@ -70,7 +71,8 @@ import {
   type BrokerDialog,
   type CrashedTab,
 } from './dialog-broker.js';
-import { withSessionFlow } from './session-flow.js';
+import { withSessionFlow, isLaunchCapable, NoSessionError } from './session-flow.js';
+import { runHistoryCommand, type HistoryVerb } from './history-output.js';
 import {
   ensureWarden,
   stopWarden,
@@ -113,6 +115,9 @@ const {
   expectUrlChangedConflict,
   waitForFlags,
   waitForFlagError,
+  textOffsetFlag,
+  textMaxCharsFlag,
+  textPagingFlagError,
   unrecognizedFlags,
 } = parseArgs(process.argv.slice(2));
 
@@ -449,6 +454,9 @@ async function withSession<T>(
   const verbClass = classifyVerb(verb);
 
   const sessionId = await withSessionFlow<string>({
+    // I-051: only nav/newtab/audit with a url and compare with two may start a browser; every other verb fails with a hint.
+    mayLaunch: isLaunchCapable(verb, cleanArgs),
+    noSession: () => new NoSessionError(verb),
     readState: async () => readState(),
     spawnFresh: async () => spawnFreshSession(runtime),
     gate: async (rawState) => {
@@ -787,6 +795,24 @@ async function cmdNav(url: string | undefined) {
   });
 }
 
+/** I-NAV: `back` / `forward` / `reload` on the active tab. Success is judged by the verification's history index (see
+ *  history-output.ts); a beforeunload cancelled by `--dialog dismiss` is detected from the dialog history (S1 spike SP-1). */
+async function cmdHistory(kind: HistoryVerb) {
+  const startedAt = Date.now();
+  await withSession(async (runtime, sessionId) => {
+    const out = await runHistoryCommand(runtime, sessionId, {
+      verb: kind,
+      expect: expectFlag,
+      settle,
+      jsonMode,
+      startedAt,
+    });
+    for (const line of out.stdout) console.log(line);
+    for (const line of out.stderr) console.error(line);
+    if (out.exitCode !== 0) process.exitCode = out.exitCode;
+  });
+}
+
 async function cmdSnap(jsonMode: boolean) {
   await withSession(async (runtime, sessionId) => {
     if (jsonMode) {
@@ -835,10 +861,30 @@ async function cmdAxSnap() {
   });
 }
 
+/**
+ * I-048: prints one window of the page text (default the first 4000 characters, `--offset`/`--max-chars` to page) and,
+ * when the read was not complete, a marker line saying how much there is and where to continue. A failed read
+ * (`PageTextReadError`, matched by name: the class is duplicated per bundle) is reported here — `Error: text read
+ * failed: <reason>` on stderr, nothing on stdout, exit 1 — instead of 0.6.1's empty line with exit 0. It never reaches
+ * `main().catch`'s `Fatal:` path. `text` no longer goes through `snapshot()`, so it does not re-stamp node ids.
+ */
 async function cmdText() {
   await withSession(async (runtime, sessionId) => {
-    const snap = await runtime.snapshot(sessionId);
-    console.log(snap.pageText);
+    const out = await runTextCommand(runtime, sessionId, {
+      ...(textOffsetFlag !== undefined ? { offset: textOffsetFlag } : {}),
+      ...(textMaxCharsFlag !== undefined ? { maxChars: textMaxCharsFlag } : {}),
+      jsonMode,
+    });
+    for (const line of out.stderr) console.error(line);
+    if (jsonMode && out.stdout.length > 0) {
+      writeJsonStdoutOnce(out.stdout[0]!);
+    } else {
+      for (const line of out.stdout) console.log(line);
+    }
+    if (out.exitCode !== 0) {
+      finalExitCode = out.exitCode;
+      process.exitCode = out.exitCode;
+    }
   });
 }
 
@@ -1220,7 +1266,7 @@ async function cmdGrant(origin: string | undefined, permissions: string[]) {
     printErrorAndExit(
       'usage: sutradhar grant <origin> <permission...>  ' +
         '(e.g. sutradhar grant https://example.com clipboard-read clipboard-write — required before ' +
-        'setclipboard/getclipboard will work against most real sites)',
+        'setclipboard/getclipboard will work against most real sites; needs an active session: run nav first)',
     );
   }
   await withSession(async (runtime, sessionId) => {
@@ -1762,6 +1808,10 @@ async function main() {
   if (baselineFlagGivenButInvalid) {
     printErrorAndExit('--baseline requires a URL (e.g. audit <url> --baseline https://prod.example.com)');
   }
+  // I-048: --offset/--max-chars are validated here, before withSession: a bad value never touches the browser.
+  if (textPagingFlagError) {
+    printErrorAndExit(textPagingFlagError);
+  }
   const dialogErr = dialogFlagError({ verb, dialogFlag, dialogFlagGivenButInvalid, dialogTextFlag });
   if (dialogErr) {
     printErrorAndExit(dialogErr);
@@ -1793,6 +1843,12 @@ async function main() {
       return cmdDoctor();
     case 'nav':
       return cmdNav(cleanArgs[0]);
+    case 'back':
+      return cmdHistory('back');
+    case 'forward':
+      return cmdHistory('forward');
+    case 'reload':
+      return cmdHistory('reload');
     case 'snap':
       return cmdSnap(jsonMode);
     case 'axsnap':
@@ -1861,7 +1917,17 @@ async function main() {
 Usage: sutradhar <command> [args] [--headed] [--profile <name>] [--allowlist-domains <domains>]
 
 Commands:
-  nav <url>                    Navigate to a URL (launches a session if none is active)
+  nav <url>                    Navigate to a URL (launches a session if none is active). Only nav <url>,
+                                newtab <url>, audit <url> and compare <urlA> <urlB> start a session; every
+                                other command needs one already open ("sutradhar nav <url>" first) and
+                                exits 1 with "no active browser session" otherwise — it does not start one.
+  back | forward | reload      Go back / forward one history entry on the active tab, or reload it (take
+                                --settle, --expect-*, --json, --dialog). back/forward print "Navigated back to
+                                <url>" / "Navigated forward to <url>" (same-page pushState/#hash entries count);
+                                at the start/end of history they print "Back: no history entry to go back to" /
+                                "Forward: no forward history entry" and exit 1 even with --expect-*. reload
+                                prints "Reloaded <url>". A beforeunload dialog dismissed by --dialog dismiss
+                                cancels the move (exit 1, after Chrome's ~30s navigation timeout).
   snap                         Print the interactive-element listing for the current page
   snap --json                  Same, plus the raw structured element data as JSON
   snap --no-text                Same elements, drops name/label/placeholder/value text
@@ -1873,14 +1939,21 @@ Commands:
                                 SortableJS-style drag lists. Slower; real CDP introspection.
   axsnap                       Accessibility-tree listing — no ids, never goes stale even if
                                 the page re-renders; pair with clicktext/clickrole below
-  text                         Print the current page's visible text
+  text [--offset N] [--max-chars N] [--json]
+                               Print the current page's visible text: the first 4000 characters by
+                                default. When the page has more, the last stdout line is a marker
+                                "[page text truncated: showing characters 0-4000 of N. Continue with:
+                                sutradhar text --offset 4000]"; page with --offset N, or raise
+                                --max-chars (1..100000). --json prints the window plus totals as one
+                                JSON document (no marker line). A page that cannot be read exits 1
+                                with "Error: text read failed: <reason>".
   click <ref>                  Click an element (selector, or a numeric id from "snap")
   clicktext <text>             Click the element containing this text (from "axsnap")
   clickrole <role> [name]      Click by accessibility role, optionally narrowed by name
                                 (from "axsnap", e.g. clickrole button Submit)
-  Selectors are CSS (shadow roots crossed), a numeric id from "snap", or pierce/ xpath/ aria/
-                                text/; Playwright syntax (text=, >>, role=) is rejected — use
-                                clicktext/clickrole.
+  Selectors are CSS (shadow roots crossed), a numeric id from "snap" (7, #7 or [#7], as
+                                printed), or pierce/ xpath/ aria/ text/; Playwright syntax
+                                (text=, >>, role=) is rejected — use clicktext/clickrole.
   type <ref> <text>            Type text into an element
   press <ref> <key>            Focus an element then press a key (e.g. Enter)
   press <ref> <key> --modifiers Control,Shift
@@ -1936,6 +2009,7 @@ Commands:
                                 Grant browser permissions for an origin (e.g. clipboard-read,
                                 clipboard-write, geolocation, notifications) — needed before
                                 setclipboard/getclipboard work against most real sites
+                                (needs an active session; run nav first)
   setclipboard <text>          Set the system clipboard (e.g. to then paste into a rich-text
                                 editor via press <ref> v --modifiers Control)
   getclipboard                 Print the current system clipboard contents
@@ -2129,6 +2203,13 @@ if (verb === '__dialog-warden') {
         console.error(DIALOG_HINT(err.dialogs[0]?.dialogType ?? 'unknown'));
         finalExitCode = err.exitCode;
         process.exitCode = err.exitCode;
+        return;
+      }
+      if ((err as Error)?.name === 'NoSessionError') {
+        // I-051: a read/act verb with no session. One line on stderr, exit 1, stdout empty (also with --json).
+        console.error(`Error: ${(err as Error).message}`);
+        finalExitCode = 1;
+        process.exitCode = 1;
         return;
       }
       if (err instanceof ProjectConfigError || (err as Error)?.name === 'ProjectConfigError') {

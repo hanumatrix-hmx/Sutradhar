@@ -36,7 +36,7 @@ import {
 } from '@sutradhar/capability-runtime';
 import { Browser, type LaunchOptions } from './browser.js';
 
-export const SUTRADHAR_VERSION = '0.6.1';
+export const SUTRADHAR_VERSION = '0.6.2';
 
 /**
  * Launch a browser and return a {@link Browser} handle. Resolves once the browser process
@@ -140,6 +140,11 @@ export {
 } from './page.js';
 export {
   SutradharRuntime,
+  PageTextReadError,
+  formatPageTextMarker,
+  DEFAULT_PAGE_TEXT_MAX_CHARS,
+  MAX_PAGE_TEXT_CHARS,
+  type PageTextResult,
   type SnapshotResult,
   ProfileManager,
   type ProfileInfo,

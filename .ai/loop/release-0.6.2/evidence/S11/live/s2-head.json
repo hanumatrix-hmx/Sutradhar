@@ -1,0 +1,88 @@
+{
+  "bundle": "E:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/packages/sutradhar/dist/index.js",
+  "bundleSha256": "162462793c5e0d045697f5ad05e90936150730d374b2dcc31f7ff0aa04efea21",
+  "hasReadTextWindow": true,
+  "checks": {
+    "FULL.length >= 10000": {
+      "ok": true,
+      "detail": 10037
+    },
+    "S2-1 default window length 4000": {
+      "ok": true,
+      "detail": 4000
+    },
+    "S2-1 totalChars == FULL.length": {
+      "ok": true,
+      "detail": {
+        "totalChars": 10037,
+        "full": 10037
+      }
+    },
+    "S2-1 truncated": {
+      "ok": true
+    },
+    "S2-1 windows concatenate to FULL exactly": {
+      "ok": true,
+      "detail": {
+        "windows": 3,
+        "accLen": 10037
+      }
+    },
+    "S2-1 windows differ (>= 3 distinct)": {
+      "ok": true,
+      "detail": 3
+    },
+    "S2-1 snapshot() carries the first window + totals": {
+      "ok": true,
+      "detail": {
+        "pageTextLength": 4000,
+        "pageTextTotalChars": 10037,
+        "pageTextTruncated": true,
+        "hasPageTextError": false
+      }
+    },
+    "maxChars 100000 returns FULL, not truncated": {
+      "ok": true
+    },
+    "offset past end: empty, truncated, totals": {
+      "ok": true,
+      "detail": {
+        "sessionId": "sess_1791137627751_1",
+        "tabId": "tab_sess_1791137627751_1_1",
+        "url": "http://127.0.0.1:51062/long?n=10000",
+        "text": "",
+        "offset": 10042,
+        "returnedChars": 0,
+        "totalChars": 10037,
+        "truncated": true,
+        "source": "dom"
+      }
+    },
+    "maxChars 0 -> TypeError": {
+      "ok": true,
+      "detail": "maxChars must be an integer from 1 to 100000 (got 0)"
+    },
+    "short pageText length > 200": {
+      "ok": true,
+      "detail": 299
+    },
+    "short: pageTextTruncated false, total == length": {
+      "ok": true,
+      "detail": {
+        "t": false,
+        "n": 299
+      }
+    }
+  },
+  "fullLength": 10037,
+  "snapLong": {
+    "pageTextLength": 4000,
+    "pageTextTotalChars": 10037,
+    "pageTextTruncated": true,
+    "hasPageTextError": false
+  },
+  "shortPageText": "Short fixture page. Short fixture page. Short fixture page. Short fixture page. Short fixture page. Short fixture page. Short fixture page. Short fixture page. Short fixture page. Short fixture page. Short fixture page. Short fixture page. Short fixture page. Short fixture page. Short fixture page.",
+  "shortPageTextSha256": "0865be5f59c45e6a5741f64248f15735af062e471e94305f8d6891542e9b9724",
+  "shortLength": 299,
+  "allPass": true
+}

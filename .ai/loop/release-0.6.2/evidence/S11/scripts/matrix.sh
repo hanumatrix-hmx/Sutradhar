@@ -1,0 +1,18 @@
+#!/bin/bash
+# usage: matrix.sh STEP [entry...]   (runs the fixed test matrix; each entry one invocation per plan S1)
+STEP="$1"; shift
+SP="E:/AI-Cache/tmp/claude/E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad"; WT="E:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041"; EV="$WT/.ai/loop/release-0.6.2/evidence"; cd "$WT"
+ISO="$SP/r062/$STEP-tmp"; mkdir -p "$ISO" "$EV/$STEP"; : > "$ISO/.r062"
+ENTRIES="$@"
+[ -z "$ENTRIES" ] && ENTRIES="agent browser capability capability-runtime cli config contracts dev-runtime events llm mcp-server memory observability sdk storage sutradhar utils workflow apps-server frontend"
+for p in $ENTRIES; do
+  echo "=== $p start $(date +%T)"
+  case "$p" in
+    apps-server) dir=apps/server; cmd="vitest run --globals" ;;
+    frontend) dir=packages/frontend; cmd="vitest run --config vitest.config.ts" ;;
+    *) dir=packages/$p; cmd="vitest run --globals" ;;
+  esac
+  (cd "$dir" && TEMP="$ISO" TMP="$ISO" TMPDIR="$ISO" NODE_OPTIONS="--import=file:///$SP/iso/assert-tmp.mjs" SUTRADHAR_CLI_DEBUG_CLEANUP=1 timeout 900 ../../node_modules/.bin/$cmd > "$EV/$STEP/test-$p.log" 2>&1; echo "exit=$?" >> "$EV/$STEP/test-$p.log")
+  tail -1 "$EV/$STEP/test-$p.log"
+done
+echo "=== matrix done $(date +%T)"

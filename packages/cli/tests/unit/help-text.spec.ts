@@ -126,3 +126,36 @@ describe('@sutradhar/cli --help text (GAP-315 cleanup diagnostics)', () => {
     expect(envSection).toContain('[cleanup]');
   });
 });
+
+describe('@sutradhar/cli --help text (I-048 text paging)', () => {
+  it('lists text [--offset N] [--max-chars N] [--json] and explains the truncation marker', () => {
+    expect(helpText).toContain('text [--offset N] [--max-chars N] [--json]');
+    expect(helpText).toContain('[page text truncated');
+    expect(helpText).toContain('sutradhar text --offset');
+  });
+});
+
+describe('@sutradhar/cli --help text (I-051: no-session reads fail with a hint)', () => {
+  it('says only nav (and newtab/audit/compare with their urls) start a session, and that every other command needs one', () => {
+    expect(helpText).toContain('does not start one');
+    expect(helpText).toContain('sutradhar nav <url>');
+  });
+
+  it('the grant entry says it needs an active session (run nav first)', () => {
+    const grantIdx = helpText.indexOf('  grant <origin> <permission...>');
+    expect(grantIdx).toBeGreaterThan(-1);
+    const grantBlock = helpText.slice(grantIdx, helpText.indexOf('  setclipboard <text>', grantIdx));
+    expect(grantBlock).toContain('needs an active session; run nav first');
+  });
+});
+
+describe('@sutradhar/cli --help text (I-NAV: back / forward / reload)', () => {
+  it('lists back | forward | reload with their flags and the edge/exit-code behaviour', () => {
+    expect(helpText).toContain('back | forward | reload');
+    expect(helpText).toContain('--settle, --expect-*, --json, --dialog');
+    expect(helpText).toContain('Back: no history entry to go back to');
+    expect(helpText).toContain('Forward: no forward history entry');
+    expect(helpText).toContain('exit 1 even with --expect-*');
+    expect(helpText).toContain('Reloaded <url>');
+  });
+});

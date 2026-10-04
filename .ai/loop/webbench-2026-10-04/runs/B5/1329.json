@@ -1,0 +1,19 @@
+{
+  "id": 1329,
+  "slot": "B5",
+  "attempts": ["a1"],
+  "startedAt": "2026-10-04T10:34:34Z",
+  "endedAt": "2026-10-04T10:35:43Z",
+  "answerFields": [],
+  "shortList": null,
+  "classification": "TASK-INVALID",
+  "subflag": "drift",
+  "disclosure": "",
+  "toolDefects": [],
+  "blockEvidence": {"logSeq": 0, "excerpt": ""},
+  "driftChecks": [12, 30],
+  "probe": null,
+  "uncitedValue": null,
+  "needsCurlControl": false,
+  "notes": "Contact page /contact-us (text seq 12, links seq 10) lists only phone 800-789-7366 and online forms for customer service; no administrative customer-support email. The only email on the contact flow is VDP@pennmedicine.upenn.edu (mailto link seq 10, text seq 18) which is for reporting security vulnerabilities, not administrative support, so I did not report it (would be substitution). Second check: site search 'customer support email' (text seq 30, 509 results) showed only newsletter/subscription email pages. Judgement call; could be AGENT-FAIL/partial if a grader considers the VDP address the intended answer. Process notes: seq 5 click ids etc. not relevant; one useless refused/no-op drive call with a bogus verb 'click-placeholder' (stderr suppressed) was issued after seq 3; a type with '#5' failed exit 1 at seq 24 (selector style, my error), retried with 5. No path-mangled args."
+}

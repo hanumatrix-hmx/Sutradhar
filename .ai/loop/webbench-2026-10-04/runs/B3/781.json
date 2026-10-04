@@ -1,0 +1,19 @@
+{
+  "id": 781,
+  "slot": "B3",
+  "attempts": ["a1", "a2"],
+  "startedAt": "2026-10-04T10:24:13Z",
+  "endedAt": "2026-10-04T10:25:23Z",
+  "answerFields": [],
+  "shortList": null,
+  "classification": "EXTERNAL-BLOCK",
+  "subflag": "edge-deny",
+  "disclosure": "Home page loaded on both attempts; submitting the search 'cordless drill' via the site search box led to /s/cordless%20drill returning HTTP 403 with an error page, on both a1 and a2.",
+  "toolDefects": [],
+  "blockEvidence": {"logSeq": 39, "excerpt": "#1 Home Improvement Retailer\nOops!! Something went wrong. Please refresh page\nRefresh"},
+  "driftChecks": [],
+  "probe": null,
+  "uncitedValue": null,
+  "needsCurlControl": false,
+  "notes": "a1: search results page text at seq 21, status 403 at seq 23. a2: status 403 at seq 37, text at seq 39. First type/press attempts with '#49' failed on selector syntax (user error; node ids are passed as bare numbers)."
+}

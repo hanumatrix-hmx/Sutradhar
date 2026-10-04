@@ -21,6 +21,7 @@
  */
 
 import type { ElementHandle, Frame, Page } from 'puppeteer-core';
+import { frameCall } from '../actions/frame-call.js';
 import type {
   BuiltInVerdict,
   EvidenceCheck,
@@ -628,7 +629,10 @@ export async function observeFocusForKey(tab: ObservedTab): Promise<KeyPre> {
 /** Best-effort removal of an armed key listener when the press itself threw (never throws). */
 export async function disposeKeyObservation(pre: KeyPre): Promise<void> {
   if (!pre.frame || !pre.token || pre.target?.kind !== 'element') return;
-  await bounded(pre.frame.evaluate(readKeyObservationInPage, pre.token, ''), OBSERVE_AFTER_TIMEOUT_MS);
+  await bounded(
+    frameCall(pre.frame, (f) => f.evaluate(readKeyObservationInPage, pre.token!, '')),
+    OBSERVE_AFTER_TIMEOUT_MS,
+  );
 }
 
 /** Reads the armed observation back after the press and returns the verdict inputs. */
@@ -644,7 +648,10 @@ export async function finishKeyObservation(
     // A dialog froze the renderer's main thread: reading would hang until the bound expires.
     obs.dialogAfter = dialogNow;
   } else if (pre.frame && pre.token && pre.target?.kind === 'element') {
-    const r = await bounded(pre.frame.evaluate(readKeyObservationInPage, pre.token, params.key), OBSERVE_AFTER_TIMEOUT_MS);
+    const r = await bounded(
+      frameCall(pre.frame, (f) => f.evaluate(readKeyObservationInPage, pre.token!, params.key)),
+      OBSERVE_AFTER_TIMEOUT_MS,
+    );
     if (r.ok) {
       if ('missing' in r.value) obs.navigated = true;
       else obs.post = r.value;
@@ -1099,6 +1106,15 @@ export function decideNavigationVerdict(o: NavObservation): BuiltInVerdict {
       observed: after.index,
     });
     if (edge) {
+      // I-NAV: machine-readable edge marker, emitted ONLY at an edge (never on a not-moved index), right after the
+      // history-index check. Consumers (the CLI back/forward verbs) classify "no entry in this direction" from this
+      // check, never from the verdict reason text (which an `expect.*` failure replaces) or from `expected === -1`.
+      checks.push({
+        check: `${t}.history-edge`,
+        outcome: 'fail',
+        expected: 'a history entry in this direction',
+        observed: `index ${before.index} of ${before.count}`,
+      });
       outcome = 'fail';
       reason =
         t === 'go_back'
@@ -1194,12 +1210,14 @@ export class NavigationProbe {
         obs.after = r.value;
         if (this.before.loaderId !== undefined && r.value.loaderId !== this.before.loaderId) {
           const st = await bounded(
-            page.mainFrame().evaluate(() => {
-              const e = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming | undefined;
-              return e && typeof (e as unknown as { responseStatus?: number }).responseStatus === 'number'
-                ? (e as unknown as { responseStatus: number }).responseStatus
-                : 0;
-            }),
+            frameCall(page.mainFrame(), (f) =>
+              f.evaluate(() => {
+                const e = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming | undefined;
+                return e && typeof (e as unknown as { responseStatus?: number }).responseStatus === 'number'
+                  ? (e as unknown as { responseStatus: number }).responseStatus
+                  : 0;
+              }),
+            ),
             NAV_PROBE_TIMEOUT_MS,
           );
           if (st.ok) obs.status = st.value;
@@ -1545,7 +1563,10 @@ export async function finishPointObservation(
     // The click/drag opened a dialog (GAP-019): the renderer is frozen, so don't wait to read.
     obs.dialogAfter = dialogNow;
   } else if (arm.frame && arm.token && arm.hit) {
-    const r = await bounded(arm.frame.evaluate(readPointInPage, arm.token), OBSERVE_AFTER_TIMEOUT_MS);
+    const r = await bounded(
+      frameCall(arm.frame, (f) => f.evaluate(readPointInPage, arm.token!)),
+      OBSERVE_AFTER_TIMEOUT_MS,
+    );
     if (r.ok) {
       if ('missing' in r.value) obs.navigated = true;
       else obs.events = r.value.events;
@@ -1732,7 +1753,7 @@ export async function observeUploadTargets(tab: ObservedTab): Promise<UploadArm>
   if (!hasFrameApi(page)) return { skipped: 'no-frame-api' };
   const token = `__sdUp_${Math.random().toString(36).slice(2)}`;
   const frame: FrameLike = page.mainFrame();
-  const r = await bounded(frame.evaluate(armUploadListenerInPage, token), OBSERVE_BEFORE_TIMEOUT_MS);
+  const r = await bounded(frameCall(frame, (f) => f.evaluate(armUploadListenerInPage, token)), OBSERVE_BEFORE_TIMEOUT_MS);
   if (!r.ok) return { error: r.timedOut ? `no answer within ${OBSERVE_BEFORE_TIMEOUT_MS}ms` : (r.error ?? 'unknown error') };
   return { token, frame };
 }
@@ -1740,7 +1761,10 @@ export async function observeUploadTargets(tab: ObservedTab): Promise<UploadArm>
 /** Best-effort cleanup when the trigger click / chooser step threw. */
 export async function removeUploadListener(arm: UploadArm): Promise<void> {
   if (!arm.frame || !arm.token) return;
-  await bounded(arm.frame.evaluate(readUploadObservationInPage, arm.token, true), OBSERVE_BEFORE_TIMEOUT_MS);
+  await bounded(
+    frameCall(arm.frame, (f) => f.evaluate(readUploadObservationInPage, arm.token!, true)),
+    OBSERVE_BEFORE_TIMEOUT_MS,
+  );
 }
 
 /** Polls (≤ 500 ms) for a trusted change event, then reads the inputs and decides. */

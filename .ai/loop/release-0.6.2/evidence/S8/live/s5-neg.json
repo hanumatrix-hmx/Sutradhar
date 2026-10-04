@@ -1,0 +1,160 @@
+{
+  "mode": "neg",
+  "cliSha256": "9858726a291e844e1f84089b18310e90379140e2dfabf7b2fda80eb550b5c59b",
+  "bundleSha256": "ddaaa00191710fc772db1c93a14e469381f0a40020de930ffae198834fd8db19",
+  "mcpSha256": "55317c669c07bdb12812a787795470e6c988ae6b6f61921c4ebc968417ed8e2b",
+  "checks": {
+    "cli nav exit 0": {
+      "ok": true,
+      "detail": "Navigated to http://127.0.0.1:65339/nodeid\nTitle: Nodeid pag"
+    },
+    "state.userDataDir <= 200 chars and dirname == ISO": {
+      "ok": true,
+      "detail": {
+        "len": 199
+      }
+    },
+    "cli snap lists Go, Name input, the iframe and the in-frame button with ids": {
+      "ok": true,
+      "detail": {
+        "ids": {
+          "go": "1",
+          "inp": "2",
+          "ifr": "3",
+          "fgo": "4"
+        },
+        "snap": [
+          "Interactive elements (4):",
+          "[#1] button \"Go\"",
+          "[#2] input \"Name\"",
+          "[#3] iframe role=clickable",
+          "[#4 in iframe \"fr\" (http://127.0.0.1:65339/nodeid-frame)] button \"Frame Go\"",
+          ""
+        ]
+      }
+    },
+    "cli counter starts at 0 (independent read via eval)": {
+      "ok": true,
+      "detail": 0
+    },
+    "S5-3 NEG061 cli click \"#<go>\" exit 1 with the node-id hint, counter unchanged": {
+      "ok": true,
+      "detail": {
+        "code": 1,
+        "stderr": [
+          "Error: Invalid selector \"#1\" — this looks like a snapshot node id; pass just the number, e.g. \"1\". Use standard CSS or a snapshot node id (e.g. \"12\"); Puppeteer's pierce/, xpath/, aria/ and text/ prefixes also work for element actions. Playwright-style selectors (text=, role=, >>, :has-text(), getBy*(), internal:) are not supported: to target by visible text or accessible role/name, use click_by_text, click_by_role or type_by_label (CLI: clicktext, clickrole), or take a snapshot and use a node id.",
+          ""
+        ]
+      }
+    },
+    "S5-3 NEG061 cli click \"[#<go>]\" exit 1 with the hint": {
+      "ok": true,
+      "detail": {
+        "code": 1
+      }
+    },
+    "S5-3 NEG061 control: the bare number works (the counter is live)": {
+      "ok": true,
+      "detail": {
+        "code": 0
+      }
+    },
+    "S5-3 NEG061 eval --frame \"#<iframe>\" fails": {
+      "ok": true,
+      "detail": {
+        "code": 1,
+        "stderr": [
+          "Error: Invalid frameSelector \"#3\" (from the full chain \"#3\") — this looks like a snapshot node id; pass just the number, e.g. \"3\". Use standard CSS or a snapshot node id (e.g. \"12\"); Puppeteer's pierce/, xpath/, aria/ and text/ prefixes also work for element actions. Playwright-style selectors (text=, role=, >>, :has-text(), getBy*(), internal:) are not supported: to target by visible text or accessible role/name, use click_by_text, click_by_role or type_by_label (CLI: clicktext, clickrole), or take a snapshot and use a node id.",
+          ""
+        ]
+      }
+    },
+    "mcp snapshot lists the ids": {
+      "ok": true,
+      "detail": {
+        "go": "1",
+        "inp": "2",
+        "ifr": "3",
+        "fgo": "4"
+      }
+    },
+    "S5-3 NEG061 mcp browser.click {target:\"#<go>\"} isError with the hint, counter 0": {
+      "ok": true,
+      "detail": {
+        "text": "click failed: Invalid selector \"#1\" — this looks like a snapshot node id; pass just the number, e.g. \"1\". Use standard CSS or a snapshot node id (e.g. \"12\"); Pu"
+      }
+    },
+    "mcp shutdown_all": {
+      "ok": true
+    },
+    "mcp child exited": {
+      "ok": true
+    },
+    "sdk snapshot lists the ids": {
+      "ok": true,
+      "detail": {
+        "go": "1",
+        "inp": "2",
+        "ifr": "3",
+        "fgo": "4"
+      }
+    },
+    "S5-3 NEG061 sdk page.click(\"#<go>\") rejects with the hint, counter 0": {
+      "ok": true,
+      "detail": "Invalid selector \"#1\" — this looks like a snapshot node id; pass just the number, e.g. \"1\". Use standard CSS or a snapshot node id (e.g. \"12\"); Puppeteer's pier"
+    },
+    "cli close: state.json removed": {
+      "ok": true
+    },
+    "path-log check exit 0 (>= 1 [cleanup] line, none outside ISO)": {
+      "ok": true,
+      "detail": {
+        "exit": 0,
+        "out": [
+          "cleanup-lines=10 outside-iso=0"
+        ]
+      }
+    },
+    "attribution query: no Chrome with the ISO basename left": {
+      "ok": true,
+      "detail": []
+    },
+    "no timed-out CLI call": {
+      "ok": true
+    }
+  },
+  "ids": {
+    "go": "1",
+    "inp": "2",
+    "ifr": "3",
+    "fgo": "4"
+  },
+  "close": {
+    "code": 0
+  },
+  "mcpIds": {
+    "go": "1",
+    "inp": "2",
+    "ifr": "3",
+    "fgo": "4"
+  },
+  "sdkIds": {
+    "go": "1",
+    "inp": "2",
+    "ifr": "3",
+    "fgo": "4"
+  },
+  "isoCliDirsLeft": [],
+  "realTemp": {
+    "before": 5,
+    "after": 5,
+    "vanished": []
+  },
+  "pathCheck": {
+    "exit": 0,
+    "out": [
+      "cleanup-lines=10 outside-iso=0"
+    ]
+  },
+  "allPass": true
+}

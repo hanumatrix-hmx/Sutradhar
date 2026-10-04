@@ -1,0 +1,23 @@
+{
+  "id": 597,
+  "slot": "B6",
+  "attempts": ["a1"],
+  "startedAt": "2026-10-04T10:33:53Z",
+  "endedAt": "2026-10-04T10:35:02Z",
+  "answerFields": [
+    {"field": "article_title", "value": "The current state, challenges, and future directions of artificial intelligence in healthcare in Saudi Arabia: systematic review", "logSeq": 25, "excerpt": "The current state, challenges, and future directions of artificial intelligence in healthcare in Saudi Arabia: systematic review"},
+    {"field": "publication_date", "value": "07 April 2025", "logSeq": 25, "excerpt": "Front. Artif. Intell., 07 April 2025"},
+    {"field": "doi", "value": "https://doi.org/10.3389/frai.2025.1518440", "logSeq": 25, "excerpt": "Volume 8 - 2025 | https://doi.org/10.3389/frai.2025.1518440"}
+  ],
+  "shortList": null,
+  "classification": "COMPLETED",
+  "subflag": "strict",
+  "disclosure": "Took the top site-search result for 'artificial intelligence in healthcare' (the probe prescribed opening the top result). The article page shows 17 citations, 7.8k views; 'highly cited' is loosely satisfied (not the most-cited article on the site; no sort-by-citations was used).",
+  "toolDefects": [],
+  "blockEvidence": {"logSeq": 0, "excerpt": ""},
+  "driftChecks": [],
+  "probe": {"result": "pass", "logSeq": 23, "detail": "count \"mark\" = 44 (seq 19). clicktext with full title exit 0, Verification: verified (confidence 0.90) - 'click_by_text' has a built-in post-condition check; article page loaded (seq 25)."},
+  "uncitedValue": null,
+  "needsCurlControl": false,
+  "notes": "Cookie banner: clicked 'Reject non-essential cookies' (seq 9). seq 11 was a failed type with '#1' (exit 1, my syntax error; bare number needed). Process slip: seqs 19 and 21 (count mark, href) were issued in one shell command (chained), contrary to the brief; they ran sequentially."
+}

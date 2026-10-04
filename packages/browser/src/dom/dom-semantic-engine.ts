@@ -29,6 +29,7 @@
 
 import { Page, CDPSession, Frame } from 'puppeteer-core';
 import { IBrowserTab } from '../session/browser-tab.js';
+import { frameCall } from '../actions/frame-call.js';
 import { SemanticElementGraph, SemanticFrameRef, SkippedFrame, SkippedFrameReason } from './semantic-element-graph.js';
 import {
   orderSnapshotFrames,
@@ -389,17 +390,23 @@ export class DOMSemanticEngine implements IDOMSemanticEngine {
 
       for (const frame of ordered.slice(0, MAX_FRAMES)) {
         const isMain = frame === main;
-        const scrape = frame.evaluate(scrapeFrame, {
-          attrName: SD_NODE_ID_ATTR,
-          genAttr: SD_GENERATION_ATTR,
-          currentGenAttr: SD_CURRENT_GENERATION_ATTR,
-          fpAttr: SD_FINGERPRINT_ATTR,
-          selector: INTERACTIVE_SELECTOR,
-          generation,
-          startId: nextId,
-          maxStamped: MAX_STAMPED_ELEMENTS_PER_FRAME,
-          syntheticClickableRole: SYNTHETIC_CLICKABLE_ROLE,
-        });
+        // I-047: a child frame that detached while an earlier frame was scraped makes `frame.evaluate` throw
+        // SYNCHRONOUSLY (Puppeteer's throwIfDetached). frameCall turns that into a rejection, which the per-frame
+        // `try` below handles (D6: a detached frame is dropped silently) instead of reaching the outer catch-all
+        // that would discard the main frame's nodes.
+        const scrape = frameCall(frame, (f) =>
+          f.evaluate(scrapeFrame, {
+            attrName: SD_NODE_ID_ATTR,
+            genAttr: SD_GENERATION_ATTR,
+            currentGenAttr: SD_CURRENT_GENERATION_ATTR,
+            fpAttr: SD_FINGERPRINT_ATTR,
+            selector: INTERACTIVE_SELECTOR,
+            generation,
+            startId: nextId,
+            maxStamped: MAX_STAMPED_ELEMENTS_PER_FRAME,
+            syntheticClickableRole: SYNTHETIC_CLICKABLE_ROLE,
+          }),
+        );
         // An abandoned (timed-out) scrape must never surface as an unhandled rejection once it
         // eventually settles (the PROB-015 pattern).
         scrape.catch(() => {});

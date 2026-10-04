@@ -1,0 +1,21 @@
+{
+  "id": 982,
+  "slot": "B5",
+  "attempts": ["a1"],
+  "startedAt": "2026-10-04T10:38:07Z",
+  "endedAt": "2026-10-04T10:39:28Z",
+  "answerFields": [],
+  "shortList": null,
+  "classification": "AGENT-FAIL",
+  "subflag": "substitution",
+  "disclosure": "",
+  "toolDefects": [
+    {"logSeq": 19, "verb": "text", "exit": 0, "what": "Page text for /search?q=Non-Disclosure+Agreement stopped after 3 of 10 result cards (cut mid-sentence at 'DEFINITIONS For t'); read 'body' (seq 33) returned all 10 cards with Filed dates. Control: seq 33. Did not change the classification because the data was obtained via read."}
+  ],
+  "blockEvidence": {"logSeq": 0, "excerpt": ""},
+  "driftChecks": [],
+  "probe": null,
+  "uncitedValue": null,
+  "needsCurlControl": false,
+  "notes": "Search worked (seq 5-9, query q=Non-Disclosure+Agreement). The site shows contract titles and a 'Filed' date per result (read body, seq 33): 1 'NON-DISCLOSURE AGREEMENT' Filed December 26, 2022; 2 'NON-DISCLOSURE AGREEMENT' Filed July 01, 2021; 3 'NON-DISCLOSURE AGREEMENT' Filed September 06, 2020; 4 'Non disclosure agreement template word' Filed January 29, 2022; 5 'Non-Disclosure Agreement' Filed February 02, 2023. The site never shows an 'effective date' (first contract page text seq 37 had no effective/date/filed text), and does not map Filed to effective date, so per interpretation rules reporting Filed as effective_date would be substitution; recorded as AGENT-FAIL/substitution rather than COMPLETED. A grader may reasonably disagree. Cookie banner only offered 'Accept All Cookies'; not accepted, text remained readable. Process notes: seq 29-31 had two drive calls chained in one shell command (read body | grep -c and count); no side effects."
+}

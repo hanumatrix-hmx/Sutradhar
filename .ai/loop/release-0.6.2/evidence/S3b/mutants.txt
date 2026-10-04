@@ -1,0 +1,30 @@
+BASELINE exit=0 tests=95 passed (95)
+M-048k KILLED exit=1 (1 failed | 94 passed (95)) restored-sha-equal=true :: snapshot ignores textMaxChars (always 2000)
+    FAIL  tests/unit/tools.spec.ts > I-048 page text: browser.snapshot textMaxChars + marker, browser.get_page_text > snapshot: textMaxChars defaults to 2000 and is forwarded
+M-048k2 KILLED exit=1 (1 failed | 94 passed (95)) restored-sha-equal=true :: snapshot default is not 2000
+    FAIL  tests/unit/tools.spec.ts > I-048 page text: browser.snapshot textMaxChars + marker, browser.get_page_text > snapshot: textMaxChars defaults to 2000 and is forwarded
+M-048k3 KILLED exit=1 (1 failed | 94 passed (95)) restored-sha-equal=true :: snapshot never renders the marker
+    FAIL  tests/unit/tools.spec.ts > I-048 page text: browser.snapshot textMaxChars + marker, browser.get_page_text > snapshot: marker is appended right after the Page text b
+M-048k4 KILLED exit=1 (1 failed | 94 passed (95)) restored-sha-equal=true :: snapshot never renders pageTextError
+    FAIL  tests/unit/tools.spec.ts > I-048 page text: browser.snapshot textMaxChars + marker, browser.get_page_text > snapshot: a page-text read failure is rendered as "Page 
+M-048k5 KILLED exit=1 (1 failed | 94 passed (95)) restored-sha-equal=true :: snapshot marker rendered even when pageTextTruncated is false
+    FAIL  tests/unit/tools.spec.ts > I-048 page text: browser.snapshot textMaxChars + marker, browser.get_page_text > snapshot: no marker when the text is complete, nor when 
+M-048k6 KILLED exit=1 (1 failed | 94 passed (95)) restored-sha-equal=true :: schema ceiling removed (snapshot + get_page_text)
+    FAIL  tests/unit/tools.spec.ts > I-048 page text: browser.snapshot textMaxChars + marker, browser.get_page_text > schemas reject textMaxChars 0 / 40001 / -1, offset -1, m
+M-048l KILLED exit=1 (1 failed | 94 passed (95)) restored-sha-equal=true :: get_page_text ignores offset
+    FAIL  tests/unit/tools.spec.ts > I-048 page text: browser.snapshot textMaxChars + marker, browser.get_page_text > get_page_text: forwards a given offset and maxChars (M-0
+M-048l2 KILLED exit=1 (1 failed | 94 passed (95)) restored-sha-equal=true :: get_page_text ignores maxChars
+    FAIL  tests/unit/tools.spec.ts > I-048 page text: browser.snapshot textMaxChars + marker, browser.get_page_text > get_page_text: forwards a given offset and maxChars (M-0
+M-048l3 KILLED exit=1 (3 failed | 92 passed (95)) restored-sha-equal=true :: get_page_text drops the marker
+    FAIL  tests/unit/tools.spec.ts > I-048 page text: browser.snapshot textMaxChars + marker, browser.get_page_text > get_page_text: reads via readTextWindow with offset/maxC
+    FAIL  tests/unit/tools.spec.ts > I-048 page text: browser.snapshot textMaxChars + marker, browser.get_page_text > get_page_text: forwards a given offset and maxChars (M-0
+    FAIL  tests/unit/tools.spec.ts > I-048 page text: browser.snapshot textMaxChars + marker, browser.get_page_text > get_page_text: the last window carries the (end) marker;
+M-048m KILLED exit=1 (4 failed | 91 passed (95)) restored-sha-equal=true :: tool missing from EXPECTED_BROWSER_TOOLS (count test)
+    FAIL  tests/unit/tools.spec.ts > @sutradhar/mcp-server registerTools > registers every expected browser.* tool exactly once, and nothing extra
+    FAIL  tests/unit/tools.spec.ts > @sutradhar/mcp-server FR2-09 frame/shadow labels > M1: registering tools does not change the total tool count
+    FAIL  tests/unit/tools.spec.ts > browser.audit (FR2-12) > M1: EXPECTED_BROWSER_TOOLS contains browser.audit and the count test passes with it
+M-048s KILLED exit=1 (1 failed | 94 passed (95)) restored-sha-equal=true :: get_page_text returns empty text instead of isError on a read error
+    FAIL  tests/unit/tools.spec.ts > I-048 page text: browser.snapshot textMaxChars + marker, browser.get_page_text > get_page_text: a PageTextReadError (matched by name) ret
+M-048s2 KILLED exit=1 (1 failed | 94 passed (95)) restored-sha-equal=true :: read error not matched by name
+    FAIL  tests/unit/tools.spec.ts > I-048 page text: browser.snapshot textMaxChars + marker, browser.get_page_text > get_page_text: a PageTextReadError (matched by name) ret
+SUMMARY mutants=12 survivors=0

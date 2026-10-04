@@ -1,0 +1,12 @@
+[iso-guard] tmpdir=e:/ai-cache/tmp/claude/e--hmx-projects-internal-projects-pinchtab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/a8t pid=75464
+[probe] CLI=E:/AI-Cache/tmp/claude/E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/r062/S8/dc/dist/cli-bin.mutant.js sha256=957251f33706ba6d883c093e799dc269166c2dd6bf8c56fdf9386f1ae0041164 PROBES=P3
+[iso-guard] tmpdir=e:/ai-cache/tmp/claude/e--hmx-projects-internal-projects-pinchtab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/a8t pid=61304
+[probe] fixture {"a":"http://127.0.0.1:64518","b":"http://127.0.0.1:64519"}
+PASS P3 nav 0
+PASS P3 the text really changed between paged reads (>= 2 distinct totals) 28
+PASS P3 >= 2 plain windows with marker A at offset > 0 (hint checked away from offset 0) [["A",0],["json",4000],["A",8000],["json",12000],["A",16000],["json",20000],["B",24000],["json",25661],["B",26402],["json",27065],["B",27689],["json",28313],["B",28976],["json",29639],["B",30302],["json",30926],["B",31550],["json",32213],["B",32876],["json",33539],["B",34202],["json",34865],["B",35528],["json",36230],["B",36932],["json",37595],["B",38258],["json",38921]]
+FAIL P3 every window: marker/JSON numbers describe the returned text (end-offset == length, A iff end < total, hint == end) [{"i":2,"mode":"plain","shape":"A","offset":8000,"end":12000,"total":24374,"hint":4000,"selfConsistent":false,"textIsSnapshotWindow":true,"totalIsLineBoundary":true},{"i":4,"mode":"plain","shape":"A","offset":16000,"end":20000,"total":24998,"hint":4000,"selfConsistent":false,"textIsSnapshotWindow":true,"totalIsLineBoundary":true}]
+PASS P3 every window is exactly FINAL[offset:end] of a real snapshot whose total is a line boundary (prefix-growing page) []
+PASS P3 concatenation of windows == FINAL {"acc":38999,"final":38999}
+PASS path-log check exit 0 ["cleanup-lines=10 outside-iso=0"]
+OWN-PROBES FAILED (1)

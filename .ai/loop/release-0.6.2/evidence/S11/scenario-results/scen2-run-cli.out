@@ -1,0 +1,95 @@
+[
+  {
+    "id": "UC-01",
+    "title": "Bot detection surface",
+    "success": true,
+    "ms": 3015,
+    "error": null
+  },
+  {
+    "id": "UC-02",
+    "title": "CAPTCHA grounding (not solving)",
+    "success": true,
+    "ms": 5354,
+    "error": null
+  },
+  {
+    "id": "UC-04",
+    "title": "Canvas blindness (Google Maps)",
+    "success": true,
+    "ms": 6515,
+    "error": null
+  },
+  {
+    "id": "UC-05",
+    "title": "Long 10+ step flow",
+    "success": false,
+    "ms": 236641,
+    "error": "could not find cart icon link in snap after add-to-cart"
+  },
+  {
+    "id": "UC-06",
+    "title": "Modals + dynamic content",
+    "success": false,
+    "ms": 41765,
+    "error": "navigation failed (dynamic_loading nav)"
+  },
+  {
+    "id": "UC-07",
+    "title": "Cross-origin iframe (TinyMCE)",
+    "success": true,
+    "ms": 11505,
+    "error": null
+  },
+  {
+    "id": "UC-08",
+    "title": "File download",
+    "success": false,
+    "ms": 32014,
+    "error": "navigation failed (download page nav)"
+  },
+  {
+    "id": "UC-09",
+    "title": "Multi-tab / popup",
+    "success": false,
+    "ms": 32746,
+    "error": "navigation failed (windows page nav)"
+  },
+  {
+    "id": "UC-10",
+    "title": "Prompt injection exposure",
+    "success": true,
+    "ms": 3581,
+    "error": null
+  },
+  {
+    "id": "UC-11",
+    "title": "Token efficiency",
+    "success": true,
+    "ms": 13661,
+    "error": null
+  },
+  {
+    "id": "UC-12",
+    "title": "Outcome verification after a state-changing action",
+    "success": false,
+    "ms": 17311,
+    "error": "independent re-read did not confirm cart badge=1 and button label flip to Remove"
+  },
+  {
+    "id": "UC-13",
+    "title": "Speed",
+    "success": true,
+    "ms": 5592,
+    "error": null
+  },
+  {
+    "id": "UC-14",
+    "title": "Accessibility-only grounding (no CSS-selectable name)",
+    "success": true,
+    "ms": 9814,
+    "error": null
+  }
+]
+
+Saved full results to E:\HMX_Projects\Internal_Projects\PinchTab\.claude\worktrees\project-understanding-696041\tools\scenario-suite\results\baseline-cli.json

@@ -17,6 +17,7 @@ import type {
   ActionResult,
   DownloadResult,
   NavigateResult,
+  PageTextResult,
   ScreenshotResult,
   VerificationResultDto,
 } from '@sutradhar/capability-runtime';
@@ -250,6 +251,23 @@ export class Page {
    */
   public async snapshot(): Promise<SnapshotResult> {
     return this.runtime.snapshot(this.sessionId, this.tabId);
+  }
+
+  /**
+   * Read one window of this page's visible text, with the totals, so a long page can be read in full:
+   * `let off = 0; do { const r = await page.text({ offset: off }); use(r.text); off += r.returnedChars; } while (off < r.totalChars);`.
+   * Defaults: `offset` 0, `maxChars` {@link DEFAULT_PAGE_TEXT_MAX_CHARS} (4000); `maxChars` is at most {@link MAX_PAGE_TEXT_CHARS}.
+   *
+   * `result.text` is the raw window and never contains the truncation marker; `truncated`, `totalChars`, `offset` and
+   * `returnedChars` say what you got (render a marker with {@link formatPageTextMarker} if you want one). A window never
+   * splits a UTF-16 surrogate pair, so `returnedChars` can be `maxChars + 1` and `offset` can be one less than requested.
+   *
+   * Rejects with {@link PageTextReadError} (`error.name === 'PageTextReadError'`) when the text cannot be read, including a
+   * PDF whose text cannot be extracted (bundled builds, PROB-052); it never resolves with empty text for a failed read.
+   * Invalid `offset`/`maxChars` reject with `TypeError` before the browser is touched.
+   */
+  public async text(options?: { offset?: number; maxChars?: number }): Promise<PageTextResult> {
+    return this.runtime.readTextWindow(this.sessionId, this.tabId, options);
   }
 
   /**

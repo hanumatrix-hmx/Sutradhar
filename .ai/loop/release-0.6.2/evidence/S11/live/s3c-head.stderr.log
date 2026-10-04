@@ -1,0 +1,11 @@
+[iso-guard] tmpdir=e:/ai-cache/tmp/claude/e--hmx-projects-internal-projects-pinchtab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/sgt pid=56540
+[harness] BUNDLE=E:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/packages/sutradhar/dist/index.js sha256=162462793c5e0d045697f5ad05e90936150730d374b2dcc31f7ff0aa04efea21 tmpdir=e:/ai-cache/tmp/claude/e--hmx-projects-internal-projects-pinchtab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/sgt
+PASS FULL via page.evaluate, L >= 10000 10037
+PASS S3c-1 page.text() fields {"keys":["sessionId","tabId","url","text","offset","returnedChars","totalChars","truncated","source"]}
+PASS S3c-1 result text never contains the marker
+PASS S3c-1 paging concatenation == page.evaluate FULL, windows differ {"windows":3}
+PASS S3c-2 page.snapshot() additive fields {"total":10037,"trunc":true}
+PASS S3c-3 /long-emoji: no window ends on a lone high or starts on a lone low surrogate; paging at 4 sizes reproduces the text []
+PASS S3c-4 {maxChars:0} -> TypeError "maxChars must be an integer from 1 to 100000 (got 0)"
+PASS attribution query: no Chrome with the ISO basename after browser.close() []
+LIVE-SDK-TEXT OK

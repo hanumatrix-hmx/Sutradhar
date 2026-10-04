@@ -1,0 +1,452 @@
+{
+  "mode": "head",
+  "cliSha256": "eaa4751d59d586032f3f5ea15fd8d0826d8fca685cf31572118acd4f056a6d32",
+  "checks": {
+    "S6-3 no session: \"text\" -> exit 1, stderr is exactly the hint line, no Fatal:, stdout empty, no state.json/warden.json": {
+      "ok": false,
+      "detail": {
+        "args": "text",
+        "code": 1,
+        "stderrLines": [],
+        "stdoutEmpty": false,
+        "exact": false,
+        "noFatal": true,
+        "stateFiles": []
+      }
+    },
+    "S6-3 no session: \"snap\" -> exit 1, stderr is exactly the hint line, no Fatal:, stdout empty, no state.json/warden.json": {
+      "ok": false,
+      "detail": {
+        "args": "snap",
+        "code": 1,
+        "stderrLines": [],
+        "stdoutEmpty": false,
+        "exact": false,
+        "noFatal": true,
+        "stateFiles": []
+      }
+    },
+    "S6-3 no session: \"axsnap\" -> exit 1, stderr is exactly the hint line, no Fatal:, stdout empty, no state.json/warden.json": {
+      "ok": false,
+      "detail": {
+        "args": "axsnap",
+        "code": 1,
+        "stderrLines": [],
+        "stdoutEmpty": false,
+        "exact": false,
+        "noFatal": true,
+        "stateFiles": []
+      }
+    },
+    "S6-3 no session: \"click 1\" -> exit 1, stderr is exactly the hint line, no Fatal:, stdout empty, no state.json/warden.json": {
+      "ok": false,
+      "detail": {
+        "args": "click 1",
+        "code": 1,
+        "stderrLines": [],
+        "stdoutEmpty": false,
+        "exact": false,
+        "noFatal": true,
+        "stateFiles": []
+      }
+    },
+    "S6-3 no session: \"type 1 x\" -> exit 1, stderr is exactly the hint line, no Fatal:, stdout empty, no state.json/warden.json": {
+      "ok": false,
+      "detail": {
+        "args": "type 1 x",
+        "code": 1,
+        "stderrLines": [],
+        "stdoutEmpty": false,
+        "exact": false,
+        "noFatal": true,
+        "stateFiles": []
+      }
+    },
+    "S6-3 no session: \"press 1 Enter\" -> exit 1, stderr is exactly the hint line, no Fatal:, stdout empty, no state.json/warden.json": {
+      "ok": false,
+      "detail": {
+        "args": "press 1 Enter",
+        "code": 1,
+        "stderrLines": [],
+        "stdoutEmpty": false,
+        "exact": false,
+        "noFatal": true,
+        "stateFiles": []
+      }
+    },
+    "S6-3 no session: \"screenshot\" -> exit 1, stderr is exactly the hint line, no Fatal:, stdout empty, no state.json/warden.json": {
+      "ok": false,
+      "detail": {
+        "args": "screenshot",
+        "code": 1,
+        "stderrLines": [],
+        "stdoutEmpty": false,
+        "exact": false,
+        "noFatal": true,
+        "stateFiles": []
+      }
+    },
+    "S6-3 no session: \"eval 1\" -> exit 1, stderr is exactly the hint line, no Fatal:, stdout empty, no state.json/warden.json": {
+      "ok": false,
+      "detail": {
+        "args": "eval 1",
+        "code": 1,
+        "stderrLines": [],
+        "stdoutEmpty": false,
+        "exact": false,
+        "noFatal": true,
+        "stateFiles": []
+      }
+    },
+    "S6-3 no session: \"tabs\" -> exit 1, stderr is exactly the hint line, no Fatal:, stdout empty, no state.json/warden.json": {
+      "ok": false,
+      "detail": {
+        "args": "tabs",
+        "code": 1,
+        "stderrLines": [],
+        "stdoutEmpty": false,
+        "exact": false,
+        "noFatal": true,
+        "stateFiles": []
+      }
+    },
+    "S6-3 no session: \"waitfor 1000 --text x\" -> exit 1, stderr is exactly the hint line, no Fatal:, stdout empty, no state.json/warden.json": {
+      "ok": false,
+      "detail": {
+        "args": "waitfor 1000 --text x",
+        "code": 1,
+        "stderrLines": [],
+        "stdoutEmpty": false,
+        "exact": false,
+        "noFatal": true,
+        "stateFiles": []
+      }
+    },
+    "S6-3 no session: \"scroll\" -> exit 1, stderr is exactly the hint line, no Fatal:, stdout empty, no state.json/warden.json": {
+      "ok": false,
+      "detail": {
+        "args": "scroll",
+        "code": 1,
+        "stderrLines": [],
+        "stdoutEmpty": false,
+        "exact": false,
+        "noFatal": true,
+        "stateFiles": []
+      }
+    },
+    "S6-3 no session: \"grant http://127.0.0.1:53457 clipboard-read\" -> exit 1, stderr is exactly the hint line, no Fatal:, stdout empty, no state.json/warden.json": {
+      "ok": false,
+      "detail": {
+        "args": "grant http://127.0.0.1:53457 clipboard-read",
+        "code": 1,
+        "stderrLines": [],
+        "stdoutEmpty": false,
+        "exact": false,
+        "noFatal": true,
+        "stateFiles": []
+      }
+    },
+    "S6-3 no session: \"getclipboard\" -> exit 1, stderr is exactly the hint line, no Fatal:, stdout empty, no state.json/warden.json": {
+      "ok": false,
+      "detail": {
+        "args": "getclipboard",
+        "code": 1,
+        "stderrLines": [],
+        "stdoutEmpty": false,
+        "exact": false,
+        "noFatal": true,
+        "stateFiles": []
+      }
+    },
+    "S6-3 no session: \"newtab\" -> exit 1, stderr is exactly the hint line, no Fatal:, stdout empty, no state.json/warden.json": {
+      "ok": false,
+      "detail": {
+        "args": "newtab",
+        "code": 1,
+        "stderrLines": [],
+        "stdoutEmpty": false,
+        "exact": false,
+        "noFatal": true,
+        "stateFiles": []
+      }
+    },
+    "S6-3 no session: \"audit\" -> exit 1, stderr is exactly the hint line, no Fatal:, stdout empty, no state.json/warden.json": {
+      "ok": false,
+      "detail": {
+        "args": "audit",
+        "code": 1,
+        "stderrLines": [],
+        "stdoutEmpty": false,
+        "exact": false,
+        "noFatal": true,
+        "stateFiles": []
+      }
+    },
+    "S6-3 no session: \"snap --json\" -> exit 1, stderr is exactly the hint line, no Fatal:, stdout empty, no state.json/warden.json": {
+      "ok": false,
+      "detail": {
+        "args": "snap --json",
+        "code": 1,
+        "stderrLines": [],
+        "stdoutEmpty": false,
+        "exact": false,
+        "noFatal": true,
+        "stateFiles": []
+      }
+    },
+    "S6-3 afterwards: no sutradhar-cli-* under ISO": {
+      "ok": true,
+      "detail": []
+    },
+    "S6-3 afterwards: the CIM attribution query for the ISO basename returns 0 Chrome processes": {
+      "ok": true,
+      "detail": []
+    },
+    "S6-4 nav <url> from no state launches (exit 0, state.json appears)": {
+      "ok": true,
+      "detail": {
+        "code": 0,
+        "out": "Navigated to http://127.0.0.1:53457/short\nTitle: Short page\nVerificati"
+      }
+    },
+    "state.userDataDir <= 200 chars and dirname == ISO": {
+      "ok": true,
+      "detail": {
+        "len": 199
+      }
+    },
+    "S6-3 state present: `text` right after `nav` is unchanged (exit 0, > 200 chars, no hint)": {
+      "ok": true,
+      "detail": {
+        "code": 0,
+        "len": 300
+      }
+    },
+    "close after nav: exit 0 and state.json gone": {
+      "ok": true,
+      "detail": {
+        "code": 0
+      }
+    },
+    "S6-3 smoke: nav, close, then `text` -> exit 1 with the hint, nothing launched": {
+      "ok": false,
+      "detail": {
+        "code": 1,
+        "lines": []
+      }
+    },
+    "S6-4 newtab <url> from no state launches (exit 0, state.json appears)": {
+      "ok": true,
+      "detail": {
+        "code": 0,
+        "out": "New tab tab_sess_1791136012637_1_2 opened at http://127.0.0.1:53457/short\n"
+      }
+    },
+    "S6-4 tabs then lists the new tab URL": {
+      "ok": true,
+      "detail": "  tab_sess_1791136012637_1_1  Short page  http://127.0.0.1:53457/short\n* tab_sess_1791136012637_1_2  New tab  chrome://new-tab-page/\n"
+    },
+    "close after newtab": {
+      "ok": true
+    },
+    "S6-4 audit <url> from no state launches and runs (exit 0)": {
+      "ok": true,
+      "detail": {
+        "code": 0,
+        "out": "URL: http://127.0.0.1:53457/short\nTitle: Short page\nScreenshot: E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects"
+      }
+    },
+    "close after audit: state.json gone": {
+      "ok": true
+    },
+    "S6-4 compare <a> <b> from no state launches and runs (exit 0)": {
+      "ok": true,
+      "detail": {
+        "code": 0,
+        "out": "http://127.0.0.1:53457/short vs http://127.0.0.1:53457/hist/a\nDiff: 4945 / 480000 pixels (1.03%)\nDiff image: E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Pro"
+      }
+    },
+    "close after compare: state.json gone": {
+      "ok": true
+    },
+    "no state.json left in any state dir at the end": {
+      "ok": true,
+      "detail": []
+    },
+    "path-log check exit 0 (>= 1 [cleanup] line, none outside ISO)": {
+      "ok": true,
+      "detail": {
+        "exit": 0,
+        "out": [
+          "cleanup-lines=40 outside-iso=0"
+        ]
+      }
+    },
+    "attribution query: no Chrome with the ISO basename left at the end": {
+      "ok": true,
+      "detail": []
+    },
+    "no timed-out CLI call": {
+      "ok": true
+    }
+  },
+  "negatives": [
+    {
+      "args": "text",
+      "code": 1,
+      "stderrLines": [],
+      "stdoutEmpty": false,
+      "exact": false,
+      "noFatal": true,
+      "stateFiles": []
+    },
+    {
+      "args": "snap",
+      "code": 1,
+      "stderrLines": [],
+      "stdoutEmpty": false,
+      "exact": false,
+      "noFatal": true,
+      "stateFiles": []
+    },
+    {
+      "args": "axsnap",
+      "code": 1,
+      "stderrLines": [],
+      "stdoutEmpty": false,
+      "exact": false,
+      "noFatal": true,
+      "stateFiles": []
+    },
+    {
+      "args": "click 1",
+      "code": 1,
+      "stderrLines": [],
+      "stdoutEmpty": false,
+      "exact": false,
+      "noFatal": true,
+      "stateFiles": []
+    },
+    {
+      "args": "type 1 x",
+      "code": 1,
+      "stderrLines": [],
+      "stdoutEmpty": false,
+      "exact": false,
+      "noFatal": true,
+      "stateFiles": []
+    },
+    {
+      "args": "press 1 Enter",
+      "code": 1,
+      "stderrLines": [],
+      "stdoutEmpty": false,
+      "exact": false,
+      "noFatal": true,
+      "stateFiles": []
+    },
+    {
+      "args": "screenshot",
+      "code": 1,
+      "stderrLines": [],
+      "stdoutEmpty": false,
+      "exact": false,
+      "noFatal": true,
+      "stateFiles": []
+    },
+    {
+      "args": "eval 1",
+      "code": 1,
+      "stderrLines": [],
+      "stdoutEmpty": false,
+      "exact": false,
+      "noFatal": true,
+      "stateFiles": []
+    },
+    {
+      "args": "tabs",
+      "code": 1,
+      "stderrLines": [],
+      "stdoutEmpty": false,
+      "exact": false,
+      "noFatal": true,
+      "stateFiles": []
+    },
+    {
+      "args": "waitfor 1000 --text x",
+      "code": 1,
+      "stderrLines": [],
+      "stdoutEmpty": false,
+      "exact": false,
+      "noFatal": true,
+      "stateFiles": []
+    },
+    {
+      "args": "scroll",
+      "code": 1,
+      "stderrLines": [],
+      "stdoutEmpty": false,
+      "exact": false,
+      "noFatal": true,
+      "stateFiles": []
+    },
+    {
+      "args": "grant http://127.0.0.1:53457 clipboard-read",
+      "code": 1,
+      "stderrLines": [],
+      "stdoutEmpty": false,
+      "exact": false,
+      "noFatal": true,
+      "stateFiles": []
+    },
+    {
+      "args": "getclipboard",
+      "code": 1,
+      "stderrLines": [],
+      "stdoutEmpty": false,
+      "exact": false,
+      "noFatal": true,
+      "stateFiles": []
+    },
+    {
+      "args": "newtab",
+      "code": 1,
+      "stderrLines": [],
+      "stdoutEmpty": false,
+      "exact": false,
+      "noFatal": true,
+      "stateFiles": []
+    },
+    {
+      "args": "audit",
+      "code": 1,
+      "stderrLines": [],
+      "stdoutEmpty": false,
+      "exact": false,
+      "noFatal": true,
+      "stateFiles": []
+    },
+    {
+      "args": "snap --json",
+      "code": 1,
+      "stderrLines": [],
+      "stdoutEmpty": false,
+      "exact": false,
+      "noFatal": true,
+      "stateFiles": []
+    }
+  ],
+  "isoCliDirsLeft": [],
+  "realTemp": {
+    "before": 5,
+    "after": 5,
+    "vanished": []
+  },
+  "pathCheck": {
+    "exit": 0,
+    "out": [
+      "cleanup-lines=40 outside-iso=0"
+    ]
+  },
+  "allPass": false
+}

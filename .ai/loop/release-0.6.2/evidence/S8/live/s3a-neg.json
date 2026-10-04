@@ -1,0 +1,124 @@
+{
+  "mode": "neg",
+  "cli": "E:/AI-Cache/tmp/claude/E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/v061/inst/node_modules/sutradhar/dist/cli-bin.js",
+  "cliSha256": "9858726a291e844e1f84089b18310e90379140e2dfabf7b2fda80eb550b5c59b",
+  "bundleSha256": "ddaaa00191710fc772db1c93a14e469381f0a40020de930ffae198834fd8db19",
+  "noMutants": true,
+  "checks": {
+    "a nav exit 0": {
+      "ok": true,
+      "detail": {
+        "code": 0,
+        "out": "Navigated to http://127.0.0.1:60095/long?n=10000\nTitle: Long page\nVerification: "
+      }
+    },
+    "a state.userDataDir <= 200 chars and dirname == ISO": {
+      "ok": true,
+      "detail": {
+        "udd": "E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\N8t\\sutradhar-cli-1791132658722-mMl5sP",
+        "len": 199
+      }
+    },
+    "a L >= 10000 and FULL.length == L": {
+      "ok": true,
+      "detail": {
+        "L": 10037,
+        "full": 10037
+      }
+    },
+    "k NEG061 text stdout length 4001 (4000 + newline), no marker": {
+      "ok": true,
+      "detail": {
+        "len": 4001
+      }
+    },
+    "NEG061 rejects --offset as an unrecognized flag (exit 1)": {
+      "ok": true,
+      "detail": "[iso-guard] tmpdir=e:/ai-cache/tmp/claude/e--hmx-projects-internal-projects-pinchtab--claude-worktre"
+    },
+    "i NEG061 control: old `text` re-stamps ids (G changes) - the check can detect it": {
+      "ok": true,
+      "detail": {
+        "G1": "1791132660861",
+        "G2": "1791132661476"
+      }
+    },
+    "f short page text: exit 0, length > 200, no marker": {
+      "ok": true,
+      "detail": {
+        "len": 300
+      }
+    },
+    "g2 NEG061 control: old text on the same PDF = one empty line, exit 0 (silent data loss)": {
+      "ok": true,
+      "detail": {
+        "len": 1,
+        "stdout": "\n",
+        "stderrNonGuard": [
+          "Warning: Cannot load \"@napi-rs/canvas\" package: \"Error: Cannot find module '@napi-rs/canvas'",
+          "Require stack:",
+          "- E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\v061\\inst\\node_modules\\sutradhar\\dist\\cli-bin.js\".",
+          "Warning: Cannot polyfill `DOMMatrix`, rendering may be broken."
+        ]
+      }
+    },
+    "close: state.json removed": {
+      "ok": true
+    },
+    "path-log check exit 0 (>= 1 [cleanup] line, none outside ISO)": {
+      "ok": true,
+      "detail": {
+        "exit": 0,
+        "out": [
+          "cleanup-lines=10 outside-iso=0"
+        ]
+      }
+    },
+    "no timed-out CLI call": {
+      "ok": true
+    }
+  },
+  "L": 10037,
+  "fullLength": 10037,
+  "negTextLength": 4001,
+  "i": {
+    "G1": "1791132660861",
+    "G2": "1791132661476"
+  },
+  "shortStdout": "Short fixture page. Short fixture page. Short fixture page. Short fixture page. Short fixture page. Short fixture page. Short fixture page. Short fixture page. Short fixture page. Short fixture page. Short fixture page. Short fixture page. Short fixture page. Short fixture page. Short fixture page.\n",
+  "shortLength": 300,
+  "shortSha256": "c5ca6a0cce7cf769e1753ed7aaf03b5ddae9b620f4957123cf979e5140b173f3",
+  "pdfBytes": 86327,
+  "j": {
+    "evalCode": 0,
+    "code": 3,
+    "stdout": "dialogPending: {\"type\":\"alert\",\"message\":\"x\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:60095/long?n=10000\"}\n",
+    "stderr": [
+      "[iso-guard] tmpdir=e:/ai-cache/tmp/claude/e--hmx-projects-internal-projects-pinchtab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/n8t pid=90784",
+      "Error: a alert dialog is open and blocking the page, so \"text\" did not run.",
+      "Hint: a alert dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unknown\", that same command identifies the specific tab that may be holding it and, when the dialog warden can prove which one it actually is, recovers by closing just that tab (never a different, healthy tab it merely shares a browser process with) — otherwise it explains why it won't guess and leaves every tab open. \"sutradhar tabs\" and \"sutradhar closetab <id>\" keep working while a page is blocked or has crashed (they list and close tabs at the browser level and never attach to the blocked page), so a stuck tab can always be closed without ending the session. If nothing else works, \"sutradhar close\" ends the whole session so you can start a fresh one."
+    ]
+  },
+  "negJRecorded": true,
+  "dialogDismiss": {
+    "code": 0,
+    "stdout": "Dismissed alert \"x\"\n"
+  },
+  "close": {
+    "code": 0
+  },
+  "stateGone": true,
+  "isoCliDirsLeft": [],
+  "realTemp": {
+    "before": 5,
+    "after": 5,
+    "vanished": []
+  },
+  "pathCheck": {
+    "exit": 0,
+    "out": [
+      "cleanup-lines=10 outside-iso=0"
+    ]
+  },
+  "allPass": true
+}

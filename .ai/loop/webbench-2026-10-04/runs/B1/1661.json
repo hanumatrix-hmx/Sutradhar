@@ -1,0 +1,19 @@
+{
+  "id": 1661,
+  "slot": "B1",
+  "attempts": ["a1", "a2"],
+  "startedAt": "2026-10-04T10:29:50Z",
+  "endedAt": "2026-10-04T10:31:30Z",
+  "answerFields": [],
+  "shortList": null,
+  "classification": "EXTERNAL-BLOCK",
+  "subflag": "challenge",
+  "disclosure": "Cloudflare 'Just a moment...' / 'Performing security verification' interstitial (HTTP 403) on both a1 and a2; not solved or clicked.",
+  "toolDefects": [],
+  "blockEvidence": {"logSeq": 19, "excerpt": "Performing security verification\n\nThis website uses a security service to protect against malicious bots. This page is displayed while the website verifies you are not a bot."},
+  "driftChecks": [],
+  "probe": null,
+  "uncitedValue": null,
+  "needsCurlControl": false,
+  "notes": "a1 evidence seq 7 identical. No viewport-suspect. The --js interstitial waits at seq 5 and 9 failed ('Unexpected token') because Git Bash mangled the leading-slash regex argument (orchestrator-confirmed environment issue, not a Sutradhar defect); the proper 30s wait therefore did not run on either attempt; a --text wait substituted at seq 13 timed out, and a2 re-navigated and showed the same challenge (seq 19). Block is therefore confirmed by two navs but the corrected JS wait was not run."
+}

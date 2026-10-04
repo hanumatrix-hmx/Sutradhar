@@ -1,0 +1,16 @@
+# check-inventory on HEAD (re-keyed), --no-unsafe
+sites=210 rows=210 missing=0 extra=0 duplicates=0 unclassified=0 unsafe=0
+CHECK-INVENTORY OK
+exit=0
+# negative control 1: one row removed
+sites=210 rows=209 missing=1 extra=0 duplicates=0 unclassified=0 unsafe=0
+MISSING packages/cli/src/cli.ts:896:33
+CHECK-INVENTORY FAILED
+exit=1
+# negative control 2: the OLD (S4-keyed) md against the HEAD sites
+sites=210 rows=210 missing=16 extra=16 duplicates=0 unclassified=0 unsafe=0
+exit=1
+# negative control 3: one row flipped to UNSAFE
+FAIL: 1 UNSAFE row(s) remain
+CHECK-INVENTORY FAILED
+exit=1

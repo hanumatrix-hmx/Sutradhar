@@ -1,0 +1,100 @@
+=== mutant S6/e (mut-S6-e) 23:16:24
+mutant S6/e written, replacements=1
+VERDICT S6/e KILLED (harness rc=1, FAIL lines=17)
+FAIL S6-3 no session: "text" -> exit 1, stderr is exactly the hint line, no Fatal:, stdout empty, no state.json/warden.json {"args":"text","code":1,"stderrLines":["Fatal: no active browser session — \"text\" needs an o
+FAIL S6-3 no session: "snap" -> exit 1, stderr is exactly the hint line, no Fatal:, stdout empty, no state.json/warden.json {"args":"snap","code":1,"stderrLines":["Fatal: no active browser session — \"snap\" needs an o
+FAIL S6-3 no session: "axsnap" -> exit 1, stderr is exactly the hint line, no Fatal:, stdout empty, no state.json/warden.json {"args":"axsnap","code":1,"stderrLines":["Fatal: no active browser session — \"axsnap\" need
+[live.sh] leftover PIDs with scratchpad/A8t in command line: []
+[live.sh] ISO deleted
+mutant-files-left=0
+=== mutant OWN/o051 (mut-own-051) 23:16:45
+mutant OWN/o051 written, replacements=1
+VERDICT OWN/o051 KILLED (harness rc=1, FAIL lines=17)
+FAIL S6-3 no session: "text" -> exit 1, stderr is exactly the hint line, no Fatal:, stdout empty, no state.json/warden.json {"args":"text","code":1,"stderrLines":[],"stdoutEmpty":false,"exact":false,"noFatal":true,"state
+FAIL S6-3 no session: "snap" -> exit 1, stderr is exactly the hint line, no Fatal:, stdout empty, no state.json/warden.json {"args":"snap","code":1,"stderrLines":[],"stdoutEmpty":false,"exact":false,"noFatal":true,"state
+FAIL S6-3 no session: "axsnap" -> exit 1, stderr is exactly the hint line, no Fatal:, stdout empty, no state.json/warden.json {"args":"axsnap","code":1,"stderrLines":[],"stdoutEmpty":false,"exact":false,"noFatal":true,"s
+[live.sh] leftover PIDs with scratchpad/A8t in command line: []
+[live.sh] ISO deleted
+mutant-files-left=0
+=== mutant OWN/o048 (mut-own-048) 23:17:06
+mutant OWN/o048 written, replacements=1
+VERDICT OWN/o048 KILLED (harness rc=1, FAIL lines=1)
+FAIL c last marker is B naming the end "[page text truncated: showing characters 8000-10037 of 10037. Continue with: sutradhar text --offset 10037]"
+[live.sh] leftover PIDs with scratchpad/A8t in command line: []
+[live.sh] ISO deleted
+mutant-files-left=0
+=== mutant S7/a (mut-S7-a) 23:17:24
+mutant S7/a written, replacements=1
+VERDICT S7/a KILLED (harness rc=1, FAIL lines=10)
+FAIL S7-1 H1 back: exit 0, first line "Navigated back to <a>", then Title and Verification {"code":0,"out":["Back requested; the history move could not be confirmed ('go_forward' completed, but its post-condition check f
+FAIL S7-1 H1 independent read: eval location.href == <a>
+FAIL S7-1 H1 forward: exit 0, "Navigated forward to <b>" {"code":1,"out":["Forward: no forward history entry (still on http://127.0.0.1:60449/hist/b)"]}
+[live.sh] leftover PIDs with scratchpad/A8t in command line: []
+[live.sh] ISO deleted
+mutant-files-left=0
+=== mutant S7/d (mut-S7-d) 23:17:37
+mutant S7/d written, replacements=1
+VERDICT S7/d KILLED (harness rc=1, FAIL lines=3)
+FAIL S7-2 H1-SPA back: exit 0 and "Navigated back to <spa>#2" {"code":1,"out":["Back: no history entry to go back to (still on http://127.0.0.1:50264/hist/spa#2)"],"err":[]}
+FAIL S7-2 H1-SPA second back: exit 0 and "Navigated back to <spa>" (no hash) {"code":1,"out":["Back: no history entry to go back to (still on http://127.0.0.1:50264/hist/spa)"]}
+FAIL S7-2 H1-SPA forward: exit 0 and "Navigated forward to <spa>#2" {"code":1,"out":["Forward: no forward history entry (still on http://127.0.0.1:50264/hist/spa#2)"]}
+[live.sh] leftover PIDs with scratchpad/A8t in command line: []
+[live.sh] ISO deleted
+mutant-files-left=0
+=== mutant S7/b (mut-S7-b) 23:17:51
+mutant S7/b written, replacements=1
+VERDICT S7/b KILLED (harness rc=1, FAIL lines=10)
+FAIL S7-3 H2 forward at the newest entry: exit 1, stdout exactly the forward-edge line {"code":1,"out":["Navigated forward to http://127.0.0.1:50857/hist/a"],"err":[]}
+FAIL S7-3 H2 the edge back: exit 1 with "Back: no history entry to go back to (still on <url>)" {"code":1,"out":["Navigated back to chrome://new-tab-page/"],"err":[]}
+FAIL S7-3 H2 the edge line names the real current URL {"first":"Navigated back to chrome://new-tab-page/","atEdgeUrl":"chrome://new-tab-page/"}
+[live.sh] leftover PIDs with scratchpad/A8t in command line: []
+[live.sh] ISO deleted
+mutant-files-left=0
+=== mutant S7/e (mut-S7-e) 23:18:02
+mutant S7/e written, replacements=1
+VERDICT S7/e KILLED (harness rc=1, FAIL lines=3)
+FAIL S7-3 H2 forward --expect-url-changed at the newest entry: exit 1 (edge outranks the failed expectation, NOT 4) {"code":4,"out":["Forward: no forward history entry (still on http://127.0.0.1:50264/hist/a)"],"err":["E
+FAIL S7-3 H2 forward --expect-url /zzz-never at the edge: exit 1 {"code":4}
+FAIL S7-3 H2 back --expect-url-changed at the edge: exit 1 (not 4) {"code":4,"out":["Back: no history entry to go back to (still on chrome://new-tab-page/)"]}
+[live.sh] leftover PIDs with scratchpad/A8t in command line: []
+[live.sh] ISO deleted
+mutant-files-left=0
+=== mutant S7/f (mut-S7-f) 23:18:13
+mutant S7/f written, replacements=1
+VERDICT S7/f KILLED (harness rc=1, FAIL lines=3)
+FAIL S7-3 H2 forward --expect-url-changed at the newest entry: exit 1 (edge outranks the failed expectation, NOT 4) {"code":4,"out":["Verification: NOT verified — contradicted (confidence 0.09) — Expected URL change 
+FAIL S7-3 H2 forward --expect-url /zzz-never at the edge: exit 1 {"code":4}
+FAIL S7-3 H2 back --expect-url-changed at the edge: exit 1 (not 4) {"code":4,"out":["Verification: NOT verified — contradicted (confidence 0.09) — Expected URL change from chrome://new-tab-page/, but URL remained chr
+[live.sh] leftover PIDs with scratchpad/A8t in command line: []
+[live.sh] ISO deleted
+mutant-files-left=0
+=== mutant OWN/onav (mut-own-nav) 23:18:23
+mutant OWN/onav written, replacements=1
+VERDICT OWN/onav KILLED (harness rc=1, FAIL lines=1)
+FAIL S7-3 H2 back --json at the edge: parseable JSON on stdout containing the go_back.history-edge check, the edge line on stderr, exit 1 {"code":1,"hasDoc":false,"err":[]}
+[live.sh] leftover PIDs with scratchpad/A8t in command line: []
+[live.sh] ISO deleted
+mutant-files-left=0
+=== mutant S7/c (mut-S7-c) 23:18:33
+mutant S7/c written, replacements=1
+VERDICT S7/c KILLED (harness rc=1, FAIL lines=2)
+FAIL S7-4 H3 reload --dialog dismiss: exit 1, the cancel message on stdout, the /beforeunload hit counter unchanged {"code":1,"ms":281,"out":[],"err":["Note: dialog policy for this session is now \"dismiss\".","Fatal: ne
+FAIL S7-4 H3 back --dialog dismiss: exit 1, the cancel message on stdout, never "Navigated" {"code":1,"ms":30255,"out":[],"err":["Note: dialog policy for this session is now \"dismiss\".","Fatal: Navigation timeout of 30
+[live.sh] leftover PIDs with scratchpad/A8t in command line: []
+[live.sh] ISO deleted
+mutant-files-left=0
+=== mutant OWN/o048hint (mut-own-048hint) 23:19:22
+mutant OWN/o048hint written, replacements=1
+VERDICT OWN/o048hint KILLED (harness rc=1, FAIL lines=1)
+FAIL P3 every window: marker/JSON numbers describe the returned text (end-offset == length, A iff end < total, hint == end) [{"i":2,"mode":"plain","shape":"A","offset":8000,"end":12000,"total":24374,"hint":4000,"selfCons
+[live.sh] leftover PIDs with scratchpad/A8t in command line: []
+[live.sh] ISO deleted
+mutant-files-left=0
+=== mutant OWN/o048hint (mut-own-048hint-s3a) 23:19:42
+mutant OWN/o048hint written, replacements=1
+VERDICT OWN/o048hint NOT-KILLED-OR-NOT-RUN (rc=0 ran=1 fails=0)
+[live.sh] leftover PIDs with scratchpad/A8t in command line: []
+[live.sh] ISO deleted
+mutant-files-left=0
+f221f536b9655e5580752adf8189145b9c4d8bb7ed2108633c89f923f5cae346 *E:/AI-Cache/tmp/claude/E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/r062/S8/dc/dist/cli-bin.js
+=== live mutants done 23:20:01

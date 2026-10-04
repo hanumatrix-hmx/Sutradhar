@@ -1,0 +1,54 @@
+{
+  "_source": "https://github.com/Halluminate/WebBench (webbenchfinal.csv), fetched 2026-08-13",
+  "_note": "Second curated sample, chosen deliberately to avoid the three domains that dominated sample 1's failures (acehardware.com's anti-bot walls, agoda.com's login requirement, crunchbase.com's hard Cloudflare block). All READ tasks (WebBench's own most common category, 64.4% of the full set) across 8 distinct, generally lower-bot-protection domains (news, reference, government, recipes, classifieds), to get a real completion-rate number instead of another 0/7-external-blocks run. IDs match the dataset's own row IDs.",
+  "tasks": [
+    {
+      "id": 31,
+      "startingUrl": "https://www.alberta.ca",
+      "category": "READ",
+      "task": "Search for and summarize the eligibility criteria for the Alberta Job Grant program.\nOnly use http://alberta.ca to achieve the task. Don't go to any other site. The task is achievable with just navigation from this site."
+    },
+    {
+      "id": 46,
+      "startingUrl": "https://www.aljazeera.com",
+      "category": "READ",
+      "task": "Use the search function to find articles about \"climate change\" and provide the titles and publication dates of the first 5 results.\nOnly use http://aljazeera.com to achieve the task. Don't go to any other site. The task is achievable with just navigation from this site."
+    },
+    {
+      "id": 63,
+      "startingUrl": "https://www.allrecipes.com",
+      "category": "READ",
+      "task": "Search for a seasonal, fall-appropriate recipe and note the recommended serving size mentioned.\nOnly use http://allrecipes.com to achieve the task. Don't go to any other site. The task is achievable with just navigation from this site."
+    },
+    {
+      "id": 104,
+      "startingUrl": "https://apnews.com",
+      "category": "READ",
+      "task": "Use the website's search bar to look for articles containing \"climate change\" and list the titles of the first five articles returned.\nOnly use http://apnews.com to achieve the task. Don't go to any other site. The task is achievable with just navigation from this site."
+    },
+    {
+      "id": 145,
+      "startingUrl": "https://www.berkeley.edu",
+      "category": "READ",
+      "task": "Find the Library Services section and list two digital resources or databases available to students.\nOnly use http://berkeley.edu to achieve the task. Don't go to any other site. The task is achievable with just navigation from this site."
+    },
+    {
+      "id": 175,
+      "startingUrl": "https://www.britannica.com",
+      "category": "READ",
+      "task": "Investigate Mount Everest's elevation in different sources on the site, and check compare it with the height of K2 and see which is higher.\nOnly use http://britannica.com to achieve the task. Don't go to any other site. The task is achievable with just navigation from this site."
+    },
+    {
+      "id": 263,
+      "startingUrl": "https://www.collinsdictionary.com",
+      "category": "READ",
+      "task": "Browse the Collins Dictionary blog section for language learning tips and list the titles of the three most recent posts.\nOnly use http://collinsdictionary.com to achieve the task. Don't go to any other site. The task is achievable with just navigation from this site."
+    },
+    {
+      "id": 297,
+      "startingUrl": "https://newyork.craigslist.org",
+      "category": "READ",
+      "task": "Find Craigslist's Terms of Use and summarize the Disclaimer & Liability clause in three sentences.\nOnly use http://craigslist.org to achieve the task. Don't go to any other site. The task is achievable with just navigation from this site."
+    }
+  ]
+}

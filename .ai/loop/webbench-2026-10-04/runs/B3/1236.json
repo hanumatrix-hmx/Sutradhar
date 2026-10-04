@@ -1,0 +1,19 @@
+{
+  "id": 1236,
+  "slot": "B3",
+  "attempts": ["a1", "a2"],
+  "startedAt": "2026-10-04T10:25:23Z",
+  "endedAt": "2026-10-04T10:25:40Z",
+  "answerFields": [],
+  "shortList": null,
+  "classification": "EXTERNAL-BLOCK",
+  "subflag": "edge-deny",
+  "disclosure": "Both attempts redirected to siteclosed.nordstrom.com/invitation.html, a bot-traffic deny page. No product content was reachable.",
+  "toolDefects": [],
+  "blockEvidence": {"logSeq": 13, "excerpt": "We've noticed some unusual activity ... To keep our site secure, we don’t allow unidentified, automated traffic."},
+  "driftChecks": [],
+  "probe": null,
+  "uncitedValue": null,
+  "needsCurlControl": false,
+  "notes": "a1 text seq 5, a2 text seq 13; no reference id on the page so a2 was run to confirm."
+}

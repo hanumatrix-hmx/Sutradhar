@@ -139,8 +139,9 @@ if auto-detection fails.
 | Method | Description |
 |---|---|
 | `goto(url, options?)` | Navigate this tab to a URL; still returns the `Page` (chaining). The navigation's verification (did a new document commit? HTTP status?) is on `page.lastResult`. `options.expect` throws `ExpectationFailedError` when it doesn't hold. |
-| `snapshot()` | Interactive-element listing (`[#id]` stamped) + page text. |
-| `click(selector, options?)` | Click by CSS selector **or** `[#id]` from a snapshot. Returns the result (`{success, verification, …}`); throws `ActionFailedError` when the action failed. `options.settle` waits for the page to stop changing before returning (also accepted by `type`, `goto`, `press`, `scroll`, `download` and `uploadFile`; it cannot see a timer the page scheduled for later, use `waitFor` for that); `options.expect` (`{text?, url?, urlChanged?}`) is checked once after the action and throws `ExpectationFailedError` when it doesn't hold. A Playwright-style selector (`text=...`) throws `InvalidSelectorError`. |
+| `snapshot()` | Interactive-element listing (`[#id]` stamped) + the first window of the page text. The result also carries `pageTextTotalChars`, `pageTextTruncated` and `pageTextError` (set when the text could not be read; `snapshot()` itself stays tolerant). |
+| `text(options?)` | Read one window of the visible page text: `{ offset?, maxChars? }` (defaults 0 and 4000; `maxChars` at most `MAX_PAGE_TEXT_CHARS`). Resolves `{ text, offset, returnedChars, totalChars, truncated, source, ... }`; `text` never contains a truncation marker (render one with `formatPageTextMarker`). Page with `offset += returnedChars` until `offset >= totalChars`. Rejects with `PageTextReadError` (`error.name === "PageTextReadError"`) when the text cannot be read, never empty text; invalid `offset`/`maxChars` reject with `TypeError` before the browser is touched. |
+| `click(selector, options?)` | Click by CSS selector **or** `[#id]` from a snapshot (`"5"`, `"#5"` and `"[#5]"` all work as node ids). Returns the result (`{success, verification, …}`); throws `ActionFailedError` when the action failed. `options.settle` waits for the page to stop changing before returning (also accepted by `type`, `goto`, `press`, `scroll`, `download` and `uploadFile`; it cannot see a timer the page scheduled for later, use `waitFor` for that); `options.expect` (`{text?, url?, urlChanged?}`) is checked once after the action and throws `ExpectationFailedError` when it doesn't hold. A Playwright-style selector (`text=...`) throws `InvalidSelectorError`. |
 | `type(selector, text, options?)` | Type into an input (selector or `[#id]`). Same result/throw contract as `click`. |
 | `press(key, options?)` | Press a keyboard key (`"Enter"`, `"Escape"`, …). Same contract as `click`; the result's `verification` says whether the key reached the focused element and changed it (`contradicted` if not, `unverifiable` if nothing had focus). |
 | `waitForSelector(selector, options?)` | Wait for `selector` to reach `options.state` — `"visible"` (default), `"attached"` (just in the DOM), or `"hidden"` (removed or not visible). "Visible" is a non-empty box AND visibility not hidden/collapse, checked on the FIRST match — `opacity:0`/off-screen still count as visible; zero-size/`display:none`/`visibility:hidden` count as hidden. `"hidden"` succeeds immediately if nothing matches. `options.timeout` is per attempt; retries can extend the real total wait. `options.timeout <= 0` checks the current state once, immediately, with no waiting or retrying. Waiting states poll roughly every 100ms, so a state that's only true for less than ~100ms (a fast visibility flicker) may be missed. Throws on timeout. |
@@ -169,7 +170,9 @@ waited for, resolves `undefined`); its verification is on `page.lastResult`. Bot
 
 ## Known limitations
 
-These are open as of 0.6.1:
+These are open as of 0.6.2:
+
+- **PDF text (PROB-052):** `page.text()` rejects with `PageTextReadError` on a PDF page in the published (bundled) package, because the bundled PDF reader needs an optional native module the package does not ship (0.6.1 returned empty text).
 
 - **Downloads:** `page.download()` only writes inside `allowedDownloadRoots` (default
   `<OS temp>/sutradhar-downloads`). Do one download per browser at a time: a second overlapping

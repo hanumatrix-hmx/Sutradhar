@@ -1,0 +1,20 @@
+[iso-guard] tmpdir=e:/ai-cache/tmp/claude/e--hmx-projects-internal-projects-pinchtab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/ngt pid=71312
+[harness] MODE=neg LEVELS=L1,L3,L4 CHURN=k=8&ms=25 RUNS=5 SNAPS=20 CLISNAPS=10 TYPES=5 NO_MUTANTS=1
+[harness] CLI=E:/AI-Cache/tmp/claude/E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/v061/inst/node_modules/sutradhar/dist/cli-bin.js sha256=9858726a291e844e1f84089b18310e90379140e2dfabf7b2fda80eb550b5c59b
+[harness] BUNDLE=E:/AI-Cache/tmp/claude/E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/v061/inst/node_modules/sutradhar/dist/index.js sha256=ddaaa00191710fc772db1c93a14e469381f0a40020de930ffae198834fd8db19 ISO=E:/AI-Cache/tmp/claude/E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/Ngt tmpdir=e:/ai-cache/tmp/claude/e--hmx-projects-internal-projects-pinchtab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/ngt
+[iso-guard] tmpdir=e:/ai-cache/tmp/claude/e--hmx-projects-internal-projects-pinchtab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/ngt pid=58532
+[harness] fixture pid=58532 url=http://127.0.0.1:51060
+PASS state.userDataDir <= 200 chars and dirname == ISO {"udd":"E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\Ngt\\sutradhar-cli-1791138669008-iDkBB3","len":199}
+[L1] detachedRuns=5/5 cleanRuns=0/5 recreated=3024,3032,2928,2912,3032
+[L3] degraded sdk=20/20 cli=10/10
+[L4] detachedRuns=5/5
+PASS L1 churn really happened (window.__recreated > 100 after every run)
+PASS L3 churn really happened (window.__recreated > 100 after every run)
+PASS L4 churn really happened (window.__recreated > 100 after every run)
+PASS NEG061 L1 recorded (validity needs >= 1 detached failure) {"detachedRuns":5,"cleanRuns":0,"sample":["Click failed: Attempted to use detached Frame 'BF6EA7C9C1DFD4D4775E73F48A613307'.","Click failed: Attempted to use detached Frame '209028CA808AEEA027691FC5DAE7CB90'."]}
+PASS NEG061 L3 recorded (validity needs >= 1 degraded result) {"degradedSdk":20,"degradedCli":10,"sample":[{"i":1,"complete":false,"elementCount":0},{"i":2,"complete":false,"elementCount":0},{"i":1,"code":0,"complete":false,"zero":true,"head":"Interactive elements (0):"},{"i":2,"code":0,"complete":false,"zero":true,"head":"Interactive elements (0):"}]}
+PASS NEG061 L4 recorded {"detachedRuns":5}
+PASS close: state.json removed
+PASS path-log check exit 0 (>= 1 [cleanup] line, none outside ISO) {"exit":0,"out":["cleanup-lines=60 outside-iso=0"]}
+PASS no timed-out CLI call
+LIVE-DETACH OK

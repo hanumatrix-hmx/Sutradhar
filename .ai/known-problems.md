@@ -5,7 +5,7 @@ Machine Readable: true
 Update Ownership: AI Agent / Technical Writer
 Freshness Expectation: Per Issue
 Update Policy: Change-driven
-Last Updated: 2026-08-09
+Last Updated: 2026-10-04
 ---
 
 # Active Technical Debt & Known Problems Log
@@ -15,6 +15,52 @@ Last Updated: 2026-08-09
 > rework.
 
 ## Problem Inventory
+
+- **ID**: `PROB-052`
+  - **Summary**: PDF text extraction does not work in any BUNDLED build (the published `sutradhar` package, `dist/cli-bin.js`, `dist/index.js`, `dist/mcp-cli.js`). `pdf-parse` -> `pdfjs-dist` is inlined into the bundles and, in Node, pdf.js needs the optional native module `@napi-rs/canvas` at run time (to polyfill `DOMMatrix`/`ImageData`/`Path2D`); `packages/sutradhar` depends only on `puppeteer-core`, so it is not resolvable from `dist/`.
+  - **Severity**: Medium — PDF text is unreadable from the published CLI/SDK/MCP.
+  - **Status**: OPEN (found 2026-10-04 during 0.6.2 S3a; PRE-EXISTING since the bundle shipped; not fixed in 0.6.2)
+  - **Impact**: In 0.6.1 `text` on a PDF printed one empty line with exit 0 (the error was swallowed; stderr only carried pdf.js warnings). The unbundled `capability-runtime/dist` works (`source:'pdf'`, 10098 chars on the fixture PDF), so the windowing logic is fine; the failure is packaging only. As of 0.6.2 the read fails loudly: `text` exits 1 with `Error: text read failed: the PDF text could not be extracted: PDF text extraction is not available in this build (PROB-052): ...`; MCP `browser.get_page_text` returns `isError` and SDK `page.text()` rejects with the same `PageTextReadError`; `snapshot()` reports it in `pageTextError`.
+  - **Mitigation**: Message only (0.6.2). Fix options: (1) add `@napi-rs/canvas` as a dependency of `sutradhar` (native, per-platform binaries); (2) bundle a pure-JS `DOMMatrix`/`ImageData`/`Path2D` polyfill before pdf.js loads. Either needs its own release decision.
+
+- **ID**: `PROB-051`
+  - **Summary**: A CLI verb other than `nav` run while no session exists (never launched, or after `close`) silently launches a blank browser and exits 0. `nav` is the only verb the help text says launches a session.
+  - **Severity**: Medium — empty output with exit 0 reads as "the page is empty", not "no session; a blank one was just created".
+  - **Status**: RESOLVED in 0.6.2 (unreleased; branch release/0.6.2) (was: OPEN (found 2026-10-04, published 0.6.1 CLI; not fixed))
+  - **Impact**: Seen in the smoke test (`.ai/loop/webbench-2026-10-04/cli-smoke-2026-10-04.md`, finding 3): a stray `text` after `close` and a following `text` printed an empty line with exit 0; before any `nav` the state dir held `state.json` and `warden.json` and TEMP held a fresh `sutradhar-cli-*` profile. The data does not settle which `text` call launched it, only that a session started without a `nav`. The WebBench wrapper added a guard (exit 97) so drivers could not hit it.
+  - **Mitigation**: None in the product. Candidate fix: every verb that needs a page fails with a clear "no session; run nav first" (non-zero exit) instead of auto-launching; keep launch only for `nav`/`doctor`. Regression test: run each read verb with no state dir and assert non-zero exit and no spawned Chrome.
+  - **Resolution (0.6.2)**: every verb except `nav <url>`, `newtab <url>`, `audit <url>` and `compare` now fails with `no active browser session ... sutradhar nav <url>` (exit 1) when no session exists and spawns nothing. Evidence: `.ai/loop/release-0.6.2/evidence/S6/README.md` (live harness all-pass, mutants killed), independent audit `evidence/S8/audit.md`. Open follow-up: the self-heal path (state present, browser gone) still starts a fresh blank session.
+
+- **ID**: `PROB-050`
+  - **Summary**: `eval` of a void expression (e.g. `history.back()`) prints the literal `undefined`, and the CLI has no first-class back-navigation verb, so agents navigate back through `eval` and see "undefined" with no verification line.
+  - **Severity**: Low (cosmetic / ergonomic).
+  - **Status**: MITIGATED in 0.6.2 (unreleased) (was: OPEN (found 2026-10-04))
+  - **Impact**: WebBench driver B6/192 observed `back` (the wrapper's pseudo-verb = `eval history.back()`) printing `undefined`, exit 0, while navigation worked. Smoke test pass 3 reproduced it directly. Candidate fix: a `back`/`forward` verb that reports the new URL with the usual verification line; or print nothing for `undefined`.
+  - **Resolution (0.6.2)**: CLI `back`, `forward` and `reload` exist and report the new URL with the usual verification line (`evidence/S7/README.md`). Not fixed: `eval` of a void expression still prints `undefined`.
+
+- **ID**: `PROB-049`
+  - **Summary**: The CLI rejects the node-id form its own snapshot prints. `snap` lists `[#5] button "..."`, but `click "#5"` / `type "#5"` / `press` with `#N` exit 1: `Invalid selector "#5" ... this looks like a snapshot node id; pass just the number, e.g. "5".` (`packages/browser/src/actions/selector-dialect.ts:186`).
+  - **Severity**: Low-Medium — one wasted call per occurrence, but it is the first thing a new agent tries and it is inconsistent with the tool's own output.
+  - **Status**: RESOLVED in 0.6.2 (unreleased) (was: OPEN (found 2026-10-04))
+  - **Impact**: 8 failed calls across 6 task logs in the WebBench 2026-10-04 run (1172 seq 19, 1946 seq 7/9, 781, 2561, 1329, 597); no task lost. `#<digits>` is not a valid CSS id selector (an id cannot start with an unescaped digit), so accepting `#N` as the node id is unambiguous. The run's own driver brief showed `click "#12"`, which is a harness defect of the same kind.
+  - **Mitigation**: None yet. Candidate fix: accept `#N` as a node id (or print the ids as `[5]`); add a CLI regression test. See `.ai/loop/webbench-2026-10-04/CANDIDATE-FIXES.md` item 1.
+  - **Resolution (0.6.2)**: `normalizeTarget` maps `#N` and `[#N]` (and `N`) to the node id on every surface (CLI, MCP, SDK, `--frame`). Evidence: `evidence/S5/README.md`, `evidence/S8/audit.md` (N1-N4).
+
+- **ID**: `PROB-048`
+  - **Summary**: Silent page-text truncation. `SutradharRuntime` returns `document.body.innerText.slice(0, 4000)` (`packages/capability-runtime/src/runtime.ts:2959`; PDF path `:2986` also 4000) with no truncation marker and no offset/limit; CLI `text` prints it as-is and MCP `browser.snapshot` slices `pageText` again to 2000 (`packages/mcp-server/src/tools.ts:524`). An agent cannot tell that content is missing.
+  - **Severity**: High for an AI browsing tool — silent data loss on every long page.
+  - **Status**: RESOLVED in 0.6.2 (unreleased) (was: OPEN (confirmed in source and in logs 2026-10-04))
+  - **Impact**: In the WebBench 2026-10-04 logs, 42 of 91 CLI `text` calls returned exactly 4001 characters (4000 plus a newline). On lawinsider.com (982) `text` showed 3 of 10 result cards, cut mid-sentence, while `read body` returned all 10 (seq 19 vs 33). It affected the reads behind the adjudicated AGENT-FAILs 1379, 2687 and 982 (a truncated read cannot prove absence), and plausibly 2582 and 1371. Those tasks stayed AGENT-FAIL because `read`/scroll were available, but the agent had no signal that the page was cut.
+  - **Mitigation**: None yet. Candidate fix: append an explicit marker ("[truncated: N of M chars]"), and let callers request more via a max or offset/limit on `text`/snapshot in the CLI, MCP and SDK. Regression test: a page with more than 4000 characters must return either all of it or a marker with the total.
+  - **Resolution (0.6.2)**: CLI `text --offset/--max-chars/--json`, SDK `page.text()`, MCP `browser.get_page_text` and `browser.snapshot` `textMaxChars` report the total, mark a partial read with a marker line and page through the rest; a failed read is an error. Evidence: `evidence/S2`, `S3a`, `S3b`, `S3c` READMEs, `evidence/S8/audit.md` (T1-T11). Related open problem: PROB-052 (PDF text in bundled builds). Separate caps not changed: `agent-loop.ts:705` (2000) and `apps/server` REST snapshot (1500).
+
+- **ID**: `PROB-047`
+  - **Summary**: `click` and `type` fail with "Attempted to use detached Frame '<id>'" on kayak.com `/stays` after same-origin navigation; the same page's `text` works, `clickrole` on the same button succeeds, and one `snap` returned "Interactive elements (0)" on a fully rendered page. The page has a same-URL child iframe (`https://www.kayak.com/stays`).
+  - **Severity**: Medium-High — the failing verbs are the primary interaction verbs, with a new frame id on each failure, so retrying does not help.
+  - **Status**: RESOLVED in 0.6.2 (unreleased) (was: OPEN (confirmed 2026-10-04: 4 failures in the driver log, 2561 seq 33/37/47/49, and reproduced 3 times in 2 sessions by the verifier via an independent frame inventory))
+  - **Impact**: The agent lost its working route on kayak.com `/stays`. Adjudicated AGENT-FAIL rather than SUTRADHAR-FAIL because on `/hotels` typing worked in both attempts and no typeahead suggestion was selected, so causation was not established. Related to the frame-lifecycle class of PROB-045 but a different code path (element binding after navigation, not selector waits).
+  - **Mitigation**: None yet. Candidate fix: re-resolve the frame after navigation and on a detached-frame error retry once on the current main frame before failing; add a regression fixture with a same-URL child iframe replaced after a same-origin navigation.
+  - **Resolution (0.6.2)**: root cause was Puppeteer's synchronous `throwIfDetached` escaping `.catch()` / promises built outside a `try`; every such site is now wrapped by `frameCall` (mechanical inventory, 0 UNSAFE). Evidence: `evidence/S4/README.md` (deterministic churn fixture: published 0.6.1 fails 10/10, 30/30, 5/5, HEAD clean), `evidence/S8/audit.md`. Not fixed (separate findings): cross-origin child-frame click surfaces raw Puppeteer errors; goto-after-click hang on a churn page; kayak `/stays` `ERR_ABORTED`.
 
 - **ID**: `PROB-046`
   - **Summary**: An X-Frame-Options-blocked (or otherwise browser-error-page) iframe's `frame.url()` reads as `chrome-error://` (Puppeteer's own real value for that class of frame), never the real site — Chrome has already replaced the blocked frame's document with its own error page by the time this snapshot runs.
@@ -225,6 +271,7 @@ Last Updated: 2026-08-09
     wiring — `sutradhar text` (which already prints `snapshot()`'s `pageText`) against the
     identical PDF URL now prints the real extracted text directly, since it shares the same
     `readPageText` code path; no separate CLI-specific gap to close.
+    AMENDED 2026-10-04 (PROB-052): the "RESOLVED" above only holds for unbundled/dev runs; in every bundled build (published CLI/SDK/MCP) pdf.js cannot load `@napi-rs/canvas` and extraction fails (0.6.1 swallowed it as empty text). See PROB-052.
     Note: `pdf-parse` was installed with plain `npm install` into an isolated scratch directory
     and its resulting `node_modules` entries (`pdf-parse`, `pdfjs-dist`, `@napi-rs/canvas`) were
     copied directly into `packages/capability-runtime/node_modules`, since `pnpm` is not

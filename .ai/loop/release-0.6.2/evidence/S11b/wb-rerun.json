@@ -1,0 +1,60 @@
+{
+  "cliSha": "f221f536b9655e5580752adf8189145b9c4d8bb7ed2108633c89f923f5cae346",
+  "tasks": {
+    "2561": [
+      {
+        "task": "2561",
+        "attempt": "a2",
+        "numbers": {
+          "navStays": {
+            "exit": 0,
+            "err": ""
+          },
+          "textLength": 2657,
+          "destinationId": 32,
+          "destinationLine": "div \"Enter a city, hotel, airport, address or landmark\" role=button",
+          "suggestion": null,
+          "finalTextLength": 2645,
+          "finalTextMentionsRome": false,
+          "exits": {
+            "click": 0,
+            "type": 1,
+            "pick": 1
+          },
+          "anyNonZeroExit": [
+            {
+              "argv": "type [#32] Rome",
+              "exit": 1
+            },
+            {
+              "argv": "clickrole option Rome",
+              "exit": 1
+            }
+          ]
+        },
+        "checks": {
+          "noDetachedFrameInAnyOutput": true,
+          "noEmptySnapWhileTextHasContent": true
+        },
+        "outcome": "INCOMPLETE",
+        "reason": "click 0, type 1, pick 1, Rome in final text: false",
+        "snapSummaries": [
+          {
+            "step": "snap-1",
+            "zeroElements": false,
+            "bytes": 2434,
+            "head": "URL: https://www.kayak.com/stays | Title: Places to Stay: Find Accommodation Deals & Discounts - KAYAK | Interactive element"
+          },
+          {
+            "step": "snap-2",
+            "zeroElements": false,
+            "bytes": 2479
+          }
+        ],
+        "closeExit": 0
+      }
+    ]
+  },
+  "startedAt": "2026-10-04T18:57:35.567Z",
+  "endedAt": "2026-10-04T18:58:35.438Z"
+}

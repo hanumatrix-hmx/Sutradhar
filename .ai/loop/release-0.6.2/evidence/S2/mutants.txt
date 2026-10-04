@@ -1,0 +1,49 @@
+BASELINE exit=0 tests=208 passed (208)
+M-048a KILLED exit=1 (8 failed | 200 passed (208)) restored-sha-equal=true :: window ignores offset
+    FAIL  tests/unit/page-text.spec.ts > readTextWindow DOM windows (S2-1 logic) > windows at 0/4000/8000/... concatenate to exactly the full text and differ
+    FAIL  tests/unit/page-text.spec.ts > readTextWindow DOM windows (S2-1 logic) > honours offset and maxChars; last window is not truncated-at-end but is truncated (offset >
+    FAIL  tests/unit/page-text.spec.ts > readTextWindow DOM windows (S2-1 logic) > offset >= total: empty window, truncated true when total > 0, not an error
+M-048b KILLED exit=1 (6 failed | 202 passed (208)) restored-sha-equal=true :: totalChars from the slice
+    FAIL  tests/unit/page-text.spec.ts > readTextWindow DOM windows (S2-1 logic) > default window of a 10 499-char text: 4000 chars, totalChars 10499, truncated
+    FAIL  tests/unit/page-text.spec.ts > readTextWindow DOM windows (S2-1 logic) > windows at 0/4000/8000/... concatenate to exactly the full text and differ
+    FAIL  tests/unit/page-text.spec.ts > readTextWindow DOM windows (S2-1 logic) > honours offset and maxChars; last window is not truncated-at-end but is truncated (offset >
+M-048c KILLED exit=1 (5 failed | 203 passed (208)) restored-sha-equal=true :: validation after evaluate
+    FAIL  tests/unit/page-text.spec.ts > readTextWindow validation never reaches the browser (S2-2) > rejects {"maxChars":0} with TypeError and evaluate call count 0
+    FAIL  tests/unit/page-text.spec.ts > readTextWindow validation never reaches the browser (S2-2) > rejects {"maxChars":100001} with TypeError and evaluate call count 0
+    FAIL  tests/unit/page-text.spec.ts > readTextWindow validation never reaches the browser (S2-2) > rejects {"offset":-1} with TypeError and evaluate call count 0
+M-048d KILLED exit=1 (2 failed | 206 passed (208)) restored-sha-equal=true :: PDF keeps slice(0,4000)
+    FAIL  tests/unit/page-text.spec.ts > PDF path > PDF ok (9000 chars mocked) is windowed with source:pdf; the 4000 cap is gone
+    FAIL  tests/unit/page-text.spec.ts > PDF path > snapshot() of a PDF windows the parsed text (source of pageText is the PDF, not the viewer DOM)
+M-048e KILLED exit=1 (1 failed | 207 passed (208)) restored-sha-equal=true :: marker emitted when not truncated
+    FAIL  tests/unit/page-text.spec.ts > formatPageTextMarker (exact strings) > null when not truncated (marker never emitted for a complete read)
+M-048f KILLED exit=1 (5 failed | 203 passed (208)) restored-sha-equal=true :: surrogate rule removed (back-up and extend, both twins)
+    FAIL  tests/unit/page-text.spec.ts > surrogate rules > window ending between a pair is extended by one (returnedChars = maxChars + 1)
+    FAIL  tests/unit/page-text.spec.ts > surrogate rules > maxChars:1 at a pair returns 2 code units, never 0
+    FAIL  tests/unit/page-text.spec.ts > surrogate rules > offset on a low surrogate starts one earlier (effective offset reported)
+M-048f2 KILLED exit=1 (3 failed | 205 passed (208)) restored-sha-equal=true :: shrink instead of extend
+    FAIL  tests/unit/page-text.spec.ts > surrogate rules > window ending between a pair is extended by one (returnedChars = maxChars + 1)
+    FAIL  tests/unit/page-text.spec.ts > surrogate rules > maxChars:1 at a pair returns 2 code units, never 0
+    FAIL  tests/unit/page-text.spec.ts > surrogate rules > maxChars:1 with the offset on a low surrogate returns the whole pair
+M-048p1 KILLED exit=1 (2 failed | 206 passed (208)) restored-sha-equal=true :: probe evaluate error swallowed (treated as not-a-PDF)
+    FAIL  tests/unit/page-text.spec.ts > failure semantics (S2-4) > only the probe evaluate rejecting still makes readTextWindow reject PageTextReadError(dom)
+    FAIL  tests/unit/page-text.spec.ts > failure semantics (S2-4) > only the probe evaluate rejecting: snapshot() reports pageTextError, keeps the listing
+M-048p2 KILLED exit=1 (2 failed | 206 passed (208)) restored-sha-equal=true :: window evaluate error swallowed -> empty text, total 0
+    FAIL  tests/unit/page-text.spec.ts > failure semantics (S2-4) > only the window evaluate rejecting still makes readTextWindow reject PageTextReadError(dom)
+    FAIL  tests/unit/page-text.spec.ts > failure semantics (S2-4) > only the window evaluate rejecting: snapshot() reports pageTextError, keeps the listing
+M-048q KILLED exit=1 (5 failed | 203 passed (208)) restored-sha-equal=true :: PDF parse failure falls back to DOM text
+    FAIL  tests/unit/page-text.spec.ts > failure semantics (S2-4) > PDF detected + parse throws -> PageTextReadError(source:pdf), never a dom result
+    FAIL  tests/unit/page-text.spec.ts > failure semantics (S2-4) > PDF byte fetch failing -> PageTextReadError(source:pdf), no DOM fallback
+    FAIL  tests/unit/page-text.spec.ts > PDF path > PDF ok (9000 chars mocked) is windowed with source:pdf; the 4000 cap is gone
+M-048t KILLED exit=1 (2 failed | 206 passed (208)) restored-sha-equal=true :: truncated ignores offset > 0
+    FAIL  tests/unit/page-text.spec.ts > readTextWindow DOM windows (S2-1 logic) > honours offset and maxChars; last window is not truncated-at-end but is truncated (offset >
+    FAIL  tests/unit/page-text.spec.ts > PDF path > PDF ok (9000 chars mocked) is windowed with source:pdf; the 4000 cap is gone
+M-048u KILLED exit=1 (2 failed | 206 passed (208)) restored-sha-equal=true :: snapshot ignores textMaxChars
+    FAIL  tests/unit/page-text.spec.ts > failure semantics (S2-4) > snapshot() success: window of 4000 by default, totals, no pageTextError key
+    FAIL  tests/unit/page-text.spec.ts > snapshot() calls pageTextWindow (the renamed private reader) > fails if snapshot() stops using pageTextWindow(tab, {offset:0, maxChar
+M-048v KILLED exit=1 (4 failed | 204 passed (208)) restored-sha-equal=true :: snapshot drops pageTextTotalChars
+    FAIL  tests/unit/page-text.spec.ts > failure semantics (S2-4) > snapshot() success: window of 4000 by default, totals, no pageTextError key
+    FAIL  tests/unit/page-text.spec.ts > failure semantics (S2-4) > snapshot() of a short page: byte-identical text, not truncated
+    FAIL  tests/unit/page-text.spec.ts > PDF path > snapshot() of a PDF windows the parsed text (source of pageText is the PDF, not the viewer DOM)
+M-048w KILLED exit=1 (1 failed | 207 passed (208)) restored-sha-equal=true :: PDF empty text falls back to DOM
+    FAIL  tests/unit/page-text.spec.ts > PDF path > PDF that parses to empty text: text "", totalChars 0, source pdf, no error, no DOM fallback
+SUMMARY mutants=14 killed=14 survivors=0

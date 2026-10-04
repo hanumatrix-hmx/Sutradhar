@@ -1,0 +1,18 @@
+[iso-guard] tmpdir=e:/ai-cache/tmp/claude/e--hmx-projects-internal-projects-pinchtab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/s4t pid=59944
+[harness] MODE=mutant LEVELS=L1,L3 CHURN=k=8&ms=25 RUNS=10 SNAPS=20 CLISNAPS=10 TYPES=5 NO_MUTANTS=0
+[harness] CLI=E:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/packages/sutradhar/dist/cli-bin.js sha256=1fb886d187c3ced784f4f1e0ea2de0adc8842ea7568b8115ccf64e59dc779881
+[harness] BUNDLE=E:\HMX_Projects\Internal_Projects\PinchTab\.claude\worktrees\project-understanding-696041\packages\sutradhar\dist\index.js sha256=e47a4f9ddedd61d28bd3f814c740f44cc8650f5d7aa06d4e04daa46b72dd87fc ISO=E:/AI-Cache/tmp/claude/E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/S4t tmpdir=e:/ai-cache/tmp/claude/e--hmx-projects-internal-projects-pinchtab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/s4t
+[iso-guard] tmpdir=e:/ai-cache/tmp/claude/e--hmx-projects-internal-projects-pinchtab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/s4t pid=83084
+[harness] fixture pid=83084 url=http://127.0.0.1:54675
+PASS state.userDataDir <= 200 chars and dirname == ISO {"udd":"E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\S4t\\sutradhar-cli-1791128924524-ZgSAJR","len":199}
+[M-047a L1] detachedRuns=10/10 recreated=3016,3056,3184,2944,2904,2944,2952,2960,2968,2896
+PASS M-047a (loop wrapper reverted) on L1: >= 1 of 10 runs shows "detached Frame" {"detachedRuns":10,"sample":["Click failed: Attempted to use detached Frame 'B00B66602228182D4D28A6E8031A3E8C'.","Click failed: Attempted to use detached Frame '11075EDD2083E203CB786A61E20DBD57'."]}
+PASS M-047a churn really happened
+[M-047b L3 sdk] degraded=20/20
+PASS M-047b (buildGraph fix reverted) on L3 (SDK): >= 1 degraded snapshot in 20 {"degraded":20,"sample":[{"i":1,"complete":false,"elementCount":0},{"i":2,"complete":false,"elementCount":0}]}
+PASS M-047b churn really happened 368
+PASS mutant files deleted; real dist sha256 unchanged {"cli":"1fb886d187c3ced784f4f1e0ea2de0adc8842ea7568b8115ccf64e59dc779881","idx":"e47a4f9ddedd61d28bd3f814c740f44cc8650f5d7aa06d4e04daa46b72dd87fc"}
+PASS close: state.json removed
+PASS path-log check exit 0 (>= 1 [cleanup] line, none outside ISO) {"exit":0,"out":["cleanup-lines=100 outside-iso=0"]}
+PASS no timed-out CLI call
+LIVE-DETACH OK

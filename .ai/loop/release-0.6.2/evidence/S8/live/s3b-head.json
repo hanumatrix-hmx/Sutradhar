@@ -1,0 +1,88 @@
+{
+  "mcp": "E:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/packages/sutradhar/dist/mcp-cli.js",
+  "mcpSha256": "4184a9a4b9546bbc3a21f1219e0d9cde4054a408619609594ade101d3e3530d8",
+  "checks": {
+    "launch": {
+      "ok": true
+    },
+    "FULL via browser.eval, L >= 10000": {
+      "ok": true,
+      "detail": 10037
+    },
+    "S3b-1 tools/list includes browser.get_page_text": {
+      "ok": true,
+      "detail": 74
+    },
+    "S3b-2 snapshot Page text block = FULL[0:2000] + marker naming get_page_text offset=2000": {
+      "ok": true,
+      "detail": {
+        "len": 2142,
+        "tail": "klmnopqr\n[page text truncated: showing characters 0-2000 of 10037. Continue with browser.get_page_text offset=2000, or raise textMaxChars (max 40000)]"
+      }
+    },
+    "S3b-2 textMaxChars 5000 = FULL[0:5000] + marker": {
+      "ok": true,
+      "detail": {
+        "len": 5142
+      }
+    },
+    "S3b-3 get_page_text paged to marker B: concatenation == FULL, windows differ": {
+      "ok": true,
+      "detail": {
+        "windows": 3,
+        "acc": 10037
+      }
+    },
+    "S3b-3 last marker is (end)": {
+      "ok": true,
+      "detail": "[page text: showing characters 8000-10037 of 10037 (end)]"
+    },
+    "S3b maxChars 40001 -> schema error (isError / JSON-RPC error, no text window)": {
+      "ok": true,
+      "detail": {
+        "isError": true,
+        "text": "MCP error -32602: Input validation error: Invalid arguments for tool browser.get_page_text: Number must be less than or equal to 40000 at maxChars"
+      }
+    },
+    "S3b snapshot textMaxChars 40001 -> schema error": {
+      "ok": true,
+      "detail": "MCP error -32602: Input validation error: Invalid arguments for tool browser.snapshot: Number must be less than or equal"
+    },
+    "S3b maxChars 40000 accepted: whole page, no marker": {
+      "ok": true,
+      "detail": {
+        "len": 10037
+      }
+    },
+    "S3b-4 /short snapshot text length > 200, no marker": {
+      "ok": true,
+      "detail": 299
+    },
+    "shutdown_all": {
+      "ok": true
+    },
+    "server child exited": {
+      "ok": true
+    },
+    "no Chrome with the ISO basename left": {
+      "ok": true,
+      "detail": []
+    }
+  },
+  "version": "0.6.1",
+  "toolCount": 74,
+  "mode": "head",
+  "L": 10037,
+  "maxChars40001": {
+    "isError": true,
+    "text": "MCP error -32602: Input validation error: Invalid arguments for tool browser.get_page_text: Number must be less than or equal to 40000 at maxChars"
+  },
+  "shortBlock": "Short fixture page. Short fixture page. Short fixture page. Short fixture page. Short fixture page. Short fixture page. Short fixture page. Short fixture page. Short fixture page. Short fixture page. Short fixture page. Short fixture page. Short fixture page. Short fixture page. Short fixture page.",
+  "shortBlockSha256": "0865be5f59c45e6a5741f64248f15735af062e471e94305f8d6891542e9b9724",
+  "shortLength": 299,
+  "stderrTail": [
+    "[iso-guard] tmpdir=e:/ai-cache/tmp/claude/e--hmx-projects-internal-projects-pinchtab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/a8t pid=90024",
+    "[sutradhar-mcp] config: disabled (SUTRADHAR_CONFIG=none)"
+  ],
+  "allPass": true
+}

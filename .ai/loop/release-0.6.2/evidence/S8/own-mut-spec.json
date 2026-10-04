@@ -1,0 +1,91 @@
+{
+ "suites": [
+  {
+   "pkg": "capability-runtime",
+   "files": [
+    "tests/unit/page-text.spec.ts",
+    "tests/unit/runtime.spec.ts"
+   ]
+  },
+  {
+   "pkg": "cli",
+   "files": [
+    "tests/unit/text-output.spec.ts",
+    "tests/unit/session-flow.spec.ts",
+    "tests/unit/history-output.spec.ts",
+    "tests/unit/selector-args.spec.ts"
+   ]
+  },
+  {
+   "pkg": "browser",
+   "files": [
+    "tests/unit/frame-detach.spec.ts",
+    "tests/unit/post-conditions.spec.ts"
+   ]
+  },
+  {
+   "pkg": "mcp-server",
+   "files": [
+    "tests/unit/tools.spec.ts"
+   ]
+  }
+ ],
+ "mutants": [
+  {
+   "id": "A-048a",
+   "note": "CLI continue hint names returnedChars instead of offset+returnedChars",
+   "file": "packages/cli/src/text-output.ts",
+   "count": 1,
+   "find": "textContinueHint(r.offset + r.returnedChars)",
+   "repl": "textContinueHint(r.returnedChars)"
+  },
+  {
+   "id": "A-048b",
+   "note": "MCP get_page_text continue hint names returnedChars only",
+   "file": "packages/mcp-server/src/tools.ts",
+   "count": 1,
+   "find": "offset=${r.offset + r.returnedChars}",
+   "repl": "offset=${r.returnedChars}"
+  },
+  {
+   "id": "A-047a",
+   "note": "frameCall swallows the error and resolves null",
+   "file": "packages/browser/src/actions/frame-call.ts",
+   "count": 1,
+   "find": "  return op(frame);",
+   "repl": "  try { return await op(frame); } catch { return null as T; }"
+  },
+  {
+   "id": "A-049a",
+   "note": "#N maps with the # kept (bracketed[0])",
+   "file": "packages/capability-runtime/src/types.ts",
+   "count": 1,
+   "find": "[data-sd-node-id=\"${bracketed[1]}\"]",
+   "repl": "[data-sd-node-id=\"${bracketed[0]}\"]"
+  },
+  {
+   "id": "A-051a",
+   "note": "no-session message hard-codes the verb",
+   "file": "packages/cli/src/session-flow.ts",
+   "count": 1,
+   "find": "\"${verb ?? ''}\" needs",
+   "repl": "\"text\" needs"
+  },
+  {
+   "id": "A-NAVa",
+   "note": "index did not move classified as edge",
+   "file": "packages/cli/src/history-output.ts",
+   "count": 1,
+   "find": "if (idx.outcome === 'fail') return 'not-moved';",
+   "repl": "if (idx.outcome === 'fail') return 'edge';"
+  },
+  {
+   "id": "A-NAVb",
+   "note": "history-edge check emitted with outcome pass",
+   "file": "packages/browser/src/verifier/post-conditions.ts",
+   "count": 1,
+   "find": "outcome: 'fail',\n        expected: 'a history entry in this direction',",
+   "repl": "outcome: 'pass',\n        expected: 'a history entry in this direction',"
+  }
+ ]
+}

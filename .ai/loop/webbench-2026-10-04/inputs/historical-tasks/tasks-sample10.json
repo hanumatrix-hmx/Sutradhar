@@ -1,0 +1,66 @@
+{
+  "_source": "https://github.com/Halluminate/WebBench (webbenchfinal.csv), fetched 2026-08-17 via the GitHub contents API (raw.githubusercontent.com returned HTTP 429 Too Many Requests for this repo at run time; the API endpoint returns the identical 818,409-byte file, base64-encoded)",
+  "_note": "Tenth Claude-direct sample, and the FIRST one driven by Opus rather than Sonnet. Samples 1-9 were all Sonnet-driven; the user asked to isolate host-model quality as an explicit variable — same tool (Sutradhar's real CLI binary), same methodology, same honest scoring standard, different brain — to see whether a stronger host model changes the real completion rate (better workaround reasoning on ambiguous/drifted tasks, less likely to give up early). 10 fresh READ-category domains, none previously attempted (checked against tools/webbench/tested-domains.txt). Deliberately NOT cherry-picked for easiness: the spread spans retail, dictionary, gov/science, national-parks, gaming media, dev Q&A, film, education, a utility site, and a reference site — including domains with known heavy anti-bot posture. IDs match the dataset's own row IDs.",
+  "tasks": [
+    {
+      "id": 1080,
+      "startingUrl": "https://www.macys.com",
+      "category": "READ",
+      "task": "Search for a specific product, like \"Levi's 501 jeans\". Return the price of the first available product.\nOnly use http://macys.com to achieve the task. Don't go to any other site. The task is achievable with just navigation from this site."
+    },
+    {
+      "id": 1136,
+      "startingUrl": "https://www.merriam-webster.com",
+      "category": "READ",
+      "task": "Use the search functionality to locate the detailed etymology for “discombobulate” and record its historical context.\nOnly use http://merriam-webster.com to achieve the task. Don't go to any other site. The task is achievable with just navigation from this site."
+    },
+    {
+      "id": 2587,
+      "startingUrl": "https://www.nasa.gov",
+      "category": "READ",
+      "task": "Check the \"About NASA\" section for a list of collaborating institutions and note three partners mentioned.\nOnly use http://nasa.gov to achieve the task. Don't go to any other site. The task is achievable with just navigation from this site."
+    },
+    {
+      "id": 1238,
+      "startingUrl": "https://www.nps.gov/index.htm",
+      "category": "READ",
+      "task": "Find a permit application  for commercial filming at a park\nOnly use http://nps.gov to achieve the task. Don't go to any other site. The task is achievable with just navigation from this site."
+    },
+    {
+      "id": 1322,
+      "startingUrl": "https://www.pcgamer.com",
+      "category": "READ",
+      "task": "Navigate to the homepage  video content section, select a recent gameplay review video, and record its title, duration, and publication date.\nOnly use http://pcgamer.com to achieve the task. Don't go to any other site. The task is achievable with just navigation from this site."
+    },
+    {
+      "id": 630,
+      "startingUrl": "https://www.geeksforgeeks.org",
+      "category": "READ",
+      "task": "Visit the \"Interview Questions\" section for Google Maps and extract two sample questions along with their brief answers.\nOnly use http://geeksforgeeks.org to achieve the task. Don't go to any other site. The task is achievable with just navigation from this site."
+    },
+    {
+      "id": 1483,
+      "startingUrl": "https://www.rottentomatoes.com",
+      "category": "READ",
+      "task": "Navigate to the \"Top Movies\" list on Rotten Tomatoes and record the title and corresponding rating of the movie listed at the top.\nOnly use http://rottentomatoes.com to achieve the task. Don't go to any other site. The task is achievable with just navigation from this site."
+    },
+    {
+      "id": 1691,
+      "startingUrl": "https://stackoverflow.com/questions",
+      "category": "READ",
+      "task": "Navigate to a popular question on debugging techniques in Java and list all the tags associated with it.\nOnly use http://stackoverflow.com to achieve the task. Don't go to any other site. The task is achievable with just navigation from this site."
+    },
+    {
+      "id": 1846,
+      "startingUrl": "https://www.timeanddate.com",
+      "category": "READ",
+      "task": "Navigate to the World Clock section and list the current time and time zone information for New York, London, Tokyo, Sydney, and Moscow.\nOnly use http://timeanddate.com to achieve the task. Don't go to any other site. The task is achievable with just navigation from this site."
+    },
+    {
+      "id": 2163,
+      "startingUrl": "https://www.worldatlas.com",
+      "category": "READ",
+      "task": "Search for an article on environmental challenges in the Amazon region and extract the three main issues discussed.\nOnly use http://worldatlas.com to achieve the task. Don't go to any other site. The task is achievable with just navigation from this site."
+    }
+  ]
+}

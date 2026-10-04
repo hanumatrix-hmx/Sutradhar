@@ -1,0 +1,21 @@
+# path-log checks (root = the run's ISO)
+s3a-head: cleanup-lines=10 outside-iso=0 (exit 0)
+s4-head: cleanup-lines=60 outside-iso=0 (exit 0)
+s4-consumer: cleanup-lines=60 outside-iso=0 (exit 0)
+s4-consumer-run2: cleanup-lines=60 outside-iso=0 (exit 0)
+s5-head: cleanup-lines=10 outside-iso=0 (exit 0)
+s6-head: cleanup-lines=40 outside-iso=0 (exit 0)
+s7-head: cleanup-lines=20 outside-iso=0 (exit 0)
+cleanup-lines=60 outside-iso=0
+# wrong-root control (Sgt logs against Ngt: must exit 1)
+cleanup-lines=60 outside-iso=30
+exit=0
+# S1 negative control log
+cleanup-lines=1 outside-iso=1
+exit=0
+# exit codes (direct, no pipe)
+right root (s4-head vs Sgt): exit=0
+wrong root control (s4-head vs Ngt): exit=1 (1 expected)
+S1 negative control: exit=1 (1 expected)
+NEG061 logs vs Ngt: exit=0
+REAL-TEMP sutradhar-cli-*: identical before/after (5 dirs)

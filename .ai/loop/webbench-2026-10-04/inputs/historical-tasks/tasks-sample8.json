@@ -1,0 +1,48 @@
+{
+  "_source": "https://github.com/Halluminate/WebBench (webbenchfinal.csv), fetched 2026-08-17",
+  "_note": "Eighth Claude-direct sample. 7 fresh READ-category domains, none previously attempted (checked against tools/webbench/tested-domains.txt). IDs match the dataset's own row IDs. Run to re-check completion rate after Milestones 61-67's engine fixes (multi-hop iframe frame targeting, SPA/live title accuracy in snap and tabs, real PDF text extraction).",
+  "tasks": [
+    {
+      "id": 269,
+      "startingUrl": "https://www.commonsensemedia.org",
+      "category": "READ",
+      "task": "Use the search feature to find the expert review of the animated film “Frozen” and extract its recommended age range and one key critique.\nOnly use http://commonsensemedia.org to achieve the task. Don't go to any other site. The task is achievable with just navigation from this site."
+    },
+    {
+      "id": 344,
+      "startingUrl": "https://www.delish.com",
+      "category": "READ",
+      "task": "Use the website’s search function to look up \"quick weeknight dinners\" and output the titles of any 3 recipes that appear.\nOnly use http://delish.com to achieve the task. Don't go to any other site. The task is achievable with just navigation from this site."
+    },
+    {
+      "id": 358,
+      "startingUrl": "https://www.deviantart.com",
+      "category": "READ",
+      "task": "Browse the homepage feed and list the titles and usernames of the first 5 featured artworks.\nOnly use http://deviantart.com to achieve the task. Don't go to any other site. The task is achievable with just navigation from this site."
+    },
+    {
+      "id": 370,
+      "startingUrl": "https://www.dickssportinggoods.com",
+      "category": "READ",
+      "task": "Navigate to the camping equipment section and extract the details (brand, price, and average user rating) of the top five tents displayed.\nOnly use http://dickssportinggoods.com to achieve the task. Don't go to any other site. The task is achievable with just navigation from this site."
+    },
+    {
+      "id": 386,
+      "startingUrl": "https://www.drugs.com",
+      "category": "READ",
+      "task": "Search for the drug \"Simvastatin\" on Drugs.com and extract a list of its common side effects as provided in the brief monograph summary.\nOnly use http://drugs.com to achieve the task. Don't go to any other site. The task is achievable with just navigation from this site."
+    },
+    {
+      "id": 431,
+      "startingUrl": "https://www.epa.gov",
+      "category": "READ",
+      "task": "Navigate EPA.gov and list the titles of the three most recent press releases on environmental policy.\nOnly use http://epa.gov to achieve the task. Don't go to any other site. The task is achievable with just navigation from this site."
+    },
+    {
+      "id": 436,
+      "startingUrl": "https://www.espn.com",
+      "category": "READ",
+      "task": "Search for ESPN articles related to the Tokyo 2020 Olympics and list the titles of the first three articles you find.\nOnly use http://espn.com to achieve the task. Don't go to any other site. The task is achievable with just navigation from this site."
+    }
+  ]
+}

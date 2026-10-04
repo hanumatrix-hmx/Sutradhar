@@ -13,6 +13,7 @@ import {
   TAB_CLOSED_MID_WAIT_MESSAGE,
 } from '@sutradhar/browser';
 import { registerTools } from '../../src/tools.js';
+import { z } from 'zod';
 import { createRequire } from 'node:module';
 import { readFileSync } from 'node:fs';
 import path from 'node:path';
@@ -48,6 +49,7 @@ const EXPECTED_BROWSER_TOOLS = [
   'browser.go_forward',
   'browser.reload',
   'browser.snapshot',
+  'browser.get_page_text',
   'browser.ax_snapshot',
   'browser.click',
   'browser.type',
@@ -1365,7 +1367,7 @@ describe('FR2-08 browser.wait_for and settle on every interacting/navigating too
     // waits: settling after a wait is meaningless
     'browser.wait_for_selector', 'browser.wait_for',
     // reads
-    'browser.snapshot', 'browser.ax_snapshot', 'browser.screenshot', 'browser.export_pdf', 'browser.extract_data',
+    'browser.snapshot', 'browser.get_page_text', 'browser.ax_snapshot', 'browser.screenshot', 'browser.export_pdf', 'browser.extract_data',
     'browser.audit', 'browser.eval', 'browser.get_cookies', 'browser.get_local_storage', 'browser.get_session_storage',
     'browser.get_storage_state', 'browser.get_viewport', 'browser.get_clipboard', 'browser.get_pending_dialog',
     'browser.get_console_logs', 'browser.get_page_errors', 'browser.get_network_log', 'browser.get_action_history',
@@ -1619,5 +1621,123 @@ describe('browser.launch viewport bound (FR2-14 fix-2 N4)', () => {
   it('TL5b: the bound is the shared VIEWPORT_MAX (one constant for flag, file and tool)', async () => {
     const { VIEWPORT_MAX } = await import('@sutradhar/capability-runtime');
     expect(VIEWPORT_MAX).toBe(10_000_000);
+  });
+});
+
+describe('I-048 page text: browser.snapshot textMaxChars + marker, browser.get_page_text', () => {
+  const baseSnap = {
+    sessionId: 's1', tabId: 't1', url: 'https://x.test', title: 'T',
+    interactiveElements: 'URL: https://x.test\nTitle: T\nInteractive elements (0):\n', elementCount: 0,
+  };
+  const setup = (snap: Record<string, unknown>) => {
+    const { server, tools } = createMockServer();
+    const runtime = new SutradharRuntime();
+    const spy = vi.spyOn(runtime, 'snapshot').mockResolvedValue({ ...baseSnap, ...snap } as any);
+    registerTools(server, { runtime });
+    return { tools, runtime, spy };
+  };
+
+  it('snapshot: marker is appended right after the Page text block iff truncated, naming get_page_text offset', async () => {
+    const { tools } = setup({ pageText: 'x'.repeat(2000), pageTextTotalChars: 10037, pageTextTruncated: true });
+    const text = (await tools.get('browser.snapshot')!.handler({ sessionId: 's1' })).content[0].text as string;
+    expect(text).toContain('Page text:\n' + 'x'.repeat(2000) + '\n[page text truncated: showing characters 0-2000 of 10037. Continue with browser.get_page_text offset=2000, or raise textMaxChars (max 40000)]');
+  });
+
+  it('snapshot: no marker when the text is complete, nor when the runtime result has no new fields (old mocks)', async () => {
+    const a = setup({ pageText: 'short', pageTextTotalChars: 5, pageTextTruncated: false });
+    expect((await a.tools.get('browser.snapshot')!.handler({ sessionId: 's1' })).content[0].text).not.toContain('[page text');
+    const b = setup({ pageText: '' });
+    expect((await b.tools.get('browser.snapshot')!.handler({ sessionId: 's1' })).content[0].text).not.toContain('[page text');
+  });
+
+  it('snapshot: textMaxChars defaults to 2000 and is forwarded to the runtime when given', async () => {
+    const a = setup({ pageText: '' });
+    await a.tools.get('browser.snapshot')!.handler({ sessionId: 's1' });
+    expect(a.spy.mock.calls[0]![3]).toMatchObject({ textMaxChars: 2000 });
+    const b = setup({ pageText: '' });
+    await b.tools.get('browser.snapshot')!.handler({ sessionId: 's1', textMaxChars: 5000 });
+    expect(b.spy.mock.calls[0]![3]).toMatchObject({ textMaxChars: 5000 });
+  });
+
+  it('snapshot: a page-text read failure is rendered as "Page text unavailable: <reason>" and the listing still returns', async () => {
+    const { tools } = setup({ pageText: '', pageTextTotalChars: 0, pageTextTruncated: false, pageTextError: 'the page text could not be read: boom' });
+    const r = await tools.get('browser.snapshot')!.handler({ sessionId: 's1' });
+    expect(r.isError).toBeUndefined();
+    expect(r.content[0].text).toContain('Page text unavailable: the page text could not be read: boom');
+    expect(r.content[0].text).toContain('Interactive elements (0)');
+  });
+
+  it('schemas reject textMaxChars 0 / 40001 / -1, offset -1, maxChars 0 / 40001 and accept the edges', () => {
+    const { tools } = setup({ pageText: '' });
+    const snap = z.object(tools.get('browser.snapshot')!.config.inputSchema);
+    for (const v of [0, 40001, -1, 1.5]) expect(snap.safeParse({ sessionId: 's', textMaxChars: v }).success).toBe(false);
+    for (const v of [1, 40000]) expect(snap.safeParse({ sessionId: 's', textMaxChars: v }).success).toBe(true);
+    const gp = z.object(tools.get('browser.get_page_text')!.config.inputSchema);
+    for (const o of [{ maxChars: 0 }, { maxChars: 40001 }, { maxChars: -1 }, { offset: -1 }, { offset: 1.5 }]) expect(gp.safeParse({ sessionId: 's', ...o }).success).toBe(false);
+    for (const o of [{}, { offset: 0 }, { maxChars: 1 }, { maxChars: 40000, offset: 123 }]) expect(gp.safeParse({ sessionId: 's', ...o }).success).toBe(true);
+  });
+
+  const win = (over: Record<string, unknown> = {}) => ({
+    sessionId: 's1', tabId: 't1', url: 'https://x.test', text: 'y'.repeat(4000), offset: 0, returnedChars: 4000, totalChars: 10037, truncated: true, source: 'dom', ...over,
+  });
+
+  it('get_page_text: reads via readTextWindow with offset/maxChars (default maxChars 4000) and appends the marker with its own hint', async () => {
+    const { server, tools } = createMockServer();
+    const runtime = new SutradharRuntime();
+    const spy = vi.spyOn(runtime, 'readTextWindow').mockResolvedValue(win() as any);
+    registerTools(server, { runtime });
+    const r = await tools.get('browser.get_page_text')!.handler({ sessionId: 's1', tabId: 't1' });
+    expect(spy).toHaveBeenCalledWith('s1', 't1', { offset: 0, maxChars: 4000 });
+    expect(r.isError).toBeUndefined();
+    expect(r.content[0].text).toBe('y'.repeat(4000) + '\n[page text truncated: showing characters 0-4000 of 10037. Continue with browser.get_page_text offset=4000]');
+  });
+
+  it('get_page_text: forwards a given offset and maxChars (M-048l: offset must not be dropped)', async () => {
+    const { server, tools } = createMockServer();
+    const runtime = new SutradharRuntime();
+    const spy = vi.spyOn(runtime, 'readTextWindow').mockResolvedValue(win({ offset: 4000, text: 'z'.repeat(2000), returnedChars: 2000 }) as any);
+    registerTools(server, { runtime });
+    const r = await tools.get('browser.get_page_text')!.handler({ sessionId: 's1', offset: 4000, maxChars: 2000 });
+    expect(spy).toHaveBeenCalledWith('s1', undefined, { offset: 4000, maxChars: 2000 });
+    expect(r.content[0].text).toContain('showing characters 4000-6000 of 10037. Continue with browser.get_page_text offset=6000]');
+  });
+
+  it('get_page_text: the last window carries the (end) marker; a complete read carries no marker', async () => {
+    const { server, tools } = createMockServer();
+    const runtime = new SutradharRuntime();
+    const spy = vi.spyOn(runtime, 'readTextWindow').mockResolvedValue(win({ offset: 8000, text: 'e'.repeat(2037), returnedChars: 2037 }) as any);
+    registerTools(server, { runtime });
+    expect((await tools.get('browser.get_page_text')!.handler({ sessionId: 's1', offset: 8000 })).content[0].text).toMatch(/\n\[page text: showing characters 8000-10037 of 10037 \(end\)\]$/);
+    spy.mockResolvedValue(win({ text: 'whole', returnedChars: 5, totalChars: 5, truncated: false }) as any);
+    expect((await tools.get('browser.get_page_text')!.handler({ sessionId: 's1' })).content[0].text).toBe('whole');
+  });
+
+  it('get_page_text: a PageTextReadError (matched by name) returns isError:true with the reason, not empty text (M-048s)', async () => {
+    const { server, tools } = createMockServer();
+    const runtime = new SutradharRuntime();
+    vi.spyOn(runtime, 'readTextWindow').mockRejectedValue(Object.assign(new Error('the PDF text could not be extracted: PDF text extraction is not available in this build (PROB-052)'), { name: 'PageTextReadError' }));
+    registerTools(server, { runtime });
+    const r = await tools.get('browser.get_page_text')!.handler({ sessionId: 's1' });
+    expect(r.isError).toBe(true);
+    expect(r.content[0].text).toContain('PROB-052');
+    expect(r.content[0].text).toMatch(/^page text read failed: /);
+  });
+
+  it('get_page_text: any other failure is also isError:true', async () => {
+    const { server, tools } = createMockServer();
+    const runtime = new SutradharRuntime();
+    vi.spyOn(runtime, 'readTextWindow').mockRejectedValue(new Error('No browser session s1'));
+    registerTools(server, { runtime });
+    const r = await tools.get('browser.get_page_text')!.handler({ sessionId: 's1' });
+    expect(r.isError).toBe(true);
+    expect(r.content[0].text).toContain('No browser session s1');
+    expect(r.content[0].text).toMatch(/^get_page_text failed: /);
+  });
+
+  it('get_page_text: the description states the 40000 ceiling and why', () => {
+    const { tools } = setup({ pageText: '' });
+    const d = tools.get('browser.get_page_text')!.config.description as string;
+    expect(d).toContain('40000');
+    expect(d).toMatch(/output limit/i);
   });
 });

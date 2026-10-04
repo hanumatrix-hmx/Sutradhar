@@ -14,11 +14,11 @@ Two brain modes, one server:
   objective and it navigates, clicks, types, and extracts a final answer. Best for
   multi-step tasks you'd rather not script call-by-call. Requires an LLM provider.
 
-## Tools (73: 72 `browser.*` plus `agent.runGoal`)
+## Tools (74: 73 `browser.*` plus `agent.runGoal`)
 
-Grouped here by category, matching `tools.ts`'s own section layout. `agent.runGoal` is only registered when an LLM provider is configured, so without one the server exposes the 72 `browser.*` tools.
+Grouped here by category, matching `tools.ts`'s own section layout. `agent.runGoal` is only registered when an LLM provider is configured, so without one the server exposes the 73 `browser.*` tools.
 
-**`sessionId` is optional** on every tool that takes one (70 tools; none requires it). Omit it while exactly one session is live and that session is used (the result ends with a `sessionId omitted: used "<id>" ...` note); with zero or several live sessions the call fails and lists the live ids. It never guesses. `browser.launch`, `browser.attach` and `agent.runGoal` are the exception in meaning: their optional `sessionId` is the id to create or reuse, and omitting it always creates a new session. If your session was idle-reaped or crashed and you launched another, an omitted id uses the new one (the note says so).
+**`sessionId` is optional** on every tool that takes one (71 tools; none requires it). Omit it while exactly one session is live and that session is used (the result ends with a `sessionId omitted: used "<id>" ...` note); with zero or several live sessions the call fails and lists the live ids. It never guesses. `browser.launch`, `browser.attach` and `agent.runGoal` are the exception in meaning: their optional `sessionId` is the id to create or reuse, and omitting it always creates a new session. If your session was idle-reaped or crashed and you launched another, an omitted id uses the new one (the note says so).
 
 **Selectors** are CSS, a snapshot `[#id]`, or Puppeteer's `pierce/`, `xpath/`, `aria/` and `text/` prefixes. Playwright syntax (`text=`, `role=`, `>>`, `:has-text()`, `getBy*()`) is rejected immediately with a hint; use `browser.click_by_text` / `click_by_role` / `type_by_label` instead.
 
@@ -58,13 +58,14 @@ Every tool that interacts with or navigates the page also accepts an opt-in `set
 | Tool | Description |
 |---|---|
 | `browser.navigate` | Navigate a tab to a URL. |
-| `browser.go_back` / `go_forward` | History navigation. |
+| `browser.go_back` / `go_forward` | History navigation. With no history entry in that direction the verification evidence carries a `go_back.history-edge` / `go_forward.history-edge` check. |
 | `browser.reload` | Reload the current page. |
 
 ### Agent vision
 | Tool | Description |
 |---|---|
-| `browser.snapshot` | **DOM-attribute grounding** — interactive-element listing (numeric `[#id]`, `data-sd-node-id`-backed) + page text. Fast; can go stale if the page re-renders between snapshot and action. Elements inside an iframe read `[#31 in iframe "pay" (url)]`, elements inside an open shadow root end with `(shadow: host)`, and a frame that could not be read is listed as `[iframe <origin> — not inspectable] (reason)` instead of being dropped (match `^[#(d+)` when parsing). |
+| `browser.snapshot` | **DOM-attribute grounding** — interactive-element listing (numeric `[#id]`, `data-sd-node-id`-backed) + page text (the first 2000 characters by default; `textMaxChars` up to 40000 raises that, and a `[page text truncated: ... browser.get_page_text offset=N ...]` line says when more exists). Fast; can go stale if the page re-renders between snapshot and action. Elements inside an iframe read `[#31 in iframe "pay" (url)]`, elements inside an open shadow root end with `(shadow: host)`, and a frame that could not be read is listed as `[iframe <origin> — not inspectable] (reason)` instead of being dropped (match `^[#(d+)` when parsing). |
+| `browser.get_page_text` | **Read the page text in windows.** `offset` (default 0) and `maxChars` (default 4000, at most 40000, because MCP clients cap a single tool result) select a window; the result ends with a `[page text ...]` marker line naming the next `offset` when it is not the whole page (`(end)` on the last window), so a long page can be read in full. If the text cannot be read (including a PDF in the bundled build, PROB-052) the call returns `isError` with the reason, never empty text. `sessionId` optional like every other tool. |
 | `browser.ax_snapshot` | **Accessibility-tree grounding** — role + accessible-name listing, no ids to go stale. Prefer this for pages that re-render (SPAs, live search, infinite scroll). Iframe content (including cross-origin) is included, grouped under `[iframe ...]` lines. |
 
 ### Interaction
@@ -233,7 +234,9 @@ it never searches the disk itself.
 
 ## Known limitations
 
-These are open, reproduced problems as of 0.6.1.
+These are open, reproduced problems as of 0.6.2.
+
+- **PDF text (PROB-052).** `browser.get_page_text` (and the page text in `browser.snapshot`) cannot extract the text of a PDF page in the published bundled server: the bundled PDF reader needs an optional native module the package does not ship. It returns an error naming PROB-052 (0.6.1 returned empty text).
 
 - **`browser.download_file` (best-effort overlap protection).** Path containment
   (`SUTRADHAR_ALLOWED_DOWNLOAD_ROOTS`/`SUTRADHAR_ALLOWED_UPLOAD_ROOTS`) is verified, including symlink,
