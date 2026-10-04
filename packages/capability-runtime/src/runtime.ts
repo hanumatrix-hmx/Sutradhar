@@ -3077,7 +3077,17 @@ export class SutradharRuntime {
         await parser.destroy();
       }
     } catch (err) {
-      throw new PageTextReadError('pdf', pageTextFailureReason(err), err);
+      const raw = pageTextFailureReason(err);
+      // PROB-052: in a bundled build pdf.js cannot load its optional native module, so the raw failure is a cryptic
+      // "DOMMatrix is not defined". Name the limitation instead (same error class on every surface).
+      if (/DOMMatrix is not defined|@napi-rs\/canvas/.test(raw)) {
+        throw new PageTextReadError(
+          'pdf',
+          'PDF text extraction is not available in this build (PROB-052): the bundled PDF reader needs the optional native module @napi-rs/canvas, which this package does not ship. Download the PDF and read it with another tool, or use an unbundled build',
+          err,
+        );
+      }
+      throw new PageTextReadError('pdf', raw, err);
     }
   }
 

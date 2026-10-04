@@ -12,6 +12,7 @@ const pdfParseState: { text: string; throws: boolean } = { text: '', throws: fal
 vi.mock('pdf-parse', () => ({
   PDFParse: class {
     async getText() {
+      if (pdfParseState.throws === ('domMatrix' as any)) throw new Error('DOMMatrix is not defined');
       if (pdfParseState.throws) throw new Error('bad pdf');
       return { text: pdfParseState.text };
     }
@@ -380,6 +381,18 @@ describe('failure semantics (S2-4)', () => {
 });
 
 describe('PDF path', () => {
+  it('g1/PROB-052: a bundled-build "DOMMatrix is not defined" failure is mapped to the documented limitation message (same error class)', async () => {
+    const orig = pdfParseState.throws;
+    pdfParseState.throws = 'domMatrix' as any;
+    const { page } = fakePage({ contentType: 'application/pdf', body: { innerText: '' } }, { pdfBase64: Buffer.from('%PDF').toString('base64') });
+    const { runtime } = runtimeWith(page);
+    const p = runtime.readTextWindow('s1');
+    await expect(p).rejects.toMatchObject({ name: 'PageTextReadError', source: 'pdf' });
+    await expect(runtime.readTextWindow('s1')).rejects.toThrow(/PDF text extraction is not available in this build \(PROB-052\)/);
+    await expect(runtime.readTextWindow('s1')).rejects.not.toThrow(/^DOMMatrix/);
+    pdfParseState.throws = orig;
+  });
+
   it('PDF ok (9000 chars mocked) is windowed with source:pdf; the 4000 cap is gone', async () => {
     pdfParseState.text = 'p'.repeat(9000);
     const { page, calls } = fakePage({ contentType: 'application/pdf', body: { innerText: '' } }, { pdfBase64: Buffer.from('%PDF').toString('base64') });

@@ -5,7 +5,7 @@
  * CLI entrypoint), which would spawn/attach to a real Chrome the moment a test imported it.
  */
 
-import { VIEWPORT_MAX, type ActionExpectation, type WaitForCondition } from '@sutradhar/capability-runtime';
+import { MAX_PAGE_TEXT_CHARS, VIEWPORT_MAX, type ActionExpectation, type WaitForCondition } from '@sutradhar/capability-runtime';
 
 export interface ParsedArgs {
   /** The subcommand, e.g. "snap", "click", "nav". `undefined` when no argument was given. */
@@ -109,6 +109,13 @@ export interface ParsedArgs {
   /** FR2-08: set when one of those flags was given with no value (it was last, or followed directly by
    *  another known flag). */
   waitForFlagError: string | undefined;
+  /** I-048: `text --offset N` — first character of the window (UTF-16 code units). `undefined` when not given or invalid. */
+  textOffsetFlag: number | undefined;
+  /** I-048: `text --max-chars N` — window size, 1..100000. `undefined` when not given or invalid. */
+  textMaxCharsFlag: number | undefined;
+  /** I-048: the user-facing message when `--offset`/`--max-chars` was given with no value, a non-integer or
+   *  out-of-range value, or on a verb other than `text`. Rejected by `main()` before any session is touched. */
+  textPagingFlagError: string | undefined;
   /** Any `--something`-shaped argument that isn't one of the flags this parser recognizes (and
    *  isn't a consumed value of one, e.g. the URL after `--baseline`). Found live (external field
    *  report, PROB-042): a typo'd or misplaced flag like `sutradhar screenshot --help` was
@@ -198,7 +205,7 @@ export function parseArgs(argv: readonly string[]): ParsedArgs {
     '--headed', '--fail-on-diff', '--json', '--viewport', '--settle', '--no-text', '--ids-only', '--scan-listeners',
     '--profile', '--user-agent', '--allowlist-domains', '--baseline', '--modifiers', '--frame', '--state', '--dialog',
     '--dialog-text', '--expect-text', '--expect-url', '--expect-url-changed', '--expect-url-unchanged',
-    '--text', '--text-gone', '--url', '--js',
+    '--text', '--text-gone', '--url', '--js', '--offset', '--max-chars',
   ]);
   // A value that is missing, or is itself one of OUR flags, means the flag was given without one
   // (`--expect-text --json`); any other `--...`-looking text is a literal value, like `--dialog-text`.
@@ -231,6 +238,30 @@ export function parseArgs(argv: readonly string[]): ParsedArgs {
           : waitJsIndex !== -1 && waitJsValue === undefined
             ? '--js needs a value (e.g. waitfor --js "window.ready === true")'
             : undefined;
+  const offsetIndex = args.indexOf('--offset');
+  const maxCharsIndex = args.indexOf('--max-chars');
+  const offsetRaw = expectValueOf(offsetIndex);
+  const maxCharsRaw = expectValueOf(maxCharsIndex);
+  const parseInt0 = (raw: string): number | undefined =>
+    /^\d+$/.test(raw) && Number.isSafeInteger(Number(raw)) ? Number(raw) : undefined;
+  const textOffsetFlag = offsetRaw !== undefined ? parseInt0(offsetRaw) : undefined;
+  const maxCharsParsed = maxCharsRaw !== undefined ? parseInt0(maxCharsRaw) : undefined;
+  const textMaxCharsFlag =
+    maxCharsParsed !== undefined && maxCharsParsed >= 1 && maxCharsParsed <= MAX_PAGE_TEXT_CHARS ? maxCharsParsed : undefined;
+  const textPagingFlagError: string | undefined =
+    offsetIndex !== -1 && verb !== 'text'
+      ? '--offset is only valid with "text" (e.g. sutradhar text --offset 4000)'
+      : maxCharsIndex !== -1 && verb !== 'text'
+        ? '--max-chars is only valid with "text" (e.g. sutradhar text --max-chars 20000)'
+        : offsetIndex !== -1 && offsetRaw === undefined
+          ? '--offset needs a value (e.g. text --offset 4000)'
+          : maxCharsIndex !== -1 && maxCharsRaw === undefined
+            ? '--max-chars needs a value (e.g. text --max-chars 20000)'
+            : offsetIndex !== -1 && textOffsetFlag === undefined
+              ? `--offset must be an integer >= 0 (got "${offsetRaw}")`
+              : maxCharsIndex !== -1 && textMaxCharsFlag === undefined
+                ? `--max-chars must be an integer from 1 to ${MAX_PAGE_TEXT_CHARS} (got "${maxCharsRaw}")`
+                : undefined;
   const expectTextValue = expectValueOf(expectTextIndex);
   const expectUrlValue = expectValueOf(expectUrlIndex);
   const expectValueMissing =
@@ -275,6 +306,8 @@ export function parseArgs(argv: readonly string[]): ParsedArgs {
     '--text-gone',
     '--url',
     '--js',
+    '--offset',
+    '--max-chars',
   ]);
   const isConsumedValue = (i: number): boolean =>
     (profileFlagIndex !== -1 && i === profileFlagIndex + 1) ||
@@ -292,7 +325,9 @@ export function parseArgs(argv: readonly string[]): ParsedArgs {
     (waitUrlIndex !== -1 && waitUrlValue !== undefined && i === waitUrlIndex + 1) ||
     (waitJsIndex !== -1 && waitJsValue !== undefined && i === waitJsIndex + 1) ||
     (expectTextIndex !== -1 && expectTextValue !== undefined && i === expectTextIndex + 1) ||
-    (expectUrlIndex !== -1 && expectUrlValue !== undefined && i === expectUrlIndex + 1);
+    (expectUrlIndex !== -1 && expectUrlValue !== undefined && i === expectUrlIndex + 1) ||
+    (offsetIndex !== -1 && offsetRaw !== undefined && i === offsetIndex + 1) ||
+    (maxCharsIndex !== -1 && maxCharsRaw !== undefined && i === maxCharsIndex + 1);
   const cleanArgs = args.filter((a, i) => !KNOWN_FLAGS.has(a) && !isConsumedValue(i));
   // Anything left that's still shaped like a flag (`--foo`) is almost certainly a typo'd or
   // misplaced flag, not literal positional data — see `unrecognizedFlags`'s doc comment.
@@ -328,6 +363,9 @@ export function parseArgs(argv: readonly string[]): ParsedArgs {
     expectUrlChangedConflict,
     waitForFlags,
     waitForFlagError,
+    textOffsetFlag,
+    textMaxCharsFlag,
+    textPagingFlagError,
     unrecognizedFlags,
   };
 }

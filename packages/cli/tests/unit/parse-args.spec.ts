@@ -469,3 +469,63 @@ describe('FR2-08 waitfor flags', () => {
     expect(parseArgs(['nav', 'https://x.test/', '--settle']).cleanArgs).toEqual(['https://x.test/']);
   });
 });
+
+describe('I-048 text paging flags (--offset / --max-chars)', () => {
+  it('parses valid values for the text verb and strips both flags and their values from cleanArgs', () => {
+    const r = parseArgs(['text', '--offset', '4000', '--max-chars', '2000']);
+    expect(r.verb).toBe('text');
+    expect(r.textOffsetFlag).toBe(4000);
+    expect(r.textMaxCharsFlag).toBe(2000);
+    expect(r.textPagingFlagError).toBeUndefined();
+    expect(r.cleanArgs).toEqual([]);
+    expect(r.unrecognizedFlags).toEqual([]);
+  });
+
+  it('works in any position and together with --json', () => {
+    const r = parseArgs(['text', '--json', '--max-chars', '100000', '--offset', '0']);
+    expect(r.textOffsetFlag).toBe(0);
+    expect(r.textMaxCharsFlag).toBe(100000);
+    expect(r.jsonMode).toBe(true);
+    expect(r.textPagingFlagError).toBeUndefined();
+  });
+
+  it('without the flags both are undefined and there is no error', () => {
+    const r = parseArgs(['text']);
+    expect(r.textOffsetFlag).toBeUndefined();
+    expect(r.textMaxCharsFlag).toBeUndefined();
+    expect(r.textPagingFlagError).toBeUndefined();
+  });
+
+  it.each([
+    [['text', '--offset'], '--offset needs a value'],
+    [['text', '--offset', '--json'], '--offset needs a value'],
+    [['text', '--max-chars'], '--max-chars needs a value'],
+    [['text', '--offset', 'abc'], '--offset must be an integer >= 0 (got "abc")'],
+    [['text', '--offset', '1.5'], '--offset must be an integer >= 0 (got "1.5")'],
+    [['text', '--offset', '-1'], '--offset must be an integer >= 0 (got "-1")'],
+    [['text', '--max-chars', '0'], '--max-chars must be an integer from 1 to 100000 (got "0")'],
+    [['text', '--max-chars', '100001'], '--max-chars must be an integer from 1 to 100000 (got "100001")'],
+    [['text', '--max-chars', '2.5'], '--max-chars must be an integer from 1 to 100000 (got "2.5")'],
+    [['text', '--max-chars', 'NaN'], '--max-chars must be an integer from 1 to 100000 (got "NaN")'],
+  ])('rejects %j with a message naming the flag and its range', (argv, message) => {
+    const r = parseArgs(argv as string[]);
+    expect(r.textPagingFlagError).toContain(message);
+  });
+
+  it('a bad value is still consumed (never leaks into cleanArgs as positional data)', () => {
+    expect(parseArgs(['text', '--offset', 'abc']).cleanArgs).toEqual([]);
+  });
+
+  it.each([['snap'], ['nav'], ['click'], ['eval'], ['waitfor'], ['close']])('%s with --offset is rejected: the flag belongs to "text" only', (verb) => {
+    const r = parseArgs([verb, '--offset', '5']);
+    expect(r.textPagingFlagError).toContain('--offset is only valid with "text"');
+    const m = parseArgs([verb, '--max-chars', '5']);
+    expect(m.textPagingFlagError).toContain('--max-chars is only valid with "text"');
+  });
+
+  it('does not disturb the --text/--url wait flags (they are different flags)', () => {
+    const r = parseArgs(['waitfor', '--text', 'Saved']);
+    expect(r.textPagingFlagError).toBeUndefined();
+    expect(r.waitForFlags).toEqual({ text: 'Saved' });
+  });
+});

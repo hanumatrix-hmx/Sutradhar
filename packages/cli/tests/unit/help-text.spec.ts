@@ -126,3 +126,11 @@ describe('@sutradhar/cli --help text (GAP-315 cleanup diagnostics)', () => {
     expect(envSection).toContain('[cleanup]');
   });
 });
+
+describe('@sutradhar/cli --help text (I-048 text paging)', () => {
+  it('lists text [--offset N] [--max-chars N] [--json] and explains the truncation marker', () => {
+    expect(helpText).toContain('text [--offset N] [--max-chars N] [--json]');
+    expect(helpText).toContain('[page text truncated');
+    expect(helpText).toContain('sutradhar text --offset');
+  });
+});

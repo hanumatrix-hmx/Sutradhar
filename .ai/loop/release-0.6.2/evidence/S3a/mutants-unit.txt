@@ -1,0 +1,43 @@
+BASELINE exit=0 tests=112 passed (112)
+M-048g KILLED exit=1 (4 failed | 108 passed (112)) restored-sha-equal=true :: marker goes to stderr instead of stdout
+    FAIL  tests/unit/text-output.spec.ts > textOutput > shape A: a truncated first window prints the text, then the marker on its own final stdout line naming the next offset
+    FAIL  tests/unit/text-output.spec.ts > textOutput > shape B: the last paged window prints the (end) marker
+    FAIL  tests/unit/text-output.spec.ts > textOutput > shape C: offset past the end prints an empty window, then the past-the-end marker, exit 0
+M-048g2 KILLED exit=1 (1 failed | 111 passed (112)) restored-sha-equal=true :: marker emitted even for a complete read (empty marker line)
+    FAIL  tests/unit/text-output.spec.ts > textOutput > a complete read prints the text only: no marker, exit 0
+M-048g3 KILLED exit=1 (1 failed | 111 passed (112)) restored-sha-equal=true :: --json also prints the marker line
+    FAIL  tests/unit/text-output.spec.ts > textOutput > --json prints exactly one parseable document equal to the result, and NO marker line
+M-048j KILLED exit=1 (1 failed | 111 passed (112)) restored-sha-equal=true :: --offset parsed but not passed to readTextWindow
+    FAIL  tests/unit/text-output.spec.ts > runTextCommand (the whole verb minus printing) > calls readTextWindow with the session id, no tab, and exactly the flags given
+M-048j2 KILLED exit=1 (1 failed | 111 passed (112)) restored-sha-equal=true :: --max-chars parsed but not passed
+    FAIL  tests/unit/text-output.spec.ts > runTextCommand (the whole verb minus printing) > calls readTextWindow with the session id, no tab, and exactly the flags given
+M-048i-unit KILLED exit=1 (3 failed | 109 passed (112)) restored-sha-equal=true :: text goes through snapshot() again (re-stamps ids)
+    FAIL  tests/unit/text-output.spec.ts > runTextCommand (the whole verb minus printing) > calls readTextWindow with the session id, no tab, and exactly the flags given
+    FAIL  tests/unit/text-output.spec.ts > runTextCommand (the whole verb minus printing) > passes {} when no flag was given (the runtime default window applies) and never ca
+    FAIL  tests/unit/text-output.spec.ts > runTextCommand (the whole verb minus printing) > a PageTextReadError becomes the exit-1 stderr outcome with empty stdout (M-048r)
+M-048r KILLED exit=1 (2 failed | 110 passed (112)) restored-sha-equal=true :: PageTextReadError printed as empty stdout, exit 0
+    FAIL  tests/unit/text-output.spec.ts > textReadErrorOutput (M-048r: a failed read is never empty stdout with exit 0) > prints exactly "Error: text read failed: <reason>" 
+    FAIL  tests/unit/text-output.spec.ts > runTextCommand (the whole verb minus printing) > a PageTextReadError becomes the exit-1 stderr outcome with empty stdout (M-048r)
+M-048r2 KILLED exit=1 (2 failed | 110 passed (112)) restored-sha-equal=true :: read error reported with the Fatal: prefix
+    FAIL  tests/unit/text-output.spec.ts > textReadErrorOutput (M-048r: a failed read is never empty stdout with exit 0) > prints exactly "Error: text read failed: <reason>" 
+    FAIL  tests/unit/text-output.spec.ts > runTextCommand (the whole verb minus printing) > a PageTextReadError becomes the exit-1 stderr outcome with empty stdout (M-048r)
+M-048r3 KILLED exit=1 (2 failed | 110 passed (112)) restored-sha-equal=true :: read error matched by instanceof-ish identity (name check removed: everything is a read error)
+    FAIL  tests/unit/text-output.spec.ts > textReadErrorOutput (M-048r: a failed read is never empty stdout with exit 0) > is identified by err.name (the class is duplicated 
+    FAIL  tests/unit/text-output.spec.ts > runTextCommand (the whole verb minus printing) > any other error is rethrown (it reaches main().catch, like any failing verb)
+M-048x1 KILLED exit=1 (1 failed | 111 passed (112)) restored-sha-equal=true :: offset regex accepts negatives
+    FAIL  tests/unit/parse-args.spec.ts > I-048 text paging flags (--offset / --max-chars) > rejects ["text","--offset","-1"] with a message naming the flag and its range
+M-048x2 KILLED exit=1 (1 failed | 111 passed (112)) restored-sha-equal=true :: max-chars upper bound not enforced
+    FAIL  tests/unit/parse-args.spec.ts > I-048 text paging flags (--offset / --max-chars) > rejects ["text","--max-chars","100001"] with a message naming the flag and its ra
+M-048x3 KILLED exit=1 (1 failed | 111 passed (112)) restored-sha-equal=true :: max-chars lower bound not enforced (0 accepted)
+    FAIL  tests/unit/parse-args.spec.ts > I-048 text paging flags (--offset / --max-chars) > rejects ["text","--max-chars","0"] with a message naming the flag and its range
+M-048x4 KILLED exit=1 (6 failed | 106 passed (112)) restored-sha-equal=true :: --offset accepted on any verb
+    FAIL  tests/unit/parse-args.spec.ts > I-048 text paging flags (--offset / --max-chars) > snap with --offset is rejected: the flag belongs to "text" only
+    FAIL  tests/unit/parse-args.spec.ts > I-048 text paging flags (--offset / --max-chars) > nav with --offset is rejected: the flag belongs to "text" only
+    FAIL  tests/unit/parse-args.spec.ts > I-048 text paging flags (--offset / --max-chars) > click with --offset is rejected: the flag belongs to "text" only
+M-048x5 KILLED exit=1 (2 failed | 110 passed (112)) restored-sha-equal=true :: --offset value not consumed (leaks into cleanArgs)
+    FAIL  tests/unit/parse-args.spec.ts > I-048 text paging flags (--offset / --max-chars) > parses valid values for the text verb and strips both flags and their values from
+    FAIL  tests/unit/parse-args.spec.ts > I-048 text paging flags (--offset / --max-chars) > a bad value is still consumed (never leaks into cleanArgs as positional data)
+M-048x6 KILLED exit=1 (2 failed | 110 passed (112)) restored-sha-equal=true :: a flag given with no value is not an error
+    FAIL  tests/unit/parse-args.spec.ts > I-048 text paging flags (--offset / --max-chars) > rejects ["text","--offset"] with a message naming the flag and its range
+    FAIL  tests/unit/parse-args.spec.ts > I-048 text paging flags (--offset / --max-chars) > rejects ["text","--offset","--json"] with a message naming the flag and its range
+SUMMARY mutants=15 survivors=0

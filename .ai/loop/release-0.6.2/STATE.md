@@ -8,3 +8,9 @@
   SP-2 -> S3a(g) runs the PDF check headless. Tool counts: tools_list=73, EXPECTED_BROWSER_TOOLS=72.
 
 - S2 done (I-048 runtime). Next: S3a (CLI text flags/marker/errors). Verify: tail -1 of evidence/S2/mutants.txt (survivors=0); capability-runtime 553 tests.
+
+- S3a STOPPED (uncommitted working tree): S3a-7 (g) PDF fails - bundled CLI cannot extract PDF text (@napi-rs/canvas / DOMMatrix); see evidence/S3a/README.md. Next: orchestrator decision, then re-run the harness and commit S3a, then S3b, S3c.
+
+- Addendum A.1 follow-ups for later steps: S10b gap (bundled PDF extraction, PROB-052, both fix options); S10 changelog "Known limitations": PDF text unavailable in bundled builds, `text` on a PDF now exits 1 with the PROB-052 message (was empty line + exit 0).
+
+- S3a done after Addendum A (committed). Next: S3b.

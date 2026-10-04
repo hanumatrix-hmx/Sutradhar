@@ -16,6 +16,13 @@ Last Updated: 2026-10-04
 
 ## Problem Inventory
 
+- **ID**: `PROB-052`
+  - **Summary**: PDF text extraction does not work in any BUNDLED build (the published `sutradhar` package, `dist/cli-bin.js`, `dist/index.js`, `dist/mcp-cli.js`). `pdf-parse` -> `pdfjs-dist` is inlined into the bundles and, in Node, pdf.js needs the optional native module `@napi-rs/canvas` at run time (to polyfill `DOMMatrix`/`ImageData`/`Path2D`); `packages/sutradhar` depends only on `puppeteer-core`, so it is not resolvable from `dist/`.
+  - **Severity**: Medium — PDF text is unreadable from the published CLI/SDK/MCP.
+  - **Status**: OPEN (found 2026-10-04 during 0.6.2 S3a; PRE-EXISTING since the bundle shipped; not fixed in 0.6.2)
+  - **Impact**: In 0.6.1 `text` on a PDF printed one empty line with exit 0 (the error was swallowed; stderr only carried pdf.js warnings). The unbundled `capability-runtime/dist` works (`source:'pdf'`, 10098 chars on the fixture PDF), so the windowing logic is fine; the failure is packaging only. As of 0.6.2 the read fails loudly: `text` exits 1 with `Error: text read failed: the PDF text could not be extracted: PDF text extraction is not available in this build (PROB-052): ...`; MCP `browser.get_page_text` returns `isError` and SDK `page.text()` rejects with the same `PageTextReadError`; `snapshot()` reports it in `pageTextError`.
+  - **Mitigation**: Message only (0.6.2). Fix options: (1) add `@napi-rs/canvas` as a dependency of `sutradhar` (native, per-platform binaries); (2) bundle a pure-JS `DOMMatrix`/`ImageData`/`Path2D` polyfill before pdf.js loads. Either needs its own release decision.
+
 - **ID**: `PROB-051`
   - **Summary**: A CLI verb other than `nav` run while no session exists (never launched, or after `close`) silently launches a blank browser and exits 0. `nav` is the only verb the help text says launches a session.
   - **Severity**: Medium — empty output with exit 0 reads as "the page is empty", not "no session; a blank one was just created".
@@ -259,6 +266,7 @@ Last Updated: 2026-10-04
     wiring — `sutradhar text` (which already prints `snapshot()`'s `pageText`) against the
     identical PDF URL now prints the real extracted text directly, since it shares the same
     `readPageText` code path; no separate CLI-specific gap to close.
+    AMENDED 2026-10-04 (PROB-052): the "RESOLVED" above only holds for unbundled/dev runs; in every bundled build (published CLI/SDK/MCP) pdf.js cannot load `@napi-rs/canvas` and extraction fails (0.6.1 swallowed it as empty text). See PROB-052.
     Note: `pdf-parse` was installed with plain `npm install` into an isolated scratch directory
     and its resulting `node_modules` entries (`pdf-parse`, `pdfjs-dist`, `@napi-rs/canvas`) were
     copied directly into `packages/capability-runtime/node_modules`, since `pnpm` is not

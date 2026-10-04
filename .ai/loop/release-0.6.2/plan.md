@@ -1182,3 +1182,25 @@ negative controls); every scratch path is release-0.6.2-specific.
 | D | gate parameters must exist in each harness's first version | New 0.2 item 4b: every live harness reads `CLI`/`BUNDLE`/`MCP` (dist paths), `RUNS` and `NO_MUTANTS` from env from its first version, defaults = its own step's run, and prints resolved values + sha256. |
 | E | scenario-results restore method unnamed | S11 8h: copy to evidence, then `git restore -- <path>` per tracked file by name, `rm -- <path>` only for untracked files under `tools/scenario-suite/results/`; final `git status` of `tools/scenario-suite` empty. |
 | F | rejected `goBack`/`goForward`/`reload` outside beforeunload unspecified | 2.5: propagates to `main().catch` (`Fatal:`, exit 1, never "Navigated"), intended; "no checks at all" -> `unconfirmed`; S7 unit rows for both. |
+
+---
+
+## Addendum A (orchestrator decisions during the build; binding)
+
+**A.1 — S3a-7 (g) PDF (builder STOP, correctly raised).** Finding: in every BUNDLED build (published 0.6.1 and HEAD) PDF
+text extraction fails because pdf.js is inlined and needs `@napi-rs/canvas` (DOMMatrix) at run time, which
+`packages/sutradhar` does not ship; 0.6.1 printed one empty line (silent data loss), the unbundled
+capability-runtime/dist works (`source:'pdf'`, 10098 chars). This is PRE-EXISTING (PROB-009's "resolved" only holds
+unbundled), not caused by 0.6.2. Decision: do NOT widen 0.6.2 with a native dependency or polyfill.
+- S3a-7 (g) is replaced by: (g1) unit tests cover the PDF windowing path (`source:'pdf'`, totals, marker) with the PDF
+  reader stubbed; (g2) LIVE on the bundled CLI, `text` on the /pdf fixture must exit 1 with a CLEAR, documented message
+  that names the limitation (not the raw "DOMMatrix is not defined"), e.g. `Error: text read failed: PDF text
+  extraction is not available in this build (PROB-052); ...`, and must never print empty text with exit 0; NEG061
+  control shows the old empty-line/exit-0 behaviour. The message mapping lives where the read error is produced, and
+  MCP get_page_text / SDK page.text() surface the same error class.
+- New PROB-052 in .ai/known-problems.md (bundled PDF extraction broken since the bundle shipped; root cause and both
+  fix options); S10b gap; S10 changelog "Known limitations" entry; PROB-009 note amended.
+**A.2 — M-048h** (validation placed inside withSession): the "exactly 1 replacement" rule exists to keep bundle mutants
+unambiguous. Run M-048h as a source-level mutant + rebuilt bundle (2 replacements are allowed for this one mutant
+because the validation and its call site move together), recorded with both replacement sites; if that is not
+feasible, run it at unit level and record why.
