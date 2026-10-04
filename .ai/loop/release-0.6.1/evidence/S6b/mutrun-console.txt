@@ -1,0 +1,58 @@
+[iso-guard] tmpdir=e:/ai-cache/tmp/claude/e--hmx-projects-internal-projects-pinchtab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/s6b-tmp pid=52616
+## M-O1: exit=1 signal= Tests  5 failed | 44 passed (49)
+   sha-before=5f29b2fae0e9f4d524a36fef0f83c26273267e0dfe9069bbe00c850f75b3b381 sha-after=5f29b2fae0e9f4d524a36fef0f83c26273267e0dfe9069bbe00c850f75b3b381 restored=true
+   must-fail=[O1:, O2:] caught=true
+   FAILED: tests/unit/close-session.spec.ts > stopSpawnedChrome (close/recovery order) > O1: normal close runs kill -> clearState -> cleanup, and cleanup sees NO chromePid in the store
+   FAILED: tests/unit/close-session.spec.ts > stopSpawnedChrome (close/recovery order) > O2: an interrupted (never-settling) cleanup leaves the state already cleared; a second stop makes 0 kill calls
+   FAILED: tests/unit/close-session.spec.ts > stopSpawnedChrome (close/recovery order) > O4: a slow kill (resolves only at its cap) still gets the state cleared and the cleanup run, after kill-end
+   FAILED: tests/unit/close-session.spec.ts > stopSpawnedChrome (close/recovery order) > O7: a state record written during the cleanup (a concurrent `nav` from the same cwd) survives
+   FAILED: tests/unit/close-session.spec.ts > stopSpawnedChrome (close/recovery order) > a failing kill or clearState never throws (never-throws contract) and later steps still run
+## M-O2: exit=1 signal= Tests  2 failed | 47 passed (49)
+   sha-before=5f29b2fae0e9f4d524a36fef0f83c26273267e0dfe9069bbe00c850f75b3b381 sha-after=5f29b2fae0e9f4d524a36fef0f83c26273267e0dfe9069bbe00c850f75b3b381 restored=true
+   must-fail=[O1:] caught=true
+   FAILED: tests/unit/close-session.spec.ts > stopSpawnedChrome (close/recovery order) > O1: normal close runs kill -> clearState -> cleanup, and cleanup sees NO chromePid in the store
+   FAILED: tests/unit/close-session.spec.ts > stopSpawnedChrome (close/recovery order) > O4: a slow kill (resolves only at its cap) still gets the state cleared and the cleanup run, after kill-end
+## M-O3: exit=1 signal= Tests  1 failed | 48 passed (49)
+   sha-before=5f29b2fae0e9f4d524a36fef0f83c26273267e0dfe9069bbe00c850f75b3b381 sha-after=5f29b2fae0e9f4d524a36fef0f83c26273267e0dfe9069bbe00c850f75b3b381 restored=true
+   must-fail=[O3:] caught=true
+   FAILED: tests/unit/close-session.spec.ts > stopSpawnedChrome (close/recovery order) > O3: a rejecting cleanup is a warning, never a throw; kill ran once; state is cleared
+## M-O4a-default: exit=1 signal= Tests  1 failed | 48 passed (49)
+   sha-before=5f29b2fae0e9f4d524a36fef0f83c26273267e0dfe9069bbe00c850f75b3b381 sha-after=5f29b2fae0e9f4d524a36fef0f83c26273267e0dfe9069bbe00c850f75b3b381 restored=true
+   must-fail=[O8:] caught=true
+   FAILED: tests/unit/close-session.spec.ts > stopSpawnedChrome (close/recovery order) > O8: with the real default clock, the cleanup deadline is ~15 s ahead on the performance.now() scale
+## M-O4b-wiring: exit=1 signal= Tests  1 failed | 48 passed (49)
+   sha-before=c468206ce06e41e0c3969e7a6f7ffe4de787533352a7c22c36127fcd0fa622b4 sha-after=c468206ce06e41e0c3969e7a6f7ffe4de787533352a7c22c36127fcd0fa622b4 restored=true
+   must-fail=[O6:] caught=true
+   FAILED: tests/unit/close-session.spec.ts > stopSpawnedChrome (close/recovery order) > O6: cli.ts wiring (source guard): exactly 2 `await stopSpawnedChrome(` calls, kill by reference, monotonic now
+## M-O5: exit=1 signal= Tests  2 failed | 47 passed (49)
+   sha-before=c468206ce06e41e0c3969e7a6f7ffe4de787533352a7c22c36127fcd0fa622b4 sha-after=c468206ce06e41e0c3969e7a6f7ffe4de787533352a7c22c36127fcd0fa622b4 restored=true
+   must-fail=[(a)] caught=true
+   FAILED: tests/unit/close-session.spec.ts > stopSpawnedChrome (close/recovery order) > O7 source guard: cmdClose clears the state exactly where the plan says > (a) no clearState( between `await stopSpawnedChrome(` and the end of the enclosing `if (state.chromePid)` block
+   FAILED: tests/unit/close-session.spec.ts > stopSpawnedChrome (close/recovery order) > O7 source guard: cmdClose clears the state exactly where the plan says > (b) exactly one clearState( in cmdClose, inside the else of `if (state.chromePid)` and OUTSIDE `if (!closeBlocked) {...}`
+## M-O6: exit=1 signal= Tests  1 failed | 48 passed (49)
+   sha-before=c468206ce06e41e0c3969e7a6f7ffe4de787533352a7c22c36127fcd0fa622b4 sha-after=c468206ce06e41e0c3969e7a6f7ffe4de787533352a7c22c36127fcd0fa622b4 restored=true
+   must-fail=[(b)] caught=true
+   FAILED: tests/unit/close-session.spec.ts > stopSpawnedChrome (close/recovery order) > O7 source guard: cmdClose clears the state exactly where the plan says > (b) exactly one clearState( in cmdClose, inside the else of `if (state.chromePid)` and OUTSIDE `if (!closeBlocked) {...}`
+## M-O7: exit=1 signal= Tests  2 failed | 47 passed (49)
+   sha-before=5f29b2fae0e9f4d524a36fef0f83c26273267e0dfe9069bbe00c850f75b3b381 sha-after=5f29b2fae0e9f4d524a36fef0f83c26273267e0dfe9069bbe00c850f75b3b381 restored=true
+   must-fail=[O9:, O10:] caught=true
+   FAILED: tests/unit/close-session.spec.ts > stopSpawnedChrome (close/recovery order) > O9: a malformed userDataDir is not passed to the cleanup, but a valid chromePid is still killed once and the state cleared
+   FAILED: tests/unit/close-session.spec.ts > stopSpawnedChrome (close/recovery order) > O10: a malformed chromePid is never killed (never reaches taskkill); state cleared; resolves
+## M-T10: exit=1 signal= Tests  1 failed | 48 passed (49)
+   sha-before=27f8598330e1d30c7ef2ac0aaa758caed3cdc31c1262eec4ba57195d00385efa sha-after=27f8598330e1d30c7ef2ac0aaa758caed3cdc31c1262eec4ba57195d00385efa restored=true
+   must-fail=[T10:] caught=true
+   FAILED: tests/unit/temp-profile.spec.ts > S6b amendment N2: cleanup never throws on malformed input (the documented contract) > T10: a scan that REJECTS is treated as null (scan-unavailable, fail closed), for close and for sweep
+## M-T9: exit=1 signal= Tests  1 failed | 48 passed (49)
+   sha-before=27f8598330e1d30c7ef2ac0aaa758caed3cdc31c1262eec4ba57195d00385efa sha-after=27f8598330e1d30c7ef2ac0aaa758caed3cdc31c1262eec4ba57195d00385efa restored=true
+   must-fail=[T9:] caught=true
+   FAILED: tests/unit/temp-profile.spec.ts > S6b amendment N2: cleanup never throws on malformed input (the documented contract) > T9: a non-string dir (hand-corrupted state.json) resolves with not-auto-temp instead of throwing
+## M-N2-close-catch: exit=1 signal= Tests  1 failed | 48 passed (49)
+   sha-before=27f8598330e1d30c7ef2ac0aaa758caed3cdc31c1262eec4ba57195d00385efa sha-after=27f8598330e1d30c7ef2ac0aaa758caed3cdc31c1262eec4ba57195d00385efa restored=true
+   must-fail=[an unexpected internal error becomes] caught=true
+   FAILED: tests/unit/temp-profile.spec.ts > S6b amendment N2: cleanup never throws on malformed input (the documented contract) > an unexpected internal error becomes {removed:false, reason:"error"} (never a throw)
+## M-N2-sweep-catch: exit=1 signal= Tests  1 failed | 48 passed (49)
+   sha-before=27f8598330e1d30c7ef2ac0aaa758caed3cdc31c1262eec4ba57195d00385efa sha-after=27f8598330e1d30c7ef2ac0aaa758caed3cdc31c1262eec4ba57195d00385efa restored=true
+   must-fail=[a sweep that hits an unexpected internal error] caught=true
+   FAILED: tests/unit/temp-profile.spec.ts > S6b amendment N2: cleanup never throws on malformed input (the documented contract) > a sweep that hits an unexpected internal error resolves (keeping the dir) instead of throwing
+ALL-MUTANTS-CAUGHT-AND-RESTORED
+mutrun-exit=0

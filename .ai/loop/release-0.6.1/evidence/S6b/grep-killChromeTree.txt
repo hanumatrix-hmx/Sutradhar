@@ -1,0 +1,3 @@
+packages/cli/src/cli.ts:306:    killChromeTree(spawned.pid);
+packages/cli/src/spawn-chrome.ts:106:  killChromeTree(pid); // never leave a Chrome that no state file knows about
+packages/cli/src/spawn-chrome.ts:116:export async function killChromeTree(pid: number, timeoutMs = 10_000): Promise<void> {

@@ -35,7 +35,8 @@ import { formatAuditText, auditNotes, auditExitCode } from './audit-output.js';
 import { dialogOutputSink, dialogBlockedJsonDoc, printDialogBlockedJsonOnce, writeJsonStdoutOnce } from './dialog-json-routing.js';
 import { readState, writeState, clearState, STATE_DIR, type CliState } from './state.js';
 import { spawnDetachedChrome, killChromeTree } from './spawn-chrome.js';
-import { CLOSE_CLEANUP_DEADLINE_MS, removeSessionTempProfile, sweepStaleTempProfiles } from './temp-profile.js';
+import { removeSessionTempProfile, sweepStaleTempProfiles } from './temp-profile.js';
+import { stopSpawnedChrome, type StopDeps } from './close-session.js';
 import { createSessionId } from '@sutradhar/contracts';
 import { parseArgs, dialogFlagError, expectFlagError, waitForConditionFromArgs } from './parse-args.js';
 import { waitForOutcome } from './waitfor-output.js';
@@ -485,9 +486,9 @@ async function withSession<T>(
         `Note: previous session was unreachable (${(err as Error).message}) — starting a fresh session.`,
       );
       await stopWarden(STATE_DIR).catch(() => {});
-      if (state.chromePid) await killChromeTree(state.chromePid);
-      await cleanupSessionTempProfile(state, state.chromePid, true, performance.now() + CLOSE_CLEANUP_DEADLINE_MS);
-      await clearState();
+      // 0.6.1 order: kill -> clear the recorded state -> bounded temp-profile cleanup (see
+      // close-session.ts for why the state must be gone before the slow cleanup runs).
+      await stopSpawnedChrome(state, sessionStopDeps());
       return spawnFreshSession(runtime, { dialogPolicy: state.dialogPolicy });
     },
     afterAttach: async (sid, isFreshSpawn) => {
@@ -1613,6 +1614,22 @@ async function cleanupSessionTempProfile(
   }
 }
 
+/** The real dependencies of {@link stopSpawnedChrome}: the SAME `killChromeTree` as 0.6.0 (by
+ *  reference), the CLI's own `clearState`, the bounded temp-profile cleanup (warns on failure),
+ *  and the monotonic clock every temp-profile deadline is measured on. */
+function sessionStopDeps(): StopDeps {
+  return {
+    kill: killChromeTree,
+    clearState,
+    cleanup: (target, chromePid, deadlineAt) => cleanupSessionTempProfile(target, chromePid, true, deadlineAt),
+    now: () => performance.now(),
+    debug: (line) => {
+      if (process.env.SUTRADHAR_CLI_DEBUG_CLEANUP === '1') process.stderr.write(`${line}\n`);
+    },
+    warn: (message) => console.error(message),
+  };
+}
+
 async function cmdClose() {
   const state = await readState();
   if (!state) {
@@ -1691,20 +1708,25 @@ async function cmdClose() {
     // SpawnedChrome doc comment), so for a Chrome process THIS CLI spawned, runtime.shutdown()
     // alone would leak it. Kill the actual process (and its child renderer/GPU processes). Never
     // attaches, so it's unaffected by closeBlocked (no 180s hang risk here either way).
-    await killChromeTree(state.chromePid);
-    await cleanupSessionTempProfile(state, state.chromePid, true, performance.now() + CLOSE_CLEANUP_DEADLINE_MS);
-  } else if (!closeBlocked) {
-    // FR2-04 N11: this attach WOULD hang for up to 180s against a dialog-blocked page — skipped
-    // whenever the gate reported 'blocked' above.
-    const runtime = new SutradharRuntime({ logger });
-    try {
-      const { sessionId } = await runtime.attach({ endpoint: state.wsEndpoint, sessionId: state.sessionId });
-      await runtime.shutdown(sessionId);
-    } catch {
-      // Already gone (browser closed externally, etc.) — clearing state is still the right move.
+    // 0.6.1 order (close-session.ts): kill -> clearState -> bounded temp-profile cleanup. The state
+    // is cleared INSIDE stopSpawnedChrome, before the slow cleanup, so no recorded PID can outlive
+    // its kill; there is deliberately no second state clear on this path (a late clear would delete
+    // a state.json that a concurrent command wrote during the cleanup).
+    await stopSpawnedChrome(state, sessionStopDeps());
+  } else {
+    if (!closeBlocked) {
+      // FR2-04 N11: this attach WOULD hang for up to 180s against a dialog-blocked page — skipped
+      // whenever the gate reported 'blocked' above.
+      const runtime = new SutradharRuntime({ logger });
+      try {
+        const { sessionId } = await runtime.attach({ endpoint: state.wsEndpoint, sessionId: state.sessionId });
+        await runtime.shutdown(sessionId);
+      } catch {
+        // Already gone (browser closed externally, etc.) — clearing state is still the right move.
+      }
     }
+    await clearState(); // still runs for BOTH no-chromePid paths, including dialog-blocked (legacy state files)
   }
-  await clearState();
   console.log('Session closed.');
 }
 

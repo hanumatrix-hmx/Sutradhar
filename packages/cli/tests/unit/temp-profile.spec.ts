@@ -433,3 +433,79 @@ describe('S6a: debug seam (SUTRADHAR_CLI_DEBUG_CLEANUP=1)', () => {
     expect(writes).toEqual([]);
   });
 });
+
+describe('S6b amendment N2: cleanup never throws on malformed input (the documented contract)', () => {
+  let root: string;
+  beforeEach(async () => {
+    root = await mkdtemp(path.join(os.tmpdir(), 'gap315-n2-'));
+  });
+  afterEach(async () => {
+    await rm(root, { recursive: true, force: true });
+  });
+
+  it('T9: a non-string dir (hand-corrupted state.json) resolves with not-auto-temp instead of throwing', async () => {
+    for (const bad of [123, null, undefined, {}, ['x']]) {
+      const res = await removeSessionTempProfile(bad as unknown as string, undefined, { tmpRoot: root, scan: async () => [] });
+      expect(res).toEqual({ removed: false, reason: 'not-auto-temp' });
+    }
+  });
+
+  it('T10: a scan that REJECTS is treated as null (scan-unavailable, fail closed), for close and for sweep', async () => {
+    const d = await createTempProfileDir(root);
+    const boom = async (): Promise<string[] | null> => {
+      throw new Error('scan exploded');
+    };
+    expect(await removeSessionTempProfile(d, undefined, { tmpRoot: root, scan: boom })).toEqual({ removed: false, reason: 'scan-unavailable' });
+    expect(await exists(d)).toBe(true);
+    const stale = path.join(root, 'sutradhar-cli-1790000000077');
+    await mkdir(stale);
+    const past = new Date(Date.now() - 2 * STALE_MIN_AGE_MS);
+    await utimes(stale, past, past);
+    const sw = await sweepStaleTempProfiles({ tmpRoot: root, scan: boom });
+    expect(sw.removed).toEqual([]);
+    expect(sw.kept.find((k) => k.dir === stale)?.reason).toBe('scan-unavailable');
+    expect(await exists(stale)).toBe(true);
+  });
+
+  it('an unexpected internal error becomes {removed:false, reason:"error"} (never a throw)', async () => {
+    const d = await createTempProfileDir(root);
+    const res = await removeSessionTempProfile(d, undefined, {
+      tmpRoot: root,
+      scan: async () => [],
+      isAlive: () => {
+        throw new Error('isAlive exploded');
+      },
+    });
+    // no chromePid, no marker: the owner-alive fact is never computed, so the dir is simply removed ...
+    expect(res).toEqual({ removed: true });
+    // ... but a marker makes the seam run, and its throw is contained
+    const d2 = await createTempProfileDir(root);
+    await writeOwnerMarker(d2, 4242);
+    const res2 = await removeSessionTempProfile(d2, undefined, {
+      tmpRoot: root,
+      scan: async () => [],
+      isAlive: () => {
+        throw new Error('isAlive exploded');
+      },
+    });
+    expect(res2).toEqual({ removed: false, reason: 'error' });
+    expect(await exists(d2)).toBe(true);
+  });
+
+  it('a sweep that hits an unexpected internal error resolves (keeping the dir) instead of throwing', async () => {
+    const stale = path.join(root, 'sutradhar-cli-1790000000088');
+    await mkdir(stale);
+    await writeOwnerMarker(stale, 4242);
+    const past = new Date(Date.now() - 2 * STALE_MIN_AGE_MS);
+    await utimes(stale, past, past);
+    const res = await sweepStaleTempProfiles({
+      tmpRoot: root,
+      scan: async () => [],
+      isAlive: () => {
+        throw new Error('isAlive exploded');
+      },
+    });
+    expect(res.removed).toEqual([]);
+    expect(await exists(stale)).toBe(true);
+  });
+});

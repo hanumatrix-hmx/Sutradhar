@@ -207,10 +207,16 @@ export async function scanCommandLines(timeoutMs = SCAN_TIMEOUT_MS): Promise<str
 }
 
 /** Runs the (real or injected) scan with an already-clamped timeout and logs `scan ms= result=`.
- */
+ *  A scan that REJECTS counts as a failed scan: `null`, which keeps everything (fail closed). */
 async function runScan(scan: typeof scanCommandLines, timeoutMs: number): Promise<string[] | null> {
   const t0 = performance.now();
-  const lines = await scan(timeoutMs);
+  let lines: string[] | null;
+  try {
+    lines = await scan(timeoutMs);
+  } catch (err) {
+    dlog('scan-error', { message: errMessage(err) });
+    lines = null;
+  }
   dlog('scan', { ms: Math.round(performance.now() - t0), result: lines === null ? 'null' : lines.length });
   return lines;
 }
@@ -353,6 +359,21 @@ export async function removeSessionTempProfile(
   chromePid: number | undefined,
   opts: RemoveSessionOptions = {},
 ): Promise<CloseCleanupResult> {
+  try {
+    if (typeof dir !== 'string') return { removed: false, reason: 'not-auto-temp' }; // hand-corrupted state.json
+    return await removeSessionTempProfileUnguarded(dir, chromePid, opts);
+  } catch (err) {
+    // The documented "never throws" contract: any unexpected error keeps the dir.
+    dlog('error', { path: typeof dir === 'string' ? dir : undefined, message: errMessage(err) });
+    return { removed: false, reason: 'error' };
+  }
+}
+
+async function removeSessionTempProfileUnguarded(
+  dir: string,
+  chromePid: number | undefined,
+  opts: RemoveSessionOptions,
+): Promise<CloseCleanupResult> {
   const t0 = performance.now();
   const deadlineAt = opts.deadlineAt ?? t0 + (opts.deadlineMs ?? CLOSE_CLEANUP_DEADLINE_MS);
   const isAlive = opts.isAlive ?? isPidAlive;
@@ -426,25 +447,32 @@ export interface SweepOptions {
  */
 export async function sweepStaleTempProfiles(opts: SweepOptions = {}): Promise<SweepResult> {
   const t0 = performance.now();
+  const result: SweepResult = { removed: [], kept: [] };
+  try {
+    await sweepInto(opts, result, t0);
+  } catch (err) {
+    // The documented "never throws" contract: an unexpected error ends the sweep, keeping what is left.
+    dlog('error', { message: errMessage(err) });
+  }
+  dlog('phase sweep', { ms: Math.round(performance.now() - t0), removed: result.removed.length, kept: result.kept.length });
+  return result;
+}
+
+async function sweepInto(opts: SweepOptions, result: SweepResult, t0: number): Promise<void> {
   const deadline = t0 + (opts.budgetMs ?? SWEEP_BUDGET_MS);
   const tmpRoot = opts.tmpRoot ?? os.tmpdir();
   const isAlive = opts.isAlive ?? isPidAlive;
-  const result: SweepResult = { removed: [], kept: [] };
-  const finish = (): SweepResult => {
-    dlog('phase sweep', { ms: Math.round(performance.now() - t0), removed: result.removed.length, kept: result.kept.length });
-    return result;
-  };
   let names: string[];
   try {
     names = (await readdir(tmpRoot)).filter((n) => n.startsWith(TEMP_PROFILE_PREFIX));
   } catch {
-    return finish();
+    return;
   }
   const candidates = names.map((n) => path.join(tmpRoot, n)).filter((d) => isAutoTempProfileDir(d, tmpRoot));
   for (const d of candidates) dlog('consider', { path: d, mode: 'sweep' });
-  if (candidates.length === 0) return finish();
+  if (candidates.length === 0) return;
   const scanMs = Math.min(SCAN_TIMEOUT_MS, deadline - performance.now());
-  if (scanMs <= 0) return finish();
+  if (scanMs <= 0) return;
   const commandLines = await runScan(opts.scan ?? scanCommandLines, scanMs);
   for (const [i, dir] of candidates.entries()) {
     if (deadline - performance.now() < MIN_RM_START_MS) {
@@ -478,5 +506,4 @@ export async function sweepStaleTempProfiles(opts: SweepOptions = {}): Promise<S
       result.kept.push({ dir, reason });
     }
   }
-  return finish();
 }
