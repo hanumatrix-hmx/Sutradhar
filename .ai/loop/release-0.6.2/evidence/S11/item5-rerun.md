@@ -30,3 +30,9 @@ sutradhar | Tests 70 passed (70) | exit=0
 utils | Tests 20 passed (20) | exit=0
 workflow | Tests 5 passed (5) | exit=0
 ```
+
+## check-release-ready (run at 1f4953e, clean tree)
+`node scripts/check-release-ready.mjs` -> rc=0
+```
+[check-release-ready] working tree clean, all workspace dependencies fresh - OK to publish.
+```
