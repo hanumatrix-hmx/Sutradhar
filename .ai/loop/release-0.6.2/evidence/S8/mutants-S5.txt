@@ -1,0 +1,8 @@
+BASELINE exit=0 tests=162 passed (162) ; 6 passed (6)
+M-049a KILLED exit=1 tests=1 failed | 161 passed (162) ; 6 passed (6) restored-sha-equal=true replacements=1 crlf=true :: unanchored regexes :: FAIL  tests/unit/runtime.spec.ts > @sutradhar/capability-runtime SutradharRuntime (logic, no browser) > normalizeTarget > I-049: half-bracketed forms keep the n
+M-049b KILLED exit=1 tests=1 failed | 161 passed (162) ; 6 passed (6) restored-sha-equal=true replacements=1 crlf=true :: #N only (no [#N]) :: FAIL  tests/unit/runtime.spec.ts > @sutradhar/capability-runtime SutradharRuntime (logic, no browser) > normalizeTarget > I-049: "#N" and "[#N]" (as snap prints
+M-049b2 KILLED exit=1 tests=1 failed | 161 passed (162) ; 6 passed (6) restored-sha-equal=true replacements=1 crlf=true :: [#N] only (no #N) :: FAIL  tests/unit/runtime.spec.ts > @sutradhar/capability-runtime SutradharRuntime (logic, no browser) > normalizeTarget > I-049: "#N" and "[#N]" (as snap prints
+M-049c KILLED exit=1 tests=1 failed | 161 passed (162) ; 6 passed (6) restored-sha-equal=true replacements=1 crlf=true :: Number() normalisation of the digits (#05 -> 5) :: FAIL  tests/unit/runtime.spec.ts > @sutradhar/capability-runtime SutradharRuntime (logic, no browser) > normalizeTarget > I-049: "#N" and "[#N]" (as snap prints
+M-049d KILLED exit=1 tests=1 failed | 161 passed (162) ; 6 passed (6) restored-sha-equal=true replacements=1 crlf=true :: untrimmed match (padded #5 rejected) :: FAIL  tests/unit/runtime.spec.ts > @sutradhar/capability-runtime SutradharRuntime (logic, no browser) > normalizeTarget > I-049: "#N" and "[#N]" (as snap prints
+survivors=0
+rc=0

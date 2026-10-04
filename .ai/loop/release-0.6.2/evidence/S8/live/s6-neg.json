@@ -1,0 +1,64 @@
+{
+  "mode": "neg",
+  "cliSha256": "9858726a291e844e1f84089b18310e90379140e2dfabf7b2fda80eb550b5c59b",
+  "checks": {
+    "S6-5 NEG061 `text` from no state: exit 0 and a state.json appears (it launched a blank browser)": {
+      "ok": true,
+      "detail": {
+        "code": 0,
+        "stdout": "\n",
+        "stderr": [
+          "[cleanup] phase sweep ms=0 removed=0 kept=0",
+          "[cleanup] created path=\"E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\N8t\\sutradhar-cli-1791133839594-vaKnSr\""
+        ]
+      }
+    },
+    "NEG061 close: state.json gone": {
+      "ok": true,
+      "detail": {
+        "code": 0
+      }
+    },
+    "S6-5 NEG061 `snap` from no state also launches (exit 0, state.json)": {
+      "ok": true,
+      "detail": {
+        "code": 0,
+        "stdout": "URL: chrome://new-tab-page/\nTitle: New tab\nInteractive eleme"
+      }
+    },
+    "no state.json left in any state dir at the end": {
+      "ok": true,
+      "detail": []
+    },
+    "path-log check exit 0 (>= 1 [cleanup] line, none outside ISO)": {
+      "ok": true,
+      "detail": {
+        "exit": 0,
+        "out": [
+          "cleanup-lines=20 outside-iso=0"
+        ]
+      }
+    },
+    "attribution query: no Chrome with the ISO basename left at the end": {
+      "ok": true,
+      "detail": []
+    },
+    "no timed-out CLI call": {
+      "ok": true
+    }
+  },
+  "negatives": [],
+  "isoCliDirsLeft": [],
+  "realTemp": {
+    "before": 5,
+    "after": 5,
+    "vanished": []
+  },
+  "pathCheck": {
+    "exit": 0,
+    "out": [
+      "cleanup-lines=20 outside-iso=0"
+    ]
+  },
+  "allPass": true
+}

@@ -1,0 +1,420 @@
+{
+  "mode": "mutant",
+  "churn": "k=8&ms=25",
+  "cli": "E:/AI-Cache/tmp/claude/E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/r062/S8/dc/dist/cli-bin.js",
+  "cliSha256": "f221f536b9655e5580752adf8189145b9c4d8bb7ed2108633c89f923f5cae346",
+  "bundle": "E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\r062\\S8\\dc\\dist\\index.js",
+  "bundleSha256": "7c528f4c3bef9053e60c46e46c43fbf255e0d50f0539175a2f74793922172e54",
+  "checks": {
+    "state.userDataDir <= 200 chars and dirname == ISO": {
+      "ok": true,
+      "detail": {
+        "udd": "E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\A8t\\sutradhar-cli-1791133177601-LIKMYT",
+        "len": 199
+      }
+    },
+    "M-047a (loop wrapper reverted) on L1: >= 1 of 10 runs shows \"detached Frame\"": {
+      "ok": true,
+      "detail": {
+        "detachedRuns": 10,
+        "sample": [
+          "Click failed: Attempted to use detached Frame '217CFF49140D20E58C0FD385DAB9D679'.",
+          "Click failed: Attempted to use detached Frame '75B3688EEB4BDCA80883A3EFA028B2FF'."
+        ]
+      }
+    },
+    "M-047a churn really happened": {
+      "ok": true
+    },
+    "M-047b (buildGraph fix reverted) on L3 (SDK): >= 1 degraded snapshot in 20": {
+      "ok": true,
+      "detail": {
+        "degraded": 20,
+        "sample": [
+          {
+            "i": 1,
+            "complete": false,
+            "elementCount": 0
+          },
+          {
+            "i": 2,
+            "complete": false,
+            "elementCount": 0
+          }
+        ]
+      }
+    },
+    "M-047b churn really happened": {
+      "ok": true,
+      "detail": 256
+    },
+    "mutant files deleted; real dist sha256 unchanged": {
+      "ok": true,
+      "detail": {
+        "cli": "f221f536b9655e5580752adf8189145b9c4d8bb7ed2108633c89f923f5cae346",
+        "idx": "7c528f4c3bef9053e60c46e46c43fbf255e0d50f0539175a2f74793922172e54"
+      }
+    },
+    "close: state.json removed": {
+      "ok": true
+    },
+    "path-log check exit 0 (>= 1 [cleanup] line, none outside ISO)": {
+      "ok": true,
+      "detail": {
+        "exit": 0,
+        "out": [
+          "cleanup-lines=100 outside-iso=0"
+        ]
+      }
+    },
+    "no timed-out CLI call": {
+      "ok": true
+    }
+  },
+  "mutantA_replacements": 1,
+  "current": {
+    "label": "mutant-M-047a",
+    "churn": "k=8&ms=25",
+    "cliBin": "E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\r062\\S8\\dc\\dist\\cli-bin.mutant.js",
+    "bundle": "E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\r062\\S8\\dc\\dist\\index.js",
+    "L1": {
+      "runs": [
+        {
+          "run": 1,
+          "navCode": 0,
+          "clickCode": 1,
+          "detached": true,
+          "noVisible": false,
+          "recreated": 3000,
+          "closeCode": 0,
+          "msg": "Click failed: Attempted to use detached Frame '217CFF49140D20E58C0FD385DAB9D679'."
+        },
+        {
+          "run": 2,
+          "navCode": 0,
+          "clickCode": 1,
+          "detached": true,
+          "noVisible": false,
+          "recreated": 3016,
+          "closeCode": 0,
+          "msg": "Click failed: Attempted to use detached Frame '75B3688EEB4BDCA80883A3EFA028B2FF'."
+        },
+        {
+          "run": 3,
+          "navCode": 0,
+          "clickCode": 1,
+          "detached": true,
+          "noVisible": false,
+          "recreated": 3120,
+          "closeCode": 0,
+          "msg": "Click failed: Attempted to use detached Frame '3115407A5A9B4F6817EF5FF020619951'."
+        },
+        {
+          "run": 4,
+          "navCode": 0,
+          "clickCode": 1,
+          "detached": true,
+          "noVisible": false,
+          "recreated": 2888,
+          "closeCode": 0,
+          "msg": "Click failed: Attempted to use detached Frame '61F72614C3D5D83D1E8235683BCB41A3'."
+        },
+        {
+          "run": 5,
+          "navCode": 0,
+          "clickCode": 1,
+          "detached": true,
+          "noVisible": false,
+          "recreated": 2944,
+          "closeCode": 0,
+          "msg": "Click failed: Attempted to use detached Frame 'D143FBE405E1CC02D9876EEC5FB86EE4'."
+        },
+        {
+          "run": 6,
+          "navCode": 0,
+          "clickCode": 1,
+          "detached": true,
+          "noVisible": false,
+          "recreated": 2864,
+          "closeCode": 0,
+          "msg": "Click failed: Attempted to use detached Frame '0D9AC72751EA42D52A3080C6D952F32D'."
+        },
+        {
+          "run": 7,
+          "navCode": 0,
+          "clickCode": 1,
+          "detached": true,
+          "noVisible": false,
+          "recreated": 2896,
+          "closeCode": 0,
+          "msg": "Click failed: Attempted to use detached Frame 'B35401D1A0F449997F8FF873EAFB6A30'."
+        },
+        {
+          "run": 8,
+          "navCode": 0,
+          "clickCode": 1,
+          "detached": true,
+          "noVisible": false,
+          "recreated": 2952,
+          "closeCode": 0,
+          "msg": "Click failed: Attempted to use detached Frame 'CDFF67ED89515F867DCD90AA7FA789D6'."
+        },
+        {
+          "run": 9,
+          "navCode": 0,
+          "clickCode": 1,
+          "detached": true,
+          "noVisible": false,
+          "recreated": 3160,
+          "closeCode": 0,
+          "msg": "Click failed: Attempted to use detached Frame 'B51030BC7EA2E80217099E1BA0DB864B'."
+        },
+        {
+          "run": 10,
+          "navCode": 0,
+          "clickCode": 1,
+          "detached": true,
+          "noVisible": false,
+          "recreated": 2864,
+          "closeCode": 0,
+          "msg": "Click failed: Attempted to use detached Frame '7A2D3B0728BF35F23E5215806671EC3B'."
+        }
+      ],
+      "detachedRuns": 10,
+      "cleanRuns": 0,
+      "churnOk": true
+    }
+  },
+  "mutantA": {
+    "label": "mutant-M-047a",
+    "churn": "k=8&ms=25",
+    "cliBin": "E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\r062\\S8\\dc\\dist\\cli-bin.mutant.js",
+    "bundle": "E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\r062\\S8\\dc\\dist\\index.js",
+    "L1": {
+      "runs": [
+        {
+          "run": 1,
+          "navCode": 0,
+          "clickCode": 1,
+          "detached": true,
+          "noVisible": false,
+          "recreated": 3000,
+          "closeCode": 0,
+          "msg": "Click failed: Attempted to use detached Frame '217CFF49140D20E58C0FD385DAB9D679'."
+        },
+        {
+          "run": 2,
+          "navCode": 0,
+          "clickCode": 1,
+          "detached": true,
+          "noVisible": false,
+          "recreated": 3016,
+          "closeCode": 0,
+          "msg": "Click failed: Attempted to use detached Frame '75B3688EEB4BDCA80883A3EFA028B2FF'."
+        },
+        {
+          "run": 3,
+          "navCode": 0,
+          "clickCode": 1,
+          "detached": true,
+          "noVisible": false,
+          "recreated": 3120,
+          "closeCode": 0,
+          "msg": "Click failed: Attempted to use detached Frame '3115407A5A9B4F6817EF5FF020619951'."
+        },
+        {
+          "run": 4,
+          "navCode": 0,
+          "clickCode": 1,
+          "detached": true,
+          "noVisible": false,
+          "recreated": 2888,
+          "closeCode": 0,
+          "msg": "Click failed: Attempted to use detached Frame '61F72614C3D5D83D1E8235683BCB41A3'."
+        },
+        {
+          "run": 5,
+          "navCode": 0,
+          "clickCode": 1,
+          "detached": true,
+          "noVisible": false,
+          "recreated": 2944,
+          "closeCode": 0,
+          "msg": "Click failed: Attempted to use detached Frame 'D143FBE405E1CC02D9876EEC5FB86EE4'."
+        },
+        {
+          "run": 6,
+          "navCode": 0,
+          "clickCode": 1,
+          "detached": true,
+          "noVisible": false,
+          "recreated": 2864,
+          "closeCode": 0,
+          "msg": "Click failed: Attempted to use detached Frame '0D9AC72751EA42D52A3080C6D952F32D'."
+        },
+        {
+          "run": 7,
+          "navCode": 0,
+          "clickCode": 1,
+          "detached": true,
+          "noVisible": false,
+          "recreated": 2896,
+          "closeCode": 0,
+          "msg": "Click failed: Attempted to use detached Frame 'B35401D1A0F449997F8FF873EAFB6A30'."
+        },
+        {
+          "run": 8,
+          "navCode": 0,
+          "clickCode": 1,
+          "detached": true,
+          "noVisible": false,
+          "recreated": 2952,
+          "closeCode": 0,
+          "msg": "Click failed: Attempted to use detached Frame 'CDFF67ED89515F867DCD90AA7FA789D6'."
+        },
+        {
+          "run": 9,
+          "navCode": 0,
+          "clickCode": 1,
+          "detached": true,
+          "noVisible": false,
+          "recreated": 3160,
+          "closeCode": 0,
+          "msg": "Click failed: Attempted to use detached Frame 'B51030BC7EA2E80217099E1BA0DB864B'."
+        },
+        {
+          "run": 10,
+          "navCode": 0,
+          "clickCode": 1,
+          "detached": true,
+          "noVisible": false,
+          "recreated": 2864,
+          "closeCode": 0,
+          "msg": "Click failed: Attempted to use detached Frame '7A2D3B0728BF35F23E5215806671EC3B'."
+        }
+      ],
+      "detachedRuns": 10,
+      "cleanRuns": 0,
+      "churnOk": true
+    }
+  },
+  "mutantB_replacements": 1,
+  "mutantB": {
+    "sdk": [
+      {
+        "i": 1,
+        "complete": false,
+        "elementCount": 0
+      },
+      {
+        "i": 2,
+        "complete": false,
+        "elementCount": 0
+      },
+      {
+        "i": 3,
+        "complete": false,
+        "elementCount": 0
+      },
+      {
+        "i": 4,
+        "complete": false,
+        "elementCount": 0
+      },
+      {
+        "i": 5,
+        "complete": false,
+        "elementCount": 0
+      },
+      {
+        "i": 6,
+        "complete": false,
+        "elementCount": 0
+      },
+      {
+        "i": 7,
+        "complete": false,
+        "elementCount": 0
+      },
+      {
+        "i": 8,
+        "complete": false,
+        "elementCount": 0
+      },
+      {
+        "i": 9,
+        "complete": false,
+        "elementCount": 0
+      },
+      {
+        "i": 10,
+        "complete": false,
+        "elementCount": 0
+      },
+      {
+        "i": 11,
+        "complete": false,
+        "elementCount": 0
+      },
+      {
+        "i": 12,
+        "complete": false,
+        "elementCount": 0
+      },
+      {
+        "i": 13,
+        "complete": false,
+        "elementCount": 0
+      },
+      {
+        "i": 14,
+        "complete": false,
+        "elementCount": 0
+      },
+      {
+        "i": 15,
+        "complete": false,
+        "elementCount": 0
+      },
+      {
+        "i": 16,
+        "complete": false,
+        "elementCount": 0
+      },
+      {
+        "i": 17,
+        "complete": false,
+        "elementCount": 0
+      },
+      {
+        "i": 18,
+        "complete": false,
+        "elementCount": 0
+      },
+      {
+        "i": 19,
+        "complete": false,
+        "elementCount": 0
+      },
+      {
+        "i": 20,
+        "complete": false,
+        "elementCount": 0
+      }
+    ],
+    "degraded": 20,
+    "recreated": 256
+  },
+  "realTemp": {
+    "before": 5,
+    "after": 5,
+    "vanished": []
+  },
+  "pathCheck": {
+    "exit": 0,
+    "out": [
+      "cleanup-lines=100 outside-iso=0"
+    ]
+  },
+  "allPass": true
+}

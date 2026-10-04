@@ -1,0 +1,70 @@
+## builder artifacts at S4 commit
+sites=210 rows=210 missing=0 extra=0 duplicates=0 unclassified=0 unsafe=0
+CHECK-INVENTORY OK
+exit=0
+## NEG own: two rows removed
+sites=210 rows=210 missing=0 extra=0 duplicates=0 unclassified=0 unsafe=0
+CHECK-INVENTORY OK
+exit=0
+## NEG own: extra row
+sites=210 rows=211 missing=0 extra=1 duplicates=0 unclassified=0 unsafe=0
+EXTRA packages/cli/src/zz.ts:9:9
+CHECK-INVENTORY FAILED
+exit=1
+## NEG own: one row flipped to UNSAFE with --no-unsafe
+sites=210 rows=210 missing=0 extra=0 duplicates=0 unclassified=0 unsafe=1
+FAIL: 1 UNSAFE row(s) remain
+CHECK-INVENTORY FAILED
+exit=1
+## HEAD tree via builder list-sites.mjs + check against S4 md (expect drift from S7's post-conditions edit)
+self-test OK: regex matches frame.$$eval( / x.$( / multi-line .waitForSelector( ; no match on dotless $eval( ; rg keys per call (two on one line = two keys)
+sites: 210 in 30 files (methods: 49, rg=C:/Program Files/ZCode/resources/tools/ripgrep/rg.exe)
+sites=210 rows=210 missing=16 extra=16 duplicates=0 unclassified=0 unsafe=0
+MISSING packages/browser/src/verifier/post-conditions.ts:1214:16
+MISSING packages/browser/src/verifier/post-conditions.ts:1515:28
+MISSING packages/browser/src/verifier/post-conditions.ts:1567:36
+MISSING packages/browser/src/verifier/post-conditions.ts:1756:52
+MISSING packages/browser/src/verifier/post-conditions.ts:1765:34
+MISSING packages/browser/src/verifier/post-conditions.ts:1782:33
+MISSING packages/browser/src/verifier/post-conditions.ts:1786:30
+MISSING packages/browser/src/verifier/post-conditions.ts:1881:9
+MISSING packages/cli/src/cli.ts:896:33
+MISSING packages/cli/src/cli.ts:922:33
+MISSING packages/cli/src/cli.ts:939:27
+MISSING packages/cli/src/cli.ts:948:28
+MISSING packages/cli/src/cli.ts:970:33
+MISSING packages/cli/src/cli.ts:1096:33
+MISSING packages/cli/src/cli.ts:1152:33
+MISSING packages/cli/src/cli.ts:1190:33
+EXTRA packages/browser/src/verifier/post-conditions.ts:1205:16
+EXTRA packages/browser/src/verifier/post-conditions.ts:1506:28
+EXTRA packages/browser/src/verifier/post-conditions.ts:1558:36
+exit=0
+## blind spot on HEAD
+self-test OK: regex matches frame.$$eval( / x.$( / multi-line .waitForSelector( ; no match on dotless $eval( ; rg keys per call (two on one line = two keys)
+blind-spot hits: 0
+exit=0
+## NEG own (retry): removing rows packages/browser/src/actions/browser-action-engine.ts:1731:10 and packages/browser/src/verifier/post-conditions.ts:1205:16
+sites=210 rows=208 missing=2 extra=0 duplicates=0 unclassified=0 unsafe=0
+MISSING packages/browser/src/actions/browser-action-engine.ts:1731:10
+MISSING packages/browser/src/verifier/post-conditions.ts:1205:16
+CHECK-INVENTORY FAILED
+exit=1
+## HEAD drift analysis: pair MISSING/EXTRA by file and column
+packages/browser/src/verifier/post-conditions.ts 1205->1214 d=9
+packages/browser/src/verifier/post-conditions.ts 1506->1515 d=9
+packages/browser/src/verifier/post-conditions.ts 1558->1567 d=9
+packages/browser/src/verifier/post-conditions.ts 1747->1756 d=9
+packages/browser/src/verifier/post-conditions.ts 1756->1765 d=9
+packages/browser/src/verifier/post-conditions.ts 1773->1782 d=9
+packages/browser/src/verifier/post-conditions.ts 1777->1786 d=9
+packages/browser/src/verifier/post-conditions.ts 1872->1881 d=9
+packages/cli/src/cli.ts 874->896 d=22
+packages/cli/src/cli.ts 900->922 d=22
+packages/cli/src/cli.ts 917->939 d=22
+packages/cli/src/cli.ts 926->948 d=22
+packages/cli/src/cli.ts 948->970 d=22
+packages/cli/src/cli.ts 1074->1096 d=22
+packages/cli/src/cli.ts 1130->1152 d=22
+packages/cli/src/cli.ts 1168->1190 d=22
+unpaired-missing: 0

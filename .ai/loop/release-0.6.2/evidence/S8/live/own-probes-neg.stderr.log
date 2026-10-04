@@ -1,0 +1,18 @@
+[iso-guard] tmpdir=e:/ai-cache/tmp/claude/e--hmx-projects-internal-projects-pinchtab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/n8t pid=105284
+[probe] CLI=E:/AI-Cache/tmp/claude/E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/v061/inst/node_modules/sutradhar/dist/cli-bin.js sha256=9858726a291e844e1f84089b18310e90379140e2dfabf7b2fda80eb550b5c59b PROBES=P1,P2,P4
+[iso-guard] tmpdir=e:/ai-cache/tmp/claude/e--hmx-projects-internal-projects-pinchtab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/n8t pid=79768
+[probe] fixture {"a":"http://127.0.0.1:51297","b":"http://127.0.0.1:51298"}
+PASS P1 nav 0
+PASS P1 churn happened (__navs > 50) "20688"
+PASS P1 #absent under cross-origin iframe navigation: every run exit 1 "No visible element", never raw detached text [{"code":1,"raw":false,"msg":"Click failed: No visible element found for selector: #absent"},{"code":1,"raw":false,"msg":"Click failed: No visible element found for selector: #absent"},{"code":1,"raw":false,"msg":"Click failed: No visible element found for selector: #absent"},{"code":1,"raw":false,"msg":"Click failed: No visible element found for selector: #absent"},{"code":1,"raw":false,"msg":"Cl
+PASS P1 #inner-btn (in a navigating child frame): never raw detached text [{"code":1,"raw":false,"msg":"Click failed: Protocol error (Runtime.callFunctionOn): Target closed"},{"code":1,"raw":false,"msg":"Click failed: Protocol error (Runtime.callFunctionOn): Argument should belong to the same JavaScript world as target object"},{"code":1,"raw":false,"msg":"Click failed: Protocol error (Runtime.callFunctionOn): Argument should belong to the same JavaScript world as targe
+PASS P2 nav 0
+FAIL P2 same-origin main-frame navigation during clicks: never raw "detached Frame" text [{"sel":"#go","code":0,"raw":false,"rawCtx":false,"msg":"Clicked #go"},{"sel":"#go","code":0,"raw":false,"rawCtx":false,"msg":"Clicked #go"},{"sel":"#absent","code":1,"raw":true,"rawCtx":false,"msg":"Click failed: Attempted to use detached Frame 'B3461F8DDD05174DD0B20B5B4C9D72D5'."},{"sel":"#go","code":0,"raw":false,"rawCtx":false,"msg":"Clicked #go"},{"sel":"#go","code":0,"raw":false,"rawCtx":fal
+PASS P2 a context-destroyed failure surfaces as the navigated-away diagnosis, not as a bare raw context error []
+PASS P4 nav 0
+PASS P4 setup: two post-load hash entries (#b current) "#b"
+FAIL P4 back over a #hash entry: exit 0 "Navigated back to ...#a", location.hash == #a {"h0":"#b","b1":[1,"Sutradhar CLI"],"h1":"#b","b2":[1,"Sutradhar CLI"],"h2":"http://127.0.0.1:51297/plain#b","f1":[1,"Sutradhar CLI"],"h3":"#b"}
+FAIL P4 second back: exit 0, URL without hash {"h0":"#b","b1":[1,"Sutradhar CLI"],"h1":"#b","b2":[1,"Sutradhar CLI"],"h2":"http://127.0.0.1:51297/plain#b","f1":[1,"Sutradhar CLI"],"h3":"#b"}
+FAIL P4 forward: exit 0, #a {"h0":"#b","b1":[1,"Sutradhar CLI"],"h1":"#b","b2":[1,"Sutradhar CLI"],"h2":"http://127.0.0.1:51297/plain#b","f1":[1,"Sutradhar CLI"],"h3":"#b"}
+PASS path-log check exit 0 ["cleanup-lines=30 outside-iso=0"]
+OWN-PROBES FAILED (4)

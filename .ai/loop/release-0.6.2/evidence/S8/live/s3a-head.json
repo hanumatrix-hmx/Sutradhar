@@ -1,0 +1,313 @@
+{
+  "mode": "head",
+  "cli": "E:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/packages/sutradhar/dist/cli-bin.js",
+  "cliSha256": "f221f536b9655e5580752adf8189145b9c4d8bb7ed2108633c89f923f5cae346",
+  "bundleSha256": "7c528f4c3bef9053e60c46e46c43fbf255e0d50f0539175a2f74793922172e54",
+  "noMutants": true,
+  "checks": {
+    "a nav exit 0": {
+      "ok": true,
+      "detail": {
+        "code": 0,
+        "out": "Navigated to http://127.0.0.1:50582/long?n=10000\nTitle: Long page\nVerification: "
+      }
+    },
+    "a state.userDataDir <= 200 chars and dirname == ISO": {
+      "ok": true,
+      "detail": {
+        "udd": "E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\A8t\\sutradhar-cli-1791132622211-UTW5ID",
+        "len": 199
+      }
+    },
+    "a L >= 10000 and FULL.length == L": {
+      "ok": true,
+      "detail": {
+        "L": 10037,
+        "full": 10037
+      }
+    },
+    "b text = FULL[0:4000] + newline + marker A (stdout), exit 0": {
+      "ok": true,
+      "detail": {
+        "code": 0,
+        "len": 4104,
+        "tail": "stuvwxyz0123456\nL000096 ab\n[page text truncated: showing characters 0-4000 of 10037. Continue with: sutradhar text --offset 4000]\n"
+      }
+    },
+    "b marker is on stdout, not stderr": {
+      "ok": true,
+      "detail": "[iso-guard] tmpdir=e:/ai-cache/tmp/claude/e--hmx-projects-internal-projects-pinchtab--claude-worktre"
+    },
+    "c windows concatenate to FULL exactly": {
+      "ok": true,
+      "detail": {
+        "windows": 3,
+        "accLen": 10037
+      }
+    },
+    "c L >= 10000, >= 3 windows, windows differ": {
+      "ok": true,
+      "detail": {
+        "windows": 3
+      }
+    },
+    "c last marker is B naming the end": {
+      "ok": true,
+      "detail": "[page text: showing characters 8000-10037 of 10037 (end)]"
+    },
+    "d --max-chars 100000 = FULL, no marker": {
+      "ok": true,
+      "detail": {
+        "len": 10038
+      }
+    },
+    "d offset past end = empty window + marker C, exit 0": {
+      "ok": true,
+      "detail": "\n[page text: offset 10042 is past the end; the page text has 10037 characters]\n"
+    },
+    "e --json parses; fields equal (b); no marker line": {
+      "ok": true,
+      "detail": {
+        "keys": [
+          "sessionId",
+          "tabId",
+          "url",
+          "text",
+          "offset",
+          "returnedChars",
+          "totalChars",
+          "truncated",
+          "source"
+        ]
+      }
+    },
+    "h invalid flags mid-session: exit 1, message, state.json unchanged, no new sutradhar-cli-* under ISO": {
+      "ok": true,
+      "detail": [
+        {
+          "args": "text --offset -1",
+          "code": 1,
+          "stderr": "[iso-guard] tmpdir=e:/ai-cache/tmp/claude/e--hmx-projects-internal-projects-pinchtab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/a8t pid=85684",
+          "stdoutEmpty": true,
+          "stateUnchanged": true,
+          "noNewCliDir": true,
+          "good": true
+        },
+        {
+          "args": "text --max-chars 0",
+          "code": 1,
+          "stderr": "[iso-guard] tmpdir=e:/ai-cache/tmp/claude/e--hmx-projects-internal-projects-pinchtab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/a8t pid=92308",
+          "stdoutEmpty": true,
+          "stateUnchanged": true,
+          "noNewCliDir": true,
+          "good": true
+        },
+        {
+          "args": "text --max-chars 100001",
+          "code": 1,
+          "stderr": "[iso-guard] tmpdir=e:/ai-cache/tmp/claude/e--hmx-projects-internal-projects-pinchtab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/a8t pid=86184",
+          "stdoutEmpty": true,
+          "stateUnchanged": true,
+          "noNewCliDir": true,
+          "good": true
+        },
+        {
+          "args": "text --offset abc",
+          "code": 1,
+          "stderr": "[iso-guard] tmpdir=e:/ai-cache/tmp/claude/e--hmx-projects-internal-projects-pinchtab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/a8t pid=90552",
+          "stdoutEmpty": true,
+          "stateUnchanged": true,
+          "noNewCliDir": true,
+          "good": true
+        },
+        {
+          "args": "text --offset",
+          "code": 1,
+          "stderr": "[iso-guard] tmpdir=e:/ai-cache/tmp/claude/e--hmx-projects-internal-projects-pinchtab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/a8t pid=90804",
+          "stdoutEmpty": true,
+          "stateUnchanged": true,
+          "noNewCliDir": true,
+          "good": true
+        },
+        {
+          "args": "snap --offset 5",
+          "code": 1,
+          "stderr": "[iso-guard] tmpdir=e:/ai-cache/tmp/claude/e--hmx-projects-internal-projects-pinchtab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/a8t pid=98656",
+          "stdoutEmpty": true,
+          "stateUnchanged": true,
+          "noNewCliDir": true,
+          "good": true
+        }
+      ]
+    },
+    "i text does not re-stamp ids (G1 non-null, G1 == G2, E1 == E2)": {
+      "ok": true,
+      "detail": {
+        "label": "head",
+        "G1": "1791132626747",
+        "G2": "1791132626747",
+        "E1": "1791132626747",
+        "E2": "1791132626747",
+        "ok": true
+      }
+    },
+    "i control: a second snap changes G (the read detects a re-stamp)": {
+      "ok": true,
+      "detail": {
+        "G1": "1791132626747",
+        "G3": "1791132628161"
+      }
+    },
+    "f short page text: exit 0, length > 200, no marker": {
+      "ok": true,
+      "detail": {
+        "len": 300
+      }
+    },
+    "g2 bundled text on /pdf: exit 1, stdout empty, clear PROB-052 message (not the raw DOMMatrix error), no Fatal:": {
+      "ok": true,
+      "detail": {
+        "nav": 0,
+        "code": 1,
+        "stdout": "",
+        "errLine": "Error: text read failed: the PDF text could not be extracted: PDF text extraction is not available in this build (PROB-052): the bundled PDF reader needs the optional native module @napi-rs/canvas, which this package does not ship. Download the PDF and read it"
+      }
+    },
+    "g2 plain text mode: also exit 1, empty stdout": {
+      "ok": true,
+      "detail": {
+        "code": 1,
+        "stdout": ""
+      }
+    },
+    "j read failure: exit 3 (dialog-blocked) or exit 1 \"Error: text read failed:\", never exit 0 with empty stdout": {
+      "ok": true,
+      "detail": {
+        "evalCode": 0,
+        "code": 3,
+        "stdout": "dialogPending: {\"type\":\"alert\",\"message\":\"x\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:50582/long?n=10000\"}\n",
+        "stderr": [
+          "[iso-guard] tmpdir=e:/ai-cache/tmp/claude/e--hmx-projects-internal-projects-pinchtab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/a8t pid=98568",
+          "Error: a alert dialog is open and blocking the page, so \"text\" did not run.",
+          "Hint: a alert dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unknown\", that same command identifies the specific tab that may be holding it and, when the dialog warden can prove which one it actually is, recovers by closing just that tab (never a different, healthy tab it merely shares a browser process with) — otherwise it explains why it won't guess and leaves every tab open. \"sutradhar tabs\" and \"sutradhar closetab <id>\" keep working while a page is blocked or has crashed (they list and close tabs at the browser level and never attach to the blocked page), so a stuck tab can always be closed without ending the session. If nothing else works, \"sutradhar close\" ends the whole session so you can start a fresh one."
+        ]
+      }
+    },
+    "close: state.json removed": {
+      "ok": true
+    },
+    "path-log check exit 0 (>= 1 [cleanup] line, none outside ISO)": {
+      "ok": true,
+      "detail": {
+        "exit": 0,
+        "out": [
+          "cleanup-lines=10 outside-iso=0"
+        ]
+      }
+    },
+    "no timed-out CLI call": {
+      "ok": true
+    }
+  },
+  "L": 10037,
+  "fullLength": 10037,
+  "h": [
+    {
+      "args": "text --offset -1",
+      "code": 1,
+      "stderr": "[iso-guard] tmpdir=e:/ai-cache/tmp/claude/e--hmx-projects-internal-projects-pinchtab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/a8t pid=85684",
+      "stdoutEmpty": true,
+      "stateUnchanged": true,
+      "noNewCliDir": true,
+      "good": true
+    },
+    {
+      "args": "text --max-chars 0",
+      "code": 1,
+      "stderr": "[iso-guard] tmpdir=e:/ai-cache/tmp/claude/e--hmx-projects-internal-projects-pinchtab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/a8t pid=92308",
+      "stdoutEmpty": true,
+      "stateUnchanged": true,
+      "noNewCliDir": true,
+      "good": true
+    },
+    {
+      "args": "text --max-chars 100001",
+      "code": 1,
+      "stderr": "[iso-guard] tmpdir=e:/ai-cache/tmp/claude/e--hmx-projects-internal-projects-pinchtab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/a8t pid=86184",
+      "stdoutEmpty": true,
+      "stateUnchanged": true,
+      "noNewCliDir": true,
+      "good": true
+    },
+    {
+      "args": "text --offset abc",
+      "code": 1,
+      "stderr": "[iso-guard] tmpdir=e:/ai-cache/tmp/claude/e--hmx-projects-internal-projects-pinchtab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/a8t pid=90552",
+      "stdoutEmpty": true,
+      "stateUnchanged": true,
+      "noNewCliDir": true,
+      "good": true
+    },
+    {
+      "args": "text --offset",
+      "code": 1,
+      "stderr": "[iso-guard] tmpdir=e:/ai-cache/tmp/claude/e--hmx-projects-internal-projects-pinchtab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/a8t pid=90804",
+      "stdoutEmpty": true,
+      "stateUnchanged": true,
+      "noNewCliDir": true,
+      "good": true
+    },
+    {
+      "args": "snap --offset 5",
+      "code": 1,
+      "stderr": "[iso-guard] tmpdir=e:/ai-cache/tmp/claude/e--hmx-projects-internal-projects-pinchtab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/a8t pid=98656",
+      "stdoutEmpty": true,
+      "stateUnchanged": true,
+      "noNewCliDir": true,
+      "good": true
+    }
+  ],
+  "i": {
+    "label": "head",
+    "G1": "1791132626747",
+    "G2": "1791132626747",
+    "E1": "1791132626747",
+    "E2": "1791132626747",
+    "ok": true
+  },
+  "shortStdout": "Short fixture page. Short fixture page. Short fixture page. Short fixture page. Short fixture page. Short fixture page. Short fixture page. Short fixture page. Short fixture page. Short fixture page. Short fixture page. Short fixture page. Short fixture page. Short fixture page. Short fixture page.\n",
+  "shortLength": 300,
+  "shortSha256": "c5ca6a0cce7cf769e1753ed7aaf03b5ddae9b620f4957123cf979e5140b173f3",
+  "pdfBytes": 86327,
+  "j": {
+    "evalCode": 0,
+    "code": 3,
+    "stdout": "dialogPending: {\"type\":\"alert\",\"message\":\"x\",\"defaultValue\":null,\"url\":\"http://127.0.0.1:50582/long?n=10000\"}\n",
+    "stderr": [
+      "[iso-guard] tmpdir=e:/ai-cache/tmp/claude/e--hmx-projects-internal-projects-pinchtab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/a8t pid=98568",
+      "Error: a alert dialog is open and blocking the page, so \"text\" did not run.",
+      "Hint: a alert dialog is open and blocking the page. Run \"sutradhar dialog accept [text]\" or \"sutradhar dialog dismiss\", or set a policy with --dialog accept|dismiss. For a dialog type \"unknown\", that same command identifies the specific tab that may be holding it and, when the dialog warden can prove which one it actually is, recovers by closing just that tab (never a different, healthy tab it merely shares a browser process with) — otherwise it explains why it won't guess and leaves every tab open. \"sutradhar tabs\" and \"sutradhar closetab <id>\" keep working while a page is blocked or has crashed (they list and close tabs at the browser level and never attach to the blocked page), so a stuck tab can always be closed without ending the session. If nothing else works, \"sutradhar close\" ends the whole session so you can start a fresh one."
+    ]
+  },
+  "dialogDismiss": {
+    "code": 0,
+    "stdout": "Dismissed alert \"x\"\n"
+  },
+  "close": {
+    "code": 0
+  },
+  "stateGone": true,
+  "isoCliDirsLeft": [],
+  "realTemp": {
+    "before": 5,
+    "after": 5,
+    "vanished": []
+  },
+  "pathCheck": {
+    "exit": 0,
+    "out": [
+      "cleanup-lines=10 outside-iso=0"
+    ]
+  },
+  "allPass": true
+}

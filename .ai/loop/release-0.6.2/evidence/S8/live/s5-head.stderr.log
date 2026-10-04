@@ -1,0 +1,38 @@
+[iso-guard] tmpdir=e:/ai-cache/tmp/claude/e--hmx-projects-internal-projects-pinchtab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/a8t pid=63016
+[harness] CLI=E:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/packages/sutradhar/dist/cli-bin.js sha256=f221f536b9655e5580752adf8189145b9c4d8bb7ed2108633c89f923f5cae346
+[harness] BUNDLE=E:\HMX_Projects\Internal_Projects\PinchTab\.claude\worktrees\project-understanding-696041\packages\sutradhar\dist\index.js sha256=7c528f4c3bef9053e60c46e46c43fbf255e0d50f0539175a2f74793922172e54
+[harness] MCP=E:\HMX_Projects\Internal_Projects\PinchTab\.claude\worktrees\project-understanding-696041\packages\sutradhar\dist\mcp-cli.js sha256=4184a9a4b9546bbc3a21f1219e0d9cde4054a408619609594ade101d3e3530d8
+[harness] MODE=head ISO=E:/AI-Cache/tmp/claude/E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/A8t tmpdir=e:/ai-cache/tmp/claude/e--hmx-projects-internal-projects-pinchtab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/a8t
+[iso-guard] tmpdir=e:/ai-cache/tmp/claude/e--hmx-projects-internal-projects-pinchtab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/a8t pid=102516
+[harness] fixture pid=102516 url=http://127.0.0.1:54123
+PASS cli nav exit 0 "Navigated to http://127.0.0.1:54123/nodeid\nTitle: Nodeid pag"
+PASS state.userDataDir <= 200 chars and dirname == ISO {"len":199}
+PASS cli snap lists Go, Name input, the iframe and the in-frame button with ids {"ids":{"go":"1","inp":"2","ifr":"3","fgo":"4"},"snap":["Interactive elements (4):","[#1] button \"Go\"","[#2] input \"Name\"","[#3] iframe role=clickable","[#4 in iframe \"fr\" (http://127.0.0.1:54123/nodeid-frame)] button \"Frame Go\"",""]}
+PASS cli counter starts at 0 (independent read via eval) 0
+PASS S5-2 cli click "#<go>" exit 0 and __goClicks == 1 {"code":0,"out":"Clicked #1\nVerification: verified (confidence 0.90) — 'click' has a built-in pos"}
+PASS S5-2 cli click "[#<go>]" exit 0 and __goClicks == 2 {"code":0,"out":"Clicked [#1]\nVerification: verified (confidence 0.90) — 'click' has a built-in p"}
+PASS S5-2 control: cli click <bare number> still works (== 3) {"code":0}
+PASS S5-2 cli type "#<input>" hello -> value hello {"code":0,"v1":"hello"}
+PASS S5-2 cli type "[#<input>]" world -> value world {"code":0,"v2":"world"}
+PASS S5-2 cli eval --frame "#<iframe>" -> iframe title (non-empty, differs from the top title) {"f1":"Frame Title","f0":"Frame Title"}
+PASS S5-2 cli eval --frame "[#<iframe>]" -> same iframe title {"f2":"Frame Title"}
+PASS S5-2 cli click "#<in-frame button>" exit 0 and the frame counter == 1 {"code":0,"out":"Clicked #4\nVerification: verified (confidence 0.90) — 'click' has a built-in pos"}
+PASS S5 negative: "#N]" still rejected with the node-id hint (exit 1), counter unchanged {"code":1,"stderr":["Error: Invalid selector \"#1]\" — this looks like a snapshot node id; pass just the number, e.g. \"1\". Use standard CSS or a snapshot node id (e.g. \"12\"); Puppeteer's pierce/, xpath/, aria/ and text/ prefixes also work for element actions. Playwright-style selectors (text=, role=, >>, :has-text(), getBy*(), internal:) are not supported: to target by visible text or accessib
+PASS S5 negative: "[#N" still rejected with the node-id hint (exit 1) {"code":1}
+PASS mcp snapshot lists the ids {"go":"1","inp":"2","ifr":"3","fgo":"4"}
+PASS S5-2 mcp browser.click {target:"#<go>"} succeeds and __goClicks == 1 {"isError":false,"text":"{\n  \"success\": true,\n  \"actionType\": \"click\",\n  \"executionTimeMs\": 66,\n  \"curren"}
+PASS S5-2 mcp browser.click {target:"[#<go>]"} succeeds and __goClicks == 2 {"isError":false}
+PASS S5-2 mcp browser.eval frameSelector "#<iframe>" -> iframe title {"r3":"{\n  \"result\": \"Frame Title\"\n}","r3b":"{\n  \"result\": \"Frame Title\"\n}"}
+PASS S5 negative mcp: "#N]" rejected (isError, node-id hint), counter unchanged {"text":"click failed: Invalid selector \"#1]\" — this looks like a snapshot node id; pass just the number, e.g. \"1\". Use standard CSS or a snapshot node id (e.g. \"12\"); P"}
+PASS mcp shutdown_all
+PASS mcp child exited
+PASS sdk snapshot lists the ids {"go":"1","inp":"2","ifr":"3","fgo":"4"}
+PASS S5-2 sdk page.click("#<go>") -> __goClicks == 1
+PASS S5-2 sdk page.click("[#<go>]") -> __goClicks == 2
+PASS S5-2 sdk page.evaluate(expr, "#<iframe>") -> iframe title "Frame Title"
+PASS S5 negative sdk: "#N]" rejects with the node-id hint, counter unchanged "Invalid selector \"#1]\" — this looks like a snapshot node id; pass just the number, e.g. \"1\". Use standard CSS or a snapshot node id (e.g. \"12\"); Puppeteer's pie"
+PASS cli close: state.json removed
+PASS path-log check exit 0 (>= 1 [cleanup] line, none outside ISO) {"exit":0,"out":["cleanup-lines=10 outside-iso=0"]}
+PASS attribution query: no Chrome with the ISO basename left []
+PASS no timed-out CLI call
+LIVE-NODEID OK

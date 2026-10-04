@@ -1,0 +1,777 @@
+{
+  "mode": "neg",
+  "churn": "k=8&ms=25",
+  "cli": "E:/AI-Cache/tmp/claude/E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/v061/inst/node_modules/sutradhar/dist/cli-bin.js",
+  "cliSha256": "9858726a291e844e1f84089b18310e90379140e2dfabf7b2fda80eb550b5c59b",
+  "bundle": "E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\v061\\inst\\node_modules\\sutradhar\\dist\\index.js",
+  "bundleSha256": "ddaaa00191710fc772db1c93a14e469381f0a40020de930ffae198834fd8db19",
+  "checks": {
+    "state.userDataDir <= 200 chars and dirname == ISO": {
+      "ok": true,
+      "detail": {
+        "udd": "E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\N8t\\sutradhar-cli-1791133487621-K3GeWl",
+        "len": 199
+      }
+    },
+    "L1 churn really happened (window.__recreated > 100 after every run)": {
+      "ok": true
+    },
+    "L3 churn really happened (window.__recreated > 100 after every run)": {
+      "ok": true
+    },
+    "L4 churn really happened (window.__recreated > 100 after every run)": {
+      "ok": true
+    },
+    "NEG061 L1 recorded (validity needs >= 1 detached failure)": {
+      "ok": true,
+      "detail": {
+        "detachedRuns": 10,
+        "cleanRuns": 0,
+        "sample": [
+          "Click failed: Attempted to use detached Frame '96E79E355552004D24D720460FBAF27A'.",
+          "Click failed: Attempted to use detached Frame 'CC2492D6CD371608BFAA88C52DE446A6'."
+        ]
+      }
+    },
+    "NEG061 L3 recorded (validity needs >= 1 degraded result)": {
+      "ok": true,
+      "detail": {
+        "degradedSdk": 20,
+        "degradedCli": 10,
+        "sample": [
+          {
+            "i": 1,
+            "complete": false,
+            "elementCount": 0
+          },
+          {
+            "i": 2,
+            "complete": false,
+            "elementCount": 0
+          },
+          {
+            "i": 1,
+            "code": 0,
+            "complete": false,
+            "zero": true,
+            "head": "Interactive elements (0):"
+          },
+          {
+            "i": 2,
+            "code": 0,
+            "complete": false,
+            "zero": true,
+            "head": "Interactive elements (0):"
+          }
+        ]
+      }
+    },
+    "NEG061 L4 recorded": {
+      "ok": true,
+      "detail": {
+        "detachedRuns": 5
+      }
+    },
+    "close: state.json removed": {
+      "ok": true
+    },
+    "path-log check exit 0 (>= 1 [cleanup] line, none outside ISO)": {
+      "ok": true,
+      "detail": {
+        "exit": 0,
+        "out": [
+          "cleanup-lines=110 outside-iso=0"
+        ]
+      }
+    },
+    "no timed-out CLI call": {
+      "ok": true
+    }
+  },
+  "current": {
+    "label": "neg",
+    "churn": "k=8&ms=25",
+    "cliBin": "E:/AI-Cache/tmp/claude/E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/v061/inst/node_modules/sutradhar/dist/cli-bin.js",
+    "bundle": "E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\v061\\inst\\node_modules\\sutradhar\\dist\\index.js",
+    "L1": {
+      "runs": [
+        {
+          "run": 1,
+          "navCode": 0,
+          "clickCode": 1,
+          "detached": true,
+          "noVisible": false,
+          "recreated": 3032,
+          "closeCode": 0,
+          "msg": "Click failed: Attempted to use detached Frame '96E79E355552004D24D720460FBAF27A'."
+        },
+        {
+          "run": 2,
+          "navCode": 0,
+          "clickCode": 1,
+          "detached": true,
+          "noVisible": false,
+          "recreated": 2992,
+          "closeCode": 0,
+          "msg": "Click failed: Attempted to use detached Frame 'CC2492D6CD371608BFAA88C52DE446A6'."
+        },
+        {
+          "run": 3,
+          "navCode": 0,
+          "clickCode": 1,
+          "detached": true,
+          "noVisible": false,
+          "recreated": 3000,
+          "closeCode": 0,
+          "msg": "Click failed: Attempted to use detached Frame '3F7AD6667AACBBAAA73143ACE82F5D2F'."
+        },
+        {
+          "run": 4,
+          "navCode": 0,
+          "clickCode": 1,
+          "detached": true,
+          "noVisible": false,
+          "recreated": 2944,
+          "closeCode": 0,
+          "msg": "Click failed: Attempted to use detached Frame 'F4E8C20B31257E3368AEA2737DDABD63'."
+        },
+        {
+          "run": 5,
+          "navCode": 0,
+          "clickCode": 1,
+          "detached": true,
+          "noVisible": false,
+          "recreated": 2928,
+          "closeCode": 0,
+          "msg": "Click failed: Attempted to use detached Frame '98F22D669E55C570AEB494A37C1EF09D'."
+        },
+        {
+          "run": 6,
+          "navCode": 0,
+          "clickCode": 1,
+          "detached": true,
+          "noVisible": false,
+          "recreated": 3056,
+          "closeCode": 0,
+          "msg": "Click failed: Attempted to use detached Frame '37F959789955196F246A941390D61C95'."
+        },
+        {
+          "run": 7,
+          "navCode": 0,
+          "clickCode": 1,
+          "detached": true,
+          "noVisible": false,
+          "recreated": 3040,
+          "closeCode": 0,
+          "msg": "Click failed: Attempted to use detached Frame '2F70C7D1B62B8C7896D22157121EF431'."
+        },
+        {
+          "run": 8,
+          "navCode": 0,
+          "clickCode": 1,
+          "detached": true,
+          "noVisible": false,
+          "recreated": 3008,
+          "closeCode": 0,
+          "msg": "Click failed: Attempted to use detached Frame '5DE97F76CD0FA073D57D014DF0E38C93'."
+        },
+        {
+          "run": 9,
+          "navCode": 0,
+          "clickCode": 1,
+          "detached": true,
+          "noVisible": false,
+          "recreated": 3128,
+          "closeCode": 0,
+          "msg": "Click failed: Attempted to use detached Frame '95482331D57947865099020EC6A85350'."
+        },
+        {
+          "run": 10,
+          "navCode": 0,
+          "clickCode": 1,
+          "detached": true,
+          "noVisible": false,
+          "recreated": 2864,
+          "closeCode": 0,
+          "msg": "Click failed: Attempted to use detached Frame 'F928C040C54F0C09BE0E31BE64C3CFEF'."
+        }
+      ],
+      "detachedRuns": 10,
+      "cleanRuns": 0,
+      "churnOk": true
+    },
+    "L3sdkRecreated": 232,
+    "L3": {
+      "sdk": [
+        {
+          "i": 1,
+          "complete": false,
+          "elementCount": 0
+        },
+        {
+          "i": 2,
+          "complete": false,
+          "elementCount": 0
+        },
+        {
+          "i": 3,
+          "complete": false,
+          "elementCount": 0
+        },
+        {
+          "i": 4,
+          "complete": false,
+          "elementCount": 0
+        },
+        {
+          "i": 5,
+          "complete": false,
+          "elementCount": 0
+        },
+        {
+          "i": 6,
+          "complete": false,
+          "elementCount": 0
+        },
+        {
+          "i": 7,
+          "complete": false,
+          "elementCount": 0
+        },
+        {
+          "i": 8,
+          "complete": false,
+          "elementCount": 0
+        },
+        {
+          "i": 9,
+          "complete": false,
+          "elementCount": 0
+        },
+        {
+          "i": 10,
+          "complete": false,
+          "elementCount": 0
+        },
+        {
+          "i": 11,
+          "complete": false,
+          "elementCount": 0
+        },
+        {
+          "i": 12,
+          "complete": false,
+          "elementCount": 0
+        },
+        {
+          "i": 13,
+          "complete": false,
+          "elementCount": 0
+        },
+        {
+          "i": 14,
+          "complete": false,
+          "elementCount": 0
+        },
+        {
+          "i": 15,
+          "complete": false,
+          "elementCount": 0
+        },
+        {
+          "i": 16,
+          "complete": false,
+          "elementCount": 0
+        },
+        {
+          "i": 17,
+          "complete": false,
+          "elementCount": 0
+        },
+        {
+          "i": 18,
+          "complete": false,
+          "elementCount": 0
+        },
+        {
+          "i": 19,
+          "complete": false,
+          "elementCount": 0
+        },
+        {
+          "i": 20,
+          "complete": false,
+          "elementCount": 0
+        }
+      ],
+      "cliSnaps": [
+        {
+          "i": 1,
+          "code": 0,
+          "complete": false,
+          "zero": true,
+          "head": "Interactive elements (0):"
+        },
+        {
+          "i": 2,
+          "code": 0,
+          "complete": false,
+          "zero": true,
+          "head": "Interactive elements (0):"
+        },
+        {
+          "i": 3,
+          "code": 0,
+          "complete": false,
+          "zero": true,
+          "head": "Interactive elements (0):"
+        },
+        {
+          "i": 4,
+          "code": 0,
+          "complete": false,
+          "zero": true,
+          "head": "Interactive elements (0):"
+        },
+        {
+          "i": 5,
+          "code": 0,
+          "complete": false,
+          "zero": true,
+          "head": "Interactive elements (0):"
+        },
+        {
+          "i": 6,
+          "code": 0,
+          "complete": false,
+          "zero": true,
+          "head": "Interactive elements (0):"
+        },
+        {
+          "i": 7,
+          "code": 0,
+          "complete": false,
+          "zero": true,
+          "head": "Interactive elements (0):"
+        },
+        {
+          "i": 8,
+          "code": 0,
+          "complete": false,
+          "zero": true,
+          "head": "Interactive elements (0):"
+        },
+        {
+          "i": 9,
+          "code": 0,
+          "complete": false,
+          "zero": true,
+          "head": "Interactive elements (0):"
+        },
+        {
+          "i": 10,
+          "code": 0,
+          "complete": false,
+          "zero": true,
+          "head": "Interactive elements (0):"
+        }
+      ],
+      "degradedSdk": 20,
+      "degradedCli": 10,
+      "completeAll": 0,
+      "total": 30,
+      "churnOk": true,
+      "cliRecreated": 15424
+    },
+    "L4": {
+      "runs": [
+        {
+          "run": 1,
+          "code": 1,
+          "detached": true,
+          "noVisible": false,
+          "msg": "Type failed: Attempted to use detached Frame '5FF358B7C082A2D832A9C138A55A684A'."
+        },
+        {
+          "run": 2,
+          "code": 1,
+          "detached": true,
+          "noVisible": false,
+          "msg": "Type failed: Attempted to use detached Frame '2EE799DD865DE11F43C5B7A273BB531F'."
+        },
+        {
+          "run": 3,
+          "code": 1,
+          "detached": true,
+          "noVisible": false,
+          "msg": "Type failed: Attempted to use detached Frame '408BD3CB5A65A1DB1C6C114EDACB9821'."
+        },
+        {
+          "run": 4,
+          "code": 1,
+          "detached": true,
+          "noVisible": false,
+          "msg": "Type failed: Attempted to use detached Frame 'DA9A64582A06CFBAFDD1E0EA06E46701'."
+        },
+        {
+          "run": 5,
+          "code": 1,
+          "detached": true,
+          "noVisible": false,
+          "msg": "Type failed: Attempted to use detached Frame 'AB3C5E58A9A407F03E07F2482D6EFE80'."
+        }
+      ],
+      "detachedRuns": 5,
+      "churnOk": true
+    }
+  },
+  "result": {
+    "label": "neg",
+    "churn": "k=8&ms=25",
+    "cliBin": "E:/AI-Cache/tmp/claude/E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/v061/inst/node_modules/sutradhar/dist/cli-bin.js",
+    "bundle": "E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\v061\\inst\\node_modules\\sutradhar\\dist\\index.js",
+    "L1": {
+      "runs": [
+        {
+          "run": 1,
+          "navCode": 0,
+          "clickCode": 1,
+          "detached": true,
+          "noVisible": false,
+          "recreated": 3032,
+          "closeCode": 0,
+          "msg": "Click failed: Attempted to use detached Frame '96E79E355552004D24D720460FBAF27A'."
+        },
+        {
+          "run": 2,
+          "navCode": 0,
+          "clickCode": 1,
+          "detached": true,
+          "noVisible": false,
+          "recreated": 2992,
+          "closeCode": 0,
+          "msg": "Click failed: Attempted to use detached Frame 'CC2492D6CD371608BFAA88C52DE446A6'."
+        },
+        {
+          "run": 3,
+          "navCode": 0,
+          "clickCode": 1,
+          "detached": true,
+          "noVisible": false,
+          "recreated": 3000,
+          "closeCode": 0,
+          "msg": "Click failed: Attempted to use detached Frame '3F7AD6667AACBBAAA73143ACE82F5D2F'."
+        },
+        {
+          "run": 4,
+          "navCode": 0,
+          "clickCode": 1,
+          "detached": true,
+          "noVisible": false,
+          "recreated": 2944,
+          "closeCode": 0,
+          "msg": "Click failed: Attempted to use detached Frame 'F4E8C20B31257E3368AEA2737DDABD63'."
+        },
+        {
+          "run": 5,
+          "navCode": 0,
+          "clickCode": 1,
+          "detached": true,
+          "noVisible": false,
+          "recreated": 2928,
+          "closeCode": 0,
+          "msg": "Click failed: Attempted to use detached Frame '98F22D669E55C570AEB494A37C1EF09D'."
+        },
+        {
+          "run": 6,
+          "navCode": 0,
+          "clickCode": 1,
+          "detached": true,
+          "noVisible": false,
+          "recreated": 3056,
+          "closeCode": 0,
+          "msg": "Click failed: Attempted to use detached Frame '37F959789955196F246A941390D61C95'."
+        },
+        {
+          "run": 7,
+          "navCode": 0,
+          "clickCode": 1,
+          "detached": true,
+          "noVisible": false,
+          "recreated": 3040,
+          "closeCode": 0,
+          "msg": "Click failed: Attempted to use detached Frame '2F70C7D1B62B8C7896D22157121EF431'."
+        },
+        {
+          "run": 8,
+          "navCode": 0,
+          "clickCode": 1,
+          "detached": true,
+          "noVisible": false,
+          "recreated": 3008,
+          "closeCode": 0,
+          "msg": "Click failed: Attempted to use detached Frame '5DE97F76CD0FA073D57D014DF0E38C93'."
+        },
+        {
+          "run": 9,
+          "navCode": 0,
+          "clickCode": 1,
+          "detached": true,
+          "noVisible": false,
+          "recreated": 3128,
+          "closeCode": 0,
+          "msg": "Click failed: Attempted to use detached Frame '95482331D57947865099020EC6A85350'."
+        },
+        {
+          "run": 10,
+          "navCode": 0,
+          "clickCode": 1,
+          "detached": true,
+          "noVisible": false,
+          "recreated": 2864,
+          "closeCode": 0,
+          "msg": "Click failed: Attempted to use detached Frame 'F928C040C54F0C09BE0E31BE64C3CFEF'."
+        }
+      ],
+      "detachedRuns": 10,
+      "cleanRuns": 0,
+      "churnOk": true
+    },
+    "L3sdkRecreated": 232,
+    "L3": {
+      "sdk": [
+        {
+          "i": 1,
+          "complete": false,
+          "elementCount": 0
+        },
+        {
+          "i": 2,
+          "complete": false,
+          "elementCount": 0
+        },
+        {
+          "i": 3,
+          "complete": false,
+          "elementCount": 0
+        },
+        {
+          "i": 4,
+          "complete": false,
+          "elementCount": 0
+        },
+        {
+          "i": 5,
+          "complete": false,
+          "elementCount": 0
+        },
+        {
+          "i": 6,
+          "complete": false,
+          "elementCount": 0
+        },
+        {
+          "i": 7,
+          "complete": false,
+          "elementCount": 0
+        },
+        {
+          "i": 8,
+          "complete": false,
+          "elementCount": 0
+        },
+        {
+          "i": 9,
+          "complete": false,
+          "elementCount": 0
+        },
+        {
+          "i": 10,
+          "complete": false,
+          "elementCount": 0
+        },
+        {
+          "i": 11,
+          "complete": false,
+          "elementCount": 0
+        },
+        {
+          "i": 12,
+          "complete": false,
+          "elementCount": 0
+        },
+        {
+          "i": 13,
+          "complete": false,
+          "elementCount": 0
+        },
+        {
+          "i": 14,
+          "complete": false,
+          "elementCount": 0
+        },
+        {
+          "i": 15,
+          "complete": false,
+          "elementCount": 0
+        },
+        {
+          "i": 16,
+          "complete": false,
+          "elementCount": 0
+        },
+        {
+          "i": 17,
+          "complete": false,
+          "elementCount": 0
+        },
+        {
+          "i": 18,
+          "complete": false,
+          "elementCount": 0
+        },
+        {
+          "i": 19,
+          "complete": false,
+          "elementCount": 0
+        },
+        {
+          "i": 20,
+          "complete": false,
+          "elementCount": 0
+        }
+      ],
+      "cliSnaps": [
+        {
+          "i": 1,
+          "code": 0,
+          "complete": false,
+          "zero": true,
+          "head": "Interactive elements (0):"
+        },
+        {
+          "i": 2,
+          "code": 0,
+          "complete": false,
+          "zero": true,
+          "head": "Interactive elements (0):"
+        },
+        {
+          "i": 3,
+          "code": 0,
+          "complete": false,
+          "zero": true,
+          "head": "Interactive elements (0):"
+        },
+        {
+          "i": 4,
+          "code": 0,
+          "complete": false,
+          "zero": true,
+          "head": "Interactive elements (0):"
+        },
+        {
+          "i": 5,
+          "code": 0,
+          "complete": false,
+          "zero": true,
+          "head": "Interactive elements (0):"
+        },
+        {
+          "i": 6,
+          "code": 0,
+          "complete": false,
+          "zero": true,
+          "head": "Interactive elements (0):"
+        },
+        {
+          "i": 7,
+          "code": 0,
+          "complete": false,
+          "zero": true,
+          "head": "Interactive elements (0):"
+        },
+        {
+          "i": 8,
+          "code": 0,
+          "complete": false,
+          "zero": true,
+          "head": "Interactive elements (0):"
+        },
+        {
+          "i": 9,
+          "code": 0,
+          "complete": false,
+          "zero": true,
+          "head": "Interactive elements (0):"
+        },
+        {
+          "i": 10,
+          "code": 0,
+          "complete": false,
+          "zero": true,
+          "head": "Interactive elements (0):"
+        }
+      ],
+      "degradedSdk": 20,
+      "degradedCli": 10,
+      "completeAll": 0,
+      "total": 30,
+      "churnOk": true,
+      "cliRecreated": 15424
+    },
+    "L4": {
+      "runs": [
+        {
+          "run": 1,
+          "code": 1,
+          "detached": true,
+          "noVisible": false,
+          "msg": "Type failed: Attempted to use detached Frame '5FF358B7C082A2D832A9C138A55A684A'."
+        },
+        {
+          "run": 2,
+          "code": 1,
+          "detached": true,
+          "noVisible": false,
+          "msg": "Type failed: Attempted to use detached Frame '2EE799DD865DE11F43C5B7A273BB531F'."
+        },
+        {
+          "run": 3,
+          "code": 1,
+          "detached": true,
+          "noVisible": false,
+          "msg": "Type failed: Attempted to use detached Frame '408BD3CB5A65A1DB1C6C114EDACB9821'."
+        },
+        {
+          "run": 4,
+          "code": 1,
+          "detached": true,
+          "noVisible": false,
+          "msg": "Type failed: Attempted to use detached Frame 'DA9A64582A06CFBAFDD1E0EA06E46701'."
+        },
+        {
+          "run": 5,
+          "code": 1,
+          "detached": true,
+          "noVisible": false,
+          "msg": "Type failed: Attempted to use detached Frame 'AB3C5E58A9A407F03E07F2482D6EFE80'."
+        }
+      ],
+      "detachedRuns": 5,
+      "churnOk": true
+    }
+  },
+  "realTemp": {
+    "before": 5,
+    "after": 5,
+    "vanished": []
+  },
+  "pathCheck": {
+    "exit": 0,
+    "out": [
+      "cleanup-lines=110 outside-iso=0"
+    ]
+  },
+  "allPass": true
+}

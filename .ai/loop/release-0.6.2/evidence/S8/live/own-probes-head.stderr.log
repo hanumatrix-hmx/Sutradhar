@@ -1,0 +1,33 @@
+[iso-guard] tmpdir=e:/ai-cache/tmp/claude/e--hmx-projects-internal-projects-pinchtab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/a8t pid=102244
+[probe] CLI=E:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/packages/sutradhar/dist/cli-bin.js sha256=f221f536b9655e5580752adf8189145b9c4d8bb7ed2108633c89f923f5cae346 PROBES=P1,P2,P3,P4,P5,P6,P7
+[iso-guard] tmpdir=e:/ai-cache/tmp/claude/e--hmx-projects-internal-projects-pinchtab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/a8t pid=77480
+[probe] fixture {"a":"http://127.0.0.1:62053","b":"http://127.0.0.1:62055"}
+PASS P1 nav 0
+PASS P1 churn happened (__navs > 50) "20236"
+PASS P1 #absent under cross-origin iframe navigation: every run exit 1 "No visible element", never raw detached text [{"code":1,"raw":false,"msg":"Click failed: No visible element found for selector: #absent"},{"code":1,"raw":false,"msg":"Click failed: No visible element found for selector: #absent"},{"code":1,"raw":false,"msg":"Click failed: No visible element found for selector: #absent"},{"code":1,"raw":false,"msg":"Click failed: No visible element found for selector: #absent"},{"code":1,"raw":false,"msg":"Cl
+PASS P1 #inner-btn (in a navigating child frame): never raw detached text [{"code":1,"raw":false,"msg":"Click failed: Protocol error (Runtime.callFunctionOn): Argument should belong to the same JavaScript world as target object"},{"code":1,"raw":false,"msg":"Click failed: Protocol error (Runtime.callFunctionOn): Argument should belong to the same JavaScript world as target object"},{"code":1,"raw":false,"msg":"Click failed: Execution context was destroyed, most likely b
+PASS P2 nav 0
+PASS P2 same-origin main-frame navigation during clicks: never raw "detached Frame" text [{"sel":"#go","code":0,"raw":false,"rawCtx":false,"msg":"Clicked #go"},{"sel":"#go","code":0,"raw":false,"rawCtx":false,"msg":"Clicked #go"},{"sel":"#absent","code":1,"raw":false,"rawCtx":false,"msg":"Click failed: No visible element found for selector: #absent"},{"sel":"#go","code":0,"raw":false,"rawCtx":false,"msg":"Clicked #go"},{"sel":"#go","code":0,"raw":false,"rawCtx":false,"msg":"Clicked #g
+PASS P2 a context-destroyed failure surfaces as the navigated-away diagnosis, not as a bare raw context error []
+PASS P3 nav 0
+PASS P3 the text really changed between paged reads (>= 2 distinct totals) 28
+PASS P3 >= 2 plain windows with marker A at offset > 0 (hint checked away from offset 0) [["A",0],["json",4000],["A",8000],["json",12000],["A",16000],["json",20000],["B",24000],["json",25700],["B",26519],["json",27299],["B",27923],["json",28625],["B",29249],["json",29912],["B",30614],["json",31238],["B",31862],["json",32486],["B",33110],["json",33734],["B",34397],["json",35021],["B",35645],["json",36269],["B",36893],["json",37517],["B",38141],["json",38804]]
+PASS P3 every window: marker/JSON numbers describe the returned text (end-offset == length, A iff end < total, hint == end) []
+PASS P3 every window is exactly FINAL[offset:end] of a real snapshot whose total is a line boundary (prefix-growing page) []
+PASS P3 concatenation of windows == FINAL {"acc":38999,"final":38999}
+PASS P4 nav 0
+PASS P4 setup: two post-load hash entries (#b current) "#b"
+PASS P4 back over a #hash entry: exit 0 "Navigated back to ...#a", location.hash == #a {"h0":"#b","b1":[0,"Navigated back to http://127.0.0.1:62053/plain#a"],"h1":"#a","b2":[0,"Navigated back to http://127.0.0.1:62053/plain"],"h2":"http://127.0.0.1:62053/plain","f1":[0,"Navigated forward to http://127.0.0.1:62053/plain#a"],"h3":"#a"}
+PASS P4 second back: exit 0, URL without hash {"h0":"#b","b1":[0,"Navigated back to http://127.0.0.1:62053/plain#a"],"h1":"#a","b2":[0,"Navigated back to http://127.0.0.1:62053/plain"],"h2":"http://127.0.0.1:62053/plain","f1":[0,"Navigated forward to http://127.0.0.1:62053/plain#a"],"h3":"#a"}
+PASS P4 forward: exit 0, #a {"h0":"#b","b1":[0,"Navigated back to http://127.0.0.1:62053/plain#a"],"h1":"#a","b2":[0,"Navigated back to http://127.0.0.1:62053/plain"],"h2":"http://127.0.0.1:62053/plain","f1":[0,"Navigated forward to http://127.0.0.1:62053/plain#a"],"h3":"#a"}
+PASS P5 ids found in snap {"ids":{"hv":"1","sel":"2","inp":"3"},"hover":[0,"1","Hovered #1"],"select":[0,"b","Selected \"b\" on [#2]"],"type":[0,"zz","Typed into  #3 "],"snap":["URL: http://127.0.0.1:62053/ids","Title: ids","Interactive elements (3):","[#1] button \"Hover me\"","[#2] select \"A","B\" value=\"a\""]}
+PASS P5 hover "#N" exit 0 and the page saw a mouseover [0,"1","Hovered #1"]
+PASS P5 select "[#N]" b -> value b [0,"b","Selected \"b\" on [#2]"]
+PASS P5 type " #N " (padded) -> value zz [0,"zz","Typed into  #3 "]
+PASS P6 no-session: exit 1, exactly the hint line on stderr, stdout empty, no state.json []
+PASS P6 no sutradhar-cli-* profile created under ISO []
+PASS P7 get_page_text with sessionId omitted (FR2-10) returns a window + marker A naming offset=1000 {"isError":false,"tail":"vwxyz0123\nG000024 abcdefghijklmnopqrstuvwxyz0123\nG000025 abcdefghijklmnopq\n[page text truncated: showing characters 0-1000 of 11699. Continue with browser.get_page_text offset=1000]\nsessionId omitted: used \"sess_1791134734717_1\", the only live browser session."}
+PASS P7 offset past the end -> marker C "\n[page text: offset 999999 is past the end; the page text has 11699 characters]\nsessionId omitted: used \"sess_1791134734717_1\", the only live browser session."
+PASS P7 read while an alert is open: an error with a reason or a real window, never an empty success, no hang {"timeout":false,"isError":false,"text":"G000000 abcdefghijklmnopqrstuvwxyz0123\nG000001 abcdefghijklmnopqrstuvwxyz0123\nG000002 abcdefghijklmnopqrstuvwxyz0123\nG000003 abcdefghijklmnopqrstuvwxyz0123\nG000004 abcdefghijklmnopqrstuvwxyz0123\nG000005 abcdefghijklmnopqrstuvwxyz0123\nG000006 abcdefghijklmnopqrstuvwxyz0123\nG000007 abcdefghijklmnopqrs","ms":2}
+PASS path-log check exit 0 ["cleanup-lines=50 outside-iso=0"]
+OWN-PROBES OK

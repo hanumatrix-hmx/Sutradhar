@@ -1,0 +1,18 @@
+[iso-guard] tmpdir=e:/ai-cache/tmp/claude/e--hmx-projects-internal-projects-pinchtab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/a8t pid=31128
+[harness] MODE=mutant LEVELS=L1,L3 CHURN=k=8&ms=25 RUNS=10 SNAPS=20 CLISNAPS=10 TYPES=5 NO_MUTANTS=0
+[harness] CLI=E:/AI-Cache/tmp/claude/E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/r062/S8/dc/dist/cli-bin.js sha256=f221f536b9655e5580752adf8189145b9c4d8bb7ed2108633c89f923f5cae346
+[harness] BUNDLE=E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\r062\S8\dc\dist\index.js sha256=7c528f4c3bef9053e60c46e46c43fbf255e0d50f0539175a2f74793922172e54 ISO=E:/AI-Cache/tmp/claude/E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/A8t tmpdir=e:/ai-cache/tmp/claude/e--hmx-projects-internal-projects-pinchtab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/a8t
+[iso-guard] tmpdir=e:/ai-cache/tmp/claude/e--hmx-projects-internal-projects-pinchtab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/a8t pid=32492
+[harness] fixture pid=32492 url=http://127.0.0.1:58747
+PASS state.userDataDir <= 200 chars and dirname == ISO {"udd":"E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\A8t\\sutradhar-cli-1791133177601-LIKMYT","len":199}
+[M-047a L1] detachedRuns=10/10 recreated=3000,3016,3120,2888,2944,2864,2896,2952,3160,2864
+PASS M-047a (loop wrapper reverted) on L1: >= 1 of 10 runs shows "detached Frame" {"detachedRuns":10,"sample":["Click failed: Attempted to use detached Frame '217CFF49140D20E58C0FD385DAB9D679'.","Click failed: Attempted to use detached Frame '75B3688EEB4BDCA80883A3EFA028B2FF'."]}
+PASS M-047a churn really happened
+[M-047b L3 sdk] degraded=20/20
+PASS M-047b (buildGraph fix reverted) on L3 (SDK): >= 1 degraded snapshot in 20 {"degraded":20,"sample":[{"i":1,"complete":false,"elementCount":0},{"i":2,"complete":false,"elementCount":0}]}
+PASS M-047b churn really happened 256
+PASS mutant files deleted; real dist sha256 unchanged {"cli":"f221f536b9655e5580752adf8189145b9c4d8bb7ed2108633c89f923f5cae346","idx":"7c528f4c3bef9053e60c46e46c43fbf255e0d50f0539175a2f74793922172e54"}
+PASS close: state.json removed
+PASS path-log check exit 0 (>= 1 [cleanup] line, none outside ISO) {"exit":0,"out":["cleanup-lines=100 outside-iso=0"]}
+PASS no timed-out CLI call
+LIVE-DETACH OK
