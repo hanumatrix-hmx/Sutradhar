@@ -1,0 +1,27 @@
+# logs: 4 CLI logs + harness.log
+L1-close1-2.stderr
+L1-close1-2.stdout
+L1-nav1-1.stderr
+L1-nav1-1.stdout
+# check-cleanup-paths over the S7-rerun logs (ISO root $SP/S11)
+cleanup-lines=15 outside-iso=0
+pathcheck-s7rerun-exit=0
+# NEGATIVE control: same real logs against the WRONG root (matrix ISO) must exit 1
+OUTSIDE-ISO e:/ai-cache/tmp/claude/e--hmx-projects-internal-projects-pinchtab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/s11/sutradhar-cli-1791086213759-d4es36 <= [cleanup] created path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S11\sutradhar-cli-1791086213759-d4ES36"
+cleanup-lines=15 outside-iso=9
+wrong-root-exit=1
+# NEGATIVE control: S1 neg log (real TEMP path) vs ISO
+OUTSIDE-ISO e:/ai-cache/tmp/sutradhar-cli-1790000000000 <= [cleanup] decision path="E:/AI-Cache/tmp/sutradhar-cli-1790000000000" reason=too-young
+cleanup-lines=1 outside-iso=1
+neg-exit=1
+# real-TEMP: S11 start vs now
+REALTEMP-IDENTICAL-SO-FAR (45)
+# phase order lines in the raw close log
+[cleanup] phase kill ms=341
+[cleanup] state-cleared
+[cleanup] removed path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S11\sutradhar-c
+[cleanup] phase cleanup ms=597
+# canary removal line in the first nav log
+[cleanup] consider path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S11\sutradhar-cli-1700000000009-CA
+[cleanup] decision path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S11\sutradhar-cli-1700000000009-CA
+[cleanup] rm-attempt path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S11\sutradhar-cli-1700000000009-

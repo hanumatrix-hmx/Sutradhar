@@ -1,0 +1,26 @@
+# lint comparison vs S1 baseline (S3b method: lines with error|warning, durations stripped)
+LINT-SAME
+# the one known failure (mcp-server) - its eslint output:
+@sutradhar/mcp-server:lint: cache bypass, force executing 84c3fd6d420e3fd0
+@sutradhar/mcp-server:lint: 
+@sutradhar/mcp-server:lint: > @sutradhar/mcp-server@0.1.0 lint E:\HMX_Projects\Internal_Projects\PinchTab\.claude\worktrees\project-understanding-696041\packages\mcp-server
+@sutradhar/mcp-server:lint: > eslint src/ --ext .ts
+@sutradhar/mcp-server:lint: 
+@sutradhar/mcp-server:lint: 
+@sutradhar/mcp-server:lint: E:\HMX_Projects\Internal_Projects\PinchTab\.claude\worktrees\project-understanding-696041\packages\mcp-server\src\session-resolution.ts
+@sutradhar/mcp-server:lint:   138:47  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+@sutradhar/mcp-server:lint:   138:56  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+@sutradhar/mcp-server:lint:   146:28  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+@sutradhar/mcp-server:lint:   146:40  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+@sutradhar/mcp-server:lint:   152:89  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+@sutradhar/mcp-server:lint:   166:18  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+@sutradhar/mcp-server:lint: 
+@sutradhar/mcp-server:lint: ✖ 6 problems (6 errors, 0 warnings)
+@sutradhar/mcp-server:lint: 
+@sutradhar/mcp-server:lint:  ELIFECYCLE  Command failed with exit code 1.
+# failed-task list
+ ERROR  @sutradhar/mcp-server#lint: command (E:\HMX_Projects\Internal_Projects\PinchTab\.claude\worktrees\project-understanding-696041\packages\mcp-server) C:\Users\Varad M\AppData\Roaming\npm\pnpm.cmd run lint exited (1)
+Failed:    @sutradhar/mcp-server#lint
+ ERROR  run failed: command  exited (1)
+# lint tasks: S1=32 S11=32
+# other packages with eslint errors (expect none): 

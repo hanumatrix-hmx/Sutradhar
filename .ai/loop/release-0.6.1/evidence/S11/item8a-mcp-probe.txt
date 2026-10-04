@@ -1,0 +1,18 @@
+# probe sha256 (must be 582b9f51...):
+582b9f519247f9541972295c4adc08b5b5de5a120b165f7551a9c2239f3c9527 *E:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/.ai/loop/release-0.6.1/evidence/S3a/mcp-probe.mjs
+582b9f519247f9541972295c4adc08b5b5de5a120b165f7551a9c2239f3c9527 *E:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/.ai/loop/release-0.6.1/evidence/S3a/mcp-probe.mjs
+# POSITIVE: EXPECT_VERSION=0.6.1 (the only adaptation per plan)
+probe-exit=0
+# NEGATIVE: EXPECT_VERSION=0.6.0 (stale-version expectation must FAIL)
+probe-negative-exit=1
+REALTEMP-IDENTICAL (45)
+# positive summary
+{"version":"PASS","toolCount":"PASS","hasWaitFor":"PASS","launch":"PASS","navigateNoError":"PASS","serverSawRequest":"PASS","navigateResultMentionsPage":"PASS","shutdownAll":"PASS","childExited":"PASS","noLeftoverChromeUnderTmp":"PASS"}
+serverInfo {"name":"sutradhar","version":"0.6.1"} toolCount 73 hasWaitFor PASS childExited {"code":0,"sig":null} mcpCli E:\HMX_Projects\Internal_Projects\PinchTab\.claude\worktrees\project-understanding-696041\packages\sutradhar\dist\mcp-cli.js
+# negative summary
+{"version":"FAIL","toolCount":"PASS","hasWaitFor":"PASS","launch":"PASS","navigateNoError":"PASS","serverSawRequest":"PASS","navigateResultMentionsPage":"PASS","shutdownAll":"PASS","childExited":"PASS","noLeftoverChromeUnderTmp":"PASS"}
+# guard lines
+1
+0
+[probe-guard] tmpdir=e:/ai-cache/tmp/claude/e--hmx-projects-internal-projects-pinchtab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/s11-tmp pid=82116
+[probe] mcp-cli=E:\HMX_Projects\Internal_Projects\PinchTab\.claude\worktrees\project-understanding-696041\packages\sutradhar\dist\mcp-cli.js

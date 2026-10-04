@@ -1,0 +1,137 @@
+# changelog placeholder check, case-insensitive, exact names (expect no output, grep exit 1)
+grep-exit=1
+# positive control: same pattern on the saved template (expect 7)
+7
+# S10 acceptance script re-run live
+PASS S10-1 headings :: ["[0.6.1] - unreleased","Security","Fixed","Changed"]
+PASS S10-1 order: [Unreleased] < 0.6.1 < 0.6.0
+PASS S10-3 GHSA set equals S1 shipped set, count 6 :: S1=5jgf-p345-68v8,f65p-4m7j-42xc,fph4-wmhf-6fwf,hrr3-gc8f-f4qj,jqff-g426-hqxp,qw65-cvwx-89v3 changelog=5jgf-p345-68v8,f65p-4m7j-42xc,fph4-wmhf-6fwf,hrr3-gc8f-f4qj,jqff-g426-hqxp,qw65-cvwx-89v3
+PASS S10-3 S1 inventory: shipped advisories: 6
+PASS S10-4 constants :: kill=10000 cleanup=15000 sweep=15000 stale=600000
+PASS S10-4 changelog says about 10 s / about 15 s / 15 s sweep / 10 minutes
+PASS S10-4 p50 source: S7 README
+PASS S10-5 no placeholder left in docs/22-changelog.md
+PASS S10-5 negative control: template has 7 placeholders (the pattern can match)
+PASS S10-2 no "as of 0.6.0" / "Status (0.6.0)" left
+PASS S10-2 README heading
+check-s10-exit=0
+# 0.6.1 section present once
+1
+# FINAL real TEMP snapshot vs S11 start
+before=45 after=45
+REALTEMP-IDENTICAL (byte-identical name lists)
+# S1 baseline 45 -> same list as S1/S8b? (names vs S8b end list)
+differs from S8b end (names list compare; see below)
+# leftover processes: ISO needles
+{"scanned":590,"hits":[{"pid":73644,"name":"bash.exe"},{"pid":81344,"name":"bash.exe"},{"pid":29720,"name":"bash.exe"},{"pid":76844,"name":"bash.exe"}]}
+E:              210G  161G   49G  77% /e
+# dist sha256 (final)
+ddaaa00191710fc772db1c93a14e469381f0a40020de930ffae198834fd8db19 *packages/sutradhar/dist/index.js
+9858726a291e844e1f84089b18310e90379140e2dfabf7b2fda80eb550b5c59b *packages/sutradhar/dist/cli-bin.js
+55317c669c07bdb12812a787795470e6c988ae6b6f61921c4ebc968417ed8e2b *packages/sutradhar/dist/mcp-cli.js
+# leftover query again, needle assembled from pieces so my own shell command text cannot match (P7)
+{"scanned":594,"hits":[]}
+# the same with a pieces-built positive control (dummy argv carries the joined text)
+{"scanned":596,"hits":[{"pid":79308,"name":"node.exe"}]}
+# after killing the dummy:
+{"scanned":590,"hits":[]}
+# S8b real-TEMP list format
+E:/AI-Cache/tmp/sutradhar-cli-1790798002107/
+E:/AI-Cache/tmp/sutradhar-cli-1791018696593/
+45
+# names compare vs S8b end snapshot (format normalised)
+1,45c1,45
+< sutradhar-cli-1790798002107
+< sutradhar-cli-1791018696593
+< sutradhar-cli-1791018994367
+< sutradhar-cli-1791019007287
+< sutradhar-cli-1791019020436
+< sutradhar-cli-1791037214591
+< sutradhar-cli-1791037222958
+< sutradhar-cli-1791037462902
+< sutradhar-cli-1791037544883
+< sutradhar-cli-1791037732928
+< sutradhar-cli-1791037847710
+< sutradhar-cli-1791037981924
+< sutradhar-cli-1791038075627
+< sutradhar-cli-1791038115619
+< sutradhar-cli-1791038207807
+< sutradhar-cli-1791038365859
+< sutradhar-cli-1791043911380
+< sutradhar-cli-1791046097748
+< sutradhar-cli-1791046172807
+< sutradhar-cli-1791046206553
+< sutradhar-cli-1791046206961
+< sutradhar-cli-1791046359999
+< sutradhar-cli-1791046360035
+< sutradhar-cli-1791046373848
+< sutradhar-cli-1791046494240
+< sutradhar-cli-1791046494327
+< sutradhar-cli-1791046518371
+< sutradhar-cli-1791046621208
+< sutradhar-cli-1791046641459
+< sutradhar-cli-1791046718830
+< sutradhar-cli-1791046780985
+< sutradhar-cli-1791046835620
+< sutradhar-cli-1791047070611
+< sutradhar-cli-1791047142670
+< sutradhar-cli-1791047286054
+< sutradhar-cli-1791047373914
+< sutradhar-cli-1791047519247
+< sutradhar-cli-1791047592153
+< sutradhar-cli-1791047642081
+< sutradhar-cli-1791047692771
+< sutradhar-cli-1791047756275
+< sutradhar-cli-1791048006315
+< sutradhar-cli-1791048051259
+< sutradhar-cli-1791054965059
+< sutradhar-cli-1791055079132
+---
+> sutradhar-cli-1790798002107/
+> sutradhar-cli-1791018696593/
+> sutradhar-cli-1791018994367/
+> sutradhar-cli-1791019007287/
+> sutradhar-cli-1791019020436/
+> sutradhar-cli-1791037214591/
+> sutradhar-cli-1791037222958/
+> sutradhar-cli-1791037462902/
+> sutradhar-cli-1791037544883/
+> sutradhar-cli-1791037732928/
+> sutradhar-cli-1791037847710/
+> sutradhar-cli-1791037981924/
+> sutradhar-cli-1791038075627/
+> sutradhar-cli-1791038115619/
+> sutradhar-cli-1791038207807/
+> sutradhar-cli-1791038365859/
+> sutradhar-cli-1791043911380/
+> sutradhar-cli-1791046097748/
+> sutradhar-cli-1791046172807/
+> sutradhar-cli-1791046206553/
+> sutradhar-cli-1791046206961/
+> sutradhar-cli-1791046359999/
+> sutradhar-cli-1791046360035/
+> sutradhar-cli-1791046373848/
+> sutradhar-cli-1791046494240/
+> sutradhar-cli-1791046494327/
+> sutradhar-cli-1791046518371/
+> sutradhar-cli-1791046621208/
+> sutradhar-cli-1791046641459/
+> sutradhar-cli-1791046718830/
+> sutradhar-cli-1791046780985/
+> sutradhar-cli-1791046835620/
+> sutradhar-cli-1791047070611/
+> sutradhar-cli-1791047142670/
+> sutradhar-cli-1791047286054/
+> sutradhar-cli-1791047373914/
+> sutradhar-cli-1791047519247/
+> sutradhar-cli-1791047592153/
+> sutradhar-cli-1791047642081/
+> sutradhar-cli-1791047692771/
+> sutradhar-cli-1791047756275/
+> sutradhar-cli-1791048006315/
+> sutradhar-cli-1791048051259/
+> sutradhar-cli-1791054965059/
+> sutradhar-cli-1791055079132/
+# corrected compare (the 'ls -1' lists carry a trailing '/', the S8b list uses full paths; both stripped)
+SAME 45 NAMES AS S8b END
+S11 BEFORE == AFTER (45)

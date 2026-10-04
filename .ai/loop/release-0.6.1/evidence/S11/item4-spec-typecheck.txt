@@ -1,0 +1,60 @@
+# spec typecheck (non-vacuous config $SP/r5/tsconfig.specs.json)
+spec-tsc-exit=2 (non-zero expected: 7 baseline errors)
+total-lines=8 errors=7 TS6059=0
+2,8c2,8
+< packages/cli/tests/unit/dialog-cli.spec.ts(122,22): error TS2322: Type 'VitestUtils' is not assignable to type 'Awaitable<HookCleanupCallback>'.
+< packages/cli/tests/unit/dialog-cli.spec.ts(123,21): error TS2322: Type 'VitestUtils' is not assignable to type 'Awaitable<void>'.
+< packages/cli/tests/unit/direct-cdp-broker.spec.ts(36,40): error TS6133: 'session' is declared but its value is never read.
+< packages/cli/tests/unit/session-flow.spec.ts(142,25): error TS2322: Type 'Promise<number>' is not assignable to type 'Promise<void>'.
+< packages/cli/tests/unit/session-flow.spec.ts(148,32): error TS2322: Type 'Promise<number>' is not assignable to type 'Promise<void>'.
+< packages/cli/tests/unit/session-flow.spec.ts(84,25): error TS2322: Type 'Promise<number>' is not assignable to type 'Promise<void>'.
+< packages/cli/tests/unit/session-flow.spec.ts(93,32): error TS2322: Type 'Promise<number>' is not assignable to type 'Promise<void>'.
+---
+> tests/unit/dialog-cli.spec.ts(122,22): error TS2322: Type 'VitestUtils' is not assignable to type 'Awaitable<HookCleanupCallback>'.
+> tests/unit/dialog-cli.spec.ts(123,21): error TS2322: Type 'VitestUtils' is not assignable to type 'Awaitable<void>'.
+> tests/unit/direct-cdp-broker.spec.ts(36,40): error TS6133: 'session' is declared but its value is never read.
+> tests/unit/session-flow.spec.ts(142,25): error TS2322: Type 'Promise<number>' is not assignable to type 'Promise<void>'.
+> tests/unit/session-flow.spec.ts(148,32): error TS2322: Type 'Promise<number>' is not assignable to type 'Promise<void>'.
+> tests/unit/session-flow.spec.ts(84,25): error TS2322: Type 'Promise<number>' is not assignable to type 'Promise<void>'.
+> tests/unit/session-flow.spec.ts(93,32): error TS2322: Type 'Promise<number>' is not assignable to type 'Promise<void>'.
+# new/changed spec files vs origin/master and errors in them:
+packages/cli/tests/unit/close-session.spec.ts
+packages/cli/tests/unit/help-text.spec.ts
+packages/cli/tests/unit/scan-command-lines.spec.ts
+packages/cli/tests/unit/spawn-failure-cleanup.spec.ts
+packages/cli/tests/unit/system-binaries.spec.ts
+packages/cli/tests/unit/temp-profile.spec.ts
+errors in packages/cli/tests/unit/close-session.spec.ts: 0
+errors in packages/cli/tests/unit/help-text.spec.ts: 0
+errors in packages/cli/tests/unit/scan-command-lines.spec.ts: 0
+errors in packages/cli/tests/unit/spawn-failure-cleanup.spec.ts: 0
+errors in packages/cli/tests/unit/system-binaries.spec.ts: 0
+errors in packages/cli/tests/unit/temp-profile.spec.ts: 0
+# negative control (planted TS2322)
+../../../../../../../../AI-Cache/tmp/claude/E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/r5/planted.ts(1,7): error TS2322: Type 'string' is not assignable to type 'number'.
+# path-normalised comparison (baseline was produced from the repo root, this run from packages/cli; only the 'packages/cli/' prefix differs)
+1,8c1,8
+<   Type 'number' is not assignable to type 'void'.
+< tests/unit/dialog-cli.spec.ts(122,22): error TS2322: Type 'VitestUtils' is not assignable to type 'Awaitable<HookCleanupCallback>'.
+< tests/unit/dialog-cli.spec.ts(123,21): error TS2322: Type 'VitestUtils' is not assignable to type 'Awaitable<void>'.
+< tests/unit/direct-cdp-broker.spec.ts(36,40): error TS6133: 'session' is declared but its value is never read.
+< tests/unit/session-flow.spec.ts(142,25): error TS2322: Type 'Promise<number>' is not assignable to type 'Promise<void>'.
+< tests/unit/session-flow.spec.ts(148,32): error TS2322: Type 'Promise<number>' is not assignable to type 'Promise<void>'.
+< tests/unit/session-flow.spec.ts(84,25): error TS2322: Type 'Promise<number>' is not assignable to type 'Promise<void>'.
+< tests/unit/session-flow.spec.ts(93,32): error TS2322: Type 'Promise<number>' is not assignable to type 'Promise<void>'.
+---
+>   Type 'number' is not assignable to type 'void'.
+> tests/unit/dialog-cli.spec.ts(122,22): error TS2322: Type 'VitestUtils' is not assignable to type 'Awaitable<HookCleanupCallback>'.
+> tests/unit/dialog-cli.spec.ts(123,21): error TS2322: Type 'VitestUtils' is not assignable to type 'Awaitable<void>'.
+> tests/unit/direct-cdp-broker.spec.ts(36,40): error TS6133: 'session' is declared but its value is never read.
+> tests/unit/session-flow.spec.ts(142,25): error TS2322: Type 'Promise<number>' is not assignable to type 'Promise<void>'.
+> tests/unit/session-flow.spec.ts(148,32): error TS2322: Type 'Promise<number>' is not assignable to type 'Promise<void>'.
+> tests/unit/session-flow.spec.ts(84,25): error TS2322: Type 'Promise<number>' is not assignable to type 'Promise<void>'.
+> tests/unit/session-flow.spec.ts(93,32): error TS2322: Type 'Promise<number>' is not assignable to type 'Promise<void>'.
+# mutant of the comparison: baseline minus one line must differ
+mutant detected (diff exit non-zero)
+# retry: also strip CR (the files differ in line endings: base.txt vs tsc output)
+base.txt CR count=8  s11 CR count=8
+SPEC-TSC-SAME-AS-BASELINE (7 identical errors, 0 TS6059)
+# mutant of the comparison: baseline minus one line must differ
+mutant detected (diff exit non-zero)

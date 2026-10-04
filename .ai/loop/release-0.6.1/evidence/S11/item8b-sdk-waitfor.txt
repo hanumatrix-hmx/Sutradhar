@@ -1,0 +1,33 @@
+cf9e960823d06b385a7ae8e148e34fd7480272393873f4dee2ef60c4c18630c1 *E:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/.ai/loop/release-0.6.1/evidence/S11/sdk-waitfor.mjs
+# POSITIVE run (v2: the page is armed 500 ms AFTER waitFor is called)
+sdk-waitfor-exit=0
+[harness-guard] tmpdir=e:/ai-cache/tmp/claude/e--hmx-projects-internal-projects-pinchtab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/s11-tmp pid=77760
+[harness] importing E:\HMX_Projects\Internal_Projects\PinchTab\.claude\worktrees\project-understanding-696041\packages\sutradhar\dist\index.js
+PASS built bundle exports launch + ActionFailedError
+PASS SUTRADHAR_VERSION from the built bundle is 0.6.1 :: 0.6.1
+PASS server served the page
+PASS positive control: attribution query finds our Chrome while the browser is open :: {"n":9,"out":"[{\"ProcessId\":77892,\"Name\":\"chrome.exe\"},{\"ProcessId\":82596,\"Name\":\"chrome.exe\"},{\"ProcessId\":54380,\"Name\":\"chrome.exe\"},{\"Proc
+PASS waitFor(READY-0.6.1) resolved with success :: {"success":true}
+PASS the call took >= 400 ms (performance.now() around the call) :: inWaitFor=544.0ms
+PASS the result itself says satisfiedAfterMs >= 400 :: satisfiedAfterMs=543 polls=6
+PASS it resolved only after the page was armed (t1 >= armedAt) :: afterArm=32.8ms
+[harness] waitFor output: {"conditions":{"text":"READY-0.6.1"},"satisfiedAfterMs":543,"polls":6}
+PASS waitFor(NEVER-THERE, 1000) throws ActionFailedError :: ActionFailedError: wait_for timed out after 1000ms waiting for text="NEVER-THERE": text "NEVER-THERE" was not found in the visible text of 1 frame(s).
+PASS the failing wait took about its timeout (>= 900 ms, < 8000 ms) :: 1008.2ms
+PASS after browser.close(): no Chrome left that references the ISO dir :: {"n":0,"out":""}
+{"total":11,"failed":0}
+--- stderr
+[iso-guard] tmpdir=e:/ai-cache/tmp/claude/e--hmx-projects-internal-projects-pinchtab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/s11-tmp pid=77760
+# NEGATIVE control (page armed BEFORE waitFor: text already present, waitFor returns at once; the >= 400 ms checks must FAIL, exit 1)
+sdk-waitfor-negative-exit=1
+PASS built bundle exports launch + ActionFailedError
+PASS SUTRADHAR_VERSION from the built bundle is 0.6.1 :: 0.6.1
+PASS server served the page
+PASS positive control: attribution query finds our Chrome while the browser is open :: {"n":9,"out":"[{\"ProcessId\":50136,\"Name\":\"chrome.exe\"},{\"ProcessId\":33440,\"Name\":\"chrome.exe\"},{\"ProcessId\":64708,\"Nam
+PASS waitFor(READY-0.6.1) resolved with success :: {"success":true}
+FAIL the call took >= 400 ms (performance.now() around the call) :: inWaitFor=3.6ms
+FAIL the result itself says satisfiedAfterMs >= 400 :: satisfiedAfterMs=2 polls=1
+PASS waitFor(NEVER-THERE, 1000) throws ActionFailedError :: ActionFailedError: wait_for timed out after 1000ms waiting for text="NEVER-THERE": text "NEVER-THERE" was not found in the visible text of 1 frame(s).
+PASS the failing wait took about its timeout (>= 900 ms, < 8000 ms) :: 1006.8ms
+PASS after browser.close(): no Chrome left that references the ISO dir :: {"n":0,"out":""}
+REALTEMP-IDENTICAL (45)

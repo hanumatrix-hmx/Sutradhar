@@ -1,0 +1,40 @@
+# consumer install (isolated dir), start 09:23:26
+
+added 26 packages, and audited 27 packages in 3s
+
+8 packages are looking for funding
+  run `npm fund` for details
+
+found 0 vulnerabilities
+consumer version: 0.6.1
+consumer-audit-exit=0
+# installed dist == local dist (sha256)
+ddaaa00191710fc772db1c93a14e469381f0a40020de930ffae198834fd8db19 *E:/AI-Cache/tmp/claude/E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/S11-tmp-consumer/node_modules/sutradhar/dist/index.js
+9858726a291e844e1f84089b18310e90379140e2dfabf7b2fda80eb550b5c59b *E:/AI-Cache/tmp/claude/E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/S11-tmp-consumer/node_modules/sutradhar/dist/cli-bin.js
+55317c669c07bdb12812a787795470e6c988ae6b6f61921c4ebc968417ed8e2b *E:/AI-Cache/tmp/claude/E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/S11-tmp-consumer/node_modules/sutradhar/dist/mcp-cli.js
+ddaaa00191710fc772db1c93a14e469381f0a40020de930ffae198834fd8db19 *packages/sutradhar/dist/index.js
+9858726a291e844e1f84089b18310e90379140e2dfabf7b2fda80eb550b5c59b *packages/sutradhar/dist/cli-bin.js
+55317c669c07bdb12812a787795470e6c988ae6b6f61921c4ebc968417ed8e2b *packages/sutradhar/dist/mcp-cli.js
+# consumer audit summary
+{"info":0,"low":0,"moderate":0,"high":0,"critical":0,"total":0}
+# consumer dependency tree (top)
+s11-tmp-consumer@1.0.0 E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\***\scratchpad\S11-tmp-consumer
+`-- sutradhar@0.6.1
+  `-- puppeteer-core@25.12.0
+    +-- @puppeteer/browsers@3.2.3
+    | +-- modern-tar@0.8.5
+    | +-- UNMET OPTIONAL DEPENDENCY proxy-agent@>=8.0.1
+    | +-- yargs@18.2.0
+    | | +-- cliui@9.0.1
+    | | | +-- string-width@7.2.0
+    | | | | +-- emoji-regex@10.6.0
+    | | | | +-- get-east-asian-width@1.7.0 deduped
+    | | | | `-- strip-ansi@7.2.0 deduped
+    | | | +-- strip-ansi@7.2.0
+    | | | | `-- ansi-regex@6.4.0
+    | | | `-- wrap-ansi@9.0.2
+    | | |   +-- ansi-styles@6.2.3
+    | | |   +-- string-width@7.2.0
+    | | |   | +-- emoji-regex@10.6.0 deduped
+    | | |   | +-- get-east-asian-width@1.7.0 deduped
+    | | |   | `-- strip-ansi@7.2.0 deduped

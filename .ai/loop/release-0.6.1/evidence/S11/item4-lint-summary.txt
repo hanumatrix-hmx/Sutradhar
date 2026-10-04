@@ -1,0 +1,17 @@
+# lint start 09:19:14
+lint-exit=1 end 09:20:36
+@sutradhar/workflow:lint: > eslint src/ --ext .ts
+@sutradhar/workflow:lint: 
+@sutradhar/server:lint: cache bypass, force executing cde83b1e5fe00786
+@sutradhar/server:lint: 
+@sutradhar/server:lint: > @sutradhar/server@0.1.0 lint E:\HMX_Projects\Internal_Projects\PinchTab\.claude\worktrees\project-understanding-696041\apps\server
+@sutradhar/server:lint: > eslint src/ --ext .ts
+@sutradhar/server:lint: 
+ ERROR  @sutradhar/mcp-server#lint: command (E:\HMX_Projects\Internal_Projects\PinchTab\.claude\worktrees\project-understanding-696041\packages\mcp-server) C:\Users\Varad M\AppData\Roaming\npm\pnpm.cmd run lint exited (1)
+
+ Tasks:    31 successful, 32 total
+Cached:    0 cached, 32 total
+  Time:    1m21.251s 
+Failed:    @sutradhar/mcp-server#lint
+
+ ERROR  run failed: command  exited (1)

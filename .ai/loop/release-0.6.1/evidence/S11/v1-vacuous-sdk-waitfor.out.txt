@@ -1,0 +1,17 @@
+[harness-guard] tmpdir=e:/ai-cache/tmp/claude/e--hmx-projects-internal-projects-pinchtab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/s11-tmp pid=66720
+[harness] importing E:\HMX_Projects\Internal_Projects\PinchTab\.claude\worktrees\project-understanding-696041\packages\sutradhar\dist\index.js
+PASS built bundle exports launch + ActionFailedError
+PASS SUTRADHAR_VERSION from the built bundle is 0.6.1 :: 0.6.1
+{"timestamp":"2026-10-04T03:55:38.174Z","level":"info","message":"[BrowserLauncher] Launching browser instance","context":{"executablePath":"C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe","headless":true,"argsCount":11}}
+{"timestamp":"2026-10-04T03:55:38.394Z","level":"info","message":"[BrowserSessionManager] Created browser session sess_1791086138174_1","context":{"isIncognito":false}}
+PASS server served the page
+PASS positive control: attribution query finds our Chrome while the browser is open :: {"n":9,"out":"[{\"ProcessId\":77692,\"Name\":\"chrome.exe\"},{\"ProcessId\":76936,\"Name\":\"chrome.exe\"},{\"ProcessId\":69608,\"Name\":\"chrome.exe\"},{\"ProcessId\":49200,\"Name\":\"chrome.exe\"},{
+PASS waitFor(READY-0.6.1) resolved with success :: {"success":true}
+PASS resolved >= 400 ms after the page was served (performance.now()) :: sinceServe=609.5ms inWaitFor=3.1ms
+[harness] waitFor output: {"conditions":{"text":"READY-0.6.1"},"satisfiedAfterMs":2,"polls":1}
+PASS waitFor(NEVER-THERE, 1000) throws ActionFailedError :: ActionFailedError: wait_for timed out after 1000ms waiting for text="NEVER-THERE": text "NEVER-THERE" was not found in the visible text of 1 frame(s).
+PASS the failing wait took about its timeout (>= 900 ms, < 8000 ms) :: 1010.0ms
+{"timestamp":"2026-10-04T03:55:41.355Z","level":"info","message":"[BrowserSession] Closed session sess_1791086138174_1","context":{"reason":"Runtime shutdown"}}
+{"timestamp":"2026-10-04T03:55:41.356Z","level":"info","message":"[BrowserSessionManager] Closed session sess_1791086138174_1","context":{"reason":"Runtime shutdown"}}
+PASS after browser.close(): no Chrome left that references the ISO dir :: {"n":0,"out":""}
+{"total":9,"failed":0}
