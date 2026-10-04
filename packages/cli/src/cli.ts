@@ -34,7 +34,8 @@ import path from 'node:path';
 import { formatAuditText, auditNotes, auditExitCode } from './audit-output.js';
 import { dialogOutputSink, dialogBlockedJsonDoc, printDialogBlockedJsonOnce, writeJsonStdoutOnce } from './dialog-json-routing.js';
 import { readState, writeState, clearState, STATE_DIR, type CliState } from './state.js';
-import { spawnDetachedChrome, killChromeTree } from './spawn-chrome.js';
+import { spawnDetachedChrome, killChromeTree, discardSpawnedProfile } from './spawn-chrome.js';
+import { attachOrDiscard } from './spawn-session.js';
 import { removeSessionTempProfile, sweepStaleTempProfiles } from './temp-profile.js';
 import { stopSpawnedChrome, type StopDeps } from './close-session.js';
 import { createSessionId } from '@sutradhar/contracts';
@@ -292,20 +293,24 @@ async function spawnFreshSession(
     printErrorAndExit((err as Error).message);
   }
   // F8: this Chrome is not in state.json yet, so if anything below fails nothing could ever `close`
-  // it. Kill it (only the PID we just spawned) before the error propagates.
-  let attached: Awaited<ReturnType<typeof runtime.attach>>;
-  try {
-    attached = await runtime.attach({ endpoint: spawned.wsEndpoint });
-    if (!attached.hasRealBrowser) {
-      throw new Error('Spawned Chrome but could not attach to it. Run "sutradhar doctor" to diagnose.');
-    }
-    if (spawnViewport) {
-      await runtime.setViewport(attached.sessionId, spawnViewport);
-    }
-  } catch (err) {
-    killChromeTree(spawned.pid);
-    throw err; // main().catch prints it and exits 1; the process stays up long enough for the kill to start
-  }
+  // it. attachOrDiscard AWAITS the discard (kill only the PID we just spawned, then remove its own
+  // auto-created temp dir: GAP-349) before the original error propagates (main().catch prints it, exit 1).
+  const attached = await attachOrDiscard(
+    spawned,
+    async () => {
+      const a = await runtime.attach({ endpoint: spawned.wsEndpoint });
+      if (!a.hasRealBrowser) {
+        throw new Error('Spawned Chrome but could not attach to it. Run "sutradhar doctor" to diagnose.');
+      }
+      if (spawnViewport) {
+        await runtime.setViewport(a.sessionId, spawnViewport);
+      }
+      return a;
+    },
+    async (s) => {
+      await discardSpawnedProfile(s);
+    },
+  );
   const { policy: resolved, persist } = resolveDialogPolicy(dialogFlag, dialogTextFlag, carry, activeConfigDialog);
   // D10 (corrected): 'set' persists whatever mode was resolved, INCLUDING 'report' — it is not
   // special-cased to "no key" any more. 'keep' carries over whatever the old state already had

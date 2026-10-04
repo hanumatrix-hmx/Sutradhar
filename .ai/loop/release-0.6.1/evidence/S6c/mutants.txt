@@ -1,0 +1,48 @@
+## M-G1: exit=1 signal= Tests  1 failed | 11 passed (12)
+   sha-before=4fc19e6e5f4eab4d1b6f72a8cd055fbd706ebfe0606e91a2fcf38a9870ec6e66 sha-after=4fc19e6e5f4eab4d1b6f72a8cd055fbd706ebfe0606e91a2fcf38a9870ec6e66 restored=true
+   must-fail=[G1 ] caught=true
+   FAILED: tests/unit/spawn-failure-cleanup.spec.ts > GAP-349: spawn-failure paths remove their own temp dir > G1 (P0): a synchronous spawn throw (EFTYPE) removes the dir; nothing is killed
+## M-G2: exit=1 signal= Tests  1 failed | 11 passed (12)
+   sha-before=4fc19e6e5f4eab4d1b6f72a8cd055fbd706ebfe0606e91a2fcf38a9870ec6e66 sha-after=4fc19e6e5f4eab4d1b6f72a8cd055fbd706ebfe0606e91a2fcf38a9870ec6e66 restored=true
+   must-fail=[G2 ] caught=true
+   FAILED: tests/unit/spawn-failure-cleanup.spec.ts > GAP-349: spawn-failure paths remove their own temp dir > G2 (P1): no PID plus an async ENOENT removes the dir and reports ENOENT; nothing is killed
+## M-G3: exit=1 signal= Tests  3 failed | 9 passed (12)
+   sha-before=4fc19e6e5f4eab4d1b6f72a8cd055fbd706ebfe0606e91a2fcf38a9870ec6e66 sha-after=4fc19e6e5f4eab4d1b6f72a8cd055fbd706ebfe0606e91a2fcf38a9870ec6e66 restored=true
+   must-fail=[G3 (P2)] caught=true
+   FAILED: tests/unit/spawn-failure-cleanup.spec.ts > GAP-349: spawn-failure paths remove their own temp dir > G3 (P2): timeout with the child alive kills once, then removes with the pid and the forwarded isAlive seam
+   FAILED: tests/unit/spawn-failure-cleanup.spec.ts > GAP-349: spawn-failure paths remove their own temp dir > G3b (P2, dying child): the dir is removed only after the killed child is really gone
+   FAILED: tests/unit/spawn-failure-cleanup.spec.ts > GAP-349: spawn-failure paths remove their own temp dir > G6: a named profile creates nothing in tmpRoot and is never removed (its Chrome is still killed)
+## M-G4: exit=1 signal= Tests  1 failed | 11 passed (12)
+   sha-before=4fc19e6e5f4eab4d1b6f72a8cd055fbd706ebfe0606e91a2fcf38a9870ec6e66 sha-after=4fc19e6e5f4eab4d1b6f72a8cd055fbd706ebfe0606e91a2fcf38a9870ec6e66 restored=true
+   must-fail=[G4 ] caught=true
+   FAILED: tests/unit/spawn-failure-cleanup.spec.ts > GAP-349: spawn-failure paths remove their own temp dir > G4 (P2x): a child that already exited is NOT killed (its pid may be reused); the dir is removed fast
+## M-G5: exit=1 signal= Tests  1 failed | 11 passed (12)
+   sha-before=0bd9cf88296042c88653125aca4185656b2d24c0ae2bf49b7182aea3e813a525 sha-after=0bd9cf88296042c88653125aca4185656b2d24c0ae2bf49b7182aea3e813a525 restored=true
+   must-fail=[G5: order] caught=true
+   FAILED: tests/unit/spawn-failure-cleanup.spec.ts > GAP-349 F8: attachOrDiscard > G5: order is attach, discard-start, discard-end, rethrow-original (the discard is awaited first)
+## M-seam: exit=1 signal= Tests  5 failed | 7 passed (12)
+   sha-before=4fc19e6e5f4eab4d1b6f72a8cd055fbd706ebfe0606e91a2fcf38a9870ec6e66 sha-after=4fc19e6e5f4eab4d1b6f72a8cd055fbd706ebfe0606e91a2fcf38a9870ec6e66 restored=true
+   must-fail=[G1 ] caught=true
+   FAILED: tests/unit/spawn-failure-cleanup.spec.ts > GAP-349: spawn-failure paths remove their own temp dir > G1 (P0): a synchronous spawn throw (EFTYPE) removes the dir; nothing is killed
+   FAILED: tests/unit/spawn-failure-cleanup.spec.ts > GAP-349: spawn-failure paths remove their own temp dir > G2 (P1): no PID plus an async ENOENT removes the dir and reports ENOENT; nothing is killed
+   FAILED: tests/unit/spawn-failure-cleanup.spec.ts > GAP-349: spawn-failure paths remove their own temp dir > G3 (P2): timeout with the child alive kills once, then removes with the pid and the forwarded isAlive seam
+   FAILED: tests/unit/spawn-failure-cleanup.spec.ts > GAP-349: spawn-failure paths remove their own temp dir > G3b (P2, dying child): the dir is removed only after the killed child is really gone
+   FAILED: tests/unit/spawn-failure-cleanup.spec.ts > GAP-349: spawn-failure paths remove their own temp dir > success path: returns the endpoint and keeps the dir (no discard)
+## M-G6: exit=1 signal= Tests  4 failed | 8 passed (12)
+   sha-before=4fc19e6e5f4eab4d1b6f72a8cd055fbd706ebfe0606e91a2fcf38a9870ec6e66 sha-after=4fc19e6e5f4eab4d1b6f72a8cd055fbd706ebfe0606e91a2fcf38a9870ec6e66 restored=true
+   must-fail=[G3b] caught=true
+   FAILED: tests/unit/spawn-failure-cleanup.spec.ts > GAP-349: spawn-failure paths remove their own temp dir > G3 (P2): timeout with the child alive kills once, then removes with the pid and the forwarded isAlive seam
+   FAILED: tests/unit/spawn-failure-cleanup.spec.ts > GAP-349: spawn-failure paths remove their own temp dir > G3b (P2, dying child): the dir is removed only after the killed child is really gone
+   FAILED: tests/unit/spawn-failure-cleanup.spec.ts > GAP-349: discardSpawnedProfile > F8 shape (alive unknown): kills the pid, then removes the temp dir WITH that pid; a named profile is only killed
+   FAILED: tests/unit/spawn-failure-cleanup.spec.ts > GAP-349: discardSpawnedProfile > never throws: a throwing kill and a rejecting removeProfile are both contained, and the removal still runs after a failed kill
+## M-G7: exit=1 signal= Tests  2 failed | 10 passed (12)
+   sha-before=4fc19e6e5f4eab4d1b6f72a8cd055fbd706ebfe0606e91a2fcf38a9870ec6e66 sha-after=4fc19e6e5f4eab4d1b6f72a8cd055fbd706ebfe0606e91a2fcf38a9870ec6e66 restored=true
+   must-fail=[G3 (P2)] caught=true
+   FAILED: tests/unit/spawn-failure-cleanup.spec.ts > GAP-349: spawn-failure paths remove their own temp dir > G3 (P2): timeout with the child alive kills once, then removes with the pid and the forwarded isAlive seam
+   FAILED: tests/unit/spawn-failure-cleanup.spec.ts > GAP-349: spawn-failure paths remove their own temp dir > G3b (P2, dying child): the dir is removed only after the killed child is really gone
+## M-G8: exit=1 signal= Tests  2 failed | 10 passed (12)
+   sha-before=be25f922c87f0607046e44b4248c0e6d70ca898b227bf3552185101e169c7e71 sha-after=be25f922c87f0607046e44b4248c0e6d70ca898b227bf3552185101e169c7e71 restored=true
+   must-fail=[G3 (P2)] caught=true
+   FAILED: tests/unit/spawn-failure-cleanup.spec.ts > GAP-349: spawn-failure paths remove their own temp dir > G3 (P2): timeout with the child alive kills once, then removes with the pid and the forwarded isAlive seam
+   FAILED: tests/unit/spawn-failure-cleanup.spec.ts > GAP-349: spawn-failure paths remove their own temp dir > G3b (P2, dying child): the dir is removed only after the killed child is really gone
+ALL-MUTANTS-CAUGHT-AND-RESTORED

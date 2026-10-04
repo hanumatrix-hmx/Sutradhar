@@ -1,0 +1,22 @@
+## killChromeTree( (expect exactly 1: the definition)
+packages/cli/src/spawn-chrome.ts:230:export async function killChromeTree(pid: number, timeoutMs = 10_000): Promise<void> {
+
+## deps.kill( / discardSpawnedProfile( / attachOrDiscard( / stopSpawnedChrome( (each non-definition line must contain await)
+packages/cli/src/cli.ts:298:  const attached = await attachOrDiscard(
+packages/cli/src/cli.ts:310:    (s) => discardSpawnedProfile(s),
+packages/cli/src/cli.ts:494:      await stopSpawnedChrome(state, sessionStopDeps());
+packages/cli/src/cli.ts:1718:    await stopSpawnedChrome(state, sessionStopDeps());
+packages/cli/src/close-session.ts:39:export async function stopSpawnedChrome(state: CliState, deps: StopDeps): Promise<void> {
+packages/cli/src/close-session.ts:50:      await deps.kill(pid, KILL_CAP_MS);
+packages/cli/src/spawn-chrome.ts:103:export async function discardSpawnedProfile(target: DiscardTarget, deps: SpawnDeps = {}): Promise<void> {
+packages/cli/src/spawn-chrome.ts:164:    discardSpawnedProfile({ pid, alive, userDataDir: resolvedUserDataDir, tempProfile }, deps);
+
+## fire-and-forget patterns (grep-exit=1 means none)
+grep-exit=1
+
+## Date.now() in the four files
+packages/cli/src/temp-profile.ts:96:  const dir = await mkdtemp(path.join(tmpRoot, `${TEMP_PROFILE_PREFIX}${Date.now()}-`));
+packages/cli/src/temp-profile.ts:263:    ageMs: Date.now() - mtimeMs,
+
+## now: Date.now wiring (must be exit 1)
+date-now-wiring-grep-exit=1

@@ -68,7 +68,7 @@ type DebugFields = Record<string, string | number | boolean | null | undefined>;
 /** `[cleanup] <event> key=value ...` on stderr, only when SUTRADHAR_CLI_DEBUG_CLEANUP=1 (read at
  *  call time). Every path is written as `path="<abs>"`. Never throws. NEVER call this from a pure
  *  predicate (isAutoTempProfileDir, commandLinesReference, decideRemoval). */
-function dlog(event: string, fields: DebugFields = {}): void {
+export function dlog(event: string, fields: DebugFields = {}): void {
   if (process.env.SUTRADHAR_CLI_DEBUG_CLEANUP !== '1') return;
   try {
     const parts: string[] = [];

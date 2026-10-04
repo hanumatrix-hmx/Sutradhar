@@ -11,10 +11,11 @@
  * (which already knows how to adopt an already-open page — see
  * BrowserSession.adoptExistingPage) sidesteps that entirely.
  */
-import { spawn } from 'node:child_process';
+import { spawn, type SpawnOptions } from 'node:child_process';
 import net from 'node:net';
 import { BrowserLauncher } from '@sutradhar/browser';
-import { createTempProfileDir, writeOwnerMarker } from './temp-profile.js';
+import { KILL_CAP_MS } from './close-session.js';
+import { createTempProfileDir, dlog, removeSessionTempProfile, writeOwnerMarker } from './temp-profile.js';
 import { taskkillExe } from './system-binaries.js';
 
 async function getFreePort(): Promise<number> {
@@ -43,6 +44,88 @@ export interface SpawnedChrome {
   tempProfile: boolean;
 }
 
+/** The minimal child-process surface {@link spawnDetachedChrome} uses (a real `ChildProcess` satisfies it). */
+export interface ChildLike {
+  pid?: number;
+  unref(): void;
+  once(event: 'exit', listener: (code: number | null, signal: NodeJS.Signals | null) => void): unknown;
+  once(event: 'error', listener: (err: Error) => void): unknown;
+}
+
+/** Test seams of {@link spawnDetachedChrome} / {@link discardSpawnedProfile} (GAP-349). Production
+ *  passes none of them. */
+export interface SpawnDeps {
+  /** Replaces the Chrome lookup. */
+  executablePath?: string;
+  /** Root of the auto-created temp profile dir (default `os.tmpdir()`); also given to the removal. */
+  tmpRoot?: string;
+  spawnFn?: (file: string, args: string[], options: SpawnOptions) => ChildLike;
+  /** Resolves the browser-level WebSocket endpoint once Chrome answers, else undefined. */
+  probeEndpoint?: (port: number) => Promise<string | undefined>;
+  /** How long to wait for Chrome to come up (default 10_000 ms, monotonic clock). */
+  startTimeoutMs?: number;
+  /** Defaults to `killChromeTree` itself, by reference: the same kill as 0.6.0. */
+  kill?: (pid: number, timeoutMs: number) => Promise<void>;
+  /** Defaults to `removeSessionTempProfile`. */
+  removeProfile?: typeof removeSessionTempProfile;
+  /** The single liveness seam handed through to `removeProfile` (default `isPidAlive`). */
+  isAlive?: (pid: number) => boolean;
+}
+
+async function probeVersionEndpoint(port: number): Promise<string | undefined> {
+  try {
+    const res = await fetch(`http://127.0.0.1:${port}/json/version`);
+    if (res.ok) {
+      const info = (await res.json()) as { webSocketDebuggerUrl?: string };
+      if (info.webSocketDebuggerUrl) return info.webSocketDebuggerUrl;
+    }
+  } catch {
+    // Chrome's DevTools HTTP endpoint isn't up yet — keep polling.
+  }
+  return undefined;
+}
+
+export interface DiscardTarget {
+  /** The spawned Chrome's PID, if one was ever obtained. */
+  pid?: number;
+  /** `false` when the child is known to have exited already: it is then NOT killed (its PID may
+   *  have been reused by an unrelated process). Anything else (true/undefined) means "may be alive". */
+  alive?: boolean;
+  userDataDir: string;
+  tempProfile: boolean;
+}
+
+/** GAP-349: undoes a spawn that will not be used — kills the Chrome (if it may be alive) and, for an
+ *  auto-created temp profile only, removes its dir. When a kill was issued the PID is handed to the
+ *  removal so the bounded, read-only exit wait runs before the delete (otherwise the just-killed
+ *  Chrome would still count as alive and the dir would be kept). A named profile is never removed.
+ *  Never throws. */
+export async function discardSpawnedProfile(target: DiscardTarget, deps: SpawnDeps = {}): Promise<void> {
+  let killed = false;
+  dlog('discard', { path: target.userDataDir, pid: target.pid, alive: target.alive, temp: target.tempProfile });
+  if (target.pid !== undefined && target.alive !== false) {
+    killed = true;
+    try {
+      await (deps.kill ?? killChromeTree)(target.pid, KILL_CAP_MS);
+    } catch {
+      // best effort: the removal below still waits (read-only) for the process to be gone
+    }
+  }
+  if (target.tempProfile) {
+    try {
+      await (deps.removeProfile ?? removeSessionTempProfile)(target.userDataDir, killed ? target.pid : undefined, {
+        tmpRoot: deps.tmpRoot,
+        isAlive: deps.isAlive,
+      });
+    } catch {
+      // never throws; a leaked dir is retried by the next session-start sweep
+    }
+  }
+}
+
+const errCode = (err: unknown): string => (err as NodeJS.ErrnoException)?.code ?? 'unknown error';
+const errText = (err: unknown): string => (err as Error)?.message ?? String(err);
+
 /** Spawns a detached Chrome with remote debugging enabled and returns its browser-level CDP
  *  WebSocket endpoint plus its PID, once it's actually ready to accept connections.
  *  `userDataDir` defaults to a fresh throwaway temp directory — pass a named profile's
@@ -50,7 +133,11 @@ export interface SpawnedChrome {
  *  with persistent cookies/history/localStorage instead. `userAgent`, if given, overrides
  *  `navigator.userAgent` via Chrome's own `--user-agent` flag — unset by default, so the real
  *  Chrome UA (including "HeadlessChrome" when headless) is left as-is; see the equivalent doc
- *  comment on `BrowserLaunchOptions.userAgent` for why this must never default to stripping it. */
+ *  comment on `BrowserLaunchOptions.userAgent` for why this must never default to stripping it.
+ *
+ *  GAP-349: every failure after the auto-created temp dir exists (spawn throws, no PID, start
+ *  timeout with the child alive, child already exited) removes that dir again via
+ *  {@link discardSpawnedProfile} before the error is thrown. */
 export async function spawnDetachedChrome(
   headless: boolean,
   userDataDir?: string,
@@ -63,15 +150,19 @@ export async function spawnDetachedChrome(
    *  full-desktop-sized window with a large empty grey margin (found live via an external field
    *  report, PROB-042). */
   windowSize?: { width: number; height: number },
+  deps: SpawnDeps = {},
 ): Promise<SpawnedChrome> {
-  const chromePath = new BrowserLauncher().findExecutablePath();
+  const chromePath = deps.executablePath ?? new BrowserLauncher().findExecutablePath();
   if (!chromePath) {
     throw new Error('No Chrome/Chromium/Edge found on this system. Run "sutradhar doctor" to diagnose.');
   }
 
   const port = await getFreePort();
   const tempProfile = userDataDir === undefined;
-  const resolvedUserDataDir = userDataDir ?? (await createTempProfileDir());
+  const resolvedUserDataDir = userDataDir ?? (await createTempProfileDir(deps.tmpRoot));
+  const discard = async (pid?: number, alive?: boolean): Promise<void> => {
+    await discardSpawnedProfile({ pid, alive, userDataDir: resolvedUserDataDir, tempProfile }, deps);
+  };
   const args = [
     `--remote-debugging-port=${port}`,
     `--user-data-dir=${resolvedUserDataDir}`,
@@ -82,28 +173,52 @@ export async function spawnDetachedChrome(
   if (userAgent) args.push(`--user-agent=${userAgent}`);
   if (!headless && windowSize) args.push(`--window-size=${windowSize.width},${windowSize.height}`);
 
-  const child = spawn(chromePath, args, { detached: true, stdio: 'ignore' });
+  let child: ChildLike;
+  try {
+    child = (deps.spawnFn ?? ((file, a, o) => spawn(file, a, o)))(chromePath, args, { detached: true, stdio: 'ignore' });
+  } catch (err) {
+    // P0: spawn threw synchronously (e.g. EFTYPE / UNKNOWN for a non-executable file).
+    await discard();
+    throw new Error(`Failed to spawn Chrome (${errCode(err)}): ${errText(err)}`);
+  }
+  // Always listen: an unhandled 'error' event would crash the CLI, and 'exit' tells the start loop
+  // (and the discard) that the child is already gone.
+  const seen: { error?: Error; exited?: { code: number | null; signal: NodeJS.Signals | null } } = {};
+  child.once('error', (err) => {
+    seen.error = err;
+  });
+  child.once('exit', (code, signal) => {
+    seen.exited = { code, signal };
+  });
   const pid = child.pid;
-  if (!pid) throw new Error('Failed to spawn Chrome — no PID returned.');
+  if (!pid) {
+    // P1: no PID (ENOENT is reported asynchronously through 'error', so read it after the await).
+    await discard();
+    await new Promise<void>((r) => setImmediate(r));
+    const why = seen.error ? ` (${errCode(seen.error)}: ${errText(seen.error)})` : '';
+    throw new Error(`Failed to spawn Chrome — no PID returned${why}.`);
+  }
   child.unref();
   // Records the owning Chrome PID so a later stale sweep can tell a dead session's dir from a
   // live one (temp-profile.ts rule 3).
   if (tempProfile) await writeOwnerMarker(resolvedUserDataDir, pid);
 
-  const deadline = Date.now() + 10_000;
-  while (Date.now() < deadline) {
-    try {
-      const res = await fetch(`http://127.0.0.1:${port}/json/version`);
-      if (res.ok) {
-        const info = (await res.json()) as { webSocketDebuggerUrl?: string };
-        if (info.webSocketDebuggerUrl) return { wsEndpoint: info.webSocketDebuggerUrl, pid, userDataDir: resolvedUserDataDir, tempProfile };
-      }
-    } catch {
-      // Chrome's DevTools HTTP endpoint isn't up yet — keep polling.
-    }
+  const probe = deps.probeEndpoint ?? probeVersionEndpoint;
+  const startTimeoutMs = deps.startTimeoutMs ?? 10_000;
+  const t0 = performance.now();
+  while (seen.exited === undefined && performance.now() - t0 < startTimeoutMs) {
+    const wsEndpoint = await probe(port).catch(() => undefined);
+    if (wsEndpoint) return { wsEndpoint, pid, userDataDir: resolvedUserDataDir, tempProfile };
     await new Promise((r) => setTimeout(r, 150));
   }
-  killChromeTree(pid); // never leave a Chrome that no state file knows about
+  if (seen.exited !== undefined) {
+    // P2x: the child is already gone — never kill a PID that may have been reused.
+    const how = seen.exited.code !== null ? `code ${seen.exited.code}` : `signal ${seen.exited.signal}`;
+    await discard(pid, false);
+    throw new Error(`Chrome exited (${how}) before it was ready on port ${port}.`);
+  }
+  // P2: still alive but never became ready — never leave a Chrome (or its dir) no state file knows about.
+  await discard(pid, true);
   throw new Error(`Timed out waiting for Chrome to start on port ${port}.`);
 }
 
