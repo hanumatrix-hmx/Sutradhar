@@ -1,0 +1,13 @@
+[iso-guard] tmpdir=e:/ai-cache/tmp/claude/e--hmx-projects-internal-projects-pinchtab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/s6gi pid=82980
+[iso-guard-harness] tmpdir=e:/ai-cache/tmp/claude/e--hmx-projects-internal-projects-pinchtab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/s6gi pid=82980 node=v25.0.0 label=ctl case=close
+INFO binary E:/AI-Cache/tmp/claude/E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/S6g-ctl/cli-bin.bff46db.js sha256=48c1756c0b7944351f9352151ab79c39d3ddc60382aa45278b3481e25a657ac4
+[iso-guard] tmpdir=e:/ai-cache/tmp/claude/e--hmx-projects-internal-projects-pinchtab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/s6gi pid=67360
+CLI 1 [nav http://127.0.0.1:58323/?ab-ctl-close] status=1 signal= error= 75ms
+FAIL setup: nav exit 0 :: status=1
+FAIL setup: state.json has chromePid
+PASS leftover query positive control: the dummy with an ISO path in argv IS found :: found=1
+PASS leftover query: no process references the isolated dir (and the harness children are gone)
+PASS page server child exited
+PASS real TEMP sutradhar-cli-* list identical before/after :: before=45 after=45
+RESULT ctl-close fails=2 acPredicate=undefined
+harness-exit=1 label=ctl case=close

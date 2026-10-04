@@ -11,7 +11,12 @@
  * whatever process had meanwhile been given that PID. With the state cleared first, an interrupted
  * cleanup leaves at worst a leaked temp dir (retried by the next session start's sweep), never a
  * stale PID. This module changes ORDER only: the kill function, its arguments and the exit codes
- * are exactly as in 0.6.0 (the callers decide exit codes; this function never throws).
+ * are exactly as in 0.6.0 (the callers decide exit codes). 0.6.0 ended with an UNGUARDED
+ * `await clearState()`: a failing clear made `close` (and a self-heal) fail. That is kept: if the
+ * clear fails, the bounded cleanup still runs (Chrome is already dead, so its dir is safe to remove)
+ * and then the ORIGINAL clearState error is rethrown, unchanged, for the caller's own error path.
+ * Nothing else is ever thrown from here (a bad `userDataDir`, a cleanup error and a kill error are
+ * caught).
  */
 import type { CliState } from './state.js';
 import { CLOSE_CLEANUP_DEADLINE_MS } from './temp-profile.js';
@@ -35,7 +40,11 @@ export interface StopDeps {
 
 const msg = (err: unknown): string => (err as Error)?.message ?? String(err);
 
-/** Never throws. See the file comment for the order and why. */
+/**
+ * Throws only a clearState failure, and only after the cleanup ran (the same error object, with no
+ * extra warning: the caller's existing error path prints it, as in 0.6.0). A kill error, a cleanup
+ * error and a malformed state field never throw. See the file comment for the order and why.
+ */
 export async function stopSpawnedChrome(state: CliState, deps: StopDeps): Promise<void> {
   const now = deps.now ?? (() => performance.now());
   const debug = deps.debug ?? (() => {});
@@ -56,11 +65,15 @@ export async function stopSpawnedChrome(state: CliState, deps: StopDeps): Promis
     debug('[cleanup] skip-kill reason=invalid-chromePid'); // malformed PID: never passed to taskkill
   }
 
+  let clearFailed = false;
+  let clearError: unknown;
   try {
     await deps.clearState();
     debug('[cleanup] state-cleared');
   } catch (err) {
-    warn(`Warning: could not clear the session state (${msg(err)}); run "sutradhar close" again if the next command misbehaves.`);
+    // 0.6.0 semantics: this failure is the caller's error. Keep it, run the cleanup, rethrow below.
+    clearFailed = true;
+    clearError = err;
   }
 
   const dir: unknown = state.userDataDir;
@@ -71,4 +84,6 @@ export async function stopSpawnedChrome(state: CliState, deps: StopDeps): Promis
       warn(`Warning: temp profile cleanup failed (${msg(err)}); a CLI session started 10 or more minutes from now will retry it.`);
     }
   }
+
+  if (clearFailed) throw clearError;
 }

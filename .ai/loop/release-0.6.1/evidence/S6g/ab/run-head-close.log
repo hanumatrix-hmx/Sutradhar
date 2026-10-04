@@ -1,0 +1,28 @@
+[iso-guard] tmpdir=e:/ai-cache/tmp/claude/e--hmx-projects-internal-projects-pinchtab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/s6gi pid=78392
+[iso-guard-harness] tmpdir=e:/ai-cache/tmp/claude/e--hmx-projects-internal-projects-pinchtab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/s6gi pid=78392 node=v25.0.0 label=head case=close
+INFO binary E:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/packages/sutradhar/dist/cli-bin.js sha256=9858726a291e844e1f84089b18310e90379140e2dfabf7b2fda80eb550b5c59b
+[iso-guard] tmpdir=e:/ai-cache/tmp/claude/e--hmx-projects-internal-projects-pinchtab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/s6gi pid=81776
+CLI 1 [nav http://127.0.0.1:57731/?ab-head-close] status=0 signal= error= 846ms
+PASS setup: nav exit 0 :: status=0
+PASS setup: Chrome CommandLine carries --user-data-dir :: "C:\Program Files\Google\Chrome\Application\chrome.exe" --remote-debugging-port=57732 --user-data-dir=E:\AI-Cache\tmp\cl
+PASS setup: profile dir is a direct child of ISO and --user-data-dir length <= 200 (P5) :: len=200
+PASS setup: ownership proven (live CommandLine references OUR isolated dir) :: sutradhar-cli-1791081895854-VzMDvs
+PASS setup: state.userDataDir equals the CIM dir
+PASS setup: profile dir exists
+PASS setup: lock holder ready (state.json open without delete-share)
+CLI 2 [close] status=1 signal= error= 1078ms
+INFO measured: status=1 errno=EBUSY fatal="Fatal: EBUSY: resource busy or locked, unlink 'E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scr" sessionClosed=false aliveRightAfter=false dirExistsRightAfter=false state.json-after=PRESENT chromePid=50140
+INFO holder pid=81192 exited=true
+PASS teardown: lock holder released and exited before any other cleanup
+PASS teardown: harness deleted state.json itself (state.json absent)
+PASS teardown: no sutradhar-cli-* dir left in ISO
+INFO HEAD-only (b)+(c): phaseKill=true stateCleared=false removedIdx=6 < fatalIdx=8 couldNotClearWarning=false productRemovedDir=true chromeDeadWhenCliReturned=true
+INFO AC predicate (close) = true {"a_statusNumberNonZeroFatalErrnoStateJson":true,"noSessionClosed":true,"noteLine":true,"chromeGone":true,"headOnlyBC":true}; expected true
+PASS AC predicate equals the expectation for head (expected true) :: {"a_statusNumberNonZeroFatalErrnoStateJson":true,"noSessionClosed":true,"noteLine":true,"chromeGone":true,"headOnlyBC":true}
+INFO holder pid=81192 exited=true
+PASS leftover query positive control: the dummy with an ISO path in argv IS found :: found=1
+PASS leftover query: no process references the isolated dir (and the harness children are gone)
+PASS page server child exited
+PASS real TEMP sutradhar-cli-* list identical before/after :: before=45 after=45
+RESULT head-close fails=0 acPredicate=true
+harness-exit=0 label=head case=close

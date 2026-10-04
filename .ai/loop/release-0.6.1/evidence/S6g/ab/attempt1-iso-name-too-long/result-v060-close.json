@@ -1,0 +1,131 @@
+{
+  "label": "v060",
+  "case": "close",
+  "bin": "E:/AI-Cache/tmp/claude/E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/verify060/inst/node_modules/sutradhar/dist/cli-bin.js",
+  "binSha256": "d71da59253c09746ebf720d266bef1d9c9e8130aa8bde6f7a79966113e026c2d",
+  "checks": [
+    {
+      "name": "setup: nav exit 0",
+      "ok": true,
+      "detail": "status=0"
+    },
+    {
+      "name": "setup: Chrome CommandLine carries --user-data-dir",
+      "ok": true,
+      "detail": "\"C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe\" --remote-debugging-port=56995 --user-data-dir=E:\\AI-Cache\\tmp\\cl"
+    },
+    {
+      "name": "setup: profile dir is a direct child of ISO and --user-data-dir length <= 200 (P5)",
+      "ok": true,
+      "detail": "len=196"
+    },
+    {
+      "name": "setup: ownership proven (live CommandLine references OUR isolated dir)",
+      "ok": true,
+      "detail": "sutradhar-cli-1791081615089"
+    },
+    {
+      "name": "setup: profile dir exists",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "setup: lock holder ready (state.json open without delete-share)",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "teardown: lock holder released and exited before any other cleanup",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "teardown: harness deleted state.json itself (state.json absent)",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "teardown: no sutradhar-cli-* dir left in ISO",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "AC predicate equals the expectation for v060 (expected true)",
+      "ok": true,
+      "detail": "{\"a_statusNumberNonZeroFatalErrnoStateJson\":true,\"noSessionClosed\":true,\"noteLine\":true,\"chromeGone\":true,\"headOnlyBC\":true}"
+    },
+    {
+      "name": "leftover query positive control: the dummy with an ISO path in argv IS found",
+      "ok": true,
+      "detail": "found=1"
+    },
+    {
+      "name": "leftover query: no process references the isolated dir (and the harness children are gone)",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page server child exited",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "real TEMP sutradhar-cli-* list identical before/after",
+      "ok": true,
+      "detail": "before=45 after=45"
+    }
+  ],
+  "notes": [
+    "harness removed leaked dir sutradhar-cli-1791081615089: true"
+  ],
+  "chromePid": 9792,
+  "userDataDir": "E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\S6g-tmp\\sutradhar-cli-1791081615089",
+  "stateHasUserDataDir": false,
+  "dirsBefore": [
+    "sutradhar-cli-1791081615089"
+  ],
+  "status": 1,
+  "signal": null,
+  "errorCode": null,
+  "ms": 555,
+  "stateAfter": {
+    "present": true,
+    "chromePid": 9792
+  },
+  "aliveRightAfter": false,
+  "dirExistsRightAfter": true,
+  "fatalLine": "Fatal: EBUSY: resource busy or locked, unlink 'E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\S6g-tmp\\st\\state.json'",
+  "errnoCode": "EBUSY",
+  "fatalNamesStateJson": true,
+  "sessionClosedPrinted": false,
+  "debug": {
+    "phaseKill": false,
+    "stateCleared": false,
+    "couldNotClearWarning": false,
+    "removedIdx": -1,
+    "fatalIdx": 1,
+    "cleanupLines": 0
+  },
+  "noteLine": "",
+  "holderExited": true,
+  "chromeGoneWithin15s": true,
+  "chromeGoneAfterMs": 273,
+  "chromeGoneFinal": true,
+  "processesStillReferencingIso": [],
+  "dirsAfterRun": [
+    "sutradhar-cli-1791081615089"
+  ],
+  "productRemovedProfileDir": false,
+  "dirsAfterHarnessCleanup": [],
+  "ac": {
+    "a_statusNumberNonZeroFatalErrnoStateJson": true,
+    "noSessionClosed": true,
+    "noteLine": true,
+    "chromeGone": true,
+    "headOnlyBC": true
+  },
+  "acPredicate": true,
+  "leftoverProcesses": [],
+  "realTempIdentical": true,
+  "fails": 0
+}

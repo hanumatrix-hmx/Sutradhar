@@ -1,0 +1,140 @@
+The CJS build of Vite's Node API is deprecated. See https://vite.dev/guide/troubleshooting.html#vite-cjs-node-api-deprecated for more details.
+
+ RUN  v1.6.1 E:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/packages/cli
+
+ ❯ tests/unit/close-session.spec.ts  (25 tests | 6 failed) 601ms
+   ❯ tests/unit/close-session.spec.ts > stopSpawnedChrome (close/recovery order) > S6g: a failing clearState is rethrown (0.6.0 failure semantics), after the cleanup > G6g-1 (AC1): clearState rejects -> the cleanup still runs with the same args -> rejects with the SAME error object, no extra warning
+     → expected { resolved: true } to have property "rejected"
+   ❯ tests/unit/close-session.spec.ts > stopSpawnedChrome (close/recovery order) > S6g: a failing clearState is rethrown (0.6.0 failure semantics), after the cleanup > G6g-1b: the rethrow happens only AFTER the (slow) cleanup has finished
+     → expected undefined to deeply equal [ 'kill-start', 'kill-end', …(3) ]
+   ❯ tests/unit/close-session.spec.ts > stopSpawnedChrome (close/recovery order) > S6g: a failing clearState is rethrown (0.6.0 failure semantics), after the cleanup > G6g-3 (F7-i): clearState AND cleanup reject -> rejects with the clearState error, exactly one cleanup warning
+     → expected undefined to be Error: EBUSY: resource busy or locked, un… { code: '…' } // Object.is equality
+   ❯ tests/unit/close-session.spec.ts > stopSpawnedChrome (close/recovery order) > S6g: a failing clearState is rethrown (0.6.0 failure semantics), after the cleanup > G6g-4 (F7-ii): clearState rejects with tempProfile false or absent -> rejects, the cleanup is not called
+     → expected undefined to be Error: EBUSY: resource busy or locked, un… { code: '…' } // Object.is equality
+   ❯ tests/unit/close-session.spec.ts > stopSpawnedChrome (close/recovery order) > S6g: a failing clearState is rethrown (0.6.0 failure semantics), after the cleanup > G6g-5 (F7-iii): clearState AND kill reject -> rejects with the clearState error; the kill error is debug-only
+     → expected undefined to be Error: EBUSY: resource busy or locked, un… { code: '…' } // Object.is equality
+   ❯ tests/unit/close-session.spec.ts > stopSpawnedChrome (close/recovery order) > S6g: a failing clearState is rethrown (0.6.0 failure semantics), after the cleanup > G6g-6: a non-Error rejection value is rethrown unchanged too
+     → expected undefined to be { code: 'EPERM' } // Object.is equality
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 6 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/unit/close-session.spec.ts > stopSpawnedChrome (close/recovery order) > S6g: a failing clearState is rethrown (0.6.0 failure semantics), after the cleanup > G6g-1 (AC1): clearState rejects -> the cleanup still runs with the same args -> rejects with the SAME error object, no extra warning
+AssertionError: expected { resolved: true } to have property "rejected"
+ ❯ tests/unit/close-session.spec.ts:257:17
+    255|       const r = await settle(stopSpawnedChrome(h.readState(), h.deps));
+    256|       const tEnd = performance.now();
+    257|       expect(r).toHaveProperty('rejected');
+       |                 ^
+    258|       expect((r as { rejected: unknown }).rejected).toBe(err); // iden…
+    259|       expect(h.events).toEqual(['kill-start', 'kill-end', 'clearState'…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/6]⎯
+
+ FAIL  tests/unit/close-session.spec.ts > stopSpawnedChrome (close/recovery order) > S6g: a failing clearState is rethrown (0.6.0 failure semantics), after the cleanup > G6g-1b: the rethrow happens only AFTER the (slow) cleanup has finished
+AssertionError: expected undefined to deeply equal [ 'kill-start', 'kill-end', …(3) ]
+
+- Expected: 
+Array [
+  "kill-start",
+  "kill-end",
+  "clearState",
+  "cleanup-start",
+  "cleanup-end",
+]
+
++ Received: 
+undefined
+
+ ❯ tests/unit/close-session.spec.ts:285:29
+    283|         rejectedAfter = [...h.events]; // what had happened by the tim…
+    284|       });
+    285|       expect(rejectedAfter).toEqual(['kill-start', 'kill-end', 'clearS…
+       |                             ^
+    286|     });
+    287| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/6]⎯
+
+ FAIL  tests/unit/close-session.spec.ts > stopSpawnedChrome (close/recovery order) > S6g: a failing clearState is rethrown (0.6.0 failure semantics), after the cleanup > G6g-3 (F7-i): clearState AND cleanup reject -> rejects with the clearState error, exactly one cleanup warning
+AssertionError: expected undefined to be Error: EBUSY: resource busy or locked, un… { code: '…' } // Object.is equality
+
+- Expected: 
+[Error: EBUSY: resource busy or locked, unlink state.json]
+
++ Received: 
+undefined
+
+ ❯ tests/unit/close-session.spec.ts:305:53
+    303|       h.deps.clearState = failingClear(err, h);
+    304|       const r = await settle(stopSpawnedChrome(h.readState(), h.deps));
+    305|       expect((r as { rejected: unknown }).rejected).toBe(err);
+       |                                                     ^
+    306|       expect(h.warnings).toHaveLength(1);
+    307|       expect(h.warnings[0]).toContain('rm exploded');
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/6]⎯
+
+ FAIL  tests/unit/close-session.spec.ts > stopSpawnedChrome (close/recovery order) > S6g: a failing clearState is rethrown (0.6.0 failure semantics), after the cleanup > G6g-4 (F7-ii): clearState rejects with tempProfile false or absent -> rejects, the cleanup is not called
+AssertionError: expected undefined to be Error: EBUSY: resource busy or locked, un… { code: '…' } // Object.is equality
+
+- Expected: 
+[Error: EBUSY: resource busy or locked, unlink state.json]
+
++ Received: 
+undefined
+
+ ❯ tests/unit/close-session.spec.ts:318:55
+    316|         h.deps.clearState = failingClear(err, h);
+    317|         const r = await settle(stopSpawnedChrome(h.readState(), h.deps…
+    318|         expect((r as { rejected: unknown }).rejected).toBe(err);
+       |                                                       ^
+    319|         expect(h.cleanupCalls).toHaveLength(0);
+    320|         expect(h.events).toEqual(['kill-start', 'kill-end', 'clearStat…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/6]⎯
+
+ FAIL  tests/unit/close-session.spec.ts > stopSpawnedChrome (close/recovery order) > S6g: a failing clearState is rethrown (0.6.0 failure semantics), after the cleanup > G6g-5 (F7-iii): clearState AND kill reject -> rejects with the clearState error; the kill error is debug-only
+AssertionError: expected undefined to be Error: EBUSY: resource busy or locked, un… { code: '…' } // Object.is equality
+
+- Expected: 
+[Error: EBUSY: resource busy or locked, unlink state.json]
+
++ Received: 
+undefined
+
+ ❯ tests/unit/close-session.spec.ts:339:53
+    337|       h.deps.clearState = failingClear(err, h);
+    338|       const r = await settle(stopSpawnedChrome(h.readState(), h.deps));
+    339|       expect((r as { rejected: unknown }).rejected).toBe(err);
+       |                                                     ^
+    340|       expect(h.warnings).toHaveLength(0);
+    341|       expect(h.debug.some((l) => l.startsWith('[cleanup] kill-error') …
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/6]⎯
+
+ FAIL  tests/unit/close-session.spec.ts > stopSpawnedChrome (close/recovery order) > S6g: a failing clearState is rethrown (0.6.0 failure semantics), after the cleanup > G6g-6: a non-Error rejection value is rethrown unchanged too
+AssertionError: expected undefined to be { code: 'EPERM' } // Object.is equality
+
+- Expected: 
+Object {
+  "code": "EPERM",
+}
+
++ Received: 
+undefined
+
+ ❯ tests/unit/close-session.spec.ts:353:53
+    351|       };
+    352|       const r = await settle(stopSpawnedChrome(h.readState(), h.deps));
+    353|       expect((r as { rejected: unknown }).rejected).toBe(weird);
+       |                                                     ^
+    354|       expect(h.cleanupCalls).toHaveLength(1);
+    355|     });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/6]⎯
+
+ Test Files  1 failed (1)
+      Tests  6 failed | 19 passed (25)
+   Start at  08:01:38
+   Duration  952ms (transform 37ms, setup 0ms, collect 45ms, tests 601ms, environment 0ms, prepare 114ms)
+

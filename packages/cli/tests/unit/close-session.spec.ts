@@ -219,7 +219,7 @@ describe('stopSpawnedChrome (close/recovery order)', () => {
     }
   });
 
-  it('a failing kill or clearState never throws (never-throws contract) and later steps still run', async () => {
+  it('a failing kill never throws (N2) and the later steps still run; the kill error is debug-only', async () => {
     const k = harness(SPAWNED, {
       kill: async () => {
         throw new Error('kill blew up');
@@ -227,16 +227,202 @@ describe('stopSpawnedChrome (close/recovery order)', () => {
     });
     await expect(stopSpawnedChrome(k.readState(), k.deps)).resolves.toBeUndefined();
     expect(k.events).toEqual(['clearState', 'cleanup']);
-    const c = harness(SPAWNED, {
-      clearState: async () => {
-        throw new Error('disk full');
-      },
+    expect(k.warnings).toHaveLength(0);
+    expect(k.debug.some((l) => l.startsWith('[cleanup] kill-error'))).toBe(true);
+  });
+
+  // S6g (F-S8-2): 0.6.0 ended `close` and self-heal with an UNGUARDED `await clearState()`, so a failing
+  // clear rejected, `close` exited 1 without "Session closed.", and self-heal failed the command. The only
+  // thing that may throw out of stopSpawnedChrome is that clearState failure, and only AFTER the bounded
+  // cleanup ran (Chrome is already killed, so removing its dir is safe).
+  describe('S6g: a failing clearState is rethrown (0.6.0 failure semantics), after the cleanup', () => {
+    const diskFull = () => Object.assign(new Error('EBUSY: resource busy or locked, unlink state.json'), { code: 'EBUSY' });
+    const failingClear = (err: Error, h: { events: string[] }) => async () => {
+      h.events.push('clearState');
+      throw err;
+    };
+    const settle = (p: Promise<void>): Promise<{ resolved: true } | { rejected: unknown }> =>
+      p.then(
+        () => ({ resolved: true as const }),
+        (e: unknown) => ({ rejected: e }),
+      );
+
+    it('G6g-1 (AC1): clearState rejects -> the cleanup still runs with the same args -> rejects with the SAME error object, no extra warning', async () => {
+      const err = diskFull();
+      const h = harness(SPAWNED);
+      h.deps.clearState = failingClear(err, h);
+      const tStart = performance.now();
+      const r = await settle(stopSpawnedChrome(h.readState(), h.deps));
+      const tEnd = performance.now();
+      expect(r).toHaveProperty('rejected');
+      expect((r as { rejected: unknown }).rejected).toBe(err); // identity: not wrapped, not a copy
+      expect(h.events).toEqual(['kill-start', 'kill-end', 'clearState', 'cleanup']);
+      expect(h.cleanupCalls).toHaveLength(1);
+      expect(h.cleanupCalls[0]!.target).toEqual({ userDataDir: SPAWNED.userDataDir, tempProfile: true });
+      expect(h.cleanupCalls[0]!.pid).toBe(4242);
+      // the 15 s overall deadline still applies: deadlineAt = now() at the call + 15 s, on the performance.now() scale
+      expect(h.cleanupCalls[0]!.deadlineAt).toBeGreaterThanOrEqual(tStart + 15_000);
+      expect(h.cleanupCalls[0]!.deadlineAt).toBeLessThanOrEqual(tEnd + 15_000);
+      expect(h.warnings.filter((w) => w.includes('could not clear the session state'))).toHaveLength(0);
+      expect(h.warnings).toHaveLength(0); // "no extra warning line": the caller's error path prints it, as 0.6.0 did
+      expect(h.debug).not.toContain('[cleanup] state-cleared');
     });
-    await expect(stopSpawnedChrome(c.readState(), c.deps)).resolves.toBeUndefined();
-    expect(c.warnings.some((w) => w.includes('disk full'))).toBe(true);
-    expect(c.events).toContain('cleanup');
+
+    it('G6g-1b: the rethrow happens only AFTER the (slow) cleanup has finished', async () => {
+      const err = diskFull();
+      const h = harness(SPAWNED, {
+        cleanup: async () => {
+          h.events.push('cleanup-start');
+          await sleep(60);
+          h.events.push('cleanup-end');
+        },
+      });
+      h.deps.clearState = failingClear(err, h);
+      let rejectedAfter: string[] | undefined;
+      await stopSpawnedChrome(h.readState(), h.deps).catch(() => {
+        rejectedAfter = [...h.events]; // what had happened by the time the caller saw the rejection
+      });
+      expect(rejectedAfter).toEqual(['kill-start', 'kill-end', 'clearState', 'cleanup-start', 'cleanup-end']);
+    });
+
+    it('G6g-2 (AC2): clearState resolves -> nothing is thrown (the O1-O10 order is unchanged)', async () => {
+      const h = harness(SPAWNED);
+      await expect(stopSpawnedChrome(h.readState(), h.deps)).resolves.toBeUndefined();
+      expect(h.events).toEqual(['kill-start', 'kill-end', 'clearState', 'cleanup']);
+      expect(h.warnings).toHaveLength(0);
+    });
+
+    it('G6g-3 (F7-i): clearState AND cleanup reject -> rejects with the clearState error, exactly one cleanup warning', async () => {
+      const err = diskFull();
+      const h = harness(SPAWNED, {
+        cleanup: async () => {
+          h.events.push('cleanup');
+          throw new Error('rm exploded');
+        },
+      });
+      h.deps.clearState = failingClear(err, h);
+      const r = await settle(stopSpawnedChrome(h.readState(), h.deps));
+      expect((r as { rejected: unknown }).rejected).toBe(err);
+      expect(h.warnings).toHaveLength(1);
+      expect(h.warnings[0]).toContain('rm exploded');
+      expect(h.warnings[0]).toContain('temp profile cleanup failed');
+      expect(h.events).toEqual(['kill-start', 'kill-end', 'clearState', 'cleanup']);
+    });
+
+    it('G6g-4 (F7-ii): clearState rejects with tempProfile false or absent -> rejects, the cleanup is not called', async () => {
+      for (const rec of [{ ...SPAWNED, tempProfile: false }, { chromePid: 4242, userDataDir: 'E:\\t\\sutradhar-cli-1790000000001-AbC' }]) {
+        const err = diskFull();
+        const h = harness(rec);
+        h.deps.clearState = failingClear(err, h);
+        const r = await settle(stopSpawnedChrome(h.readState(), h.deps));
+        expect((r as { rejected: unknown }).rejected).toBe(err);
+        expect(h.cleanupCalls).toHaveLength(0);
+        expect(h.events).toEqual(['kill-start', 'kill-end', 'clearState']);
+      }
+      // an attached session (no chromePid at all) that cannot clear its state also rejects
+      const err = diskFull();
+      const a = harness({ sessionId: 's', wsEndpoint: 'ws://x', tempProfile: false });
+      a.deps.clearState = failingClear(err, a);
+      expect(((await settle(stopSpawnedChrome(a.readState(), a.deps))) as { rejected: unknown }).rejected).toBe(err);
+      expect(a.killCalls).toHaveLength(0);
+    });
+
+    it('G6g-5 (F7-iii): clearState AND kill reject -> rejects with the clearState error; the kill error is debug-only', async () => {
+      const err = diskFull();
+      const h = harness(SPAWNED, {
+        kill: async () => {
+          throw new Error('kill blew up');
+        },
+      });
+      h.deps.clearState = failingClear(err, h);
+      const r = await settle(stopSpawnedChrome(h.readState(), h.deps));
+      expect((r as { rejected: unknown }).rejected).toBe(err);
+      expect(h.warnings).toHaveLength(0);
+      expect(h.debug.some((l) => l.startsWith('[cleanup] kill-error') && l.includes('kill blew up'))).toBe(true);
+      expect(h.events).toEqual(['clearState', 'cleanup']);
+    });
+
+    it('G6g-6: a non-Error rejection value is rethrown unchanged too', async () => {
+      const h = harness(SPAWNED);
+      const weird = { code: 'EPERM' };
+      h.deps.clearState = async () => {
+        h.events.push('clearState');
+        throw weird;
+      };
+      const r = await settle(stopSpawnedChrome(h.readState(), h.deps));
+      expect((r as { rejected: unknown }).rejected).toBe(weird);
+      expect(h.cleanupCalls).toHaveLength(1);
+    });
+  });
+
+  // F2: the call sites must NOT swallow that rejection. O6 only counts `await stopSpawnedChrome(`, which a
+  // `.catch(() => {})` or a try/catch around the call would leave intact.
+  describe('O6b source guard: neither `await stopSpawnedChrome(` call site swallows the rejection', () => {
+    const selfHealBody = extractBlock(cliSource, cliSource.indexOf('selfHeal: async'));
+    const closeBody = extractBlock(cliSource, cliSource.indexOf('async function cmdClose('));
+    const CALL = 'await stopSpawnedChrome(';
+
+    it('located both real bodies', () => {
+      expect(selfHealBody).toContain(CALL);
+      expect(selfHealBody.startsWith('{')).toBe(true);
+      expect(closeBody).toContain(CALL);
+      expect(closeBody.endsWith("console.log('Session closed.');\n}")).toBe(true);
+    });
+    it('self-heal: the call is not followed by .catch/.then and not inside a try block', () => {
+      expect(swallowedAtCallSite(selfHealBody, CALL)).toEqual([]);
+    });
+    it('cmdClose: the call is not followed by .catch/.then and not inside a try block', () => {
+      expect(swallowedAtCallSite(closeBody, CALL)).toEqual([]);
+      // F2: also the `if (state.chromePid) {` block on its own
+      const ifBlock = extractBlock(closeBody, closeBody.indexOf('if (state.chromePid) {'));
+      expect(ifBlock).toContain(CALL);
+      expect(swallowedAtCallSite(ifBlock, CALL)).toEqual([]);
+    });
+    it('the detector itself flags every swallowing form (positive controls) and passes the plain call', () => {
+      const plain = 'async function f() {\n  await stopSpawnedChrome(state, deps);\n  return 1;\n}';
+      expect(swallowedAtCallSite(plain, CALL)).toEqual([]);
+      const dotCatch = plain.replace('deps);', 'deps).catch(() => {});');
+      expect(swallowedAtCallSite(dotCatch, CALL)).toEqual(['followed-by-.catch/.then']);
+      const dotThen = plain.replace('deps);', 'deps)\n    .then(() => 0, () => 1);');
+      expect(swallowedAtCallSite(dotThen, CALL)).toEqual(['followed-by-.catch/.then']);
+      const tried = 'async function f() {\n  try {\n    await stopSpawnedChrome(state, deps);\n  } catch {}\n}';
+      expect(swallowedAtCallSite(tried, CALL)).toEqual(['inside-try']);
+      const triedFinally = 'async function f() {\n  try {\n    log();\n    await stopSpawnedChrome(state, deps);\n  } finally {\n    x();\n  }\n}';
+      expect(swallowedAtCallSite(triedFinally, CALL)).toEqual(['inside-try']);
+      const nested = 'async function f() {\n  try {\n    g();\n  } catch {}\n  if (a) {\n    await stopSpawnedChrome(state, deps);\n  }\n}'; // a try ELSEWHERE is fine
+      expect(swallowedAtCallSite(nested, CALL)).toEqual([]);
+    });
   });
 });
+
+/** Reasons the single `call` in `body` is swallowed at its call site (empty = not swallowed). */
+function swallowedAtCallSite(body: string, call: string): string[] {
+  const reasons: string[] = [];
+  const at = body.indexOf(call);
+  if (at < 0) throw new Error('call not found');
+  if (body.indexOf(call, at + 1) >= 0) throw new Error('more than one call in this body');
+  // end of the call expression: match the parentheses that open at `call`'s last character
+  let depth = 0;
+  let end = -1;
+  for (let i = at + call.length - 1; i < body.length; i++) {
+    if (body[i] === '(') depth++;
+    else if (body[i] === ')' && --depth === 0) {
+      end = i + 1;
+      break;
+    }
+  }
+  if (end < 0) throw new Error('unbalanced call');
+  if (/^\s*\.(catch|then)\s*\(/.test(body.slice(end))) reasons.push('followed-by-.catch/.then');
+  for (let t = body.indexOf('try {'); t >= 0; t = body.indexOf('try {', t + 1)) {
+    const block = extractBlock(body, t);
+    const open = body.indexOf('{', t);
+    if (at > open && at < open + block.length) {
+      reasons.push('inside-try');
+      break;
+    }
+  }
+  return reasons;
+}
 
 /** Text of the `{ ... }` block that starts at the first `{` at or after `from` (braces inside
  *  strings, template literals and comments are skipped), including both braces. */

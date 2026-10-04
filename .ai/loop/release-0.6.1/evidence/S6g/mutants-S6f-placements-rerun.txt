@@ -1,0 +1,21 @@
+## M-O6-i-S8-variant-last-stmt-in-block: exit=1 signal= Tests  1 failed | 24 passed (25)
+   sha-before=740552c7adcc98f3ef29717fbf574e041181df4049e4d48b4aed2d66b7027de2 sha-after=740552c7adcc98f3ef29717fbf574e041181df4049e4d48b4aed2d66b7027de2 restored=true
+   must-fail=[(b)] caught=true
+   FAILED: tests/unit/close-session.spec.ts > stopSpawnedChrome (close/recovery order) > O7 source guard: cmdClose clears the state exactly where the plan says > (b) exactly one clearState( in cmdClose, inside the else of `if (state.chromePid)` and OUTSIDE `if (!closeBlocked) {...}`
+## M-O6-ii-S6b-original-inside-try: exit=1 signal= Tests  1 failed | 24 passed (25)
+   sha-before=740552c7adcc98f3ef29717fbf574e041181df4049e4d48b4aed2d66b7027de2 sha-after=740552c7adcc98f3ef29717fbf574e041181df4049e4d48b4aed2d66b7027de2 restored=true
+   must-fail=[(b)] caught=true
+   FAILED: tests/unit/close-session.spec.ts > stopSpawnedChrome (close/recovery order) > O7 source guard: cmdClose clears the state exactly where the plan says > (b) exactly one clearState( in cmdClose, inside the else of `if (state.chromePid)` and OUTSIDE `if (!closeBlocked) {...}`
+## M-O6-iii-first-stmt-after-brace: exit=1 signal= Tests  1 failed | 24 passed (25)
+   sha-before=740552c7adcc98f3ef29717fbf574e041181df4049e4d48b4aed2d66b7027de2 sha-after=740552c7adcc98f3ef29717fbf574e041181df4049e4d48b4aed2d66b7027de2 restored=true
+   must-fail=[(b)] caught=true
+   FAILED: tests/unit/close-session.spec.ts > stopSpawnedChrome (close/recovery order) > O7 source guard: cmdClose clears the state exactly where the plan says > (b) exactly one clearState( in cmdClose, inside the else of `if (state.chromePid)` and OUTSIDE `if (!closeBlocked) {...}`
+## M-O6-iv-inside-catch: exit=1 signal= Tests  1 failed | 24 passed (25)
+   sha-before=740552c7adcc98f3ef29717fbf574e041181df4049e4d48b4aed2d66b7027de2 sha-after=740552c7adcc98f3ef29717fbf574e041181df4049e4d48b4aed2d66b7027de2 restored=true
+   must-fail=[(b)] caught=true
+   FAILED: tests/unit/close-session.spec.ts > stopSpawnedChrome (close/recovery order) > O7 source guard: cmdClose clears the state exactly where the plan says > (b) exactly one clearState( in cmdClose, inside the else of `if (state.chromePid)` and OUTSIDE `if (!closeBlocked) {...}`
+## M-O6-v-before-if-block: exit=1 signal= Tests  1 failed | 24 passed (25)
+   sha-before=740552c7adcc98f3ef29717fbf574e041181df4049e4d48b4aed2d66b7027de2 sha-after=740552c7adcc98f3ef29717fbf574e041181df4049e4d48b4aed2d66b7027de2 restored=true
+   must-fail=[(b)] caught=true
+   FAILED: tests/unit/close-session.spec.ts > stopSpawnedChrome (close/recovery order) > O7 source guard: cmdClose clears the state exactly where the plan says > (b) exactly one clearState( in cmdClose, inside the else of `if (state.chromePid)` and OUTSIDE `if (!closeBlocked) {...}`
+ALL-MUTANTS-CAUGHT-AND-RESTORED

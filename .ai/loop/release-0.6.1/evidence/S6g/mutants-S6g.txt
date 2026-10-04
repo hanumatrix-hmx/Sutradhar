@@ -1,0 +1,79 @@
+## M-B2a-swallow: exit=1 signal= Tests  6 failed | 19 passed (25)
+   sha-before=2feb90a45c481ba94e32f07ff8bfbcacc86d0e8e8d5b3c4162902a385aa70061 sha-after=2feb90a45c481ba94e32f07ff8bfbcacc86d0e8e8d5b3c4162902a385aa70061 restored=true
+   must-fail=[G6g-1, G6g-3, G6g-4, G6g-5, G6g-6] caught=true
+   FAILED: tests/unit/close-session.spec.ts > stopSpawnedChrome (close/recovery order) > S6g: a failing clearState is rethrown (0.6.0 failure semantics), after the cleanup > G6g-1 (AC1): clearState rejects -> the cleanup still runs with the same args -> rejects with the SAME error object, no extra warning
+   FAILED: tests/unit/close-session.spec.ts > stopSpawnedChrome (close/recovery order) > S6g: a failing clearState is rethrown (0.6.0 failure semantics), after the cleanup > G6g-1b: the rethrow happens only AFTER the (slow) cleanup has finished
+   FAILED: tests/unit/close-session.spec.ts > stopSpawnedChrome (close/recovery order) > S6g: a failing clearState is rethrown (0.6.0 failure semantics), after the cleanup > G6g-3 (F7-i): clearState AND cleanup reject -> rejects with the clearState error, exactly one cleanup warning
+   FAILED: tests/unit/close-session.spec.ts > stopSpawnedChrome (close/recovery order) > S6g: a failing clearState is rethrown (0.6.0 failure semantics), after the cleanup > G6g-4 (F7-ii): clearState rejects with tempProfile false or absent -> rejects, the cleanup is not called
+   FAILED: tests/unit/close-session.spec.ts > stopSpawnedChrome (close/recovery order) > S6g: a failing clearState is rethrown (0.6.0 failure semantics), after the cleanup > G6g-5 (F7-iii): clearState AND kill reject -> rejects with the clearState error; the kill error is debug-only
+   FAILED: tests/unit/close-session.spec.ts > stopSpawnedChrome (close/recovery order) > S6g: a failing clearState is rethrown (0.6.0 failure semantics), after the cleanup > G6g-6: a non-Error rejection value is rethrown unchanged too
+## M-B2a-old-warn: exit=1 signal= Tests  6 failed | 19 passed (25)
+   sha-before=2feb90a45c481ba94e32f07ff8bfbcacc86d0e8e8d5b3c4162902a385aa70061 sha-after=2feb90a45c481ba94e32f07ff8bfbcacc86d0e8e8d5b3c4162902a385aa70061 restored=true
+   must-fail=[G6g-1] caught=true
+   FAILED: tests/unit/close-session.spec.ts > stopSpawnedChrome (close/recovery order) > S6g: a failing clearState is rethrown (0.6.0 failure semantics), after the cleanup > G6g-1 (AC1): clearState rejects -> the cleanup still runs with the same args -> rejects with the SAME error object, no extra warning
+   FAILED: tests/unit/close-session.spec.ts > stopSpawnedChrome (close/recovery order) > S6g: a failing clearState is rethrown (0.6.0 failure semantics), after the cleanup > G6g-1b: the rethrow happens only AFTER the (slow) cleanup has finished
+   FAILED: tests/unit/close-session.spec.ts > stopSpawnedChrome (close/recovery order) > S6g: a failing clearState is rethrown (0.6.0 failure semantics), after the cleanup > G6g-3 (F7-i): clearState AND cleanup reject -> rejects with the clearState error, exactly one cleanup warning
+   FAILED: tests/unit/close-session.spec.ts > stopSpawnedChrome (close/recovery order) > S6g: a failing clearState is rethrown (0.6.0 failure semantics), after the cleanup > G6g-4 (F7-ii): clearState rejects with tempProfile false or absent -> rejects, the cleanup is not called
+   FAILED: tests/unit/close-session.spec.ts > stopSpawnedChrome (close/recovery order) > S6g: a failing clearState is rethrown (0.6.0 failure semantics), after the cleanup > G6g-5 (F7-iii): clearState AND kill reject -> rejects with the clearState error; the kill error is debug-only
+   FAILED: tests/unit/close-session.spec.ts > stopSpawnedChrome (close/recovery order) > S6g: a failing clearState is rethrown (0.6.0 failure semantics), after the cleanup > G6g-6: a non-Error rejection value is rethrown unchanged too
+## M-B2b-rethrow-before-cleanup: exit=1 signal= Tests  5 failed | 20 passed (25)
+   sha-before=2feb90a45c481ba94e32f07ff8bfbcacc86d0e8e8d5b3c4162902a385aa70061 sha-after=2feb90a45c481ba94e32f07ff8bfbcacc86d0e8e8d5b3c4162902a385aa70061 restored=true
+   must-fail=[G6g-1, G6g-1b] caught=true
+   FAILED: tests/unit/close-session.spec.ts > stopSpawnedChrome (close/recovery order) > S6g: a failing clearState is rethrown (0.6.0 failure semantics), after the cleanup > G6g-1 (AC1): clearState rejects -> the cleanup still runs with the same args -> rejects with the SAME error object, no extra warning
+   FAILED: tests/unit/close-session.spec.ts > stopSpawnedChrome (close/recovery order) > S6g: a failing clearState is rethrown (0.6.0 failure semantics), after the cleanup > G6g-1b: the rethrow happens only AFTER the (slow) cleanup has finished
+   FAILED: tests/unit/close-session.spec.ts > stopSpawnedChrome (close/recovery order) > S6g: a failing clearState is rethrown (0.6.0 failure semantics), after the cleanup > G6g-3 (F7-i): clearState AND cleanup reject -> rejects with the clearState error, exactly one cleanup warning
+   FAILED: tests/unit/close-session.spec.ts > stopSpawnedChrome (close/recovery order) > S6g: a failing clearState is rethrown (0.6.0 failure semantics), after the cleanup > G6g-5 (F7-iii): clearState AND kill reject -> rejects with the clearState error; the kill error is debug-only
+   FAILED: tests/unit/close-session.spec.ts > stopSpawnedChrome (close/recovery order) > S6g: a failing clearState is rethrown (0.6.0 failure semantics), after the cleanup > G6g-6: a non-Error rejection value is rethrown unchanged too
+## M-B2c-wrapped-error: exit=1 signal= Tests  5 failed | 20 passed (25)
+   sha-before=2feb90a45c481ba94e32f07ff8bfbcacc86d0e8e8d5b3c4162902a385aa70061 sha-after=2feb90a45c481ba94e32f07ff8bfbcacc86d0e8e8d5b3c4162902a385aa70061 restored=true
+   must-fail=[G6g-1, G6g-3, G6g-4, G6g-5, G6g-6] caught=true
+   FAILED: tests/unit/close-session.spec.ts > stopSpawnedChrome (close/recovery order) > S6g: a failing clearState is rethrown (0.6.0 failure semantics), after the cleanup > G6g-1 (AC1): clearState rejects -> the cleanup still runs with the same args -> rejects with the SAME error object, no extra warning
+   FAILED: tests/unit/close-session.spec.ts > stopSpawnedChrome (close/recovery order) > S6g: a failing clearState is rethrown (0.6.0 failure semantics), after the cleanup > G6g-3 (F7-i): clearState AND cleanup reject -> rejects with the clearState error, exactly one cleanup warning
+   FAILED: tests/unit/close-session.spec.ts > stopSpawnedChrome (close/recovery order) > S6g: a failing clearState is rethrown (0.6.0 failure semantics), after the cleanup > G6g-4 (F7-ii): clearState rejects with tempProfile false or absent -> rejects, the cleanup is not called
+   FAILED: tests/unit/close-session.spec.ts > stopSpawnedChrome (close/recovery order) > S6g: a failing clearState is rethrown (0.6.0 failure semantics), after the cleanup > G6g-5 (F7-iii): clearState AND kill reject -> rejects with the clearState error; the kill error is debug-only
+   FAILED: tests/unit/close-session.spec.ts > stopSpawnedChrome (close/recovery order) > S6g: a failing clearState is rethrown (0.6.0 failure semantics), after the cleanup > G6g-6: a non-Error rejection value is rethrown unchanged too
+## M-B2d-selfheal-dot-catch: exit=1 signal= Tests  1 failed | 24 passed (25)
+   sha-before=740552c7adcc98f3ef29717fbf574e041181df4049e4d48b4aed2d66b7027de2 sha-after=740552c7adcc98f3ef29717fbf574e041181df4049e4d48b4aed2d66b7027de2 restored=true
+   must-fail=[O6b, self-heal] caught=true
+   FAILED: tests/unit/close-session.spec.ts > stopSpawnedChrome (close/recovery order) > O6b source guard: neither `await stopSpawnedChrome(` call site swallows the rejection > self-heal: the call is not followed by .catch/.then and not inside a try block
+## M-B2e-cmdClose-dot-catch: exit=1 signal= Tests  1 failed | 24 passed (25)
+   sha-before=740552c7adcc98f3ef29717fbf574e041181df4049e4d48b4aed2d66b7027de2 sha-after=740552c7adcc98f3ef29717fbf574e041181df4049e4d48b4aed2d66b7027de2 restored=true
+   must-fail=[O6b, cmdClose] caught=true
+   FAILED: tests/unit/close-session.spec.ts > stopSpawnedChrome (close/recovery order) > O6b source guard: neither `await stopSpawnedChrome(` call site swallows the rejection > cmdClose: the call is not followed by .catch/.then and not inside a try block
+## M-B2d2-selfheal-try-catch: exit=1 signal= Tests  1 failed | 24 passed (25)
+   sha-before=740552c7adcc98f3ef29717fbf574e041181df4049e4d48b4aed2d66b7027de2 sha-after=740552c7adcc98f3ef29717fbf574e041181df4049e4d48b4aed2d66b7027de2 restored=true
+   must-fail=[O6b, self-heal] caught=true
+   FAILED: tests/unit/close-session.spec.ts > stopSpawnedChrome (close/recovery order) > O6b source guard: neither `await stopSpawnedChrome(` call site swallows the rejection > self-heal: the call is not followed by .catch/.then and not inside a try block
+## M-B2e2-cmdClose-try-catch: exit=1 signal= Tests  1 failed | 24 passed (25)
+   sha-before=740552c7adcc98f3ef29717fbf574e041181df4049e4d48b4aed2d66b7027de2 sha-after=740552c7adcc98f3ef29717fbf574e041181df4049e4d48b4aed2d66b7027de2 restored=true
+   must-fail=[O6b, cmdClose] caught=true
+   FAILED: tests/unit/close-session.spec.ts > stopSpawnedChrome (close/recovery order) > O6b source guard: neither `await stopSpawnedChrome(` call site swallows the rejection > cmdClose: the call is not followed by .catch/.then and not inside a try block
+## M-B2f1-rethrow-cleanup-error: exit=1 signal= Tests  2 failed | 23 passed (25)
+   sha-before=2feb90a45c481ba94e32f07ff8bfbcacc86d0e8e8d5b3c4162902a385aa70061 sha-after=2feb90a45c481ba94e32f07ff8bfbcacc86d0e8e8d5b3c4162902a385aa70061 restored=true
+   must-fail=[G6g-3, O3] caught=true
+   FAILED: tests/unit/close-session.spec.ts > stopSpawnedChrome (close/recovery order) > O3: a rejecting cleanup is a warning, never a throw; kill ran once; state is cleared
+   FAILED: tests/unit/close-session.spec.ts > stopSpawnedChrome (close/recovery order) > S6g: a failing clearState is rethrown (0.6.0 failure semantics), after the cleanup > G6g-3 (F7-i): clearState AND cleanup reject -> rejects with the clearState error, exactly one cleanup warning
+## M-B2f2-skip-rethrow-when-cleanup-fails: exit=1 signal= Tests  1 failed | 24 passed (25)
+   sha-before=2feb90a45c481ba94e32f07ff8bfbcacc86d0e8e8d5b3c4162902a385aa70061 sha-after=2feb90a45c481ba94e32f07ff8bfbcacc86d0e8e8d5b3c4162902a385aa70061 restored=true
+   must-fail=[G6g-3] caught=true
+   FAILED: tests/unit/close-session.spec.ts > stopSpawnedChrome (close/recovery order) > S6g: a failing clearState is rethrown (0.6.0 failure semantics), after the cleanup > G6g-3 (F7-i): clearState AND cleanup reject -> rejects with the clearState error, exactly one cleanup warning
+## M-B2g-rethrow-only-with-tempProfile: exit=1 signal= Tests  1 failed | 24 passed (25)
+   sha-before=2feb90a45c481ba94e32f07ff8bfbcacc86d0e8e8d5b3c4162902a385aa70061 sha-after=2feb90a45c481ba94e32f07ff8bfbcacc86d0e8e8d5b3c4162902a385aa70061 restored=true
+   must-fail=[G6g-4] caught=true
+   FAILED: tests/unit/close-session.spec.ts > stopSpawnedChrome (close/recovery order) > S6g: a failing clearState is rethrown (0.6.0 failure semantics), after the cleanup > G6g-4 (F7-ii): clearState rejects with tempProfile false or absent -> rejects, the cleanup is not called
+## M-B2h-extra-warning-line: exit=1 signal= Tests  3 failed | 22 passed (25)
+   sha-before=2feb90a45c481ba94e32f07ff8bfbcacc86d0e8e8d5b3c4162902a385aa70061 sha-after=2feb90a45c481ba94e32f07ff8bfbcacc86d0e8e8d5b3c4162902a385aa70061 restored=true
+   must-fail=[G6g-1] caught=true
+   FAILED: tests/unit/close-session.spec.ts > stopSpawnedChrome (close/recovery order) > S6g: a failing clearState is rethrown (0.6.0 failure semantics), after the cleanup > G6g-1 (AC1): clearState rejects -> the cleanup still runs with the same args -> rejects with the SAME error object, no extra warning
+   FAILED: tests/unit/close-session.spec.ts > stopSpawnedChrome (close/recovery order) > S6g: a failing clearState is rethrown (0.6.0 failure semantics), after the cleanup > G6g-3 (F7-i): clearState AND cleanup reject -> rejects with the clearState error, exactly one cleanup warning
+   FAILED: tests/unit/close-session.spec.ts > stopSpawnedChrome (close/recovery order) > S6g: a failing clearState is rethrown (0.6.0 failure semantics), after the cleanup > G6g-5 (F7-iii): clearState AND kill reject -> rejects with the clearState error; the kill error is debug-only
+## M-B2i-state-cleared-logged-on-failure: exit=1 signal= Tests  1 failed | 24 passed (25)
+   sha-before=2feb90a45c481ba94e32f07ff8bfbcacc86d0e8e8d5b3c4162902a385aa70061 sha-after=2feb90a45c481ba94e32f07ff8bfbcacc86d0e8e8d5b3c4162902a385aa70061 restored=true
+   must-fail=[G6g-1] caught=true
+   FAILED: tests/unit/close-session.spec.ts > stopSpawnedChrome (close/recovery order) > S6g: a failing clearState is rethrown (0.6.0 failure semantics), after the cleanup > G6g-1 (AC1): clearState rejects -> the cleanup still runs with the same args -> rejects with the SAME error object, no extra warning
+## M-B2j-kill-error-escalated: exit=1 signal= Tests  2 failed | 23 passed (25)
+   sha-before=2feb90a45c481ba94e32f07ff8bfbcacc86d0e8e8d5b3c4162902a385aa70061 sha-after=2feb90a45c481ba94e32f07ff8bfbcacc86d0e8e8d5b3c4162902a385aa70061 restored=true
+   must-fail=[failing kill never throws] caught=true
+   FAILED: tests/unit/close-session.spec.ts > stopSpawnedChrome (close/recovery order) > a failing kill never throws (N2) and the later steps still run; the kill error is debug-only
+   FAILED: tests/unit/close-session.spec.ts > stopSpawnedChrome (close/recovery order) > S6g: a failing clearState is rethrown (0.6.0 failure semantics), after the cleanup > G6g-5 (F7-iii): clearState AND kill reject -> rejects with the clearState error; the kill error is debug-only
+ALL-MUTANTS-CAUGHT-AND-RESTORED
