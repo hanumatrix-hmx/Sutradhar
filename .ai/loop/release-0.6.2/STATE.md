@@ -26,3 +26,5 @@
 - S6 done (I-051 no-session reads, committed). Next: S7 (I-NAV back/forward/reload). Verify: evidence/S6/README.md AC table; mutants-unit.txt (survivors=0) and mutants-live.txt (both live mutants fail the harness); live-nosession-head.json allPass. Background processes: none.
 
 - S7 done (I-NAV back/forward/reload, committed after fixture fix 6c952b8). Next: S8 independent audit (not started). Verify: evidence/S7/README.md; live-history-head.json allPass; mutants-unit.txt survivors=0. Background processes: none.
+
+- S0b/S9 done (A-1 test 5393010; version bump 0.6.2). Next: S10 changelog+docs, S10b gaps, S11 gate, S11b WebBench.
