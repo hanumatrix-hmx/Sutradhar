@@ -1,0 +1,39 @@
+== cells per new row (expect 8 pipes = 6 columns)
+     20 7
+== new ids
+357 379 380 381 382 383 384 385 386 387 388 389 390 391 392 393 394 395 396 397 398 
+== duplicate ids in file (expect none)
+== ids used on FR2-11 branch >= 379 (expect none)
+== required content present
+no .test. script                                                       1
+CI guard                                                               1
+cannot be cancelled                                                    1
+grep: Unmatched ( or \(
+vitest (critical                                                       
+no POSIX equivalent                                                    1
+no deterministic live trigger                                          1
+macOS (any)                                                            0
+Scan timing margin                                                     1
+A failed state clear leaves .chromePid. recorded (as in 0.6.0)         0
+8.3 short-name                                                         1
+owner-unknown. and KEPT forever                                        1
+reused by an unrelated live process                                    1
+not-a-directory                                                        1
+F-S8-3                                                                 1
+F-S8-5                                                                 1
+F-S8-6                                                                 1
+S8b-1                                                                  1
+S8b-3                                                                  1
+S8b-4                                                                  1
+plan.md. section 10                                                    1
+== GAP-315 row tail
+essions' Chrome, all survived; the close path refused the harness dir with `in-use` and removed it once that PID exited. A mutant with close cleanup disabled leaves the dir behind. 0.6.1 (release/0.6.1): merged with a 15 s overall cleanup deadline, a path-logging debug seam, absolute system-binary paths, a case-insensitive scan filter, an lstat guard, fail-closed owner markers and the close order kill -> clear state -> bounded cleanup (a failed state clear still fails the command as in 0.6.0). Independently audited three times (S4 REOPEN, S8 REOPEN, S8b ACCEPT); evidence `release-0.6.1/evidence/S4`, `S8`, `S8b`; follow-ups GAP-379..GAP-398. | DONE | GAP-315-fix; release-0.6.1/evidence/S8b |
+== gaps.md line endings: LF-only lines (expect 0)
+0
+== git diff numstat
+21	1	.ai/loop/field-report-2/gaps.md
+== fixed-string re-checks of the 3 patterns the regex pass could not express (counts among GAP-379..398 rows)
+macOS (any)                                                            1
+A failed state clear leaves `chromePid` recorded (as in 0.6.0)         1
+vitest (critical                                                       1
+(pipes per new row is 7 = 6 columns; the 'expect 8' remark above was a miscount)
