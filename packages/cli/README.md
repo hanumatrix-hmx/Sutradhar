@@ -148,6 +148,7 @@ Run `sutradhar` with no arguments for this same list straight from the binary.
 | `SUTRADHAR_CONFIG` | _(unset — search for `.sutradhar.json`)_ | An absolute path loads exactly that project config file; `none` ignores project config. See "Project config" below. |
 | `SUTRADHAR_CLI_STATE_DIR` | per-project-directory hash | Where session state (`state.json`) is stored — see above. |
 | `SUTRADHAR_CLI_DEADLINE_MS` | `300000` | Process watchdog: a command still running after this many milliseconds is stopped with an error message. `wait <ref> <timeoutMs>` extends its own deadline to at least 3 x `timeoutMs` + 30 s. |
+| `SUTRADHAR_CLI_DEBUG_CLEANUP` | _(unset — silent)_ | Diagnostics switch. Set to `1` to print `[cleanup] <event> ...` lines on stderr for every temp-profile directory (`<OS temp>/sutradhar-cli-*`) that the session-end cleanup (`close`, self-heal) and the session-start sweep consider, create, remove or keep; every path appears as `path="<absolute path>"`. The cleanup is bounded: `close` spends at most 15 s on it and the sweep at most 15 s, measured on a monotonic clock, and no delete starts with less than 1 s left. A delete that has already started cannot be cancelled and may finish after that. |
 
 ## Project config (`.sutradhar.json`)
 

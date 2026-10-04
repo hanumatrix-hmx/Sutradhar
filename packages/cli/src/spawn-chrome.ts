@@ -15,6 +15,7 @@ import { spawn } from 'node:child_process';
 import net from 'node:net';
 import { BrowserLauncher } from '@sutradhar/browser';
 import { createTempProfileDir, writeOwnerMarker } from './temp-profile.js';
+import { taskkillExe } from './system-binaries.js';
 
 async function getFreePort(): Promise<number> {
   return new Promise((resolve, reject) => {
@@ -115,7 +116,9 @@ export async function spawnDetachedChrome(
 export async function killChromeTree(pid: number, timeoutMs = 10_000): Promise<void> {
   if (process.platform === 'win32') {
     await new Promise<void>((resolve) => {
-      const tk = spawn('taskkill', ['/PID', String(pid), '/T', '/F'], { stdio: 'ignore', windowsHide: true });
+      // Absolute path (system-binaries.ts): same program and arguments as before, but never a
+      // planted taskkill.exe from the cwd (Node 18/20 search the cwd first for a bare name).
+      const tk = spawn(taskkillExe(), ['/PID', String(pid), '/T', '/F'], { stdio: 'ignore', windowsHide: true });
       const timer = setTimeout(resolve, timeoutMs);
       const done = () => {
         clearTimeout(timer);

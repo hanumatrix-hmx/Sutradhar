@@ -35,7 +35,7 @@ import { formatAuditText, auditNotes, auditExitCode } from './audit-output.js';
 import { dialogOutputSink, dialogBlockedJsonDoc, printDialogBlockedJsonOnce, writeJsonStdoutOnce } from './dialog-json-routing.js';
 import { readState, writeState, clearState, STATE_DIR, type CliState } from './state.js';
 import { spawnDetachedChrome, killChromeTree } from './spawn-chrome.js';
-import { removeSessionTempProfile, sweepStaleTempProfiles } from './temp-profile.js';
+import { CLOSE_CLEANUP_DEADLINE_MS, removeSessionTempProfile, sweepStaleTempProfiles } from './temp-profile.js';
 import { createSessionId } from '@sutradhar/contracts';
 import { parseArgs, dialogFlagError, expectFlagError, waitForConditionFromArgs } from './parse-args.js';
 import { waitForOutcome } from './waitfor-output.js';
@@ -486,7 +486,7 @@ async function withSession<T>(
       );
       await stopWarden(STATE_DIR).catch(() => {});
       if (state.chromePid) await killChromeTree(state.chromePid);
-      await cleanupSessionTempProfile(state);
+      await cleanupSessionTempProfile(state, state.chromePid, true, performance.now() + CLOSE_CLEANUP_DEADLINE_MS);
       await clearState();
       return spawnFreshSession(runtime, { dialogPolicy: state.dialogPolicy });
     },
@@ -1592,14 +1592,24 @@ async function cmdDialog(sub: string | undefined, rest: string[]): Promise<void>
 // unit-tested there instead of only via live/process-spawn scenarios.
 
 /** GAP-315: removes the session's auto-created temp profile dir once its Chrome has exited
- *  (waits with a hard timeout, retries through Windows' post-exit file locks, never touches a
- *  dir a running process still references or a named profile). A failure only warns — `close`
- *  still succeeds, and the next session start's stale sweep retries it. */
-async function cleanupSessionTempProfile(state: CliState, warn = false): Promise<void> {
-  if (!state.tempProfile || !state.userDataDir) return;
-  const res = await removeSessionTempProfile(state.userDataDir, state.chromePid);
+ *  (read-only exit wait, retries through Windows' post-exit file locks, never touches a dir a
+ *  running process still references or a named profile), all inside ONE overall deadline
+ *  (`deadlineAt`, a `performance.now()` value). `chromePid` is used only for the read-only exit
+ *  wait — it is never killed here. A failure only warns — `close` still succeeds, and a later
+ *  session start's stale sweep retries the dir. One delete that has already started may finish
+ *  after the deadline. */
+async function cleanupSessionTempProfile(
+  target: { userDataDir?: string; tempProfile?: boolean },
+  chromePid: number | undefined,
+  warn: boolean,
+  deadlineAt: number,
+): Promise<void> {
+  if (!target.tempProfile || !target.userDataDir) return;
+  const res = await removeSessionTempProfile(target.userDataDir, chromePid, { deadlineAt });
   if (!res.removed && warn) {
-    console.error(`Warning: could not remove temp profile ${state.userDataDir} (${res.reason}); it will be retried at the next session start.`);
+    console.error(
+      `Warning: could not remove temp profile ${target.userDataDir} (${res.reason}); a CLI session started 10 or more minutes from now will retry it.`,
+    );
   }
 }
 
@@ -1682,7 +1692,7 @@ async function cmdClose() {
     // alone would leak it. Kill the actual process (and its child renderer/GPU processes). Never
     // attaches, so it's unaffected by closeBlocked (no 180s hang risk here either way).
     await killChromeTree(state.chromePid);
-    await cleanupSessionTempProfile(state, true);
+    await cleanupSessionTempProfile(state, state.chromePid, true, performance.now() + CLOSE_CLEANUP_DEADLINE_MS);
   } else if (!closeBlocked) {
     // FR2-04 N11: this attach WOULD hang for up to 180s against a dialog-blocked page — skipped
     // whenever the gate reported 'blocked' above.
@@ -2034,6 +2044,8 @@ Environment:
   SUTRADHAR_ALLOWED_UPLOAD_ROOTS    If set, "upload" may only read files under these directories (off by default).
   SUTRADHAR_ALLOWED_DOMAINS         Comma-separated domains navigation is limited to (same as --allowlist-domains).
   SUTRADHAR_CONFIG                  Absolute path of one .sutradhar.json to load, or "none" to ignore project config.
+  SUTRADHAR_CLI_DEBUG_CLEANUP       Diagnostics: set to 1 to print "[cleanup] ..." lines on stderr for every temp-profile dir the
+                                     session-end cleanup and the session-start sweep consider, remove or keep (off by default).
 
 Project config:
   .sutradhar.json in this directory or the nearest parent (stopping at the git root or your home
