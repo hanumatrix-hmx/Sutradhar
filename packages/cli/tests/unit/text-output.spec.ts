@@ -29,6 +29,14 @@ describe('textOutput', () => {
     expect(o.exitCode).toBe(0);
   });
 
+  it('shape A for a window after the first: the hint names the END of that window (offset + returnedChars), not its length (S8 A-1)', () => {
+    const r = { ...base, text: 'z'.repeat(4000), offset: 4000, returnedChars: 4000, totalChars: 10037, truncated: true };
+    const o = textOutput(r, false);
+    expect(o.stdout[1]).toBe('[page text truncated: showing characters 4000-8000 of 10037. Continue with: sutradhar text --offset 8000]');
+    expect(o.stdout[1]).not.toContain('--offset 4000]');
+    expect(o.exitCode).toBe(0);
+  });
+
   it('shape B: the last paged window prints the (end) marker', () => {
     const r = { ...base, text: 'y'.repeat(2499), offset: 8000, returnedChars: 2499, totalChars: 10499, truncated: true };
     expect(textOutput(r, false).stdout[1]).toBe('[page text: showing characters 8000-10499 of 10499 (end)]');
