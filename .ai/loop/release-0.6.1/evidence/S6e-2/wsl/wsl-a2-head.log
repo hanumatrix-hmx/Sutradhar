@@ -1,0 +1,31 @@
+# cmd: timeout 300 wsl.exe -e sh -c 'D=$(mktemp -d) && cp /mnt/e/AI-Cache/tmp/claude/E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/S6e-2/mod/temp-profile.mjs /mnt/e/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/.ai/loop/release-0.6.1/evidence/S4/probes/common.mjs /mnt/e/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/.ai/loop/release-0.6.1/evidence/S4/probes/wsl/*.mjs /mnt/e/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/.ai/loop/release-0.6.1/evidence/S4/probes/wsl/*.mjs "$D"/ && cd "$D" && sha256sum temp-profile.mjs && R=$(mktemp -d -p "$PWD") && echo PROBE_ROOT=$R && node -v && TMPDIR="$R" PROBE_ROOT="$R" TP_MODULE="$PWD/temp-profile.mjs" timeout 240 node  wsl-a2.mjs 2>&1; echo "# exit=$?"; cd /; case "$D" in /tmp/tmp.*) rm -rf -- "$D" && echo "# removed own D=$D";; *) echo REFUSE;; esac' ; start=2026-10-04T06:24:04+05:30
+d24edfa86bf8a7addfb493f0aa81834562aea76ef9920f36ea52c15fc0b0e576  temp-profile.mjs
+PROBE_ROOT=/tmp/tmp.m9gtMC4hkB/tmp.ax8AsY0WmC
+v20.20.2
+[wsl-guard] root=/tmp/tmp.m9gtMC4hkB/tmp.ax8AsY0WmC
+== wsl-a2 symlink as candidate (A2, C5-live c) node=v20.20.2 platform=linux tmpdir=/tmp/tmp.m9gtMC4hkB/tmp.ax8AsY0WmC pid=829
+[cleanup] probe tmpRoot path="/tmp/tmp.m9gtMC4hkB/tmp.ax8AsY0WmC/a2-root-bPdlDM"
+[cleanup] probe victimRoot path="/tmp/tmp.m9gtMC4hkB/tmp.ax8AsY0WmC/a2-victims-S2CSOb"
+INFO victim SingletonLock uses dead pid 4190000
+[cleanup] probe victim path="/tmp/tmp.m9gtMC4hkB/tmp.ax8AsY0WmC/a2-victims-S2CSOb/victim-sweep-dir"
+[cleanup] probe link path="/tmp/tmp.m9gtMC4hkB/tmp.ax8AsY0WmC/a2-root-bPdlDM/sutradhar-cli-1790000000010" type=dir
+[cleanup] probe victim path="/tmp/tmp.m9gtMC4hkB/tmp.ax8AsY0WmC/a2-victims-S2CSOb/victim-close-dir"
+[cleanup] probe link path="/tmp/tmp.m9gtMC4hkB/tmp.ax8AsY0WmC/a2-root-bPdlDM/sutradhar-cli-1790000000011" type=dir
+[cleanup] probe victim path="/tmp/tmp.m9gtMC4hkB/tmp.ax8AsY0WmC/a2-victims-S2CSOb/victim-sweep-file"
+[cleanup] probe link path="/tmp/tmp.m9gtMC4hkB/tmp.ax8AsY0WmC/a2-root-bPdlDM/sutradhar-cli-1790000000022" type=file
+[cleanup] probe victim path="/tmp/tmp.m9gtMC4hkB/tmp.ax8AsY0WmC/a2-victims-S2CSOb/victim-close-file"
+[cleanup] probe link path="/tmp/tmp.m9gtMC4hkB/tmp.ax8AsY0WmC/a2-root-bPdlDM/sutradhar-cli-1790000000023" type=file
+[cleanup] probe close-result path="/tmp/tmp.m9gtMC4hkB/tmp.ax8AsY0WmC/a2-root-bPdlDM/sutradhar-cli-1790000000011" removed=false reason=not-a-directory
+[cleanup] probe close-result path="/tmp/tmp.m9gtMC4hkB/tmp.ax8AsY0WmC/a2-root-bPdlDM/sutradhar-cli-1790000000023" removed=false reason=not-a-directory
+[cleanup] probe sweep-kept path="/tmp/tmp.m9gtMC4hkB/tmp.ax8AsY0WmC/a2-root-bPdlDM/sutradhar-cli-1790000000010" reason=not-a-directory
+[cleanup] probe sweep-kept path="/tmp/tmp.m9gtMC4hkB/tmp.ax8AsY0WmC/a2-root-bPdlDM/sutradhar-cli-1790000000011" reason=not-a-directory
+[cleanup] probe sweep-kept path="/tmp/tmp.m9gtMC4hkB/tmp.ax8AsY0WmC/a2-root-bPdlDM/sutradhar-cli-1790000000022" reason=not-a-directory
+[cleanup] probe sweep-kept path="/tmp/tmp.m9gtMC4hkB/tmp.ax8AsY0WmC/a2-root-bPdlDM/sutradhar-cli-1790000000023" reason=not-a-directory
+PASS A2 sweep dir victim intact :: missing=[] linkStillThere=true
+PASS A2 close dir victim intact :: missing=[] linkStillThere=true
+PASS A2 sweep file victim intact :: missing=[] linkStillThere=true
+PASS A2 close file victim intact :: missing=[] linkStillThere=true
+RESULT fails=0
+# exit=0
+# removed own D=/tmp/tmp.m9gtMC4hkB
+# end=2026-10-04T06:24:04+05:30

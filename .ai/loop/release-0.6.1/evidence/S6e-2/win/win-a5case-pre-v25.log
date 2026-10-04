@@ -1,0 +1,12 @@
+# cmd: TEMP=ISO TMP=ISO TMPDIR=ISO NODE_OPTIONS=--import=file:///$SP/iso/assert-tmp.mjs SUTRADHAR_CLI_DEBUG_CLEANUP=1 TP_MODULE=E:/AI-Cache/tmp/claude/E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/S6e-2/mod-pre/temp-profile.mjs timeout 600 "/c/Program Files/nodejs/node" $EV/S4/probes/win-a5case.mjs ; ISO=E:/AI-Cache/tmp/claude/E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/S6e-2-tmp-pre-v25 ; module-sha=9eb16c956ae72c47f21aef795e957e2dcbbdf1bf5dcff6d7e6693998cc22ba76 ; start=2026-10-04T06:20:12+05:30
+[iso-guard] tmpdir=e:/ai-cache/tmp/claude/e--hmx-projects-internal-projects-pinchtab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/s6e-2-tmp-pre-v25 pid=77444
+[probe-guard] tmpdir=e:/ai-cache/tmp/claude/e--hmx-projects-internal-projects-pinchtab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/s6e-2-tmp-pre-v25 pid=77444
+== win-a5case: where is the upper-case reference dropped? node=v25.0.0 platform=win32 tmpdir=E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S6e-2-tmp-pre-v25 pid=77444
+[cleanup] probe dir path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S6e-2-tmp-pre-v25\a5c-pfczC3\sutradhar-cli-1790000000777-AbC123"
+INFO raw WQL output lines mentioning basename (any case): 1 -> ["-2-TMP-PRE-V25\\A5C-PFCZC3\\SUTRADHAR-CLI-1790000000777-ABC123"]
+INFO module scanCommandLines() lines mentioning basename: 0
+PASS CASE: WQL LIKE is case-insensitive (raw output has the upper-case line)
+FAIL CASE: module scan keeps it (expected FAIL: JS filter is case-sensitive)
+INFO stand-in exited=true
+RESULT fails=1
+# exit=1 end=2026-10-04T06:20:15+05:30

@@ -158,3 +158,40 @@ describe('readProcCommandLines (the /proc reader)', () => {
     }
   });
 });
+
+// ---------------------------------------------------------------------------------------------
+// S6e-2 (F2): the post-filter must be case-INSENSITIVE on every platform. WQL `LIKE` is
+// case-insensitive, so a process that holds the dir as `SUTRADHAR-CLI-...` was returned by the query
+// and then dropped by a case-sensitive `includes`, which let the dir be deleted (S4 audit A5).
+// ---------------------------------------------------------------------------------------------
+describe('S6e-2 (F2): case-insensitive scan post-filter', () => {
+  const UPPER = '"C:\\Program Files\\Chrome\\chrome.exe" --user-data-dir=C:\\T\\SUTRADHAR-CLI-1790000000777-ABC123 --type=renderer';
+  const LOWER = '"C:\\Program Files\\Chrome\\chrome.exe" --user-data-dir=C:\\T\\sutradhar-cli-1790000000778-def456';
+  const NONE = 'C:\\Windows\\system32\\svchost.exe -k netsvcs';
+
+  it('F2-a: raw CRLF output with an upper-case, a lower-case and an unrelated line keeps exactly the two prefixed lines', async () => {
+    const raw = `${UPPER}\r\n${LOWER}\r\n${NONE}\r\n`;
+    const lines = await scanCommandLines(1000, { platform: 'win32', run: async () => raw });
+    expect(lines).toEqual([UPPER, LOWER]);
+  });
+
+  it('F2-b: a dir referenced only in UPPER case is in-use for close (the rule-2 scan sees it)', async () => {
+    const root = mkdtempSync(path.join(os.tmpdir(), 'f2b-'));
+    try {
+      const dir = path.join(root, 'sutradhar-cli-1790000000777-ABC123');
+      mkdirSync(dir);
+      const scan = (ms?: number) => scanCommandLines(ms, { platform: 'win32', run: async () => `${UPPER}\r\n` });
+      const res = await removeSessionTempProfile(dir, undefined, { tmpRoot: root, scan });
+      expect(res).toEqual({ removed: false, reason: 'in-use' });
+      expect(existsSync(dir)).toBe(true);
+    } finally {
+      rmSync(root, { recursive: true, force: true });
+    }
+  });
+
+  it('F2-c: the same filter applies to the Linux /proc reader and to macOS ps output', async () => {
+    const upperPosix = 'node x --user-data-dir=/tmp/SUTRADHAR-CLI-1790000000999-ZZZ';
+    expect(await scanCommandLines(1000, { platform: 'linux', readProc: async () => [upperPosix, NONE] })).toEqual([upperPosix]);
+    expect(await scanCommandLines(1000, { platform: 'darwin', run: async () => `${upperPosix}\n${NONE}\n` })).toEqual([upperPosix]);
+  });
+});

@@ -241,9 +241,13 @@ export async function readProcCommandLines(timeoutMs: number, procFs: ProcFs = r
   return lines;
 }
 
-/** Keeps the lines that mention {@link TEMP_PROFILE_PREFIX}. Shared by every platform. */
+/** Keeps the lines that mention {@link TEMP_PROFILE_PREFIX}, CASE-INSENSITIVELY, on every platform.
+ *  The Windows query (`LIKE`) is case-insensitive, so a process that holds the dir as
+ *  `SUTRADHAR-CLI-...` is returned by it; a case-sensitive filter here would drop that line and let
+ *  the dir be deleted (S4 audit F2). The prefix constant is lower-case. This is only a substring
+ *  pre-filter: the whole-token matching lives in {@link commandLinesReference}. */
 function keepPrefixed(lines: readonly string[]): string[] {
-  return lines.filter((l) => l.includes(TEMP_PROFILE_PREFIX));
+  return lines.filter((l) => l.toLowerCase().includes(TEMP_PROFILE_PREFIX));
 }
 
 const execRun: NonNullable<ScanDeps['run']> = (file, args, timeoutMs) =>

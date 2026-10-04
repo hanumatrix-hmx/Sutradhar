@@ -1,0 +1,19 @@
+## M-F2: exit=1 signal= Tests  3 failed | 12 passed | 1 skipped (16)
+   sha-before=6da2045fc8c87e26ed29ef5b4833e55e1ba8a732bc22011b50d7bcde5956969c sha-after=6da2045fc8c87e26ed29ef5b4833e55e1ba8a732bc22011b50d7bcde5956969c restored=true
+   must-fail=[F2-a, F2-b] caught=true
+   FAILED: tests/unit/scan-command-lines.spec.ts > S6e-2 (F2): case-insensitive scan post-filter > F2-a: raw CRLF output with an upper-case, a lower-case and an unrelated line keeps exactly the two prefixed lines
+   FAILED: tests/unit/scan-command-lines.spec.ts > S6e-2 (F2): case-insensitive scan post-filter > F2-b: a dir referenced only in UPPER case is in-use for close (the rule-2 scan sees it)
+   FAILED: tests/unit/scan-command-lines.spec.ts > S6e-2 (F2): case-insensitive scan post-filter > F2-c: the same filter applies to the Linux /proc reader and to macOS ps output
+## M5: exit=1 signal= Tests  3 failed | 12 passed | 1 skipped (16)
+   sha-before=6da2045fc8c87e26ed29ef5b4833e55e1ba8a732bc22011b50d7bcde5956969c sha-after=6da2045fc8c87e26ed29ef5b4833e55e1ba8a732bc22011b50d7bcde5956969c restored=true
+   must-fail=[F2-a] caught=true
+   FAILED: tests/unit/scan-command-lines.spec.ts > scanCommandLines: Linux reads /proc (no ps) > D1: returns only the lines that carry the prefix, from the injected /proc reader; `ps` is never run
+   FAILED: tests/unit/scan-command-lines.spec.ts > scanCommandLines: macOS / other POSIX use ps -ww > D3: darwin runs the absolute ps with exactly -A -ww -o args= and the given timeout
+   FAILED: tests/unit/scan-command-lines.spec.ts > S6e-2 (F2): case-insensitive scan post-filter > F2-a: raw CRLF output with an upper-case, a lower-case and an unrelated line keeps exactly the two prefixed lines
+## M-F2-linux-unfiltered: exit=1 signal= Tests  3 failed | 12 passed | 1 skipped (16)
+   sha-before=6da2045fc8c87e26ed29ef5b4833e55e1ba8a732bc22011b50d7bcde5956969c sha-after=6da2045fc8c87e26ed29ef5b4833e55e1ba8a732bc22011b50d7bcde5956969c restored=true
+   must-fail=[F2-c, D1:] caught=true
+   FAILED: tests/unit/scan-command-lines.spec.ts > scanCommandLines: Linux reads /proc (no ps) > D1: returns only the lines that carry the prefix, from the injected /proc reader; `ps` is never run
+   FAILED: tests/unit/scan-command-lines.spec.ts > scanCommandLines: Linux reads /proc (no ps) > D2b: a reader that matched nothing is [] (the query ran), distinct from null
+   FAILED: tests/unit/scan-command-lines.spec.ts > S6e-2 (F2): case-insensitive scan post-filter > F2-c: the same filter applies to the Linux /proc reader and to macOS ps output
+ALL-MUTANTS-CAUGHT-AND-RESTORED
