@@ -39,6 +39,8 @@ Fixes for the defects found by the Claude-direct WebBench run of 2026-10-04 (`to
   bundled builds).
 - **Clicks and typing no longer fail with "Attempted to use detached Frame" (PROB-047)** on pages that keep replacing an
   iframe, and `snap` no longer returns an empty element list on such pages. Cause: Puppeteer throws synchronously (not as a rejected promise) when a frame is already detached, so `.catch()`, promises built outside a `try`, and `bounded(frame.evaluate(...))` never saw it; every such site in the action, snapshot and verification code now contains it.
+  The same fix stops `upload` through a file-chooser trigger from leaving an abandoned `waitForFileChooser()` (a later
+  unhandled rejection) when the main frame is detached.
 - **`#5` and `[#5]` work as element ids (PROB-049)**, as `snap` prints them.
 - **Commands other than `nav` no longer start a blank browser when no session is open (PROB-051)**; they exit 1 with
   `no active browser session ... sutradhar nav <url>`. `nav <url>`, `newtab <url>`, `audit <url>` and `compare` still
