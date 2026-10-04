@@ -1,0 +1,25 @@
+// S6h CONTROL ONLY (never committed): the pre-S6h T5, verbatim, to show it is load-sensitive.
+import { mkdtemp, rm } from 'node:fs/promises';
+import os from 'node:os';
+import path from 'node:path';
+import { createTempProfileDir, removeSessionTempProfile } from '../../src/temp-profile.js';
+const sleep = (ms: number) => new Promise<void>((r) => setTimeout(r, ms));
+describe('OLD T5 control', () => {
+  let root: string;
+  beforeEach(async () => { root = await mkdtemp(path.join(os.tmpdir(), 'gap315-oldt5-')); });
+  afterEach(async () => { await rm(root, { recursive: true, force: true }); });
+  it('OLDT5: no rm attempt starts with less than MIN_RM_START_MS left (absolute deadlineAt)', async () => {
+    const d = await createTempProfileDir(root);
+    const deadlineAt = performance.now() + 2000;
+    const starts: number[] = [];
+    const rmFn = (async () => {
+      starts.push(deadlineAt - performance.now());
+      await sleep(600);
+      throw Object.assign(new Error('busy'), { code: 'EBUSY' });
+    }) as unknown as typeof rm;
+    const res = await removeSessionTempProfile(d, undefined, { tmpRoot: root, scan: async () => [], deadlineAt, rmFn });
+    expect(res.removed).toBe(false);
+    expect(starts.length).toBeGreaterThanOrEqual(1);
+    for (const s of starts) expect(s).toBeGreaterThanOrEqual(975);
+  });
+});

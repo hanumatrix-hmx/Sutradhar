@@ -317,19 +317,46 @@ describe('S6a: bounded cleanup (fake scan / fake rm, monotonic clock)', () => {
     }
   });
 
-  it('T5: no rm attempt starts with less than MIN_RM_START_MS left (absolute deadlineAt)', async () => {
-    const d = await createTempProfileDir(root);
-    const deadlineAt = performance.now() + 2000;
+  it("T5: no rm attempt starts with less than MIN_RM_START_MS left (absolute deadlineAt), asserted on the module's own remaining-ms value", async () => {
+    // Deterministic (S6h, S8 F-S8-4): the assertion is on the `remaining-ms=N` the module itself logged for each
+    // attempt, i.e. the SAME variable its `remaining < MIN_RM_START_MS` check used, so there is no wall-clock
+    // slack between the check and the measurement and no load-sensitive threshold. The fake's own reading of the
+    // clock is only logged (INFO), never asserted. The timings (a 400 ms failing rm + the 250 ms retry pause
+    // => attempts at about 0, 650 and 1300 ms of a 2000 ms deadline) put a third attempt at about 700 ms left,
+    // which a deadline check weaker than MIN_RM_START_MS (e.g. `remaining < 0`) would start.
+    const saved = process.env.SUTRADHAR_CLI_DEBUG_CLEANUP;
+    process.env.SUTRADHAR_CLI_DEBUG_CLEANUP = '1';
+    const written: string[] = [];
+    const spy = vi.spyOn(process.stderr, 'write').mockImplementation(((chunk: unknown) => {
+      written.push(String(chunk));
+      return true;
+    }) as typeof process.stderr.write);
     const starts: number[] = [];
-    const rmFn = (async () => {
-      starts.push(deadlineAt - performance.now());
-      await sleep(600);
-      throw Object.assign(new Error('busy'), { code: 'EBUSY' });
-    }) as unknown as typeof rm;
-    const res = await removeSessionTempProfile(d, undefined, { tmpRoot: root, scan: async () => [], deadlineAt, rmFn });
+    let d = '';
+    let res: { removed: boolean };
+    try {
+      d = await createTempProfileDir(root);
+      const deadlineAt = performance.now() + 2000;
+      const rmFn = (async () => {
+        starts.push(deadlineAt - performance.now());
+        await sleep(400);
+        throw Object.assign(new Error('busy'), { code: 'EBUSY' });
+      }) as unknown as typeof rm;
+      res = await removeSessionTempProfile(d, undefined, { tmpRoot: root, scan: async () => [], deadlineAt, rmFn });
+    } finally {
+      spy.mockRestore();
+      if (saved === undefined) delete process.env.SUTRADHAR_CLI_DEBUG_CLEANUP;
+      else process.env.SUTRADHAR_CLI_DEBUG_CLEANUP = saved;
+    }
     expect(res.removed).toBe(false);
-    expect(starts.length).toBeGreaterThanOrEqual(1);
-    for (const s of starts) expect(s).toBeGreaterThanOrEqual(975);
+    const attempts = written
+      .join('')
+      .split('\n')
+      .filter((l) => l.startsWith('[cleanup] rm-attempt ') && l.includes(`path="${path.resolve(d)}"`))
+      .map((l) => Number(/ remaining-ms=(-?\d+)\b/.exec(l)?.[1]));
+    expect(attempts.length).toBeGreaterThanOrEqual(1);
+    for (const remaining of attempts) expect(remaining).toBeGreaterThanOrEqual(MIN_RM_START_MS); // zero slack
+    console.info(`T5 INFO: module remaining-ms at each attempt=${attempts.join(',')}; the fake's own reading=${starts.map((x) => Math.round(x)).join(',')}`);
   });
 
   it('T8: a scan that fails (null) keeps the dir, for close and for sweep (fail closed)', async () => {
