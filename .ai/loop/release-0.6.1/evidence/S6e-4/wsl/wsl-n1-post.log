@@ -1,0 +1,48 @@
+# cmd: timeout 300 wsl.exe -e sh -c 'D=$(mktemp -d) && cp /mnt/e/AI-Cache/tmp/claude/E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/S6e-4/mod/temp-profile.mjs /mnt/e/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/.ai/loop/release-0.6.1/evidence/S4/probes/common.mjs /mnt/e/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/.ai/loop/release-0.6.1/evidence/S4/probes/wsl/*.mjs /mnt/e/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/.ai/loop/release-0.6.1/evidence/S6e-4/probes/wsl/*.mjs "$D"/ && cd "$D" && sha256sum temp-profile.mjs && R=$(mktemp -d -p "$PWD") && echo PROBE_ROOT=$R && node -v && TMPDIR="$R" PROBE_ROOT="$R" TP_MODULE="$PWD/temp-profile.mjs" timeout 240 node  wsl-n1.mjs 2>&1; echo "# exit=$?"; cd /; case "$D" in /tmp/tmp.*) rm -rf -- "$D" && echo "# removed own D=$D";; *) echo REFUSE;; esac' ; start=2026-10-04T06:35:21+05:30
+676162d0104416177e1dc8eb6ed64b145c9cad9a3ba748985c5350443537e6b5  temp-profile.mjs
+PROBE_ROOT=/tmp/tmp.rpgm4AvsFR/tmp.IjQApW2jUI
+v20.20.2
+[wsl-guard] root=/tmp/tmp.rpgm4AvsFR/tmp.IjQApW2jUI
+== wsl-n1 corrupt/unreadable owner marker fails closed node=v20.20.2 platform=linux tmpdir=/tmp/tmp.rpgm4AvsFR/tmp.IjQApW2jUI pid=800
+[cleanup] probe dir path="/tmp/tmp.rpgm4AvsFR/tmp.IjQApW2jUI/n1-XYzV1o/close-s7pVRr/sutradhar-cli-179000000060-AbC123"
+INFO [corrupt JSON] readOwnerPid=undefined
+[cleanup] probe close-result path="/tmp/tmp.rpgm4AvsFR/tmp.IjQApW2jUI/n1-XYzV1o/close-s7pVRr/sutradhar-cli-179000000060-AbC123" removed=false reason=owner-unknown
+PASS N1 [corrupt JSON] close keeps (owner-unknown) :: {"removed":false,"reason":"owner-unknown"}
+[cleanup] probe dir path="/tmp/tmp.rpgm4AvsFR/tmp.IjQApW2jUI/n1-XYzV1o/sweep-mrVnX2/sutradhar-cli-179000000061-AbC123"
+PASS N1 [corrupt JSON] sweep keeps (owner-unknown) :: ["sutradhar-cli-179000000061-AbC123:owner-unknown"]
+[cleanup] probe dir path="/tmp/tmp.rpgm4AvsFR/tmp.IjQApW2jUI/n1-XYzV1o/close-8xszZ0/sutradhar-cli-179000000062-AbC123"
+INFO [chromePid is a string] readOwnerPid=undefined
+[cleanup] probe close-result path="/tmp/tmp.rpgm4AvsFR/tmp.IjQApW2jUI/n1-XYzV1o/close-8xszZ0/sutradhar-cli-179000000062-AbC123" removed=false reason=owner-unknown
+PASS N1 [chromePid is a string] close keeps (owner-unknown) :: {"removed":false,"reason":"owner-unknown"}
+[cleanup] probe dir path="/tmp/tmp.rpgm4AvsFR/tmp.IjQApW2jUI/n1-XYzV1o/sweep-f0JgI4/sutradhar-cli-179000000063-AbC123"
+PASS N1 [chromePid is a string] sweep keeps (owner-unknown) :: ["sutradhar-cli-179000000063-AbC123:owner-unknown"]
+[cleanup] probe dir path="/tmp/tmp.rpgm4AvsFR/tmp.IjQApW2jUI/n1-XYzV1o/close-0zfNJQ/sutradhar-cli-179000000064-AbC123"
+INFO [marker path is a directory (EISDIR)] readOwnerPid=undefined
+[cleanup] probe close-result path="/tmp/tmp.rpgm4AvsFR/tmp.IjQApW2jUI/n1-XYzV1o/close-0zfNJQ/sutradhar-cli-179000000064-AbC123" removed=false reason=owner-unknown
+PASS N1 [marker path is a directory (EISDIR)] close keeps (owner-unknown) :: {"removed":false,"reason":"owner-unknown"}
+[cleanup] probe dir path="/tmp/tmp.rpgm4AvsFR/tmp.IjQApW2jUI/n1-XYzV1o/sweep-j4WPeS/sutradhar-cli-179000000065-AbC123"
+PASS N1 [marker path is a directory (EISDIR)] sweep keeps (owner-unknown) :: ["sutradhar-cli-179000000065-AbC123:owner-unknown"]
+[cleanup] probe dir path="/tmp/tmp.rpgm4AvsFR/tmp.IjQApW2jUI/n1-XYzV1o/close-B1vaMH/sutradhar-cli-179000000066-AbC123"
+INFO [chromePid is 0] readOwnerPid=0
+[cleanup] probe close-result path="/tmp/tmp.rpgm4AvsFR/tmp.IjQApW2jUI/n1-XYzV1o/close-B1vaMH/sutradhar-cli-179000000066-AbC123" removed=false reason=owner-unknown
+PASS N1 [chromePid is 0] close keeps (owner-unknown) :: {"removed":false,"reason":"owner-unknown"}
+[cleanup] probe dir path="/tmp/tmp.rpgm4AvsFR/tmp.IjQApW2jUI/n1-XYzV1o/sweep-DKkizp/sutradhar-cli-179000000067-AbC123"
+PASS N1 [chromePid is 0] sweep keeps (owner-unknown) :: ["sutradhar-cli-179000000067-AbC123:owner-unknown"]
+[cleanup] probe dir path="/tmp/tmp.rpgm4AvsFR/tmp.IjQApW2jUI/n1-XYzV1o/close-BApamr/sutradhar-cli-179000000068-AbC123"
+INFO [empty marker file] readOwnerPid=undefined
+[cleanup] probe close-result path="/tmp/tmp.rpgm4AvsFR/tmp.IjQApW2jUI/n1-XYzV1o/close-BApamr/sutradhar-cli-179000000068-AbC123" removed=false reason=owner-unknown
+PASS N1 [empty marker file] close keeps (owner-unknown) :: {"removed":false,"reason":"owner-unknown"}
+[cleanup] probe dir path="/tmp/tmp.rpgm4AvsFR/tmp.IjQApW2jUI/n1-XYzV1o/sweep-ydYAaU/sutradhar-cli-179000000069-AbC123"
+PASS N1 [empty marker file] sweep keeps (owner-unknown) :: ["sutradhar-cli-179000000069-AbC123:owner-unknown"]
+[cleanup] probe dir path="/tmp/tmp.rpgm4AvsFR/tmp.IjQApW2jUI/n1-XYzV1o/ctl-El5rQA/sutradhar-cli-1790000000701-AbC123"
+PASS N1 control: no marker, no lock -> removed (close) :: {"removed":true}
+[cleanup] probe dir path="/tmp/tmp.rpgm4AvsFR/tmp.IjQApW2jUI/n1-XYzV1o/ctl-5DO01s/sutradhar-cli-1790000000702-AbC123"
+PASS N1 control: no marker, no lock -> removed (sweep) :: {"removed":["/tmp/tmp.rpgm4AvsFR/tmp.IjQApW2jUI/n1-XYzV1o/ctl-5DO01s/sutradhar-cli-1790000000702-AbC123"],"kept":[]}
+[cleanup] probe dir path="/tmp/tmp.rpgm4AvsFR/tmp.IjQApW2jUI/n1-XYzV1o/ctl-j9DnzC/sutradhar-cli-1790000000703-AbC123"
+PASS N1 control: VALID marker with a dead owner -> removed :: deadPid=811 {"removed":true}
+[cleanup] probe dir path="/tmp/tmp.rpgm4AvsFR/tmp.IjQApW2jUI/n1-XYzV1o/ctl-PBQI7W/sutradhar-cli-1790000000704-AbC123"
+PASS N1 control: VALID marker with a live owner -> owner-alive (kept) :: {"removed":false,"reason":"owner-alive"}
+RESULT fails=0
+# exit=0
+# removed own D=/tmp/tmp.rpgm4AvsFR
+# end=2026-10-04T06:35:25+05:30

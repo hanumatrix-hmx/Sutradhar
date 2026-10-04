@@ -18,7 +18,8 @@
  *     (Chrome's renderer/GPU/utility children carry `--user-data-dir=` too). A failed scan
  *     means "unknown", and unknown means keep.
  *  3. The dir's owning Chrome PID (from the marker file this module writes, or Chrome's own
- *     POSIX `SingletonLock`) is not alive.
+ *     POSIX `SingletonLock`) is not alive. A marker that is PRESENT but unreadable or corrupt means
+ *     "owner unknown" and keeps the dir (`owner-unknown`); only an ABSENT marker falls back to the lock (S6e-4).
  *  4. Stale sweeps only: the dir was last modified more than {@link STALE_MIN_AGE_MS} ago.
  *  5. At removal time on Windows, Chrome's own exclusive `lockfile` handle is probed first: if
  *     it can't be deleted, some process still holds the profile open and the dir is kept.
@@ -146,6 +147,9 @@ export interface RemovalFacts {
   ageMs: number;
   /** 0 for `close` (we just stopped this dir's Chrome ourselves), {@link STALE_MIN_AGE_MS} for sweeps. */
   minAgeMs: number;
+  /** State of the owner marker: `absent` (falls back to `SingletonLock`), `valid`, or `invalid` (present but
+   *  unreadable/corrupt: `owner-unknown`, kept). `undefined` = not checked, decision unchanged. */
+  ownerState?: 'absent' | 'valid' | 'invalid';
   /** `lstat` says the candidate is a real directory (not a symlink/junction, not a file). `false` keeps it
    *  (`not-a-directory`); `undefined` means "not checked" and leaves the decision unchanged. */
   realDir?: boolean;
@@ -153,7 +157,10 @@ export interface RemovalFacts {
 
 export type RemovalDecision =
   | { remove: true }
-  | { remove: false; reason: 'not-auto-temp' | 'not-a-directory' | 'scan-unavailable' | 'in-use' | 'owner-alive' | 'too-young' };
+  | {
+      remove: false;
+      reason: 'not-auto-temp' | 'not-a-directory' | 'scan-unavailable' | 'in-use' | 'owner-unknown' | 'owner-alive' | 'too-young';
+    };
 
 /** Rules 1-4 (+ the real-directory check). Pure — the unit-tested core of every deletion. */
 export function decideRemoval(f: RemovalFacts): RemovalDecision {
@@ -161,6 +168,7 @@ export function decideRemoval(f: RemovalFacts): RemovalDecision {
   if (f.realDir === false) return { remove: false, reason: 'not-a-directory' };
   if (f.commandLines === null) return { remove: false, reason: 'scan-unavailable' };
   if (commandLinesReference(f.dir, f.commandLines)) return { remove: false, reason: 'in-use' };
+  if (f.ownerState === 'invalid') return { remove: false, reason: 'owner-unknown' };
   if (f.ownerAlive) return { remove: false, reason: 'owner-alive' };
   // minAgeMs 0 means "no threshold": a just-created dir's mtime can read slightly in the future.
   if (f.minAgeMs > 0 && f.ageMs < f.minAgeMs) return { remove: false, reason: 'too-young' };
@@ -298,15 +306,30 @@ async function runScan(scan: typeof scanCommandLines, timeoutMs: number): Promis
   return lines;
 }
 
-/** Rule 3 input: the marker's chromePid, else (POSIX) the PID in Chrome's `SingletonLock`
- *  symlink (`<hostname>-<pid>`). */
-export async function readOwnerPid(dir: string): Promise<number | undefined> {
+type OwnerMarkerRead = { state: 'absent' } | { state: 'valid'; pid: number } | { state: 'invalid' };
+
+/** Reads the owner marker with three distinct outcomes (N1): `absent` only for ENOENT (a pre-GAP-315 dir or
+ *  Chrome without a marker); ANY other read error (EACCES, EISDIR, EBUSY, ...), a JSON parse failure, or a
+ *  `chromePid` that is not a positive integer is `invalid`, which callers must treat as "owner unknown"
+ *  (keep), never as "owner dead". Never throws. */
+async function readOwnerMarker(dir: string): Promise<OwnerMarkerRead> {
+  let raw: string;
   try {
-    const m = JSON.parse(await readFile(path.join(dir, OWNER_MARKER), 'utf-8')) as Partial<OwnerMarker>;
-    if (typeof m.chromePid === 'number') return m.chromePid;
-  } catch {
-    // no marker (pre-GAP-315 dir) — fall through
+    raw = await readFile(path.join(dir, OWNER_MARKER), 'utf-8');
+  } catch (err) {
+    return (err as NodeJS.ErrnoException).code === 'ENOENT' ? { state: 'absent' } : { state: 'invalid' };
   }
+  try {
+    const m = JSON.parse(raw) as Partial<OwnerMarker> | null;
+    const pid = m?.chromePid;
+    return typeof pid === 'number' && Number.isInteger(pid) && pid > 0 ? { state: 'valid', pid } : { state: 'invalid' };
+  } catch {
+    return { state: 'invalid' };
+  }
+}
+
+/** POSIX only: the PID in Chrome's `SingletonLock` symlink (`<hostname>-<pid>`), if there is one. */
+async function readLockPid(dir: string): Promise<number | undefined> {
   try {
     const target = await readlink(path.join(dir, 'SingletonLock'));
     const pid = Number(target.slice(target.lastIndexOf('-') + 1));
@@ -315,6 +338,19 @@ export async function readOwnerPid(dir: string): Promise<number | undefined> {
     // not POSIX Chrome, or no lock
   }
   return undefined;
+}
+
+/** Rule 3 input: the marker's chromePid, else (POSIX) the PID in Chrome's `SingletonLock`
+ *  symlink (`<hostname>-<pid>`). Exported with its original behaviour (the S4 probes call it); the
+ *  removal rules use {@link readOwnerMarker} so that a corrupt marker is not mistaken for "no owner". */
+export async function readOwnerPid(dir: string): Promise<number | undefined> {
+  try {
+    const m = JSON.parse(await readFile(path.join(dir, OWNER_MARKER), 'utf-8')) as Partial<OwnerMarker>;
+    if (typeof m.chromePid === 'number') return m.chromePid;
+  } catch {
+    // no marker (pre-GAP-315 dir) — fall through
+  }
+  return readLockPid(dir);
 }
 
 /** True only for a REAL directory: `lstat` (never follows) succeeds and the entry is neither a symlink
@@ -352,12 +388,14 @@ async function gatherFacts(
   } catch {
     return undefined; // already gone
   }
-  const ownerPid = await readOwnerPid(dir);
+  const marker = await readOwnerMarker(dir);
+  const ownerPid = marker.state === 'valid' ? marker.pid : await readLockPid(dir);
   return {
     dir,
     tmpRoot,
     commandLines,
     ownerPid,
+    ownerState: marker.state,
     ownerAlive: ownerPid !== undefined && isAlive(ownerPid),
     ageMs: Date.now() - mtimeMs,
     minAgeMs,

@@ -1,0 +1,41 @@
+# cmd: TEMP=ISO TMP=ISO TMPDIR=ISO NODE_OPTIONS=--import=file:///$SP/iso/assert-tmp.mjs SUTRADHAR_CLI_DEBUG_CLEANUP=1 TP_MODULE=E:/AI-Cache/tmp/claude/E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/S6e-4/mod/temp-profile.mjs timeout 600 "/c/Program Files/nodejs/node" $EV/S4/probes/win-a7.mjs ; ISO=E:/AI-Cache/tmp/claude/E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/S6e-4-tmp-post-v25 ; module-sha=676162d0104416177e1dc8eb6ed64b145c9cad9a3ba748985c5350443537e6b5 ; start=2026-10-04T06:36:04+05:30
+[iso-guard] tmpdir=e:/ai-cache/tmp/claude/e--hmx-projects-internal-projects-pinchtab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/s6e-4-tmp-post-v25 pid=81828
+[probe-guard] tmpdir=e:/ai-cache/tmp/claude/e--hmx-projects-internal-projects-pinchtab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/s6e-4-tmp-post-v25 pid=81828
+== win-a7 fail closed node=v25.0.0 platform=win32 tmpdir=E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S6e-4-tmp-post-v25 pid=81828
+[cleanup] probe dir path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S6e-4-tmp-post-v25\a7-7OXwIT\sutradhar-cli-1790000000300-AbC123"
+[cleanup] consider path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S6e-4-tmp-post-v25\a7-7OXwIT\sutradhar-cli-1790000000300-AbC123" mode=sweep
+[cleanup] scan ms=0 result=null
+[cleanup] decision path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S6e-4-tmp-post-v25\a7-7OXwIT\sutradhar-cli-1790000000300-AbC123" reason=scan-unavailable
+[cleanup] kept path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S6e-4-tmp-post-v25\a7-7OXwIT\sutradhar-cli-1790000000300-AbC123" reason=scan-unavailable
+[cleanup] phase sweep ms=1 removed=0 kept=1
+PASS A7 null scan sweep keeps :: ["scan-unavailable"]
+[cleanup] consider path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S6e-4-tmp-post-v25\a7-7OXwIT\sutradhar-cli-1790000000300-AbC123" mode=close
+[cleanup] scan ms=0 result=null
+[cleanup] decision path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S6e-4-tmp-post-v25\a7-7OXwIT\sutradhar-cli-1790000000300-AbC123" reason=scan-unavailable
+[cleanup] kept path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S6e-4-tmp-post-v25\a7-7OXwIT\sutradhar-cli-1790000000300-AbC123" reason=scan-unavailable
+[cleanup] phase cleanup ms=1
+PASS A7 null scan close keeps :: {"removed":false,"reason":"scan-unavailable"}
+PASS A7 scanCommandLines(1) -> null :: got=null in 19ms
+PASS A7 real scan ran (array) :: len=35
+INFO real scan lines=35 selfLines=1 (the query's own powershell.exe matches its own filter, so a Windows scan never returns [])
+PASS A7 real scan: every line carries the prefix
+[cleanup] consider path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S6e-4-tmp-post-v25\a7-7OXwIT\sutradhar-cli-1790000000300-AbC123" mode=close
+[cleanup] scan ms=486 result=35
+[cleanup] decision path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S6e-4-tmp-post-v25\a7-7OXwIT\sutradhar-cli-1790000000300-AbC123" reason=remove
+[cleanup] rm-attempt path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S6e-4-tmp-post-v25\a7-7OXwIT\sutradhar-cli-1790000000300-AbC123" n=1 remaining-ms=14513
+[cleanup] removed path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S6e-4-tmp-post-v25\a7-7OXwIT\sutradhar-cli-1790000000300-AbC123"
+[cleanup] phase cleanup ms=489
+FAIL A7 powershell unresolvable -> scan null :: got=array(35)
+FAIL A7 powershell unresolvable -> close keeps :: {"removed":true}
+[cleanup] probe dir path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S6e-4-tmp-post-v25\a7-7OXwIT\sutradhar-cli-1790000000301"
+OBS corrupt marker -> readOwnerPid=undefined (unknown owner is treated as not alive)
+OBS removeSessionTempProfile(non-string dir) throws=no
+[cleanup] consider path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S6e-4-tmp-post-v25\a7-7OXwIT\sutradhar-cli-1790000000301" mode=close
+[cleanup] scan-error message="scan boom"
+[cleanup] scan ms=0 result=null
+[cleanup] decision path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S6e-4-tmp-post-v25\a7-7OXwIT\sutradhar-cli-1790000000301" reason=scan-unavailable
+[cleanup] kept path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S6e-4-tmp-post-v25\a7-7OXwIT\sutradhar-cli-1790000000301" reason=scan-unavailable
+[cleanup] phase cleanup ms=1
+OBS removeSessionTempProfile(rejecting scan) throws=no; d3 exists=true
+RESULT fails=2
+# exit=1 end=2026-10-04T06:36:05+05:30

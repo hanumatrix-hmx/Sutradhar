@@ -688,3 +688,91 @@ describe('S6e-1 (F1/N3): links and non-directories are kept, never followed', ()
     expect(decideRemoval(facts())).toEqual({ remove: true }); // realDir undefined: unchanged (port-probe compatibility)
   });
 });
+
+// ---------------------------------------------------------------------------------------------
+// S6e-4 (N1): an owner marker that is PRESENT but unreadable or corrupt means "owner unknown", never
+// "owner dead". Before this, `{"chromePid":"123"` made readOwnerPid return undefined, which rule 3
+// treated as a dead owner (fail open). Only a genuinely ABSENT marker falls back to SingletonLock.
+// ---------------------------------------------------------------------------------------------
+describe('S6e-4 (N1): an unreadable or corrupt owner marker fails CLOSED (owner-unknown)', () => {
+  let root: string;
+  beforeEach(async () => {
+    root = await mkdtemp(path.join(os.tmpdir(), 'gap315-n1-'));
+  });
+  afterEach(async () => {
+    await rm(root, { recursive: true, force: true });
+  });
+
+  /** A stale, unreferenced profile dir whose marker is made by `makeMarker` (or absent). */
+  async function staleWithMarker(name: string, makeMarker?: (markerPath: string) => Promise<void>): Promise<string> {
+    const d = path.join(root, name);
+    await mkdir(path.join(d, 'Default'), { recursive: true });
+    await writeFile(path.join(d, 'Default', 'Preferences'), '{}');
+    if (makeMarker) await makeMarker(path.join(d, OWNER_MARKER));
+    const past = new Date(Date.now() - 2 * STALE_MIN_AGE_MS);
+    await utimes(d, past, past);
+    return d;
+  }
+
+  const BAD_MARKERS: Array<[string, (markerPath: string) => Promise<void>]> = [
+    ['N1-a corrupt JSON', (p) => writeFile(p, '{"chromePid":"123"')],
+    ['N1-b chromePid is a string', (p) => writeFile(p, JSON.stringify({ chromePid: 'abc', cliPid: 1 }))],
+    ['N1-c the marker path is a directory (EISDIR)', (p) => mkdir(p)],
+    ['chromePid is 0', (p) => writeFile(p, JSON.stringify({ chromePid: 0 }))],
+    ['chromePid is negative', (p) => writeFile(p, JSON.stringify({ chromePid: -5 }))],
+    ['chromePid is fractional', (p) => writeFile(p, JSON.stringify({ chromePid: 12.5 }))],
+    ['chromePid is missing', (p) => writeFile(p, JSON.stringify({ cliPid: 1 }))],
+    ['marker is JSON null', (p) => writeFile(p, 'null')],
+    ['marker is an empty file', (p) => writeFile(p, '')],
+  ];
+
+  for (const [name, make] of BAD_MARKERS) {
+    it(`${name}: sweep and close keep the dir with owner-unknown`, async () => {
+      const forSweep = await staleWithMarker('sutradhar-cli-1700000000100-SWP', make);
+      const sweep = await sweepStaleTempProfiles({ tmpRoot: root, scan: async () => [], minAgeMs: 0, isAlive: () => false });
+      expect(sweep.removed).toEqual([]);
+      expect(sweep.kept).toEqual([{ dir: forSweep, reason: 'owner-unknown' }]);
+      expect(await exists(forSweep)).toBe(true);
+
+      const forClose = await staleWithMarker('sutradhar-cli-1700000000101-CLS', make);
+      const res = await removeSessionTempProfile(forClose, undefined, { tmpRoot: root, scan: async () => [], isAlive: () => false });
+      expect(res).toEqual({ removed: false, reason: 'owner-unknown' });
+      expect(await exists(forClose)).toBe(true);
+    });
+  }
+
+  it('N1-d (positive control): no marker and no lock is still removed by sweep and close', async () => {
+    const a = await staleWithMarker('sutradhar-cli-1700000000102-AAA');
+    const sweep = await sweepStaleTempProfiles({ tmpRoot: root, scan: async () => [], minAgeMs: 0, isAlive: () => false });
+    expect(sweep.removed).toEqual([a]);
+    const b = await staleWithMarker('sutradhar-cli-1700000000103-BBB');
+    expect(await removeSessionTempProfile(b, undefined, { tmpRoot: root, scan: async () => [], isAlive: () => false })).toEqual({ removed: true });
+    expect(await exists(a)).toBe(false);
+    expect(await exists(b)).toBe(false);
+  });
+
+  it('a VALID marker whose owner is dead is still removed; with an alive owner it is owner-alive (unchanged)', async () => {
+    const dead = await staleWithMarker('sutradhar-cli-1700000000104-DED', (p) => writeFile(p, JSON.stringify({ chromePid: 4242, cliPid: 1 })));
+    expect(await removeSessionTempProfile(dead, undefined, { tmpRoot: root, scan: async () => [], isAlive: () => false })).toEqual({ removed: true });
+    const live = await staleWithMarker('sutradhar-cli-1700000000105-LIV', (p) => writeFile(p, JSON.stringify({ chromePid: 4242, cliPid: 1 })));
+    expect(await removeSessionTempProfile(live, undefined, { tmpRoot: root, scan: async () => [], isAlive: () => true })).toEqual({ removed: false, reason: 'owner-alive' });
+  });
+
+  it('readOwnerPid keeps its old behaviour (the S4 probes call it): corrupt marker -> undefined, valid marker -> pid', async () => {
+    const corrupt = await staleWithMarker('sutradhar-cli-1700000000106-COR', (p) => writeFile(p, '{"chromePid":"123"'));
+    expect(await readOwnerPid(corrupt)).toBeUndefined();
+    const valid = await staleWithMarker('sutradhar-cli-1700000000107-VAL', (p) => writeFile(p, JSON.stringify({ chromePid: 777 })));
+    expect(await readOwnerPid(valid)).toBe(777);
+  });
+
+  it('decideRemoval: ownerState invalid is owner-unknown (after in-use, before owner-alive); absent/undefined are unchanged', () => {
+    expect(decideRemoval(facts({ ownerState: 'invalid' }))).toEqual({ remove: false, reason: 'owner-unknown' });
+    expect(decideRemoval(facts({ ownerState: 'invalid', ownerPid: 123, ownerAlive: true }))).toEqual({ remove: false, reason: 'owner-unknown' });
+    expect(decideRemoval(facts({ ownerState: 'invalid', commandLines: [`chrome --user-data-dir=${DIR}`] }))).toEqual({ remove: false, reason: 'in-use' });
+    expect(decideRemoval(facts({ ownerState: 'invalid', commandLines: null }))).toEqual({ remove: false, reason: 'scan-unavailable' });
+    expect(decideRemoval(facts({ ownerState: 'absent' }))).toEqual({ remove: true });
+    expect(decideRemoval(facts({ ownerState: 'absent', ownerPid: 123, ownerAlive: true }))).toEqual({ remove: false, reason: 'owner-alive' });
+    expect(decideRemoval(facts({ ownerState: 'valid', ownerPid: 123, ownerAlive: false }))).toEqual({ remove: true });
+    expect(decideRemoval(facts())).toEqual({ remove: true }); // ownerState undefined: unchanged (port-probe compatibility)
+  });
+});
