@@ -1,0 +1,8 @@
+Q7 root, all logs except L1s + harness.log:
+cleanup-lines=271 outside-iso=0
+exit=0
+'S 7' root, L1s logs:
+cleanup-lines=20 outside-iso=0
+negative control (L1s logs vs Q7 root):
+neg-exit=1
+iso-guard lines: 49 ISOLATION-GUARD: 0

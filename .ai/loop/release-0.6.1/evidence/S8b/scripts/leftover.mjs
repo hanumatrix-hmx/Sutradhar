@@ -1,0 +1,10 @@
+import { execFileSync, spawn } from 'node:child_process'; import path from 'node:path';
+const SP = 'e:/ai-cache/tmp/claude/e--hmx-projects-internal-projects-pinchtab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad';
+const roots = ['qb', 'q7', 'q8', 's 7', 's8y', 'a1', 'a2', 'a3', 'a4', 'a5', 'a6', 'a7', 'a8', 's8b-tmp', 's8b/mut', 's8b/load', 's8b/bins'].map((r) => SP + '/' + r);
+const needles = roots.map((r) => r + '/').concat(roots.filter((r) => r.includes('s8b-tmp')));
+const q = () => execFileSync('C:/Windows/System32/WindowsPowerShell/v1.0/powershell.exe', ['-NoProfile', '-NonInteractive', '-ExecutionPolicy', 'Bypass', '-File', SP + '/S8b/leftover.ps1'], { env: { ...process.env, NEEDLES: needles.join('|') }, encoding: 'utf8' }).split(/\r?\n/).filter(Boolean);
+const d = spawn(process.execPath, ['-e', 'setTimeout(()=>{},60000)', SP + '/Q7/positive-control'], { windowsHide: true, env: { ...process.env, NODE_OPTIONS: '' } });
+await new Promise((r) => setTimeout(r, 800));
+const pc = q(); console.log(`positive-control: dummy pid=${d.pid} found=${pc.some((l) => Number(l.split(' ')[0]) === d.pid)} lines=${pc.join(';')}`);
+d.kill(); await new Promise((r) => setTimeout(r, 800));
+const left = q(); console.log(`final leftover processes referencing my roots: ${left.length} ${left.join(';')}`);

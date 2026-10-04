@@ -1,0 +1,31 @@
+## T5-BASELINE-new: vitest-exit=0 0 failed | 55 passed | 0 skipped | suites-failed 0 ms=10641 restored-identical=true
+   change: HEAD spec, HEAD module
+   must-fail=[] BASELINE-GREEN=true
+
+## LAT80-new-T5: vitest-exit=0 0 failed | 55 passed | 0 skipped | suites-failed 0 ms=12628 restored-identical=true
+   change: NEW T5 under the 80 ms latency (must still PASS: run expected green)
+   must-fail=[] CAUGHT=false
+
+## OLD-T5-no-latency: vitest-exit=0 0 failed | 55 passed | 0 skipped | suites-failed 0 ms=11064 restored-identical=true
+   change: OLD T5 (fe71ceb) on the real module (must PASS)
+   must-fail=[] CAUGHT=false
+
+## LAT80-old-T5: vitest-exit=1 1 failed | 54 passed | 0 skipped | suites-failed 0 ms=12975 restored-identical=true
+   change: OLD T5 under the 80 ms latency (expected to FAIL: load-sensitive)
+   must-fail=["T5:"] CAUGHT=true
+   FAILED: temp-profile.spec.ts >  S6a: bounded cleanup (fake scan / fake rm, monotonic clock) T5: no rm attempt starts with less than MIN_RM_START_MS left (absolute deadlineAt)
+## OLDGUARD-M-O6-i: vitest-exit=0 0 failed | 25 passed | 0 skipped | suites-failed 0 ms=1417 restored-identical=true
+   change: pre-S6f guard (b) + placement (i): expected to SURVIVE (0 failed)
+   must-fail=[] CAUGHT=false
+
+## OLDGUARD-only: vitest-exit=0 0 failed | 25 passed | 0 skipped | suites-failed 0 ms=1380 restored-identical=true
+   change: pre-S6f guard (b) on the real code: green
+   must-fail=[] CAUGHT=false
+
+# SUMMARY
+T5-BASELINE-new BASELINE-GREEN=true restored=true
+LAT80-new-T5 CAUGHT=false restored=true
+OLD-T5-no-latency CAUGHT=false restored=true
+LAT80-old-T5 CAUGHT=true restored=true
+OLDGUARD-M-O6-i CAUGHT=false restored=true
+OLDGUARD-only CAUGHT=false restored=true

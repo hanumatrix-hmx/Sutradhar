@@ -1,0 +1,13 @@
+win-a7b mutFAILOPEN v25 exit=1 pathcheck=0 5 PASS 3 FAIL guard=1 isoguardfail=0 realtemp-same=yes cleanup-lines=25 outside-iso=0
+win-plant mutMF3 v18 exit=1 pathcheck=0 1 PASS 1 FAIL guard=1 isoguardfail=0 realtemp-same=yes cleanup-lines=8 outside-iso=0
+FAIL A7b scanCommandLines() with unresolvable scanner -> null :: got=array(0) ms=3
+FAIL A7b close keeps dir with scan-unavailable :: {"removed":true}
+FAIL A7b sweep keeps dir with scan-unavailable :: []
+INFO planted scan took ms=8032 (20000 = planted cmd.exe ran and waited on stdin until the scan timeout)
+FAIL PLANT: scan unaffected by a powershell.exe in cwd (expected FAIL on branch; S6a powershellExe() fixes)
+browser-chrome-headless-MUTANT-M2 exit=1 pathcheck=0 77 PASS 6 FAIL guards=5 isoguardfail=0 realtemp-same=yes cleanup-lines=177 outside-iso=0 bpid=STARTED browser pid=69228
+[v25] FAIL A4 close no file missing :: count 230->119 bytes 14099925->1137790 missing=["ActorSafetyLists/","AmountExtractionHeuristicRegexes/","CaptchaProviders
+[v18] FAIL A4 close no file missing :: count 119->118 bytes 1144571->1144571 missing=["Default/Segmentation Platform/"]
+[v20] FAIL A4 close no file missing :: count 124->118 bytes 1168216->1163551 missing=["Default/Download Service/","Default/Download Service/EntryDB/","Default/D
+PASS browser pid exited within 15 s
+PASS post-kill close removes the now-dead profile (positive control) :: {"removed":true}

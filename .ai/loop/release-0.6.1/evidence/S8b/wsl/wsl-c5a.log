@@ -1,0 +1,23 @@
+# cmd: timeout 700 wsl.exe -e sh -c 'D=$(mktemp -d) && cp /mnt/e/AI-Cache/tmp/claude/E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/S8b/mod/temp-profile.mjs /mnt/e/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/.ai/loop/release-0.6.1/evidence/S4/probes/common.mjs /mnt/e/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/.ai/loop/release-0.6.1/evidence/S4/probes/wsl/*.mjs /mnt/e/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/.ai/loop/release-0.6.1/evidence/S6e/probes/wsl-a7b.mjs "$D"/ && cd "$D" && sha256sum temp-profile.mjs wsl-c5a.mjs && R=$(mktemp -d -p "$PWD") && echo PROBE_ROOT=$R && node -v && TMPDIR="$R" PROBE_ROOT="$R" TP_MODULE="$PWD/temp-profile.mjs" timeout 600 node  wsl-c5a.mjs 2>&1; echo "# exit=$?"; cd /; case "$D" in /tmp/tmp.*) rm -rf -- "$D" && echo "# removed own D=$D";; *) echo REFUSE;; esac' ; start=2026-10-04T08:34:17+05:30
+676162d0104416177e1dc8eb6ed64b145c9cad9a3ba748985c5350443537e6b5  temp-profile.mjs
+b9cb5b319b7b7fff5474237772153b06971e1f1396154efc1ad46737704d14b1  wsl-c5a.mjs
+PROBE_ROOT=/tmp/tmp.8OsohfDTFj/tmp.IONB5zrst2
+v20.20.2
+[wsl-guard] root=/tmp/tmp.8OsohfDTFj/tmp.IONB5zrst2
+== wsl-c5a argv longer than 4096 chars node=v20.20.2 platform=linux tmpdir=/tmp/tmp.8OsohfDTFj/tmp.IONB5zrst2 pid=1002
+[cleanup] probe dir path="/tmp/tmp.8OsohfDTFj/tmp.IONB5zrst2/c5a-Cz607b/sutradhar-cli-179000000043-AbC123" pad=100
+INFO pad=100 scan lines=1 longest=247 hit=true
+[cleanup] probe close-result path="/tmp/tmp.8OsohfDTFj/tmp.IONB5zrst2/c5a-Cz607b/sutradhar-cli-179000000043-AbC123" removed=false reason=in-use
+PASS C5a pad=100 -> in-use :: {"removed":false,"reason":"in-use"}
+[cleanup] probe dir path="/tmp/tmp.8OsohfDTFj/tmp.IONB5zrst2/c5a-Cz607b/sutradhar-cli-179000000044-AbC123" pad=4200
+INFO pad=4200 scan lines=1 longest=4347 hit=true
+[cleanup] probe close-result path="/tmp/tmp.8OsohfDTFj/tmp.IONB5zrst2/c5a-Cz607b/sutradhar-cli-179000000044-AbC123" removed=false reason=in-use
+PASS C5a pad=4200 -> in-use :: {"removed":false,"reason":"in-use"}
+[cleanup] probe dir path="/tmp/tmp.8OsohfDTFj/tmp.IONB5zrst2/c5a-Cz607b/sutradhar-cli-179000000045-AbC123" pad=70000
+INFO pad=70000 scan lines=1 longest=70147 hit=true
+[cleanup] probe close-result path="/tmp/tmp.8OsohfDTFj/tmp.IONB5zrst2/c5a-Cz607b/sutradhar-cli-179000000045-AbC123" removed=false reason=in-use
+PASS C5a pad=70000 -> in-use :: {"removed":false,"reason":"in-use"}
+RESULT fails=0
+# exit=0
+# removed own D=/tmp/tmp.8OsohfDTFj
+# end=2026-10-04T08:34:21+05:30

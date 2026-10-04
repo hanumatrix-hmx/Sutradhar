@@ -1,0 +1,25 @@
+PASS close v060: harness had 0 failing checks
+PASS close head: harness had 0 failing checks
+PASS close ctl: harness had 0 failing checks
+PASS close: 0.6.0 meets the base AC (exit!=0 number, no timeout, Fatal errno on state.json, no "Session closed.") :: {"code":1,"errno":"EBUSY"}
+PASS close: HEAD meets base AC + debug-order AC (phase kill, no state-cleared, removed(dir) before Fatal, no warning, dir gone at return) :: {"code":1,"errno":"EBUSY","removedIdx":6,"fatalIdx":8}
+PASS close: exit codes equal and non-zero :: 1/1
+PASS close: same errno :: EBUSY/EBUSY
+PASS close: 0.6.0 leaked the dir (harness removed it); HEAD removed it itself
+PASS close: both left chromePid recorded (as 0.6.0) - harness deleted state.json
+PASS close: NEGATIVE CONTROL bff46db FAILS the AC :: {"code":0,"sessionClosed":true,"couldNotClear":true}
+PASS selfheal v060: harness had 0 failing checks
+PASS selfheal head: harness had 0 failing checks
+PASS selfheal ctl: harness had 0 failing checks
+PASS selfheal: 0.6.0 meets the base AC (exit!=0 number, no timeout, Fatal errno on state.json, no "Session closed.") :: {"code":1,"errno":"EBUSY"}
+PASS selfheal: HEAD meets base AC + debug-order AC (phase kill, no state-cleared, removed(dir) before Fatal, no warning, dir gone at return) :: {"code":1,"errno":"EBUSY","removedIdx":7,"fatalIdx":9}
+PASS selfheal: exit codes equal and non-zero :: 1/1
+PASS selfheal: same errno :: EBUSY/EBUSY
+PASS selfheal: both printed the unreachable note (self-heal path really ran)
+PASS selfheal: 0.6.0 leaked the dir (harness removed it); HEAD removed it itself
+PASS selfheal: both left chromePid recorded (as 0.6.0) - harness deleted state.json
+PASS selfheal: NEGATIVE CONTROL bff46db FAILS the AC :: {"code":0,"sessionClosed":false,"couldNotClear":true}
+PASS live mutant M-B2e (cmdClose .catch) FAILS the close AC :: {"code":0,"sessionClosed":true}
+PASS live mutant M-B2d (self-heal .catch) FAILS the self-heal AC :: {"code":0}
+compare-bad=0
+compare-exit=0

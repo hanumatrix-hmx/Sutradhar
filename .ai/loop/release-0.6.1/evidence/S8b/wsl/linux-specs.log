@@ -1,0 +1,41 @@
+# cmd: timeout 900 wsl.exe -e sh <$SP>/S8b/linux-specs.sh ; start=2026-10-04T09:04:30+05:30
+D=/tmp/tmp.KtSxEW8TDQ node=v20.20.2 uname=Linux 6.18.33.2-microsoft-standard-WSL2
+346572f5b6baff4c8a3fc1b8315a057a8d9338e274fc9401655346430100a0fd  src/temp-profile.ts
+43a37a483a1ef88a86827e7c07ce0722490ee8e94821d3a0d81088eeb1525a38  src/spawn-chrome.ts
+2feb90a45c481ba94e32f07ff8bfbcacc86d0e8e8d5b3c4162902a385aa70061  src/close-session.ts
+740552c7adcc98f3ef29717fbf574e041181df4049e4d48b4aed2d66b7027de2  src/cli.ts
+87d5b8c80b9e088347e8eaa4bf37be219b1381f89b1178d74d35fb53feeaffd9  tests/unit/temp-profile.spec.ts
+47882fec44e7d0b2b131406677a063f7b4304aa24f2b1aec8d31082529710dfa  tests/unit/close-session.spec.ts
+npm-install-exit=0
+vitest=1.6.1
+# run 1 vitest-exit=0
+ Test Files  5 passed (5)
+      Tests  115 passed | 3 skipped (118)
+# run 2 vitest-exit=0
+ Test Files  5 passed (5)
+      Tests  115 passed | 3 skipped (118)
+# run 3 vitest-exit=0
+ Test Files  5 passed (5)
+      Tests  115 passed | 3 skipped (118)
+# T5/G6g/O6b/(b) lines of run 1:
+ ✓ tests/unit/scan-command-lines.spec.ts > readProcCommandLines (the /proc reader) > D5: NUL separators become spaces, non-numeric entries are skipped, empty cmdlines (kernel threads) are dropped
+ ✓ tests/unit/scan-command-lines.spec.ts > readProcCommandLines (the /proc reader) > D6: a process that exits between readdir and read is skipped, not an error
+ ✓ tests/unit/close-session.spec.ts > stopSpawnedChrome (close/recovery order) > O7 source guard: cmdClose clears the state exactly where the plan says > (b) exactly one clearState( in cmdClose, inside the else of `if (state.chromePid)` and OUTSIDE `if (!closeBlocked) {...}`
+ ✓ tests/unit/close-session.spec.ts > stopSpawnedChrome (close/recovery order) > S6g: a failing clearState is rethrown (0.6.0 failure semantics), after the cleanup > G6g-1 (AC1): clearState rejects -> the cleanup still runs with the same args -> rejects with the SAME error object, no extra warning
+ ✓ tests/unit/close-session.spec.ts > stopSpawnedChrome (close/recovery order) > S6g: a failing clearState is rethrown (0.6.0 failure semantics), after the cleanup > G6g-1b: the rethrow happens only AFTER the (slow) cleanup has finished
+ ✓ tests/unit/close-session.spec.ts > stopSpawnedChrome (close/recovery order) > S6g: a failing clearState is rethrown (0.6.0 failure semantics), after the cleanup > G6g-2 (AC2): clearState resolves -> nothing is thrown (the O1-O10 order is unchanged)
+ ✓ tests/unit/close-session.spec.ts > stopSpawnedChrome (close/recovery order) > S6g: a failing clearState is rethrown (0.6.0 failure semantics), after the cleanup > G6g-3 (F7-i): clearState AND cleanup reject -> rejects with the clearState error, exactly one cleanup warning
+ ✓ tests/unit/close-session.spec.ts > stopSpawnedChrome (close/recovery order) > S6g: a failing clearState is rethrown (0.6.0 failure semantics), after the cleanup > G6g-4 (F7-ii): clearState rejects with tempProfile false or absent -> rejects, the cleanup is not called
+ ✓ tests/unit/close-session.spec.ts > stopSpawnedChrome (close/recovery order) > S6g: a failing clearState is rethrown (0.6.0 failure semantics), after the cleanup > G6g-5 (F7-iii): clearState AND kill reject -> rejects with the clearState error; the kill error is debug-only
+ ✓ tests/unit/close-session.spec.ts > stopSpawnedChrome (close/recovery order) > S6g: a failing clearState is rethrown (0.6.0 failure semantics), after the cleanup > G6g-6: a non-Error rejection value is rethrown unchanged too
+ ✓ tests/unit/close-session.spec.ts > stopSpawnedChrome (close/recovery order) > O6b source guard: neither `await stopSpawnedChrome(` call site swallows the rejection > located both real bodies
+ ✓ tests/unit/close-session.spec.ts > stopSpawnedChrome (close/recovery order) > O6b source guard: neither `await stopSpawnedChrome(` call site swallows the rejection > self-heal: the call is not followed by .catch/.then and not inside a try block
+ ✓ tests/unit/close-session.spec.ts > stopSpawnedChrome (close/recovery order) > O6b source guard: neither `await stopSpawnedChrome(` call site swallows the rejection > cmdClose: the call is not followed by .catch/.then and not inside a try block
+ ✓ tests/unit/close-session.spec.ts > stopSpawnedChrome (close/recovery order) > O6b source guard: neither `await stopSpawnedChrome(` call site swallows the rejection > the detector itself flags every swallowing form (positive controls) and passes the plain call
+stdout | tests/unit/temp-profile.spec.ts > S6a: bounded cleanup (fake scan / fake rm, monotonic clock) > T5: no rm attempt starts with less than MIN_RM_START_MS left (absolute deadlineAt), asserted on the module's own remaining-ms value
+T5 INFO: module remaining-ms at each attempt=1999,1348; the fake's own reading=1999,1347
+ ✓ tests/unit/temp-profile.spec.ts > S6a: bounded cleanup (fake scan / fake rm, monotonic clock) > T5: no rm attempt starts with less than MIN_RM_START_MS left (absolute deadlineAt), asserted on the module's own remaining-ms value 1307ms
+ ✓ tests/unit/temp-profile.spec.ts > S6e-1 (F1/N3): links and non-directories are kept, never followed > F1-b: a dir symlink named like a profile is kept (skipped with a logged reason where symlinks need privilege)
+      Tests  115 passed | 3 skipped (118)
+# removed own D=/tmp/tmp.KtSxEW8TDQ
+# wsl-exit=0 end=2026-10-04T09:05:12+05:30

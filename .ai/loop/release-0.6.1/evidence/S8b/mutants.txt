@@ -1,0 +1,387 @@
+# start 2026-10-04T08:48:07+05:30 runner=c22d2e7fd962cdfe defs=6f911d87430825bb
+## BASELINE: vitest-exit=0 0 failed | 118 passed | 0 skipped | suites-failed 0 ms=10748 restored-identical=true
+   change: no change (the copy must be green)
+   must-fail=[] BASELINE-GREEN=true
+
+## M-O1-s6g: vitest-exit=1 10 failed | 108 passed | 0 skipped | suites-failed 0 ms=10718 restored-identical=true
+   change: clearState moved after the cleanup (post-S6g anchors)
+   must-fail=["O1:","O2:"] CAUGHT=true
+   FAILED: close-session.spec.ts >  stopSpawnedChrome (close/recovery order) O1: normal close runs kill -> clearState -> cleanup, and cleanup sees NO chromePid in the store
+   FAILED: close-session.spec.ts >  stopSpawnedChrome (close/recovery order) O2: an interrupted (never-settling) cleanup leaves the state already cleared; a second stop makes 0 kill calls
+   FAILED: close-session.spec.ts >  stopSpawnedChrome (close/recovery order) O4: a slow kill (resolves only at its cap) still gets the state cleared and the cleanup run, after kill-end
+   FAILED: close-session.spec.ts >  stopSpawnedChrome (close/recovery order) O7: a state record written during the cleanup (a concurrent `nav` from the same cwd) survives
+   FAILED: close-session.spec.ts >  stopSpawnedChrome (close/recovery order) a failing kill never throws (N2) and the later steps still run; the kill error is debug-only
+   FAILED: close-session.spec.ts >  stopSpawnedChrome (close/recovery order) S6g: a failing clearState is rethrown (0.6.0 failure semantics), after the cleanup G6g-1 (AC1): clearState rejects -> the cleanup still runs with the same args -> rejects with the SAME error object, no extra warning
+   FAILED: close-session.spec.ts >  stopSpawnedChrome (close/recovery order) S6g: a failing clearState is rethrown (0.6.0 failure semantics), after the cleanup G6g-1b: the rethrow happens only AFTER the (slow) cleanup has finished
+   FAILED: close-session.spec.ts >  stopSpawnedChrome (close/recovery order) S6g: a failing clearState is rethrown (0.6.0 failure semantics), after the cleanup G6g-2 (AC2): clearState resolves -> nothing is thrown (the O1-O10 order is unchanged)
+   FAILED: close-session.spec.ts >  stopSpawnedChrome (close/recovery order) S6g: a failing clearState is rethrown (0.6.0 failure semantics), after the cleanup G6g-3 (F7-i): clearState AND cleanup reject -> rejects with the clearState error, exactly one cleanup warning
+   FAILED: close-session.spec.ts >  stopSpawnedChrome (close/recovery order) S6g: a failing clearState is rethrown (0.6.0 failure semantics), after the cleanup G6g-5 (F7-iii): clearState AND kill reject -> rejects with the clearState error; the kill error is debug-only
+## M-O6-i: vitest-exit=1 1 failed | 117 passed | 0 skipped | suites-failed 0 ms=10724 restored-identical=true
+   change: no-chromePid clear = LAST statement inside if (!closeBlocked) {}
+   must-fail=["(b) exactly one clearState("] CAUGHT=true
+   FAILED: close-session.spec.ts >  stopSpawnedChrome (close/recovery order) O7 source guard: cmdClose clears the state exactly where the plan says (b) exactly one clearState( in cmdClose, inside the else of `if (state.chromePid)` and OUTSIDE `if (!closeBlocked) {...}`
+## M-O6-ii: vitest-exit=1 1 failed | 117 passed | 0 skipped | suites-failed 0 ms=10712 restored-identical=true
+   change: clear inside the nested try (after shutdown)
+   must-fail=["(b) exactly one clearState("] CAUGHT=true
+   FAILED: close-session.spec.ts >  stopSpawnedChrome (close/recovery order) O7 source guard: cmdClose clears the state exactly where the plan says (b) exactly one clearState( in cmdClose, inside the else of `if (state.chromePid)` and OUTSIDE `if (!closeBlocked) {...}`
+## M-O6-iii: vitest-exit=1 1 failed | 117 passed | 0 skipped | suites-failed 0 ms=10705 restored-identical=true
+   change: clear = FIRST statement after the { of if (!closeBlocked)
+   must-fail=["(b) exactly one clearState("] CAUGHT=true
+   FAILED: close-session.spec.ts >  stopSpawnedChrome (close/recovery order) O7 source guard: cmdClose clears the state exactly where the plan says (b) exactly one clearState( in cmdClose, inside the else of `if (state.chromePid)` and OUTSIDE `if (!closeBlocked) {...}`
+## M-O6-iv: vitest-exit=1 1 failed | 117 passed | 0 skipped | suites-failed 0 ms=10719 restored-identical=true
+   change: clear inside the catch {} of the nested try
+   must-fail=["(b) exactly one clearState("] CAUGHT=true
+   FAILED: close-session.spec.ts >  stopSpawnedChrome (close/recovery order) O7 source guard: cmdClose clears the state exactly where the plan says (b) exactly one clearState( in cmdClose, inside the else of `if (state.chromePid)` and OUTSIDE `if (!closeBlocked) {...}`
+## M-O6-v: vitest-exit=1 1 failed | 117 passed | 0 skipped | suites-failed 0 ms=10687 restored-identical=true
+   change: clear BEFORE if (!closeBlocked) inside the else
+   must-fail=["(b) exactly one clearState("] CAUGHT=true
+   FAILED: close-session.spec.ts >  stopSpawnedChrome (close/recovery order) O7 source guard: cmdClose clears the state exactly where the plan says (b) exactly one clearState( in cmdClose, inside the else of `if (state.chromePid)` and OUTSIDE `if (!closeBlocked) {...}`
+## M-B2a-swallow: vitest-exit=1 6 failed | 112 passed | 0 skipped | suites-failed 0 ms=10754 restored-identical=true
+   change: the clearState error is never rethrown
+   must-fail=["G6g-1 (AC1)","G6g-3","G6g-4","G6g-5","G6g-6"] CAUGHT=true
+   FAILED: close-session.spec.ts >  stopSpawnedChrome (close/recovery order) S6g: a failing clearState is rethrown (0.6.0 failure semantics), after the cleanup G6g-1 (AC1): clearState rejects -> the cleanup still runs with the same args -> rejects with the SAME error object, no extra warning
+   FAILED: close-session.spec.ts >  stopSpawnedChrome (close/recovery order) S6g: a failing clearState is rethrown (0.6.0 failure semantics), after the cleanup G6g-1b: the rethrow happens only AFTER the (slow) cleanup has finished
+   FAILED: close-session.spec.ts >  stopSpawnedChrome (close/recovery order) S6g: a failing clearState is rethrown (0.6.0 failure semantics), after the cleanup G6g-3 (F7-i): clearState AND cleanup reject -> rejects with the clearState error, exactly one cleanup warning
+   FAILED: close-session.spec.ts >  stopSpawnedChrome (close/recovery order) S6g: a failing clearState is rethrown (0.6.0 failure semantics), after the cleanup G6g-4 (F7-ii): clearState rejects with tempProfile false or absent -> rejects, the cleanup is not called
+   FAILED: close-session.spec.ts >  stopSpawnedChrome (close/recovery order) S6g: a failing clearState is rethrown (0.6.0 failure semantics), after the cleanup G6g-5 (F7-iii): clearState AND kill reject -> rejects with the clearState error; the kill error is debug-only
+   FAILED: close-session.spec.ts >  stopSpawnedChrome (close/recovery order) S6g: a failing clearState is rethrown (0.6.0 failure semantics), after the cleanup G6g-6: a non-Error rejection value is rethrown unchanged too
+## M-B2a-old-warn: vitest-exit=1 6 failed | 112 passed | 0 skipped | suites-failed 0 ms=10632 restored-identical=true
+   change: the exact pre-S6g behaviour: warn and continue
+   must-fail=["G6g-1 (AC1)"] CAUGHT=true
+   FAILED: close-session.spec.ts >  stopSpawnedChrome (close/recovery order) S6g: a failing clearState is rethrown (0.6.0 failure semantics), after the cleanup G6g-1 (AC1): clearState rejects -> the cleanup still runs with the same args -> rejects with the SAME error object, no extra warning
+   FAILED: close-session.spec.ts >  stopSpawnedChrome (close/recovery order) S6g: a failing clearState is rethrown (0.6.0 failure semantics), after the cleanup G6g-1b: the rethrow happens only AFTER the (slow) cleanup has finished
+   FAILED: close-session.spec.ts >  stopSpawnedChrome (close/recovery order) S6g: a failing clearState is rethrown (0.6.0 failure semantics), after the cleanup G6g-3 (F7-i): clearState AND cleanup reject -> rejects with the clearState error, exactly one cleanup warning
+   FAILED: close-session.spec.ts >  stopSpawnedChrome (close/recovery order) S6g: a failing clearState is rethrown (0.6.0 failure semantics), after the cleanup G6g-4 (F7-ii): clearState rejects with tempProfile false or absent -> rejects, the cleanup is not called
+   FAILED: close-session.spec.ts >  stopSpawnedChrome (close/recovery order) S6g: a failing clearState is rethrown (0.6.0 failure semantics), after the cleanup G6g-5 (F7-iii): clearState AND kill reject -> rejects with the clearState error; the kill error is debug-only
+   FAILED: close-session.spec.ts >  stopSpawnedChrome (close/recovery order) S6g: a failing clearState is rethrown (0.6.0 failure semantics), after the cleanup G6g-6: a non-Error rejection value is rethrown unchanged too
+## M-B2b: vitest-exit=1 5 failed | 113 passed | 0 skipped | suites-failed 0 ms=10734 restored-identical=true
+   change: rethrow BEFORE the cleanup
+   must-fail=["G6g-1 (AC1)","G6g-1b"] CAUGHT=true
+   FAILED: close-session.spec.ts >  stopSpawnedChrome (close/recovery order) S6g: a failing clearState is rethrown (0.6.0 failure semantics), after the cleanup G6g-1 (AC1): clearState rejects -> the cleanup still runs with the same args -> rejects with the SAME error object, no extra warning
+   FAILED: close-session.spec.ts >  stopSpawnedChrome (close/recovery order) S6g: a failing clearState is rethrown (0.6.0 failure semantics), after the cleanup G6g-1b: the rethrow happens only AFTER the (slow) cleanup has finished
+   FAILED: close-session.spec.ts >  stopSpawnedChrome (close/recovery order) S6g: a failing clearState is rethrown (0.6.0 failure semantics), after the cleanup G6g-3 (F7-i): clearState AND cleanup reject -> rejects with the clearState error, exactly one cleanup warning
+   FAILED: close-session.spec.ts >  stopSpawnedChrome (close/recovery order) S6g: a failing clearState is rethrown (0.6.0 failure semantics), after the cleanup G6g-5 (F7-iii): clearState AND kill reject -> rejects with the clearState error; the kill error is debug-only
+   FAILED: close-session.spec.ts >  stopSpawnedChrome (close/recovery order) S6g: a failing clearState is rethrown (0.6.0 failure semantics), after the cleanup G6g-6: a non-Error rejection value is rethrown unchanged too
+## M-B2c: vitest-exit=1 5 failed | 113 passed | 0 skipped | suites-failed 0 ms=10719 restored-identical=true
+   change: rethrow a wrapped/different error
+   must-fail=["G6g-1 (AC1)","G6g-6"] CAUGHT=true
+   FAILED: close-session.spec.ts >  stopSpawnedChrome (close/recovery order) S6g: a failing clearState is rethrown (0.6.0 failure semantics), after the cleanup G6g-1 (AC1): clearState rejects -> the cleanup still runs with the same args -> rejects with the SAME error object, no extra warning
+   FAILED: close-session.spec.ts >  stopSpawnedChrome (close/recovery order) S6g: a failing clearState is rethrown (0.6.0 failure semantics), after the cleanup G6g-3 (F7-i): clearState AND cleanup reject -> rejects with the clearState error, exactly one cleanup warning
+   FAILED: close-session.spec.ts >  stopSpawnedChrome (close/recovery order) S6g: a failing clearState is rethrown (0.6.0 failure semantics), after the cleanup G6g-4 (F7-ii): clearState rejects with tempProfile false or absent -> rejects, the cleanup is not called
+   FAILED: close-session.spec.ts >  stopSpawnedChrome (close/recovery order) S6g: a failing clearState is rethrown (0.6.0 failure semantics), after the cleanup G6g-5 (F7-iii): clearState AND kill reject -> rejects with the clearState error; the kill error is debug-only
+   FAILED: close-session.spec.ts >  stopSpawnedChrome (close/recovery order) S6g: a failing clearState is rethrown (0.6.0 failure semantics), after the cleanup G6g-6: a non-Error rejection value is rethrown unchanged too
+## M-B2d: vitest-exit=1 1 failed | 117 passed | 0 skipped | suites-failed 0 ms=10668 restored-identical=true
+   change: self-heal call site swallows via .catch
+   must-fail=["self-heal: the call is not followed"] CAUGHT=true
+   FAILED: close-session.spec.ts >  stopSpawnedChrome (close/recovery order) O6b source guard: neither `await stopSpawnedChrome(` call site swallows the rejection self-heal: the call is not followed by .catch/.then and not inside a try block
+## M-B2e: vitest-exit=1 1 failed | 117 passed | 0 skipped | suites-failed 0 ms=10745 restored-identical=true
+   change: cmdClose call site swallows via .catch
+   must-fail=["cmdClose: the call is not followed"] CAUGHT=true
+   FAILED: close-session.spec.ts >  stopSpawnedChrome (close/recovery order) O6b source guard: neither `await stopSpawnedChrome(` call site swallows the rejection cmdClose: the call is not followed by .catch/.then and not inside a try block
+## M-B2d2: vitest-exit=1 1 failed | 117 passed | 0 skipped | suites-failed 0 ms=10701 restored-identical=true
+   change: self-heal call site inside try {} catch {}
+   must-fail=["self-heal: the call is not followed"] CAUGHT=true
+   FAILED: close-session.spec.ts >  stopSpawnedChrome (close/recovery order) O6b source guard: neither `await stopSpawnedChrome(` call site swallows the rejection self-heal: the call is not followed by .catch/.then and not inside a try block
+## M-B2e2: vitest-exit=1 1 failed | 117 passed | 0 skipped | suites-failed 0 ms=10677 restored-identical=true
+   change: cmdClose call site inside try {} catch {}
+   must-fail=["cmdClose: the call is not followed"] CAUGHT=true
+   FAILED: close-session.spec.ts >  stopSpawnedChrome (close/recovery order) O6b source guard: neither `await stopSpawnedChrome(` call site swallows the rejection cmdClose: the call is not followed by .catch/.then and not inside a try block
+## M-B2f1: vitest-exit=1 1 failed | 117 passed | 0 skipped | suites-failed 0 ms=10673 restored-identical=true
+   change: when both fail, the CLEANUP error is thrown instead of the clearState error
+   must-fail=["G6g-3"] CAUGHT=true
+   FAILED: close-session.spec.ts >  stopSpawnedChrome (close/recovery order) S6g: a failing clearState is rethrown (0.6.0 failure semantics), after the cleanup G6g-3 (F7-i): clearState AND cleanup reject -> rejects with the clearState error, exactly one cleanup warning
+## M-B2f2: vitest-exit=1 1 failed | 117 passed | 0 skipped | suites-failed 0 ms=10684 restored-identical=true
+   change: the rethrow is skipped when the cleanup fails
+   must-fail=["G6g-3"] CAUGHT=true
+   FAILED: close-session.spec.ts >  stopSpawnedChrome (close/recovery order) S6g: a failing clearState is rethrown (0.6.0 failure semantics), after the cleanup G6g-3 (F7-i): clearState AND cleanup reject -> rejects with the clearState error, exactly one cleanup warning
+## M-B2g: vitest-exit=1 1 failed | 117 passed | 0 skipped | suites-failed 0 ms=10668 restored-identical=true
+   change: rethrow only on the tempProfile path
+   must-fail=["G6g-4"] CAUGHT=true
+   FAILED: close-session.spec.ts >  stopSpawnedChrome (close/recovery order) S6g: a failing clearState is rethrown (0.6.0 failure semantics), after the cleanup G6g-4 (F7-ii): clearState rejects with tempProfile false or absent -> rejects, the cleanup is not called
+## M-b2: vitest-exit=1 1 failed | 117 passed | 0 skipped | suites-failed 0 ms=11918 restored-identical=true
+   change: deadline check at MIN_RM_START_MS / 2
+   must-fail=["T5:"] CAUGHT=true
+   FAILED: temp-profile.spec.ts >  S6a: bounded cleanup (fake scan / fake rm, monotonic clock) T5: no rm attempt starts with less than MIN_RM_START_MS left (absolute deadlineAt), asserted on the module's own remaining-ms value
+## M-b4: vitest-exit=1 2 failed | 116 passed | 0 skipped | suites-failed 0 ms=10664 restored-identical=true
+   change: the rm-attempt debug line removed (T5 must not pass vacuously)
+   must-fail=["T5:"] CAUGHT=true
+   FAILED: temp-profile.spec.ts >  S6a: bounded cleanup (fake scan / fake rm, monotonic clock) T5: no rm attempt starts with less than MIN_RM_START_MS left (absolute deadlineAt), asserted on the module's own remaining-ms value
+   FAILED: temp-profile.spec.ts >  S6a: debug seam (SUTRADHAR_CLI_DEBUG_CLEANUP=1) T6: [cleanup] lines appear only with the env set; every path is written as path="<abs>"
+## M-F1a: vitest-exit=1 4 failed | 114 passed | 0 skipped | suites-failed 0 ms=10774 restored-identical=true
+   change: realDirectory always true
+   must-fail=["F1-a","F1-c"] CAUGHT=true
+   FAILED: temp-profile.spec.ts >  S6e-1 (F1/N3): links and non-directories are kept, never followed F1-a: a junction (Windows) / symlink (POSIX) named like a profile is kept by sweep and close; the victim, incl. lockfile, is intact
+   FAILED: temp-profile.spec.ts >  S6e-1 (F1/N3): links and non-directories are kept, never followed F1-b: a dir symlink named like a profile is kept (skipped with a logged reason where symlinks need privilege)
+   FAILED: temp-profile.spec.ts >  S6e-1 (F1/N3): links and non-directories are kept, never followed F1-c (N3): a regular FILE named like a profile is kept by sweep and close
+   FAILED: temp-profile.spec.ts >  S6e-1 (F1/N3): links and non-directories are kept, never followed F1-e: a dir swapped for a junction/symlink between the facts and a retry is NOT followed (re-check inside the retry loop)
+## M-F1b: vitest-exit=1 3 failed | 115 passed | 0 skipped | suites-failed 0 ms=10768 restored-identical=true
+   change: lstat -> stat in realDirectory (follows links)
+   must-fail=["F1-a"] CAUGHT=true
+   FAILED: temp-profile.spec.ts >  S6e-1 (F1/N3): links and non-directories are kept, never followed F1-a: a junction (Windows) / symlink (POSIX) named like a profile is kept by sweep and close; the victim, incl. lockfile, is intact
+   FAILED: temp-profile.spec.ts >  S6e-1 (F1/N3): links and non-directories are kept, never followed F1-b: a dir symlink named like a profile is kept (skipped with a logged reason where symlinks need privilege)
+   FAILED: temp-profile.spec.ts >  S6e-1 (F1/N3): links and non-directories are kept, never followed F1-e: a dir swapped for a junction/symlink between the facts and a retry is NOT followed (re-check inside the retry loop)
+## M-F1c: vitest-exit=1 4 failed | 114 passed | 0 skipped | suites-failed 0 ms=10666 restored-identical=true
+   change: removeWithRetries re-check removed AND gatherFacts link check bypassed
+   must-fail=["F1-a"] CAUGHT=true
+   FAILED: temp-profile.spec.ts >  S6e-1 (F1/N3): links and non-directories are kept, never followed F1-a: a junction (Windows) / symlink (POSIX) named like a profile is kept by sweep and close; the victim, incl. lockfile, is intact
+   FAILED: temp-profile.spec.ts >  S6e-1 (F1/N3): links and non-directories are kept, never followed F1-b: a dir symlink named like a profile is kept (skipped with a logged reason where symlinks need privilege)
+   FAILED: temp-profile.spec.ts >  S6e-1 (F1/N3): links and non-directories are kept, never followed F1-c (N3): a regular FILE named like a profile is kept by sweep and close
+   FAILED: temp-profile.spec.ts >  S6e-1 (F1/N3): links and non-directories are kept, never followed F1-e: a dir swapped for a junction/symlink between the facts and a retry is NOT followed (re-check inside the retry loop)
+## M-F1c-only-recheck: vitest-exit=1 1 failed | 117 passed | 0 skipped | suites-failed 0 ms=10740 restored-identical=true
+   change: only the removeWithRetries re-check removed (TOCTOU guard)
+   must-fail=["F1-e"] CAUGHT=true
+   FAILED: temp-profile.spec.ts >  S6e-1 (F1/N3): links and non-directories are kept, never followed F1-e: a dir swapped for a junction/symlink between the facts and a retry is NOT followed (re-check inside the retry loop)
+## M-F2: vitest-exit=1 3 failed | 115 passed | 0 skipped | suites-failed 0 ms=10725 restored-identical=true
+   change: case-sensitive post-filter restored
+   must-fail=["F2-a","F2-b"] CAUGHT=true
+   FAILED: scan-command-lines.spec.ts >  S6e-2 (F2): case-insensitive scan post-filter F2-a: raw CRLF output with an upper-case, a lower-case and an unrelated line keeps exactly the two prefixed lines
+   FAILED: scan-command-lines.spec.ts >  S6e-2 (F2): case-insensitive scan post-filter F2-b: a dir referenced only in UPPER case is in-use for close (the rule-2 scan sees it)
+   FAILED: scan-command-lines.spec.ts >  S6e-2 (F2): case-insensitive scan post-filter F2-c: the same filter applies to the Linux /proc reader and to macOS ps output
+## M5: vitest-exit=1 4 failed | 114 passed | 0 skipped | suites-failed 0 ms=10723 restored-identical=true
+   change: S4 M5: filter on the upper-cased prefix
+   must-fail=["F2-a"] CAUGHT=true
+   FAILED: scan-command-lines.spec.ts >  scanCommandLines: Linux reads /proc (no ps) D1: returns only the lines that carry the prefix, from the injected /proc reader; `ps` is never run
+   FAILED: scan-command-lines.spec.ts >  scanCommandLines: macOS / other POSIX use ps -ww D3: darwin runs the absolute ps with exactly -A -ww -o args= and the given timeout
+   FAILED: scan-command-lines.spec.ts >  S6e-2 (F2): case-insensitive scan post-filter F2-a: raw CRLF output with an upper-case, a lower-case and an unrelated line keeps exactly the two prefixed lines
+   FAILED: scan-command-lines.spec.ts >  S6e-2 (F2): case-insensitive scan post-filter N4-b: the filter is only a SUBSTRING pre-filter: a line whose token merely contains the prefix is still returned; the word boundary lives in commandLinesReference
+## M-F3: vitest-exit=1 1 failed | 117 passed | 0 skipped | suites-failed 0 ms=10672 restored-identical=true
+   change: scan runs bare 'powershell.exe'
+   must-fail=["F3-a"] CAUGHT=true
+   FAILED: system-binaries.spec.ts >  S6e-3 (F3): the executables actually run are absolute helper paths F3-a: the Windows scan runs powershellExe() (absolute), and follows SystemRoot (so it is the helper, not a literal)
+## M-F3-kill: vitest-exit=1 2 failed | 116 passed | 0 skipped | suites-failed 0 ms=10712 restored-identical=true
+   change: killChromeTree runs bare 'taskkill'
+   must-fail=["F3-c"] CAUGHT=true
+   FAILED: system-binaries.spec.ts >  S6e-3 (F3): the executables actually run are absolute helper paths F3-c (Windows): killChromeTree runs taskkillExe() (absolute) with exactly /PID <pid> /T /F
+   FAILED: system-binaries.spec.ts >  S6e-3 (F3): the executables actually run are absolute helper paths F3-d: every spawn/execFile call site in packages/cli/src runs a helper path, process.execPath, the resolved Chrome path or an injected seam, never a bare tool name
+## M-N1: vitest-exit=1 9 failed | 109 passed | 0 skipped | suites-failed 0 ms=10694 restored-identical=true
+   change: invalid marker treated as absent
+   must-fail=["N1-a","N1-b","N1-c"] CAUGHT=true
+   FAILED: temp-profile.spec.ts >  S6e-4 (N1): an unreadable or corrupt owner marker fails CLOSED (owner-unknown) N1-a corrupt JSON: sweep and close keep the dir with owner-unknown
+   FAILED: temp-profile.spec.ts >  S6e-4 (N1): an unreadable or corrupt owner marker fails CLOSED (owner-unknown) N1-b chromePid is a string: sweep and close keep the dir with owner-unknown
+   FAILED: temp-profile.spec.ts >  S6e-4 (N1): an unreadable or corrupt owner marker fails CLOSED (owner-unknown) N1-c the marker path is a directory (EISDIR): sweep and close keep the dir with owner-unknown
+   FAILED: temp-profile.spec.ts >  S6e-4 (N1): an unreadable or corrupt owner marker fails CLOSED (owner-unknown) chromePid is 0: sweep and close keep the dir with owner-unknown
+   FAILED: temp-profile.spec.ts >  S6e-4 (N1): an unreadable or corrupt owner marker fails CLOSED (owner-unknown) chromePid is negative: sweep and close keep the dir with owner-unknown
+   FAILED: temp-profile.spec.ts >  S6e-4 (N1): an unreadable or corrupt owner marker fails CLOSED (owner-unknown) chromePid is fractional: sweep and close keep the dir with owner-unknown
+   FAILED: temp-profile.spec.ts >  S6e-4 (N1): an unreadable or corrupt owner marker fails CLOSED (owner-unknown) chromePid is missing: sweep and close keep the dir with owner-unknown
+   FAILED: temp-profile.spec.ts >  S6e-4 (N1): an unreadable or corrupt owner marker fails CLOSED (owner-unknown) marker is JSON null: sweep and close keep the dir with owner-unknown
+   FAILED: temp-profile.spec.ts >  S6e-4 (N1): an unreadable or corrupt owner marker fails CLOSED (owner-unknown) marker is an empty file: sweep and close keep the dir with owner-unknown
+## M-O7: vitest-exit=1 1 failed | 117 passed | 0 skipped | suites-failed 0 ms=10657 restored-identical=true
+   change: stopSpawnedChrome userDataDir type guard removed
+   must-fail=["O9"] CAUGHT=true
+   FAILED: close-session.spec.ts >  stopSpawnedChrome (close/recovery order) O9: a malformed userDataDir is not passed to the cleanup, but a valid chromePid is still killed once and the state cleared
+## M-O7-pid: vitest-exit=1 1 failed | 117 passed | 0 skipped | suites-failed 0 ms=10664 restored-identical=true
+   change: stopSpawnedChrome pid guard removed (raw chromePid killed)
+   must-fail=["O10"] CAUGHT=true
+   FAILED: close-session.spec.ts >  stopSpawnedChrome (close/recovery order) O10: a malformed chromePid is never killed (never reaches taskkill); state cleared; resolves
+## M-T10: vitest-exit=1 1 failed | 117 passed | 0 skipped | suites-failed 0 ms=10707 restored-identical=true
+   change: rejecting scan propagates
+   must-fail=["T10"] CAUGHT=true
+   FAILED: temp-profile.spec.ts >  S6b amendment N2: cleanup never throws on malformed input (the documented contract) T10: a scan that REJECTS is treated as null (scan-unavailable, fail closed), for close and for sweep
+## M1: vitest-exit=1 6 failed | 112 passed | 0 skipped | suites-failed 0 ms=10645 restored-identical=true
+   change: S4 M1 null scan fails open
+   must-fail=["T8"] CAUGHT=true
+   FAILED: scan-command-lines.spec.ts >  scanCommandLines: Linux reads /proc (no ps) D2: an unreadable /proc is null (fail closed), and a close with that scan keeps the dir (scan-unavailable)
+   FAILED: temp-profile.spec.ts >  decideRemoval fails closed when the process scan failed
+   FAILED: temp-profile.spec.ts >  filesystem paths (scratch temp root) sweep deletes nothing when the process scan fails
+   FAILED: temp-profile.spec.ts >  S6a: bounded cleanup (fake scan / fake rm, monotonic clock) T8: a scan that fails (null) keeps the dir, for close and for sweep (fail closed)
+   FAILED: temp-profile.spec.ts >  S6b amendment N2: cleanup never throws on malformed input (the documented contract) T10: a scan that REJECTS is treated as null (scan-unavailable, fail closed), for close and for sweep
+   FAILED: temp-profile.spec.ts >  S6e-4 (N1): an unreadable or corrupt owner marker fails CLOSED (owner-unknown) decideRemoval: ownerState invalid is owner-unknown (after in-use, before owner-alive); absent/undefined are unchanged
+## M2: vitest-exit=1 1 failed | 117 passed | 0 skipped | suites-failed 0 ms=10702 restored-identical=true
+   change: S4 M2 Windows lockfile probe removed
+   must-fail=["N4-a"] CAUGHT=true
+   FAILED: temp-profile.spec.ts >  S6e-5 (N4-a): a lockfile held open by a live process protects the whole profile (Windows rule 5) N4-a (Windows only; rule 5 is Windows-only, so this is skipped on POSIX): 21 entries survive while lockfile is held with FileShare.None
+## M3: vitest-exit=1 5 failed | 113 passed | 0 skipped | suites-failed 0 ms=10504 restored-identical=true
+   change: S4 M3 owner-alive ignored
+   must-fail=[] CAUGHT=true
+   FAILED: temp-profile.spec.ts >  decideRemoval keeps a dir whose owning Chrome PID is alive
+   FAILED: temp-profile.spec.ts >  filesystem paths (scratch temp root) sweep removes only stale, unreferenced, dead-owner temp dirs
+   FAILED: temp-profile.spec.ts >  S6a: bounded cleanup (fake scan / fake rm, monotonic clock) isAlive seam: the injected probe drives BOTH the exit wait and the ownerAlive fact
+   FAILED: temp-profile.spec.ts >  S6e-4 (N1): an unreadable or corrupt owner marker fails CLOSED (owner-unknown) a VALID marker whose owner is dead is still removed; with an alive owner it is owner-alive (unchanged)
+   FAILED: temp-profile.spec.ts >  S6e-4 (N1): an unreadable or corrupt owner marker fails CLOSED (owner-unknown) decideRemoval: ownerState invalid is owner-unknown (after in-use, before owner-alive); absent/undefined are unchanged
+## M4: vitest-exit=1 2 failed | 116 passed | 0 skipped | suites-failed 0 ms=10739 restored-identical=true
+   change: S4 M4 age ignored
+   must-fail=[] CAUGHT=true
+   FAILED: temp-profile.spec.ts >  decideRemoval keeps a dir younger than the threshold
+   FAILED: temp-profile.spec.ts >  filesystem paths (scratch temp root) sweep removes only stale, unreferenced, dead-owner temp dirs
+## M6: vitest-exit=1 1 failed | 117 passed | 0 skipped | suites-failed 0 ms=10768 restored-identical=true
+   change: S4 M6 root check removed
+   must-fail=[] CAUGHT=true
+   FAILED: temp-profile.spec.ts >  isAutoTempProfileDir (rule 1) rejects named profiles, nested dirs, other roots and look-alikes
+## M-a: vitest-exit=1 2 failed | 116 passed | 0 skipped | suites-failed 0 ms=14216 restored-identical=true
+   change: close scan 20 s, no clamp
+   must-fail=["T1"] CAUGHT=true
+   FAILED: temp-profile.spec.ts >  S6a: bounded cleanup (fake scan / fake rm, monotonic clock) T1: a scan that only returns at its own timeout is clamped to the remaining deadline
+   FAILED: temp-profile.spec.ts >  S6a: bounded cleanup (fake scan / fake rm, monotonic clock) T4: the scan timeout passed by sweep and by close never exceeds the time remaining at the call
+## M-b: vitest-exit=1 1 failed | 117 passed | 0 skipped | suites-failed 0 ms=12782 restored-identical=true
+   change: no MIN_RM_START_MS check
+   must-fail=["T5:"] CAUGHT=true
+   FAILED: temp-profile.spec.ts >  S6a: bounded cleanup (fake scan / fake rm, monotonic clock) T5: no rm attempt starts with less than MIN_RM_START_MS left (absolute deadlineAt), asserted on the module's own remaining-ms value
+## M-c: vitest-exit=1 1 failed | 117 passed | 0 skipped | suites-failed 0 ms=10812 restored-identical=true
+   change: sweep deadline starts after the scan
+   must-fail=["T3"] CAUGHT=true
+   FAILED: temp-profile.spec.ts >  S6a: bounded cleanup (fake scan / fake rm, monotonic clock) T3: a slow scan eats the sweep budget, so NO dir is removed (deadline starts before the scan)
+## M-d: vitest-exit=1 1 failed | 117 passed | 0 skipped | suites-failed 0 ms=10731 restored-identical=true
+   change: sweep decision line without path=
+   must-fail=["T6"] CAUGHT=true
+   FAILED: temp-profile.spec.ts >  S6a: debug seam (SUTRADHAR_CLI_DEBUG_CLEANUP=1) T6: [cleanup] lines appear only with the env set; every path is written as path="<abs>"
+## M-e: vitest-exit=1 6 failed | 112 passed | 0 skipped | suites-failed 0 ms=10780 restored-identical=true
+   change: null scan treated as []
+   must-fail=["T8"] CAUGHT=true
+   FAILED: scan-command-lines.spec.ts >  scanCommandLines: Linux reads /proc (no ps) D2: an unreadable /proc is null (fail closed), and a close with that scan keeps the dir (scan-unavailable)
+   FAILED: temp-profile.spec.ts >  decideRemoval fails closed when the process scan failed
+   FAILED: temp-profile.spec.ts >  filesystem paths (scratch temp root) sweep deletes nothing when the process scan fails
+   FAILED: temp-profile.spec.ts >  S6a: bounded cleanup (fake scan / fake rm, monotonic clock) T8: a scan that fails (null) keeps the dir, for close and for sweep (fail closed)
+   FAILED: temp-profile.spec.ts >  S6b amendment N2: cleanup never throws on malformed input (the documented contract) T10: a scan that REJECTS is treated as null (scan-unavailable, fail closed), for close and for sweep
+   FAILED: temp-profile.spec.ts >  S6e-4 (N1): an unreadable or corrupt owner marker fails CLOSED (owner-unknown) decideRemoval: ownerState invalid is owner-unknown (after in-use, before owner-alive); absent/undefined are unchanged
+## M-f: vitest-exit=1 1 failed | 117 passed | 0 skipped | suites-failed 0 ms=10749 restored-identical=true
+   change: debug log inside isAutoTempProfileDir
+   must-fail=["T6b"] CAUGHT=true
+   FAILED: temp-profile.spec.ts >  S6a: debug seam (SUTRADHAR_CLI_DEBUG_CLEANUP=1) T6b: the pure predicates never log, even with the debug env set
+## M-O2: vitest-exit=1 9 failed | 109 passed | 0 skipped | suites-failed 0 ms=10671 restored-identical=true
+   change: kill not awaited
+   must-fail=["O1"] CAUGHT=true
+   FAILED: close-session.spec.ts >  stopSpawnedChrome (close/recovery order) O1: normal close runs kill -> clearState -> cleanup, and cleanup sees NO chromePid in the store
+   FAILED: close-session.spec.ts >  stopSpawnedChrome (close/recovery order) O4: a slow kill (resolves only at its cap) still gets the state cleared and the cleanup run, after kill-end
+   FAILED: close-session.spec.ts >  stopSpawnedChrome (close/recovery order) a failing kill never throws (N2) and the later steps still run; the kill error is debug-only
+   FAILED: close-session.spec.ts >  stopSpawnedChrome (close/recovery order) S6g: a failing clearState is rethrown (0.6.0 failure semantics), after the cleanup G6g-1 (AC1): clearState rejects -> the cleanup still runs with the same args -> rejects with the SAME error object, no extra warning
+   FAILED: close-session.spec.ts >  stopSpawnedChrome (close/recovery order) S6g: a failing clearState is rethrown (0.6.0 failure semantics), after the cleanup G6g-1b: the rethrow happens only AFTER the (slow) cleanup has finished
+   FAILED: close-session.spec.ts >  stopSpawnedChrome (close/recovery order) S6g: a failing clearState is rethrown (0.6.0 failure semantics), after the cleanup G6g-2 (AC2): clearState resolves -> nothing is thrown (the O1-O10 order is unchanged)
+   FAILED: close-session.spec.ts >  stopSpawnedChrome (close/recovery order) S6g: a failing clearState is rethrown (0.6.0 failure semantics), after the cleanup G6g-3 (F7-i): clearState AND cleanup reject -> rejects with the clearState error, exactly one cleanup warning
+   FAILED: close-session.spec.ts >  stopSpawnedChrome (close/recovery order) S6g: a failing clearState is rethrown (0.6.0 failure semantics), after the cleanup G6g-4 (F7-ii): clearState rejects with tempProfile false or absent -> rejects, the cleanup is not called
+   FAILED: close-session.spec.ts >  stopSpawnedChrome (close/recovery order) S6g: a failing clearState is rethrown (0.6.0 failure semantics), after the cleanup G6g-5 (F7-iii): clearState AND kill reject -> rejects with the clearState error; the kill error is debug-only
+## M-O3: vitest-exit=1 2 failed | 116 passed | 0 skipped | suites-failed 0 ms=10722 restored-identical=true
+   change: cleanup error propagates
+   must-fail=["O3"] CAUGHT=true
+   FAILED: close-session.spec.ts >  stopSpawnedChrome (close/recovery order) O3: a rejecting cleanup is a warning, never a throw; kill ran once; state is cleared
+   FAILED: close-session.spec.ts >  stopSpawnedChrome (close/recovery order) S6g: a failing clearState is rethrown (0.6.0 failure semantics), after the cleanup G6g-3 (F7-i): clearState AND cleanup reject -> rejects with the clearState error, exactly one cleanup warning
+## M-O4-default: vitest-exit=1 1 failed | 117 passed | 0 skipped | suites-failed 0 ms=10783 restored-identical=true
+   change: default now = Date.now
+   must-fail=["O8"] CAUGHT=true
+   FAILED: close-session.spec.ts >  stopSpawnedChrome (close/recovery order) O8: with the real default clock, the cleanup deadline is ~15 s ahead on the performance.now() scale
+## M-O4-wiring: vitest-exit=1 1 failed | 117 passed | 0 skipped | suites-failed 0 ms=10712 restored-identical=true
+   change: cli.ts wiring now = Date.now
+   must-fail=["O6"] CAUGHT=true
+   FAILED: close-session.spec.ts >  stopSpawnedChrome (close/recovery order) O6: cli.ts wiring (source guard): exactly 2 `await stopSpawnedChrome(` calls, kill by reference, monotonic now
+## M-O5: vitest-exit=1 2 failed | 116 passed | 0 skipped | suites-failed 0 ms=10671 restored-identical=true
+   change: trailing clearState re-added to the chromePid branch
+   must-fail=["(a)"] CAUGHT=true
+   FAILED: close-session.spec.ts >  stopSpawnedChrome (close/recovery order) O7 source guard: cmdClose clears the state exactly where the plan says (a) no clearState( between `await stopSpawnedChrome(` and the end of the enclosing `if (state.chromePid)` block
+   FAILED: close-session.spec.ts >  stopSpawnedChrome (close/recovery order) O7 source guard: cmdClose clears the state exactly where the plan says (b) exactly one clearState( in cmdClose, inside the else of `if (state.chromePid)` and OUTSIDE `if (!closeBlocked) {...}`
+## M-G1: vitest-exit=1 1 failed | 117 passed | 0 skipped | suites-failed 0 ms=10709 restored-identical=true
+   change: no discard on P0
+   must-fail=["G1"] CAUGHT=true
+   FAILED: spawn-failure-cleanup.spec.ts >  GAP-349: spawn-failure paths remove their own temp dir G1 (P0): a synchronous spawn throw (EFTYPE) removes the dir; nothing is killed
+## M-G2: vitest-exit=1 1 failed | 117 passed | 0 skipped | suites-failed 0 ms=10696 restored-identical=true
+   change: no discard on P1
+   must-fail=["G2"] CAUGHT=true
+   FAILED: spawn-failure-cleanup.spec.ts >  GAP-349: spawn-failure paths remove their own temp dir G2 (P1): no PID plus an async ENOENT removes the dir and reports ENOENT; nothing is killed
+## M-G3: vitest-exit=1 3 failed | 115 passed | 0 skipped | suites-failed 0 ms=10721 restored-identical=true
+   change: no discard on P2
+   must-fail=["G3"] CAUGHT=true
+   FAILED: spawn-failure-cleanup.spec.ts >  GAP-349: spawn-failure paths remove their own temp dir G3 (P2): timeout with the child alive kills once, then removes with the pid and the forwarded isAlive seam
+   FAILED: spawn-failure-cleanup.spec.ts >  GAP-349: spawn-failure paths remove their own temp dir G3b (P2, dying child): the dir is removed only after the killed child is really gone
+   FAILED: spawn-failure-cleanup.spec.ts >  GAP-349: spawn-failure paths remove their own temp dir G6: a named profile creates nothing in tmpRoot and is never removed (its Chrome is still killed)
+## M-G4: vitest-exit=1 1 failed | 117 passed | 0 skipped | suites-failed 0 ms=10705 restored-identical=true
+   change: P2x kills anyway
+   must-fail=["G4"] CAUGHT=true
+   FAILED: spawn-failure-cleanup.spec.ts >  GAP-349: spawn-failure paths remove their own temp dir G4 (P2x): a child that already exited is NOT killed (its pid may be reused); the dir is removed fast
+## M-G5: vitest-exit=1 1 failed | 117 passed | 0 skipped | suites-failed 0 ms=10691 restored-identical=true
+   change: rethrow before the discard
+   must-fail=["G5"] CAUGHT=true
+   FAILED: spawn-failure-cleanup.spec.ts >  GAP-349 F8: attachOrDiscard G5: order is attach, discard-start, discard-end, rethrow-original (the discard is awaited first)
+## M-seam: vitest-exit=1 5 failed | 113 passed | 0 skipped | suites-failed 0 ms=10699 restored-identical=true
+   change: createTempProfileDir ignores tmpRoot
+   must-fail=["G1"] CAUGHT=true
+   FAILED: spawn-failure-cleanup.spec.ts >  GAP-349: spawn-failure paths remove their own temp dir G1 (P0): a synchronous spawn throw (EFTYPE) removes the dir; nothing is killed
+   FAILED: spawn-failure-cleanup.spec.ts >  GAP-349: spawn-failure paths remove their own temp dir G2 (P1): no PID plus an async ENOENT removes the dir and reports ENOENT; nothing is killed
+   FAILED: spawn-failure-cleanup.spec.ts >  GAP-349: spawn-failure paths remove their own temp dir G3 (P2): timeout with the child alive kills once, then removes with the pid and the forwarded isAlive seam
+   FAILED: spawn-failure-cleanup.spec.ts >  GAP-349: spawn-failure paths remove their own temp dir G3b (P2, dying child): the dir is removed only after the killed child is really gone
+   FAILED: spawn-failure-cleanup.spec.ts >  GAP-349: spawn-failure paths remove their own temp dir success path: returns the endpoint and keeps the dir (no discard)
+## M-G6: vitest-exit=1 4 failed | 114 passed | 0 skipped | suites-failed 0 ms=10692 restored-identical=true
+   change: P2 passes undefined instead of pid to removeProfile
+   must-fail=["G3b"] CAUGHT=true
+   FAILED: spawn-failure-cleanup.spec.ts >  GAP-349: spawn-failure paths remove their own temp dir G3 (P2): timeout with the child alive kills once, then removes with the pid and the forwarded isAlive seam
+   FAILED: spawn-failure-cleanup.spec.ts >  GAP-349: spawn-failure paths remove their own temp dir G3b (P2, dying child): the dir is removed only after the killed child is really gone
+   FAILED: spawn-failure-cleanup.spec.ts >  GAP-349: discardSpawnedProfile F8 shape (alive unknown): kills the pid, then removes the temp dir WITH that pid; a named profile is only killed
+   FAILED: spawn-failure-cleanup.spec.ts >  GAP-349: discardSpawnedProfile never throws: a throwing kill and a rejecting removeProfile are both contained, and the removal still runs after a failed kill
+## M-G7: vitest-exit=1 2 failed | 116 passed | 0 skipped | suites-failed 0 ms=10807 restored-identical=true
+   change: discardSpawnedProfile omits isAlive
+   must-fail=["G3"] CAUGHT=true
+   FAILED: spawn-failure-cleanup.spec.ts >  GAP-349: spawn-failure paths remove their own temp dir G3 (P2): timeout with the child alive kills once, then removes with the pid and the forwarded isAlive seam
+   FAILED: spawn-failure-cleanup.spec.ts >  GAP-349: spawn-failure paths remove their own temp dir G3b (P2, dying child): the dir is removed only after the killed child is really gone
+## M-G8: vitest-exit=1 2 failed | 116 passed | 0 skipped | suites-failed 0 ms=10795 restored-identical=true
+   change: TEST wrapper builds fresh opts (drops isAlive)
+   must-fail=["G3"] CAUGHT=true
+   FAILED: spawn-failure-cleanup.spec.ts >  GAP-349: spawn-failure paths remove their own temp dir G3 (P2): timeout with the child alive kills once, then removes with the pid and the forwarded isAlive seam
+   FAILED: spawn-failure-cleanup.spec.ts >  GAP-349: spawn-failure paths remove their own temp dir G3b (P2, dying child): the dir is removed only after the killed child is really gone
+## M-D-proc-empty: vitest-exit=1 2 failed | 116 passed | 0 skipped | suites-failed 0 ms=10730 restored-identical=true
+   change: /proc unreadable -> [] instead of null
+   must-fail=["D7"] CAUGHT=true
+   FAILED: scan-command-lines.spec.ts >  readProcCommandLines (the /proc reader) D7: an unreadable /proc (readdir fails) is null
+   FAILED: scan-command-lines.spec.ts >  readProcCommandLines (the /proc reader) D10: on a host without /proc the default reader is null (so a linux scan fails closed)
+## M-D-noread-empty: vitest-exit=1 1 failed | 117 passed | 0 skipped | suites-failed 0 ms=10675 restored-identical=true
+   change: nothing readable -> [] instead of null
+   must-fail=["D8"] CAUGHT=true
+   FAILED: scan-command-lines.spec.ts >  readProcCommandLines (the /proc reader) D8: a /proc that lists processes but where NOTHING can be read is null, never []
+# SUMMARY
+BASELINE BASELINE-GREEN=true restored=true
+M-O1-s6g CAUGHT=true restored=true
+M-O6-i CAUGHT=true restored=true
+M-O6-ii CAUGHT=true restored=true
+M-O6-iii CAUGHT=true restored=true
+M-O6-iv CAUGHT=true restored=true
+M-O6-v CAUGHT=true restored=true
+M-B2a-swallow CAUGHT=true restored=true
+M-B2a-old-warn CAUGHT=true restored=true
+M-B2b CAUGHT=true restored=true
+M-B2c CAUGHT=true restored=true
+M-B2d CAUGHT=true restored=true
+M-B2e CAUGHT=true restored=true
+M-B2d2 CAUGHT=true restored=true
+M-B2e2 CAUGHT=true restored=true
+M-B2f1 CAUGHT=true restored=true
+M-B2f2 CAUGHT=true restored=true
+M-B2g CAUGHT=true restored=true
+M-b2 CAUGHT=true restored=true
+M-b4 CAUGHT=true restored=true
+M-F1a CAUGHT=true restored=true
+M-F1b CAUGHT=true restored=true
+M-F1c CAUGHT=true restored=true
+M-F1c-only-recheck CAUGHT=true restored=true
+M-F2 CAUGHT=true restored=true
+M5 CAUGHT=true restored=true
+M-F3 CAUGHT=true restored=true
+M-F3-kill CAUGHT=true restored=true
+M-N1 CAUGHT=true restored=true
+M-O7 CAUGHT=true restored=true
+M-O7-pid CAUGHT=true restored=true
+M-T10 CAUGHT=true restored=true
+M1 CAUGHT=true restored=true
+M2 CAUGHT=true restored=true
+M3 CAUGHT=true restored=true
+M4 CAUGHT=true restored=true
+M6 CAUGHT=true restored=true
+M-a CAUGHT=true restored=true
+M-b CAUGHT=true restored=true
+M-c CAUGHT=true restored=true
+M-d CAUGHT=true restored=true
+M-e CAUGHT=true restored=true
+M-f CAUGHT=true restored=true
+M-O2 CAUGHT=true restored=true
+M-O3 CAUGHT=true restored=true
+M-O4-default CAUGHT=true restored=true
+M-O4-wiring CAUGHT=true restored=true
+M-O5 CAUGHT=true restored=true
+M-G1 CAUGHT=true restored=true
+M-G2 CAUGHT=true restored=true
+M-G3 CAUGHT=true restored=true
+M-G4 CAUGHT=true restored=true
+M-G5 CAUGHT=true restored=true
+M-seam CAUGHT=true restored=true
+M-G6 CAUGHT=true restored=true
+M-G7 CAUGHT=true restored=true
+M-G8 CAUGHT=true restored=true
+M-D-proc-empty CAUGHT=true restored=true
+M-D-noread-empty CAUGHT=true restored=true
+# runner-exit=0 end 2026-10-04T08:58:46+05:30
+WT-SRC-UNCHANGED

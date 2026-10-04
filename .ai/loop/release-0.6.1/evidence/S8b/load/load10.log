@@ -1,0 +1,27 @@
+cpu-before=12% start=2026-10-04T09:01:40+05:30
+gen: cores=32 workers=8 self-terminate-ms=180000 pids=33260,78928,82672,76932,17772,63300,66992,42344
+POSITIVE-CONTROL (workers must be found): marker-processes=8 pids=33260,78928,82672,76932,17772,63300,66992,42344
+cpu-during=17%
+run 1 PASS T5 INFO: module remaining-ms at each attempt=1999,1325
+run 2 PASS T5 INFO: module remaining-ms at each attempt=1998,1335
+run 3 PASS T5 INFO: module remaining-ms at each attempt=1999,1322
+run 4 PASS T5 INFO: module remaining-ms at each attempt=1998,1326
+run 5 PASS T5 INFO: module remaining-ms at each attempt=1998,1335
+run 6 PASS T5 INFO: module remaining-ms at each attempt=1999,1335
+run 7 PASS T5 INFO: module remaining-ms at each attempt=1999,1329
+run 8 PASS T5 INFO: module remaining-ms at each attempt=1998,1327
+run 9 PASS T5 INFO: module remaining-ms at each attempt=1999,1325
+run 10 PASS T5 INFO: module remaining-ms at each attempt=1999,1345
+RESULT pass=10 fail=0 elapsed=25s cpu-end=15%
+before stop: marker-processes=8 logged=8
+pid 33260: marker confirmed, taskkill ok
+pid 78928: marker confirmed, taskkill ok
+pid 82672: marker confirmed, taskkill ok
+pid 76932: marker confirmed, taskkill ok
+pid 17772: marker confirmed, taskkill ok
+pid 63300: marker confirmed, taskkill ok
+pid 66992: marker confirmed, taskkill ok
+pid 42344: marker confirmed, taskkill ok
+after stop: marker-processes=0
+FINAL LEFTOVER QUERY: marker-processes=0 pids=
+end=2026-10-04T09:02:17+05:30

@@ -1,0 +1,18 @@
+== mutB2d selfheal node=v25.0.0 bin=E:/AI-Cache/tmp/claude/E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/S8b/bins/mut-B2d-selfheal.js ISO=E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\A8 tmpdir=E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S8b-tmp-ab
+PASS setup nav exit 0 :: code=0 
+PASS Chrome command line references our ISO (ownership) and yields the profile dir :: dir=E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\A8\sutradhar-cli-1791083580525-URu1vG
+PASS state.userDataDir equals the CIM-derived dir
+PASS --user-data-dir length <= 200 (P5) :: len=198
+PASS profile dir exists after nav
+INFO state.json wsEndpoint rewritten to closed port 55528; chromePid kept=67508
+PASS lock holder ready (FileShare ReadWrite, no Delete)
+MEASURED {"code":0,"signal":null,"timedOut":false,"ms":4812,"aliveAtReturn":false,"dirAtReturn":false,"fatalLine":null,"errno":null,"fatalStatePath":null,"fatalIdx":-1,"removedIdx":7,"sessionClosed":false,"noteUnreachable":true,"phaseKill":true,"stateCleared":false,"couldNotClear":false}
+PASS lock holder released and exited :: exit=0 out=ready,released
+STATE-AFTER {"chromePid":83428,"userDataDir":"E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\A8\\sutradhar-cli-1791083582986-7Dw8wP"}
+INFO harness deleted state.json itself (no CLI command touches this state dir again)
+PASS owned pid 83428 (control fresh-session chrome) exited within 15 s after the ownership-checked kill
+INFO harness removed leftover dir sutradhar-cli-1791083582986-7Dw8wP
+PASS leftover query positive control finds the dummy :: 44424 node.exe
+PASS no process references the ISO at the end
+PASS real TEMP sutradhar-cli-* list unchanged
+# harness-fails=0
