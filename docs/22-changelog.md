@@ -24,6 +24,48 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 Nothing yet.
 
+## [0.6.2] - unreleased
+
+Prepared on branch `release/0.6.2`; the date and the published-to-npm line are filled in after `npm publish`.
+Fixes for the defects found by the Claude-direct WebBench run of 2026-10-04 (`tools/webbench/claude-direct-run-2026-10-04.md`).
+
+### Fixed
+- **Page text is no longer cut off silently (PROB-048).** CLI `text`, SDK `page.snapshot()` and MCP `browser.snapshot`
+  used to return at most 4000 (MCP: 2000) characters with no sign that more existed. They now state the total, print
+  `[page text truncated: showing characters A-B of N. ...]` when they show only part, and let you page through the rest:
+  `sutradhar text --offset B` / `--max-chars N`, `page.text({ offset, maxChars })`, MCP `browser.get_page_text`.
+  A failed read is now an error (CLI exit 1, MCP `isError`, SDK rejection), not empty text. Default sizes are unchanged.
+  PDF text is no longer capped at 4000 characters (but see Known limitations: PDF text is not extractable in the
+  bundled builds).
+- **Clicks and typing no longer fail with "Attempted to use detached Frame" (PROB-047)** on pages that keep replacing an
+  iframe, and `snap` no longer returns an empty element list on such pages. Cause: Puppeteer throws synchronously (not as a rejected promise) when a frame is already detached, so `.catch()`, promises built outside a `try`, and `bounded(frame.evaluate(...))` never saw it; every such site in the action, snapshot and verification code now contains it.
+- **`#5` and `[#5]` work as element ids (PROB-049)**, as `snap` prints them.
+- **Commands other than `nav` no longer start a blank browser when no session is open (PROB-051)**; they exit 1 with
+  `no active browser session ... sutradhar nav <url>`. `nav <url>`, `newtab <url>`, `audit <url>` and `compare` still
+  start one; `grant` now needs an open session.
+
+### Added
+- CLI `back`, `forward`, `reload` (PROB-050). Same-page history entries (`pushState`, `#hash`) count as navigation;
+  at the start/end of history they exit 1.
+- CLI `text --offset/--max-chars/--json`; SDK `page.text()`; MCP `browser.get_page_text` (74 tools now:
+  73 `browser.*` plus `agent.runGoal`); MCP `browser.snapshot` `textMaxChars` (MCP ceiling 40000).
+
+### Changed
+- `go_back`/`go_forward` verification evidence (CLI `--json`, MCP `browser.go_back`/`go_forward`, SDK) gains a
+  `go_back.history-edge` / `go_forward.history-edge` check when there is no history entry in that direction; tier and
+  reason are unchanged.
+- CLI `text` prints a marker line on stdout when the text is truncated, exits 1 when the page text cannot be read, and
+  no longer re-numbers snapshot ids.
+- `SnapshotResult` has new fields `pageTextTotalChars`, `pageTextTruncated` and `pageTextError`.
+
+### Known limitations
+- **PDF text extraction does not work in the bundled builds (PROB-052, pre-existing).** The published `sutradhar`
+  package (CLI, SDK, MCP) cannot extract text from a PDF page: the bundled PDF reader needs an optional native module
+  that the package does not ship. 0.6.1 printed an empty line and exited 0; 0.6.2 fails loudly: `text` exits 1 with
+  `text read failed: the PDF text could not be extracted: PDF text extraction is not available in this build
+  (PROB-052) ...`, `browser.get_page_text` returns `isError`, `page.text()` rejects with `PageTextReadError`. Not fixed
+  in this release (both fix options are logged in `.ai/known-problems.md`).
+
 ## [0.6.1] - 2026-10-04
 
 Published to npm as `sutradhar@0.6.1` on 2026-10-04.

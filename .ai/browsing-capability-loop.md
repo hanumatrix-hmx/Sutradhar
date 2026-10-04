@@ -100,6 +100,10 @@ a reconnect to be live-confirmed end-to-end through MCP itself.
 
 Append-only. Newest first.
 
+### 2026-10-04 — Release 0.6.2: fixes for the WebBench 2026-10-04 defects (PROB-047/048/049/051, PROB-050 mitigated), independently audited
+
+Built on branch `release/0.6.2` (not published): page text windows with totals and a marker (CLI/SDK/MCP, new `browser.get_page_text`, 74 tools), frame-detach containment (`frameCall` at every unsafe site, deterministic churn fixture that fails the published 0.6.1 and passes HEAD), `#N`/`[#N]` node ids, no-session reads fail with a hint instead of launching a blank browser, CLI `back`/`forward`/`reload`. The S8 audit (fresh auditor, own mutants and probes) accepted all five items; its one test gap (continue-offset hint for later windows) is closed. Discovered along the way: PROB-052 (PDF text extraction never worked in bundled builds; 0.6.1 hid it as empty text, 0.6.2 reports it). Follow-ups are logged as GAP entries (see the 0.6.2 S10b commit). Evidence: `.ai/loop/release-0.6.2/evidence/`.
+
 ### 2026-10-04 — Milestone 100: pre-registered, blind-verified WebBench run of the published 0.6.1 CLI — 4 confirmed defects (PROB-047 to PROB-050), 1 usability defect (PROB-051), three bug re-tests
 
 Driven by the host AI through the published `sutradhar@0.6.1` CLI (sha256 `9858726a...5c59b`, checked on every call), 30 seeded fresh READ tasks plus a 6-task re-test set, strict evidence rules, a blind Opus verifier with three canaries (all caught), and orchestrator adjudication. Full report: `tools/webbench/claude-direct-run-2026-10-04.md`; protocol, logs' hashes and rulings in `.ai/loop/webbench-2026-10-04/`. Result: 6 strict completions of 29 in-scope (H1 20.7%, CI 9.8 to 38.4), 1 interpreted, 13 external blocks, 9 agent failures, 0 Sutradhar failures after adjudication. The old "0 Sutradhar-attributable failures" is now explained as a counting convention, not a measurement (see `.ai/competitive-benchmarks.md`).

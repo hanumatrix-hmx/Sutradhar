@@ -30,7 +30,9 @@ The per-package READMEs cover the pre-bundling, workspace-internal view:
 agent loop + web inspector dashboard) — this monorepo's `apps/server` + `packages/frontend`,
 see [Quickstart & Development](#-quickstart--development) below.
 
-### Status (0.6.1) and known limitations
+### Status (0.6.2) and known limitations
+
+0.6.2 fixes the defects the 2026-10-04 WebBench run found: page text is no longer cut off silently (CLI `text`, SDK `page.text()`, MCP `browser.get_page_text` report the total, mark a partial read and page with an offset), clicks no longer fail with "detached Frame" on pages that keep replacing an iframe, `#5` works as an element id, a command other than `nav` no longer starts a blank browser when no session is open (it exits 1 with a hint), and the CLI gains `back`, `forward` and `reload`. Known limitation: PDF text cannot be extracted from the bundled builds (PROB-052); `text` on a PDF now exits 1 with a message instead of printing an empty line.
 
 0.6.1 is a security and cleanup patch: it updates the `fast-uri` copy bundled in the MCP server (six advisories) and makes the CLI remove its own temporary Chrome profile directories; there are no API or tool changes.
 
@@ -39,13 +41,13 @@ see [Quickstart & Development](#-quickstart--development) below.
 (flag > env > config file > default; see [docs/project-config.md](./docs/project-config.md)). 0.5.0
 (2026-09-29) added, among other things, an optional MCP `sessionId`, a machine-readable
 `browser.audit` / `audit --json`, `wait_for_selector` states, live-value `extract_data`, iframe/shadow
-labels in snapshots, download/upload allow-list env vars, and CLI native-dialog handling. The MCP server now exposes 72 `browser.*` tools plus `agent.runGoal`. Several of
+labels in snapshots, download/upload allow-list env vars, and CLI native-dialog handling. The MCP server now exposes 73 `browser.*` tools plus `agent.runGoal`. Several of
 these did not pass every independent audit and ship with documented limitations: `expect.text` / `wait_for` text
 (best-effort rendered text; never-painted SVG containers still count), CLI dialogs (a
 crashed tab needs `sutradhar tabs` then `closetab <id>`; wrong-popup closes are possible), downloads
 (one `download_file` per browser at a time; cross-process protection is best effort), `audit` (it can
 miss the first navigation's error status on a brand-new tab), and `wait_for_selector --state hidden`
-(best effort). The full list is in [docs/22-changelog.md](./docs/22-changelog.md) under "0.6.1", "0.6.0"
+(best effort). The full list is in [docs/22-changelog.md](./docs/22-changelog.md) under "0.6.2", "0.6.1", "0.6.0"
 and "0.5.0 (2026-09-29)" and in [AGENT_SETUP.md](./AGENT_SETUP.md)'s "Known limitations". Sutradhar does no
 stealth or bot-detection evasion; Cloudflare, CAPTCHA and IP blocks stop it like any other automation tool.
 

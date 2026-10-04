@@ -36,7 +36,7 @@ cd packages/cli && npm link
 ### 3. Try it
 
 ```bash
-sutradhar nav https://example.com     # navigates (spawns a session if none is active)
+sutradhar nav https://example.com     # navigates (spawns a session if none is active; other commands need one)
 sutradhar snap                        # prints the interactive-element listing
 sutradhar click 4                     # click by the numeric [#id] from "snap"
 sutradhar text                        # print the page's visible text
@@ -49,15 +49,16 @@ Run `sutradhar` with no arguments for the full command list.
 
 | Command | Description |
 |---|---|
-| `nav <url>` | Navigate to a URL (launches a session if none is active). |
+| `nav <url>` | Navigate to a URL (launches a session if none is active). Only `nav <url>`, `newtab <url>`, `audit <url>` and `compare <urlA> <urlB>` start a session; every other command needs one already open and otherwise exits 1 with `no active browser session ... Start a session with: sutradhar nav <url>` (it does not launch a blank browser). `grant` therefore needs an open session. |
+| `back` / `forward` / `reload` | Go back / forward one history entry on the active tab, or reload it. Take `--settle`, `--expect-*`, `--json`, `--dialog`. Print `Navigated back to <url>` / `Navigated forward to <url>` / `Reloaded <url>`; same-page entries (`pushState`, `#hash`) count as navigation. At the start/end of history `back`/`forward` print `Back: no history entry to go back to` / `Forward: no forward history entry` and exit 1, **also when an `--expect-*` flag is given** (this is the one exception to the `--expect-*` exit-4 rule below); with `--json` the JSON (carrying a `go_back.history-edge` / `go_forward.history-edge` check) is on stdout and the edge line on stderr. A `beforeunload` dialog dismissed with `--dialog dismiss` cancels the move (exit 1, after Chrome's ~30 s navigation timeout). |
 | `snap` | Print the interactive-element listing for the current page. |
 | `snap --json` | Same, plus the raw structured per-element data as JSON. |
 | `snap --no-text` | Same elements, drops name/label/placeholder/value text (keeps tag+role+id) — smaller listing when you already know what you're targeting and just need fresh ids. |
 | `snap --ids-only` | Smallest listing: only the bracketed `[#id]`, nothing else. |
 | `snap --scan-listeners` | Also finds elements whose only interactivity signal is a real `addEventListener`-attached handler (no `onclick=`/role/`tabindex`/`cursor:pointer`) — e.g. SortableJS-style drag lists. Slower; real CDP introspection. |
 | `axsnap` | Accessibility-tree listing — no ids, never goes stale even if the page re-renders; pair with `clicktext`/`clickrole`. |
-| `text` | Print the current page's visible text. |
-| `click <ref>` | Click an element (selector, or a numeric id from `snap`). |
+| `text [--offset N] [--max-chars N] [--json]` | Print the current page's visible text: the first 4000 characters by default. When the page has more, the **last stdout line** is a marker `[page text truncated: showing characters A-B of N. Continue with: sutradhar text --offset B]` (the last window ends `(end)`; an offset past the end prints an empty window and `offset N is past the end`). Page with `--offset`, or raise `--max-chars` (1..100000). `--json` prints the window plus totals (`totalChars`, `truncated`, ...) as one JSON document with no marker line. Bad flag values exit 1 before the browser is touched. A page whose text cannot be read exits 1 with `Error: text read failed: <reason>` (never empty text with exit 0); a PDF in the bundled build is such a case (PROB-052, see Known limitations). |
+| `click <ref>` | Click an element (selector, or a node id from `snap`: `5`, `#5` and `[#5]` all work). |
 | `clicktext <text>` | Click the element containing this text (from `axsnap`). |
 | `clickrole <role> [name]` | Click by accessibility role, optionally narrowed by name (e.g. `clickrole button Submit`). |
 | `type <ref> <text>` | Type text into an element. |
@@ -134,7 +135,7 @@ stderr). `getclipboard` keeps stdout as just the clipboard text and prints its v
 now aborts (`Press aborted: …`, exit 1, no key sent) when focusing the target fails or lands elsewhere, instead of
 pressing into whatever holds focus.
 
-**Selectors.** Selectors are CSS (shadow roots crossed for element actions), a numeric id from `snap`, or Puppeteer's `pierce/`, `xpath/`, `aria/` and `text/` prefixes. Playwright syntax (`text=`, `role=`, `>>`, `:has-text()`, `getBy*()`, `internal:`) and the old `xpath=`/`aria=`/`pierce=` forms are rejected immediately with a hint instead of failing slowly — use `clicktext`/`clickrole` to target by visible text or accessible role. Invalid CSS/XPath fails in one round trip with the browser's own parser message.
+**Selectors.** Selectors are CSS (shadow roots crossed for element actions), a node id from `snap` (`5`, `#5` or `[#5]`, exactly as `snap` prints it), or Puppeteer's `pierce/`, `xpath/`, `aria/` and `text/` prefixes. Playwright syntax (`text=`, `role=`, `>>`, `:has-text()`, `getBy*()`, `internal:`) and the old `xpath=`/`aria=`/`pierce=` forms are rejected immediately with a hint instead of failing slowly — use `clicktext`/`clickrole` to target by visible text or accessible role. Invalid CSS/XPath fails in one round trip with the browser's own parser message.
 
 Run `sutradhar` with no arguments for this same list straight from the binary.
 
@@ -236,8 +237,10 @@ Without `--profile`, the first command that needs a browser starts Chrome with a
 
 ## Known limitations
 
-These are open, reproduced problems as of 0.6.1, not
+These are open, reproduced problems as of 0.6.2, not
 hypothetical ones.
+
+**PDF text (PROB-052).** `text` cannot extract the text of a PDF page in the published (bundled) CLI: the bundled PDF reader needs an optional native module that the package does not ship. 0.6.1 printed an empty line with exit 0; 0.6.2 exits 1 with `Error: text read failed: the PDF text could not be extracted: PDF text extraction is not available in this build (PROB-052) ...`. Download the PDF and read it with another tool.
 
 **Native dialogs and crashed tabs**
 

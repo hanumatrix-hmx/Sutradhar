@@ -57,13 +57,13 @@ tool (Sutradhar's own autonomous loop takes a natural-language goal and drives i
 agent setups won't need this; `browser.*` is the normal path and needs no LLM provider config
 at all since you already are one).
 
-72 `browser.*` tools, grouped by what they do:
+73 `browser.*` tools, grouped by what they do:
 
 | Category | Tools | What they're for |
 |---|---|---|
 | **Lifecycle** | `health`, `launch`, `attach`, `shutdown`, `shutdown_all` | Start/stop a session. `attach` connects to an already-running Chrome over CDP instead of launching a new one. Other tools take the sessionId from launch/attach. It may be omitted only while exactly one session is live. Otherwise the call fails and lists the live ids. |
 | **Navigation** | `navigate`, `go_back`, `go_forward`, `reload` | Standard page navigation. |
-| **Agent vision** | `snapshot`, `ax_snapshot` | **Read the page.** See the grounding section below — this is the most important pair of tools here. Elements inside an iframe are labelled `[#31 in iframe "pay" (https://…)]` (the URL shown once per frame; an unnamed frame shows its number instead), and elements inside an open shadow root end with `(shadow: host-tag#id)`; a frame that couldn't be read is listed as `[iframe <origin> — not inspectable] (reason)` instead of being silently dropped. |
+| **Agent vision** | `snapshot`, `ax_snapshot`, `get_page_text` | **Read the page.** See the grounding section below — this is the most important pair of tools here. `get_page_text` reads the page's visible text in windows (`offset`, `maxChars`, at most 40000): `snapshot` carries only the first 2000 characters (`textMaxChars` raises that, up to 40000), and when a read shows only part of the page the text ends with a `[page text truncated: ...]` marker naming the next `offset`; page with `get_page_text` until the `(end)` marker. A text read that fails is an error, never empty text. Elements inside an iframe are labelled `[#31 in iframe "pay" (https://…)]` (the URL shown once per frame; an unnamed frame shows its number instead), and elements inside an open shadow root end with `(shadow: host-tag#id)`; a frame that couldn't be read is listed as `[iframe <origin> — not inspectable] (reason)` instead of being silently dropped. |
 | **Interaction** | `click`, `click_by_text`, `click_by_role`, `right_click`, `type`, `type_by_label`, `press_key`, `hover`, `scroll`, `select_option`/`select_options`, `drag_and_drop`, `touch_tap`, `upload_file`, `upload_file_via_trigger`, `download_file`, `wait_for_selector`, `wait_for`, `fill_form`, `click_at_point`, `drag_at_points` | Act on the page. `fill_form` does a whole form in one call. `click_at_point`/`drag_at_points` are the escape hatch for canvas/custom-rendered UI with nothing addressable via DOM. Selectors are standard CSS or a snapshot node id; Puppeteer's `pierce/`, `xpath/`, `aria/` and `text/` prefixes also work. `wait_for_selector` takes `state`: `visible` (the default; non-empty box and not `visibility:hidden`, `opacity:0` still counts), `attached` (just in the DOM) or `hidden` (removed or not visible; succeeds at once if nothing matches). `wait_for` waits on a *page condition* (text, text gone, URL, a JS expression) instead of an element: see "Waiting" below. Every tool in this row except the two waits takes `settle` (see "Waiting" for what it does and does not see). Playwright-style syntax (`text=`, `role=`, `>>`, `:has-text()`, `getBy*()`) is rejected immediately with a hint — use `click_by_text`/`click_by_role`/`type_by_label` to target by visible text or accessible role/name instead. |
 | **Capture & extraction** | `screenshot`, `audit`, `export_pdf`, `eval`, `extract_data` | Get data out. `audit` returns a JSON report (console/page errors, broken requests, a11y heuristics, Web Vitals) plus the screenshot; pass `url` for full coverage (auditing the current page as-is only sees activity since this session attached); findings never fail the call. `extract_data` takes a field-name → CSS-selector map and returns real matched values — prefer this over eyeballing a screenshot for anything you need to assert on. With no `attribute`, form controls (`input`/`select`/`textarea`) return their **live** current value (including typed-but-unsubmitted text) and other elements return rendered text; `"value"`/`"checked"`/`"selected"` read live DOM state, `"attr:<name>"` reads the raw HTML attribute, and `visibleOnly` (whole call or per field) drops non-visible matches. Both `eval` and `extract_data` accept an optional `frameSelector` (a CSS selector or snapshot `[#id]` for an `<iframe>` element) to read inside that frame instead of the top-level page — including a genuinely cross-origin one. |
 | **Storage** | `get_cookies`/`set_cookie`/`delete_cookie`, `get_local_storage`/`set_local_storage_item`/`clear_local_storage`, `get_session_storage`/`set_session_storage_item`/`clear_session_storage`, `get_storage_state`/`set_storage_state` | Cookie/storage read-write. The `storage_state` pair is a single-blob export/import of all three at once — the way to log in once and reuse that session later. |
@@ -119,7 +119,7 @@ report `unverifiable` with the dialog named instead of hanging.
 ## Grounding: `snapshot` vs `ax_snapshot` — read this before driving anything
 
 - **`browser.snapshot`** — DOM-attribute grounding. Returns a compact interactive-element
-  listing (numeric `[#id]`, backed by a stamped `data-sd-node-id`) plus page text. Fast, and
+  listing (numeric `[#id]`, backed by a stamped `data-sd-node-id`) plus page text (the first window only: a `[page text truncated: ...]` marker line says when there is more; read the rest with `browser.get_page_text`). Fast, and
   fine for static pages — but the `[#id]`s are a snapshot of the DOM at that instant, and can
   go stale if the page re-renders (a React/Vue update, a list re-sorting) before you act on it.
 - **`browser.ax_snapshot`** — accessibility-tree grounding (role + accessible name). No ids to
@@ -263,7 +263,7 @@ npx --package=sutradhar sutradhar doctor    # environment diagnostics
 ```
 
 Or `npm install -g sutradhar` once, then drop the `npx --package=sutradhar` prefix and just
-run `sutradhar <command>`. Sessions persist across separate CLI invocations, scoped
+run `sutradhar <command>`. Only `nav <url>` (and `newtab <url>`, `audit <url>`, `compare`) start a browser; every other command exits 1 with `no active browser session` when none is open, so run `nav` first. Node ids from `snap` work as `5`, `#5` or `[#5]`. `sutradhar text` prints the first 4000 characters of the page text and, when there is more, a final `[page text truncated: ... Continue with: sutradhar text --offset N]` line (`--offset`, `--max-chars`, `--json`; a failed read exits 1). `back`, `forward` and `reload` navigate the history. Sessions persist across separate CLI invocations, scoped
 automatically to the calling directory (`~/.sutradhar-cli/<hash-of-cwd>/state.json`) so two
 projects run in parallel don't share a browser — run `sutradhar close` when done. `sutradhar profile create
 <name>` gives you a persistent, named profile (cookies/login survive across runs); `sutradhar
@@ -337,6 +337,7 @@ it ships), the pattern that actually holds up is:
 
 ## Known limitations — stated honestly
 
+- **PDF text is not extractable from the published (bundled) builds (PROB-052).** `get_page_text`, `sutradhar text` and `page.text()` on a PDF page fail with an error naming PROB-052 (0.6.1 returned empty text); the bundled PDF reader needs an optional native module the package does not ship.
 - **No stealth or bot-detection evasion, by design.** Sutradhar does not attempt to evade
   bot-detection or solve CAPTCHAs, and Cloudflare challenges, CAPTCHA walls, and IP-level
   blocks stop it exactly as they would stop any other automation tool run the same way — this
