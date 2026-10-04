@@ -111,7 +111,7 @@ export function start() {
     }
     if (p === '/hist/spa') {
       return html(page('hist-spa', 'Hist SPA',
-        `<h1>History SPA</h1><script>history.pushState({}, '', '#2'); location.hash = 'x';</script>`));
+        `<h1>History SPA</h1><script>history.pushState({}, '', '#2'); history.pushState({}, '', '#x');</script>`));
     }
     if (p === '/reload-count') {
       counters.reload += 1;
