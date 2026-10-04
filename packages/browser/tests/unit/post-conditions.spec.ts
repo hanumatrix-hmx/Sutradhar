@@ -5,10 +5,13 @@
  */
 
 import {
+  EVIDENCE_MAX_CHECKS,
+  ExecutionVerifier,
   PostConditionRecorder,
   activeInfoInPage,
   armKeyListenerInPage,
   bounded,
+  capEvidence,
   checkFocus,
   decideClipboardVerdict,
   decideDragVerdict,
@@ -28,6 +31,7 @@ import {
   recordScreenshotEvidence,
   recordWaitForSelectorEvidence,
   statDownloadedFile,
+  type IBrowserTab,
   type KeyObservation,
   type NavSnapshot,
   type TargetInfo,
@@ -582,5 +586,115 @@ describe('FR2-07 PostConditionRecorder / bounded / wait evidence', () => {
     recordWaitForSelectorEvidence(others, { state: 'hidden', matchedAtStart: true, otherVisibleMatches: 2 });
     expect(others.toBuiltIn()).toMatchObject({ outcome: 'pass' });
     expect(others.toBuiltIn()!.checks[0]!.detail).toContain('2 later match');
+  });
+});
+
+describe('I-NAV decideNavigationVerdict: machine-readable <go_back|go_forward>.history-edge check', () => {
+  const snap = (over: Partial<NavSnapshot> = {}): NavSnapshot => ({ url: 'http://x/a', loaderId: 'L1', index: 2, count: 4, ...over });
+  const names = (v: { checks: ReadonlyArray<{ check: string }> }) => v.checks.map((c) => c.check);
+
+  it('E1: back at the first entry carries go_back.history-edge, immediately after go_back.history-index', () => {
+    const v = decideNavigationVerdict({ kind: 'go_back', before: snap({ index: 0 }), after: snap({ index: 0 }) });
+    expect(names(v)).toEqual(['go_back.document', 'go_back.history-index', 'go_back.history-edge']);
+    expect(v.checks[2]).toEqual({
+      check: 'go_back.history-edge',
+      outcome: 'fail',
+      expected: 'a history entry in this direction',
+      observed: 'index 0 of 4',
+    });
+    expect(v.outcome).toBe('fail');
+  });
+
+  it('E2: forward at the newest entry carries go_forward.history-edge, immediately after go_forward.history-index', () => {
+    const v = decideNavigationVerdict({ kind: 'go_forward', before: snap({ index: 3 }), after: snap({ index: 3 }) });
+    expect(names(v)).toEqual(['go_forward.document', 'go_forward.history-index', 'go_forward.history-edge']);
+    expect(v.checks[2]).toEqual({
+      check: 'go_forward.history-edge',
+      outcome: 'fail',
+      expected: 'a history entry in this direction',
+      observed: 'index 3 of 4',
+    });
+  });
+
+  it('E3: forward NOT moved at index 0 of 2 (not an edge: there is an entry ahead) carries NO edge check', () => {
+    const v = decideNavigationVerdict({ kind: 'go_forward', before: snap({ index: 0, count: 2 }), after: snap({ index: 0, count: 2 }) });
+    expect(names(v)).not.toContain('go_forward.history-edge');
+    expect(v.checks.find((c) => c.check === 'go_forward.history-index')).toMatchObject({ outcome: 'fail' });
+    expect(v.reason).toContain('did not move');
+  });
+
+  it('E4: back NOT moved from index 2 (not an edge) carries NO edge check', () => {
+    const v = decideNavigationVerdict({ kind: 'go_back', before: snap({ index: 2 }), after: snap({ index: 2 }) });
+    expect(names(v)).not.toContain('go_back.history-edge');
+    expect(v.reason).toContain('did not move');
+  });
+
+  it('E5: a passing move (new document or same-document) carries no edge check', () => {
+    for (const after of [snap({ index: 1, loaderId: 'L2', url: 'http://x/p' }), snap({ index: 1 })]) {
+      const v = decideNavigationVerdict({ kind: 'go_back', before: snap(), after });
+      expect(v.outcome).toBe('pass');
+      expect(names(v)).not.toContain('go_back.history-edge');
+    }
+    const fwd = decideNavigationVerdict({ kind: 'go_forward', before: snap(), after: snap({ index: 3, loaderId: 'L2' }) });
+    expect(names(fwd)).not.toContain('go_forward.history-edge');
+  });
+
+  it('E6: navigate/reload and the not-run paths (dialog, unavailable baseline) never carry an edge check', () => {
+    const reload = decideNavigationVerdict({ kind: 'reload', before: snap({ index: 0 }), after: snap({ index: 0, loaderId: 'L2' }) });
+    expect(names(reload).some((n) => n.endsWith('history-edge'))).toBe(false);
+    const dlg = decideNavigationVerdict({ kind: 'go_back', before: snap({ index: 0 }), after: snap({ index: 0 }), dialog: 'beforeunload' });
+    expect(names(dlg).some((n) => n.endsWith('history-edge'))).toBe(false);
+    const gone = decideNavigationVerdict({ kind: 'go_back', unavailable: 'no CDP' });
+    expect(names(gone).some((n) => n.endsWith('history-edge'))).toBe(false);
+  });
+
+  it('E7: the edge check survives capEvidence (cap ' + EVIDENCE_MAX_CHECKS + ', navigation checks first) together with the maximum number of expect.* checks, in order', async () => {
+    expect(EVIDENCE_MAX_CHECKS).toBe(8);
+    const nav = decideNavigationVerdict({ kind: 'go_back', before: snap({ index: 0 }), after: snap({ index: 0 }), status: 200 });
+    expect(names(nav)).toEqual(['go_back.document', 'go_back.history-index', 'go_back.history-edge', 'go_back.http-status']);
+    const verifier = new ExecutionVerifier();
+    const tabStub = { url: 'http://x/a', page: undefined } as unknown as IBrowserTab;
+    const v = await verifier.verifyAction(
+      tabStub,
+      'http://x/a',
+      { success: true, actionType: 'go_back' },
+      { expectedElementText: 'Never', expectedUrlSubstring: '/zzz', shouldUrlChange: true },
+      nav,
+    );
+    const got = v.evidence.checks.map((c) => c.check);
+    expect(got).toEqual([
+      'go_back.document',
+      'go_back.history-index',
+      'go_back.history-edge',
+      'go_back.http-status',
+      'expect.text',
+      'expect.url',
+      'expect.urlChanged',
+    ]);
+    expect(got.length).toBeLessThanOrEqual(EVIDENCE_MAX_CHECKS);
+    expect(v.evidence.checks[2]).toMatchObject({ check: 'go_back.history-edge', outcome: 'fail' });
+  });
+
+  it('E8: capEvidence keeps the first ' + EVIDENCE_MAX_CHECKS + ' checks in order, so an edge check at position 3 survives a longer list', () => {
+    const nav = decideNavigationVerdict({ kind: 'go_forward', before: snap({ index: 3 }), after: snap({ index: 3 }), status: 200 });
+    const filler = Array.from({ length: 8 }, (_, i) => ({ check: 'expect.filler' + i, outcome: 'pass' as const }));
+    const capped = capEvidence({ tier: 'contradicted', checks: [...nav.checks, ...filler] });
+    expect(capped.checks).toHaveLength(EVIDENCE_MAX_CHECKS);
+    expect(capped.checks.slice(0, 4).map((c) => c.check)).toEqual(nav.checks.map((c) => c.check));
+    expect(capped.checks[2]).toMatchObject({ check: 'go_forward.history-edge', outcome: 'fail' });
+  });
+
+  it('E9: Rule 5 replaces the verdict reason with an expectation failure, yet the edge check is still in the evidence', async () => {
+    const nav = decideNavigationVerdict({ kind: 'go_forward', before: snap({ index: 3 }), after: snap({ index: 3 }) });
+    expect(nav.reason).toContain('no forward history entry');
+    const v = await new ExecutionVerifier().verifyAction(
+      { url: 'http://x/a' } as unknown as IBrowserTab,
+      'http://x/a',
+      { success: true, actionType: 'go_forward' },
+      { shouldUrlChange: true },
+      nav,
+    );
+    expect(v.reason).not.toContain('no forward history entry'); // the reason text was replaced by the failed expectation
+    expect(v.evidence.checks.map((c) => c.check)).toContain('go_forward.history-edge');
   });
 });

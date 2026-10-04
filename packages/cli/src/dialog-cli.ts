@@ -136,6 +136,18 @@ export function beforeunloadCancelMessage(url: string): string {
   );
 }
 
+/** I-NAV: a beforeunload dialog that was dismissed (by policy) at or after `since` (wall-clock ms) is in the dialog
+ *  history. Shared by `isBeforeunloadCancel` (nav) and the `back`/`forward`/`reload` verbs, whose cancel carries no
+ *  `ERR_ABORTED` error (it surfaces as a 30 s navigation timeout, or as no error at all). */
+export function dismissedBeforeunloadSince(
+  history: ReadonlyArray<{ dialogType: string; action?: string; handledAt?: string }>,
+  since: number,
+): boolean {
+  return history.some(
+    (h) => h.dialogType === 'beforeunload' && h.action === 'dismiss' && h.handledAt && Date.parse(h.handledAt) >= since,
+  );
+}
+
 /** True only for an `ERR_ABORTED`-shaped navigation error combined with a beforeunload the
  *  policy dismissed at or after `since` — distinguishes "cancelled by our own dismiss policy"
  *  from any other reason a navigation might abort. */
@@ -146,9 +158,7 @@ export function isBeforeunloadCancel(
 ): boolean {
   const message = String((err as { message?: unknown })?.message ?? err);
   if (!/ERR_ABORTED/.test(message)) return false;
-  return history.some(
-    (h) => h.dialogType === 'beforeunload' && h.action === 'dismiss' && h.handledAt && Date.parse(h.handledAt) >= since,
-  );
+  return dismissedBeforeunloadSince(history, since);
 }
 
 export type VerbClass = 'exempt' | 'trigger' | 'guarded';

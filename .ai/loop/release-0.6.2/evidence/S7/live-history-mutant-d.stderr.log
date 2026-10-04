@@ -1,0 +1,33 @@
+[iso-guard] tmpdir=e:/ai-cache/tmp/claude/e--hmx-projects-internal-projects-pinchtab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/s7t pid=70144
+[harness] CLI=E:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/packages/sutradhar/dist/cli-bin.mutant.js sha256=c626601c9f680bc452cd9117ea7206d7b2567aaebc0b0a741ef7a369fb28d121 GROUPS=H1
+[harness] ISO=E:/AI-Cache/tmp/claude/E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/S7t tmpdir=e:/ai-cache/tmp/claude/e--hmx-projects-internal-projects-pinchtab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/s7t
+[iso-guard] tmpdir=e:/ai-cache/tmp/claude/e--hmx-projects-internal-projects-pinchtab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/s7t pid=44540
+[harness] fixture pid=44540 url=http://127.0.0.1:65109
+PASS H1 nav /hist/a exit 0 "Navigated to http://127.0.0.1:65109/hist/a\nTitle: "
+PASS state.userDataDir <= 200 chars and dirname == ISO {"len":199}
+PASS H1 nav /hist/b exit 0
+PASS S7-1 H1 back: exit 0, first line "Navigated back to <a>", then Title and Verification {"code":0,"out":["Navigated back to http://127.0.0.1:65109/hist/a","Title: Hist A","Verification: verified (confidence 0.90) — 'go_back' verified: history moved from entry 2 to 1 (http://127.0.0.1:65109/hist/a) (new document)"]}
+PASS S7-1 H1 independent read: eval location.href == <a>
+PASS S7-1 H1 forward: exit 0, "Navigated forward to <b>" {"code":0,"out":["Navigated forward to http://127.0.0.1:65109/hist/b","Title: Hist B","Verification: verified (confidence 0.90) — 'go_forward' verified: history moved from entry 1 to 2 (http://127.0.0.1:65109/hist/b) (new document)"]}
+PASS S7-1 H1 independent read: eval location.href == <b>
+PASS S7-1 H1 reload: exit 0, "Reloaded <url>", Title, Verification {"code":0,"out":["Reloaded http://127.0.0.1:65109/reload-count","Title: Reload count","Verification: verified (confidence 0.90) — 'reload' verified: a new document committed (loader changed)"]}
+PASS S7-1 H1 reload: the server hit counter went up by exactly 1 (fixture side) and the page shows the new count {"before":1,"after":2,"textBefore":"Reload count: 1","textAfter":"Reload count: 2"}
+PASS H1-SPA nav /hist/spa exit 0
+PASS S7-2 H1-SPA precondition: location.hash == #x (the inline script ran) {"hash":"#x","historyLength":"7"}
+FAIL S7-2 H1-SPA back: exit 0 and "Navigated back to <spa>#2" {"code":1,"out":["Back: no history entry to go back to (still on http://127.0.0.1:65109/hist/spa#2)"],"err":[]}
+PASS S7-2 H1-SPA independent read: location.href ends with #2
+FAIL S7-2 H1-SPA second back: exit 0 and "Navigated back to <spa>" (no hash) {"code":1,"out":["Back: no history entry to go back to (still on http://127.0.0.1:65109/hist/spa)"]}
+PASS S7-2 H1-SPA independent read: location.href == <spa> (no hash)
+FAIL S7-2 H1-SPA forward: exit 0 and "Navigated forward to <spa>#2" {"code":1,"out":["Forward: no forward history entry (still on http://127.0.0.1:65109/hist/spa#2)"]}
+PASS S7-2 H1-SPA independent read after forward: href ends with #2
+PASS S7-5 H4 back --json after a successful move: exit 0, one parseable document with the go_back.history-index pass check {"code":0,"keys":["tabId","url","title","verification","success"]}
+PASS H1 close: exit 0, state.json gone
+PASS close before the no-session check: exit 0 {"code":0}
+PASS S7-5 H4 no-session back: exit 1, the exact S6 hint line, stdout empty, nothing launched {"code":1,"l":["Error: no active browser session — \"back\" needs an open page and does not start one. Start a session with: sutradhar nav <url>"]}
+PASS S7-5 H4 no-session forward: exit 1, the exact S6 hint line, stdout empty, nothing launched {"code":1,"l":["Error: no active browser session — \"forward\" needs an open page and does not start one. Start a session with: sutradhar nav <url>"]}
+PASS S7-5 H4 no-session reload: exit 1, the exact S6 hint line, stdout empty, nothing launched {"code":1,"l":["Error: no active browser session — \"reload\" needs an open page and does not start one. Start a session with: sutradhar nav <url>"]}
+PASS no state.json left in any state dir at the end []
+PASS path-log check exit 0 (>= 1 [cleanup] line, none outside ISO) {"exit":0,"out":["cleanup-lines=10 outside-iso=0"]}
+PASS attribution query: no Chrome with the ISO basename left at the end []
+PASS no timed-out CLI call
+LIVE-HISTORY FAILED

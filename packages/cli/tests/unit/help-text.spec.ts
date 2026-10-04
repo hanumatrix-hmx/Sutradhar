@@ -148,3 +148,14 @@ describe('@sutradhar/cli --help text (I-051: no-session reads fail with a hint)'
     expect(grantBlock).toContain('needs an active session; run nav first');
   });
 });
+
+describe('@sutradhar/cli --help text (I-NAV: back / forward / reload)', () => {
+  it('lists back | forward | reload with their flags and the edge/exit-code behaviour', () => {
+    expect(helpText).toContain('back | forward | reload');
+    expect(helpText).toContain('--settle, --expect-*, --json, --dialog');
+    expect(helpText).toContain('Back: no history entry to go back to');
+    expect(helpText).toContain('Forward: no forward history entry');
+    expect(helpText).toContain('exit 1 even with --expect-*');
+    expect(helpText).toContain('Reloaded <url>');
+  });
+});

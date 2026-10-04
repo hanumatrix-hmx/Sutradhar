@@ -1106,6 +1106,15 @@ export function decideNavigationVerdict(o: NavObservation): BuiltInVerdict {
       observed: after.index,
     });
     if (edge) {
+      // I-NAV: machine-readable edge marker, emitted ONLY at an edge (never on a not-moved index), right after the
+      // history-index check. Consumers (the CLI back/forward verbs) classify "no entry in this direction" from this
+      // check, never from the verdict reason text (which an `expect.*` failure replaces) or from `expected === -1`.
+      checks.push({
+        check: `${t}.history-edge`,
+        outcome: 'fail',
+        expected: 'a history entry in this direction',
+        observed: `index ${before.index} of ${before.count}`,
+      });
       outcome = 'fail';
       reason =
         t === 'go_back'

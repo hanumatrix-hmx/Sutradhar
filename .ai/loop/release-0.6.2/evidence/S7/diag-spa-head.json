@@ -1,0 +1,51 @@
+{
+  "cli": "E:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/packages/sutradhar/dist/cli-bin.js",
+  "variants": {
+    "S1-fixture (/hist/spa body, served as /spa-orig)": {
+      "entriesBefore": 2,
+      "hash": "#x",
+      "entriesAfter": 4,
+      "extraEntriesCreatedByThePage": 1,
+      "steps": {
+        "back1": {
+          "code": 0,
+          "line": "Navigated back to http://127.0.0.1:49429/spa-orig",
+          "href": "http://127.0.0.1:49429/spa-orig"
+        },
+        "back2": {
+          "code": 0,
+          "line": "Navigated back to http://127.0.0.1:49429/plain",
+          "href": "http://127.0.0.1:49429/plain"
+        },
+        "forward1": {
+          "code": 0,
+          "line": "Verification: NOT verified — contradicted (confidence 0.09) — 'go_forward' completed, but its post-condition check failed: the history index did not move (still 1).",
+          "href": "http://127.0.0.1:49429/spa-orig#x"
+        }
+      }
+    },
+    "two-pushState variant": {
+      "entriesBefore": 2,
+      "hash": "#x",
+      "entriesAfter": 5,
+      "extraEntriesCreatedByThePage": 2,
+      "steps": {
+        "back1": {
+          "code": 0,
+          "line": "Navigated back to http://127.0.0.1:49429/spa-2push#2",
+          "href": "http://127.0.0.1:49429/spa-2push#2"
+        },
+        "back2": {
+          "code": 0,
+          "line": "Navigated back to http://127.0.0.1:49429/spa-2push",
+          "href": "http://127.0.0.1:49429/spa-2push"
+        },
+        "forward1": {
+          "code": 0,
+          "line": "Navigated forward to http://127.0.0.1:49429/spa-2push#2",
+          "href": "http://127.0.0.1:49429/spa-2push#2"
+        }
+      }
+    }
+  }
+}

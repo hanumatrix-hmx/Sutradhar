@@ -1,0 +1,67 @@
+# S7 evidence - I-NAV CLI `back`, `forward`, `reload` (commit `I-NAV: CLI back/forward/reload verbs`)
+
+Run 2026-10-04 on `release/0.6.2` (parent 6c952b8). Update after the coordinator decision (A): the S1 fixture `/hist/spa` was corrected in its own commit 6c952b8 (new sha256 20aa282c..., recorded in `S1/fixtures.sha256` and `S1/fixtures-change-1.md`). The final live run (`live-history-head.*`, harness sha256 in `harness.sha256`, harness UNMODIFIED) is 46 PASS, 0 FAIL, `LIVE-HISTORY OK`, including every S7-2 H1-SPA check (back -> `#2`, back -> `/hist/spa`, forward -> `#2`, history length 7). The sections below that describe the STOP are kept as history; S7-2 is now PASS.
+
+## What changed (working tree)
+- `packages/browser/src/verifier/post-conditions.ts`: `decideNavigationVerdict` emits `<go_back|go_forward>.history-edge` (`fail`, expected `a history entry in this direction`,
+  observed `index <i> of <n>`) immediately after `<verb>.history-index`, only at an edge (never on a not-moved index).
+- `packages/cli/src/history-output.ts` (new, pure): `classifyHistoryOutcome(verb, verification)` -> `moved|edge|unconfirmed|not-moved|reloaded` from the
+  `history-index` / `history-edge` checks only; `historyExitCode` (edge -> 1 > failed `--expect-*` -> 4 > 0); `historyOutput` (all printed lines; `--json` at an edge: JSON on stdout,
+  edge line on stderr); `runHistoryCommand` (calls `goBack|goForward|reload`, rejections propagate, beforeunload cancel detected from the dialog history).
+- `packages/cli/src/dialog-cli.ts`: `dismissedBeforeunloadSince` factored out of `isBeforeunloadCancel` (nav unchanged).
+- `packages/cli/src/cli.ts`: `back`/`forward`/`reload` dispatch (`cmdHistory`), help text. They are not launch-capable (S6 table), class `guarded`.
+- Tests: `packages/cli/tests/unit/history-output.spec.ts` (new, 30), `help-text.spec.ts` (+1), `packages/browser/tests/unit/post-conditions.spec.ts` (+9).
+- SP-1 branch used: the dialog-history branch (a dismissed beforeunload makes `reload`/`goBack` wait for Puppeteer's 30 s navigation timeout; no `ERR_ABORTED`).
+
+## AC table
+
+| AC | result | evidence |
+|---|---|---|
+| S7-1 H1 full documents | PASS | `live-history-head.stderr.log`: `back` -> `Navigated back to <a>`, `Title: Hist A`, `Verification: ...`, `eval location.href` == a; `forward` -> `Navigated forward to <b>`; `reload` on `/reload-count` -> `Reloaded <url>` and the fixture-side hit counter +1 exactly (1 -> 2, page shows `Reload count: 2`). `window.__nav` after the back: `{"type":"navigate","persisted":true}` (a bfcache restore) |
+| S7-2 H1-SPA | PASS (after fixture commit 6c952b8) | `live-history-head.stderr.log`: all H1-SPA checks pass with the unmodified harness; M-NAVd killed by them (below) |
+| S7-3 H2 edges | PASS | fresh session (`state-h2`): `forward` at the newest entry -> exit 1, stdout exactly `Forward: no forward history entry (still on <url>)`; **`forward --expect-url-changed` -> exit 1 (not 4)**; `forward --expect-url /zzz-never` -> 1; `back` x2: the first `back` exits 0 `Navigated back to chrome://new-tab-page/` (confirmed by `eval location.href`), the second is the edge: exit 1 `Back: no history entry to go back to (still on chrome://new-tab-page/)`; `back --expect-url-changed` at the edge -> 1 (not 4); `back --json` at the edge -> parseable JSON on stdout containing `go_back.history-edge`, the edge line on stderr, exit 1 |
+| S7-4 H3 beforeunload (SP-1 branch) | PASS | armed by a real CLI `click '#arm-bu'` (`typeof window.onbeforeunload == function`). Validity: `reload --dialog accept` on the armed page printed `Reloaded ...` and a `dialogHandled: {"type":"beforeunload",...}` line (the dialog really is raised). `reload --dialog dismiss` -> exit 1, stdout `Navigate failed: the page's beforeunload dialog was dismissed (--dialog dismiss is in effect), so the navigation to <url> was cancelled...`, no `Reloaded`, `/beforeunload` fixture hit counter unchanged, URL unchanged (30.2 s: Puppeteer's navigation timeout); `back --dialog dismiss` (re-armed) -> exit 1, same message, no `Navigated`, URL unchanged (30.2 s) |
+| S7-5 H4 | PASS | `back --json` after a successful move: exit 0, one parseable document (`success:true`, `go_back.history-index` pass); no session: `back`, `forward`, `reload` each exit 1 with the exact S6 line (`Error: no active browser session — "<verb>" needs an open page and does not start one. Start a session with: sutradhar nav <url>`), stdout empty, nothing launched |
+| S7-6 probe edge-check unit tests | PASS | `post-conditions.spec.ts` E1-E9: back edge and forward edge each carry the check right after `history-index` (exact object); forward not-moved (index 0 of 2) and back not-moved carry none; passing moves, reload, dialog and unavailable baselines carry none; cap `EVIDENCE_MAX_CHECKS` = 8: through `ExecutionVerifier.verifyAction` with all three `expect.*` checks plus `http-status` the evidence is `[go_back.document, go_back.history-index, go_back.history-edge, go_back.http-status, expect.text, expect.url, expect.urlChanged]` (7, order kept); `capEvidence` on a 12-check list keeps the first 8 with the edge check at position 3; Rule 5 replaces the reason text yet the edge check stays in the evidence |
+| S7-7 counts / typecheck / mode | PASS | browser 951 -> 960 (+9), cli 406 -> 436 + 2 skipped (+30), capability-runtime 557, mcp-server 167, sutradhar 70 unchanged (`test-*.log`); spec typecheck 7 errors == baseline in the same 3 files (`spec-tsc.txt`, new spec clean); `tsc --noEmit` cli and browser exit 0; eslint `packages/cli/src` + `post-conditions.ts` exit 0; `git ls-files -s packages/cli/src/cli.ts` = 100644 (not modified in the index, working-tree edit only) |
+
+Build: forced, 9/9 executed, 0 cached (`build.log`, `build-times.txt` rc=0); `cli-bin.js` 3c5527e6 -> f221f536, `index.js` 0ca9bab4 -> 7c528f4c, `mcp-cli.js` 6fb55653 -> 4184a9a4 (the probe change is bundled into all three);
+`grep -c history-edge` 2 / 1 / 1; no `*.mutant.js` left; real `cli-bin.js` sha256 unchanged by the mutant runs. Isolation: `[iso-guard]` lines present, 0 `ISOLATION GUARD`, path-log check exit 0 (20 `[cleanup]` lines, 0 outside ISO), real-TEMP `sutradhar-cli-*` 5 before / 5 after (none vanished; the count rose from 4 because another session created one), no Chrome with the ISO basename afterwards, ISO dirs deleted with the guarded form.
+
+## STOP: S7-2 H1-SPA contradicts the S1 fixture (plan 4.S1 step 7 / 4.S7 H1-SPA)
+Plan: `/hist/spa` "does `history.pushState({}, '', '#2')` then `location.hash = 'x'` (two same-document entries)" and H1-SPA expects `back` -> `.../hist/spa#2`, `back` -> `.../hist/spa`, `forward` -> `#2`.
+Observed (`live-history-head.stderr.log`, `diag-spa-head.json`): Chrome converts a fragment navigation made **before the document finished loading** (the inline end-of-body script) into a history REPLACE,
+so the page creates ONE same-document entry, not two (`history.length` 6 where 7 was expected; in the diagnostic: 1 extra entry for the S1 body, 2 for a two-`pushState` variant).
+Sequence on the S1 fixture: `nav /hist/spa` leaves `[... spa, spa#x]`; `back` -> `Navigated back to .../hist/spa` (exit 0, correct: a same-document move by -1), a second `back` -> the previous page, `forward` -> `.../hist/spa` (a new document whose script pushes again).
+The verbs behave correctly; the literal expectations (`#2`) cannot hold. The failing checks are exactly the 6 `S7-2 H1-SPA ...` lines (34 of 40 live checks pass; every other check passes).
+Evidence that the verbs are right and the fixture is the problem:
+- `diag-spa.mjs` / `diag-spa-head.json` (diagnostic, not an AC): a variant with TWO `history.pushState` calls (`#2`, `#x`) gives exactly the plan's sequence on HEAD (`back` -> `spa#2`, `back` -> `spa`, `forward` -> `spa#2`, all exit 0).
+- `proposed-fixture-fix.diff` (one line: `location.hash = 'x'` -> `history.pushState({}, '', '#x')`): I applied it temporarily to the tracked fixture, ran the **unmodified** harness group H1 -> **all H1 and H1-SPA checks PASS** (`live-history-head-with-proposed-fixture-fix-H1.json`, `LIVE-HISTORY OK`, history length 7), then reversed the edit; `sha256sum -c` against the pre-edit hash OK and `git status` of the fixture is empty. The fixture in the tree is the committed one.
+- M-NAVd (no-history detected by loaderId) must be killed by H1-SPA ("exit 1 on a same-document back"): with the bundle mutant, `diag-spa-mutant-d.json` shows `back` from `spa#x` -> `Back: no history entry ... exit 1` on a real same-document move (killed). With the committed fixture the harness cannot discriminate it because H1-SPA already fails at HEAD.
+Per the plan's STOP rule I did not change the fixture (a fixture change is its own commit with a reason, S1 step 7) and did not commit S7. Decision needed: (A) approve the one-line fixture commit, then S7 is re-run unmodified and committed; or (B) re-state S7-2/H1-SPA for the fixture as it is.
+
+## Mutants
+Unit (`mutants-unit.txt`, `mut-spec.json`, runner `../tools/mutrun.mjs`; 16 mutants, 16 killed, 0 survivors, restored sha256 equal; suites: cli history-output + help-text + session-flow, browser post-conditions):
+M-NAVa (back->goForward), M-NAVa2 (forward->goBack), M-NAVb (edge printed as "Navigated"), M-NAVb2 (edge exits 0), **M-NAVd** (edge from the document check / loaderId: 10 failures), **M-NAVe** (expect outranks the edge), **M-NAVf** (edge from reason text: C6/C7), M-NAVf2 (edge from `expected === -1`: C2/C8), **M-NAVg** (probe emits the edge check on not-moved too: E3/E4), M-NAVg2 (probe never emits it), M-NAVg3 (edge placed before history-index), M-NAVh (rejection swallowed: R2), M-NAVc-unit (cancel detection disabled: R3/R5), M-NAVi (cancel ignores startedAt: R4), M-NAVj (unconfirmed printed as moved: C4), M-NAVk (`back` launch-capable: session-flow table).
+Live same-build bundle mutants (`mutants-live.txt`, `run-live-mutants.sh`, `mk-mutant.mjs`; sibling `dist/cli-bin.mutant.js`, exactly 1 replacement, deleted after; harness groups as stated):
+| mutant | groups | result |
+|---|---|---|
+| M-NAVa back->goForward | H1 | KILLED: `back` prints `Back requested; the history move could not be confirmed (...)`, `forward` hits the edge, location.href not a |
+| M-NAVb edge printed as "Navigated back" | H2 | KILLED: forward-edge and back-edge checks fail |
+| M-NAVe expect outranks the edge | H2 | KILLED: `forward --expect-url-changed`, `forward --expect-url /zzz-never`, `back --expect-url-changed` exit 4 (must be 1) |
+| M-NAVf edge from the reason text | H2 | KILLED: the same three exit 4, as the plan predicts (the reason was replaced by the failed expectation) |
+| M-NAVc reload as `navigate(currentUrl)`, no beforeunload handling (one contiguous replacement of the try/catch/cancel block) | H3 | KILLED: `reload --dialog dismiss` -> `Fatal: net::ERR_ABORTED`, no cancel message; `back --dialog dismiss` -> `Fatal: Navigation timeout of 30000 ms exceeded` |
+| M-NAVd loaderId | H1 (fixed fixture) | KILLED by the committed H1-SPA checks: `back`, second `back` and `forward` each exit 1 with an edge line on real same-document moves (`live-history-mutant-d.stderr.log`); also `diag-spa-mutant-d.json` |
+M-NAVg is live-unreachable by design (the probe is also covered at unit level E3/E4); killed by the browser unit tests.
+
+## False-pass analysis
+- S7-1/S7-3: the verbs' own output could agree with itself while the browser did not move: every `Navigated ...` is cross-checked by a separate `eval location.href` call, and `reload` by the fixture-side request counter (+1 exactly) plus the page's own counter text. A stale bundle: forced uncached build, hash changed, printed `cliSha256` equals the file, `grep -c history-edge` >= 1, and M-NAVa/b/e/f/c (same build, different behaviour) fail the same checks.
+- S7-3 exit-code precedence could pass because no expectation ever failed: `forward --expect-url-changed` and `back --expect-url-changed` at an edge really contradict (the mutants M-NAVe/M-NAVf return 4 on exactly these calls).
+- S7-4 could pass because no dialog was ever raised: the `--dialog accept` validity run prints the `dialogHandled: {"type":"beforeunload"...}` line on the same armed page; the URL and the fixture hit counter are re-read after the dismissed runs; M-NAVc (no dialog-history detection) turns the same two calls into `Fatal:` lines.
+- S7-5: no-session `back/forward/reload` are asserted byte-for-byte, with a fresh state dir that must not contain `state.json` afterwards.
+- S7-6: the unit tests would pass vacuously if `decideNavigationVerdict` never ran against real shapes; the live H2 check reads the real `go_back.history-edge` check out of the CLI's `--json` output.
+- Not verified: `reload` against a page whose probe is `not-run` (CDP timeout) live; the `unconfirmed` line is unit-covered only (the dialog-open case surfaces as the cancel message instead). The 30 s timeout path is real wall time (Puppeteer's navigation timeout): ~30.2 s per cancelled verb.
+
+## Other observations (not defects of this step)
+- On a fresh Chrome tab the first history entry is `chrome://new-tab-page/`, so `back` from the first page navigates there (exit 0) before the edge.
+- After the S1 fixture's `/hist/spa`, a `forward` that re-enters the document makes the page push again and truncate forward history: Chrome then reports a not-moved index. Page behaviour, not a verb defect; shown in `diag-spa-head.json` (`forward1` on the S1 body).

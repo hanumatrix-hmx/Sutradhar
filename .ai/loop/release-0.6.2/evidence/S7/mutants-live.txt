@@ -1,0 +1,54 @@
+mutant a written, replacements=1
+mutant a groups=H1 harness rc=1 (expected 1)
+FAIL S7-1 H1 back: exit 0, first line "Navigated back to <a>", then Title and Verification {"code":0,"out":["Back requested; the history move could not be confirmed ('go_forward' completed, but its post-condition check failed: the
+FAIL S7-1 H1 independent read: eval location.href == <a>
+FAIL S7-1 H1 forward: exit 0, "Navigated forward to <b>" {"code":1,"out":["Forward: no forward history entry (still on http://127.0.0.1:55041/hist/b)"]}
+FAIL S7-2 H1-SPA back: exit 0 and "Navigated back to <spa>#2" {"code":0,"out":["Back requested; the history move could not be confirmed ('go_forward' completed, but its post-condition check failed: there was no forward history ent
+FAIL S7-2 H1-SPA independent read: location.href ends with #2
+FAIL S7-2 H1-SPA second back: exit 0 and "Navigated back to <spa>" (no hash) {"code":0,"out":["Back requested; the history move could not be confirmed ('go_forward' completed, but its post-condition check failed: there was no forw
+FAIL S7-2 H1-SPA independent read: location.href == <spa> (no hash)
+FAIL S7-2 H1-SPA forward: exit 0 and "Navigated forward to <spa>#2" {"code":1,"out":["Forward: no forward history entry (still on http://127.0.0.1:55041/hist/spa#x)"]}
+FAIL S7-2 H1-SPA independent read after forward: href ends with #2
+FAIL S7-5 H4 back --json after a successful move: exit 0, one parseable document with the go_back.history-index pass check {"code":0,"keys":["tabId","url","title","verification","success"]}
+mutant-files-left=0
+chrome-left=0
+mutant b written, replacements=1
+mutant b groups=H2 harness rc=1 (expected 1)
+FAIL S7-3 H2 forward at the newest entry: exit 1, stdout exactly the forward-edge line {"code":1,"out":["Navigated forward to http://127.0.0.1:51451/hist/a"],"err":[]}
+FAIL S7-3 H2 the edge back: exit 1 with "Back: no history entry to go back to (still on <url>)" {"code":1,"out":["Navigated back to chrome://new-tab-page/"],"err":[]}
+FAIL S7-3 H2 the edge line names the real current URL {"first":"Navigated back to chrome://new-tab-page/","atEdgeUrl":"chrome://new-tab-page/"}
+FAIL S7-3 H2 the edge back: exit 1 with "Back: no history entry to go back to (still on <url>)" {"code":1,"out":["Navigated back to chrome://new-tab-page/"],"err":[]}
+FAIL S7-3 H2 the edge line names the real current URL {"first":"Navigated back to chrome://new-tab-page/","atEdgeUrl":"chrome://new-tab-page/"}
+FAIL S7-3 H2 the edge back: exit 1 with "Back: no history entry to go back to (still on <url>)" {"code":1,"out":["Navigated back to chrome://new-tab-page/"],"err":[]}
+FAIL S7-3 H2 the edge line names the real current URL {"first":"Navigated back to chrome://new-tab-page/","atEdgeUrl":"chrome://new-tab-page/"}
+FAIL S7-3 H2 the edge back: exit 1 with "Back: no history entry to go back to (still on <url>)" {"code":1,"out":["Navigated back to chrome://new-tab-page/"],"err":[]}
+FAIL S7-3 H2 the edge line names the real current URL {"first":"Navigated back to chrome://new-tab-page/","atEdgeUrl":"chrome://new-tab-page/"}
+FAIL S7-3 H2 the back-edge was reached within 5 backs [{"i":0,"code":0,"first":"Navigated back to chrome://new-tab-page/","href":"chrome://new-tab-page/"},{"i":1,"code":1,"first":"Navigated back to chrome://new-tab-page/"},{"i":2,
+mutant-files-left=0
+chrome-left=0
+mutant e written, replacements=1
+mutant e groups=H2 harness rc=1 (expected 1)
+FAIL S7-3 H2 forward --expect-url-changed at the newest entry: exit 1 (edge outranks the failed expectation, NOT 4) {"code":4,"out":["Forward: no forward history entry (still on http://127.0.0.1:62051/hist/a)"],"err":["Error: expe
+FAIL S7-3 H2 forward --expect-url /zzz-never at the edge: exit 1 {"code":4}
+FAIL S7-3 H2 back --expect-url-changed at the edge: exit 1 (not 4) {"code":4,"out":["Back: no history entry to go back to (still on chrome://new-tab-page/)"]}
+mutant-files-left=0
+chrome-left=0
+mutant f written, replacements=1
+mutant f groups=H2 harness rc=1 (expected 1)
+FAIL S7-3 H2 forward --expect-url-changed at the newest entry: exit 1 (edge outranks the failed expectation, NOT 4) {"code":4,"out":["Verification: NOT verified — contradicted (confidence 0.09) — Expected URL change from http:
+FAIL S7-3 H2 forward --expect-url /zzz-never at the edge: exit 1 {"code":4}
+FAIL S7-3 H2 back --expect-url-changed at the edge: exit 1 (not 4) {"code":4,"out":["Verification: NOT verified — contradicted (confidence 0.09) — Expected URL change from chrome://new-tab-page/, but URL remained chrome://new-
+mutant-files-left=0
+chrome-left=0
+mutant c written, replacements=1
+mutant c groups=H3 harness rc=1 (expected 1)
+FAIL S7-4 H3 reload --dialog dismiss: exit 1, the cancel message on stdout, the /beforeunload hit counter unchanged {"code":1,"ms":245,"out":[],"err":["Note: dialog policy for this session is now \"dismiss\".","Fatal: net::ERR_ABO
+FAIL S7-4 H3 back --dialog dismiss: exit 1, the cancel message on stdout, never "Navigated" {"code":1,"ms":30257,"out":[],"err":["Note: dialog policy for this session is now \"dismiss\".","Fatal: Navigation timeout of 30000 ms exc
+mutant-files-left=0
+chrome-left=0
+E:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/packages/sutradhar/dist/cli-bin.js: OK
+DONE
+mutant d groups=H1 (fixed fixture) harness rc expected 1
+FAIL S7-2 H1-SPA back: exit 0 and "Navigated back to <spa>#2" {"code":1,"out":["Back: no history entry to go back to (still on http://127.0.0.1:65109/hist/spa#2)"],"err":[]}
+FAIL S7-2 H1-SPA second back: exit 0 and "Navigated back to <spa>" (no hash) {"code":1,"out":["Back: no history entry to go back to (still on http://127.0.0.1:65109/hist/spa)"]}
+FAIL S7-2 H1-SPA forward: exit 0 and "Navigated forward to <spa>#2" {"code":1,"out":["Forward: no forward history entry (still on http://127.0.0.1:65109/hist/spa#2)"]}

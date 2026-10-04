@@ -72,6 +72,7 @@ import {
   type CrashedTab,
 } from './dialog-broker.js';
 import { withSessionFlow, isLaunchCapable, NoSessionError } from './session-flow.js';
+import { runHistoryCommand, type HistoryVerb } from './history-output.js';
 import {
   ensureWarden,
   stopWarden,
@@ -791,6 +792,24 @@ async function cmdNav(url: string | undefined) {
         await runtime.setStorageState(sessionId, saved).catch(() => {});
       }
     }
+  });
+}
+
+/** I-NAV: `back` / `forward` / `reload` on the active tab. Success is judged by the verification's history index (see
+ *  history-output.ts); a beforeunload cancelled by `--dialog dismiss` is detected from the dialog history (S1 spike SP-1). */
+async function cmdHistory(kind: HistoryVerb) {
+  const startedAt = Date.now();
+  await withSession(async (runtime, sessionId) => {
+    const out = await runHistoryCommand(runtime, sessionId, {
+      verb: kind,
+      expect: expectFlag,
+      settle,
+      jsonMode,
+      startedAt,
+    });
+    for (const line of out.stdout) console.log(line);
+    for (const line of out.stderr) console.error(line);
+    if (out.exitCode !== 0) process.exitCode = out.exitCode;
   });
 }
 
@@ -1824,6 +1843,12 @@ async function main() {
       return cmdDoctor();
     case 'nav':
       return cmdNav(cleanArgs[0]);
+    case 'back':
+      return cmdHistory('back');
+    case 'forward':
+      return cmdHistory('forward');
+    case 'reload':
+      return cmdHistory('reload');
     case 'snap':
       return cmdSnap(jsonMode);
     case 'axsnap':
@@ -1896,6 +1921,13 @@ Commands:
                                 newtab <url>, audit <url> and compare <urlA> <urlB> start a session; every
                                 other command needs one already open ("sutradhar nav <url>" first) and
                                 exits 1 with "no active browser session" otherwise — it does not start one.
+  back | forward | reload      Go back / forward one history entry on the active tab, or reload it (take
+                                --settle, --expect-*, --json, --dialog). back/forward print "Navigated back to
+                                <url>" / "Navigated forward to <url>" (same-page pushState/#hash entries count);
+                                at the start/end of history they print "Back: no history entry to go back to" /
+                                "Forward: no forward history entry" and exit 1 even with --expect-*. reload
+                                prints "Reloaded <url>". A beforeunload dialog dismissed by --dialog dismiss
+                                cancels the move (exit 1, after Chrome's ~30s navigation timeout).
   snap                         Print the interactive-element listing for the current page
   snap --json                  Same, plus the raw structured element data as JSON
   snap --no-text                Same elements, drops name/label/placeholder/value text

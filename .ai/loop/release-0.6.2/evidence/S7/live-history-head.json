@@ -1,0 +1,372 @@
+{
+  "cliSha256": "f221f536b9655e5580752adf8189145b9c4d8bb7ed2108633c89f923f5cae346",
+  "groups": [
+    "H1",
+    "H2",
+    "H3"
+  ],
+  "checks": {
+    "H1 nav /hist/a exit 0": {
+      "ok": true,
+      "detail": "Navigated to http://127.0.0.1:51520/hist/a\nTitle: "
+    },
+    "state.userDataDir <= 200 chars and dirname == ISO": {
+      "ok": true,
+      "detail": {
+        "len": 199
+      }
+    },
+    "H1 nav /hist/b exit 0": {
+      "ok": true
+    },
+    "S7-1 H1 back: exit 0, first line \"Navigated back to <a>\", then Title and Verification": {
+      "ok": true,
+      "detail": {
+        "code": 0,
+        "out": [
+          "Navigated back to http://127.0.0.1:51520/hist/a",
+          "Title: Hist A",
+          "Verification: verified (confidence 0.90) — 'go_back' verified: history moved from entry 2 to 1 (http://127.0.0.1:51520/hist/a) (new document)"
+        ]
+      }
+    },
+    "S7-1 H1 independent read: eval location.href == <a>": {
+      "ok": true
+    },
+    "S7-1 H1 forward: exit 0, \"Navigated forward to <b>\"": {
+      "ok": true,
+      "detail": {
+        "code": 0,
+        "out": [
+          "Navigated forward to http://127.0.0.1:51520/hist/b",
+          "Title: Hist B",
+          "Verification: verified (confidence 0.90) — 'go_forward' verified: history moved from entry 1 to 2 (http://127.0.0.1:51520/hist/b) (new document)"
+        ]
+      }
+    },
+    "S7-1 H1 independent read: eval location.href == <b>": {
+      "ok": true
+    },
+    "S7-1 H1 reload: exit 0, \"Reloaded <url>\", Title, Verification": {
+      "ok": true,
+      "detail": {
+        "code": 0,
+        "out": [
+          "Reloaded http://127.0.0.1:51520/reload-count",
+          "Title: Reload count",
+          "Verification: verified (confidence 0.90) — 'reload' verified: a new document committed (loader changed)"
+        ]
+      }
+    },
+    "S7-1 H1 reload: the server hit counter went up by exactly 1 (fixture side) and the page shows the new count": {
+      "ok": true,
+      "detail": {
+        "before": 1,
+        "after": 2,
+        "textBefore": "Reload count: 1",
+        "textAfter": "Reload count: 2"
+      }
+    },
+    "H1-SPA nav /hist/spa exit 0": {
+      "ok": true
+    },
+    "S7-2 H1-SPA precondition: location.hash == #x (the inline script ran)": {
+      "ok": true,
+      "detail": {
+        "hash": "#x",
+        "historyLength": "7"
+      }
+    },
+    "S7-2 H1-SPA back: exit 0 and \"Navigated back to <spa>#2\"": {
+      "ok": true,
+      "detail": {
+        "code": 0,
+        "out": [
+          "Navigated back to http://127.0.0.1:51520/hist/spa#2",
+          "Title: Hist SPA",
+          "Verification: verified (confidence 0.90) — 'go_back' verified: history moved from entry 6 to 5 (http://127.0.0.1:51520/hist/spa#2) (same-document)"
+        ],
+        "err": []
+      }
+    },
+    "S7-2 H1-SPA independent read: location.href ends with #2": {
+      "ok": true
+    },
+    "S7-2 H1-SPA second back: exit 0 and \"Navigated back to <spa>\" (no hash)": {
+      "ok": true,
+      "detail": {
+        "code": 0,
+        "out": [
+          "Navigated back to http://127.0.0.1:51520/hist/spa",
+          "Title: Hist SPA",
+          "Verification: verified (confidence 0.90) — 'go_back' verified: history moved from entry 5 to 4 (http://127.0.0.1:51520/hist/spa) (same-document)"
+        ]
+      }
+    },
+    "S7-2 H1-SPA independent read: location.href == <spa> (no hash)": {
+      "ok": true
+    },
+    "S7-2 H1-SPA forward: exit 0 and \"Navigated forward to <spa>#2\"": {
+      "ok": true,
+      "detail": {
+        "code": 0,
+        "out": [
+          "Navigated forward to http://127.0.0.1:51520/hist/spa#2",
+          "Title: Hist SPA",
+          "Verification: verified (confidence 0.90) — 'go_forward' verified: history moved from entry 4 to 5 (http://127.0.0.1:51520/hist/spa#2) (same-document)"
+        ]
+      }
+    },
+    "S7-2 H1-SPA independent read after forward: href ends with #2": {
+      "ok": true
+    },
+    "S7-5 H4 back --json after a successful move: exit 0, one parseable document with the go_back.history-index pass check": {
+      "ok": true,
+      "detail": {
+        "code": 0,
+        "keys": [
+          "tabId",
+          "url",
+          "title",
+          "verification",
+          "success"
+        ]
+      }
+    },
+    "H1 close: exit 0, state.json gone": {
+      "ok": true
+    },
+    "H2 nav /hist/a (fresh session) exit 0": {
+      "ok": true
+    },
+    "S7-3 H2 forward at the newest entry: exit 1, stdout exactly the forward-edge line": {
+      "ok": true,
+      "detail": {
+        "code": 1,
+        "out": [
+          "Forward: no forward history entry (still on http://127.0.0.1:51520/hist/a)"
+        ],
+        "err": []
+      }
+    },
+    "S7-3 H2 forward --expect-url-changed at the newest entry: exit 1 (edge outranks the failed expectation, NOT 4)": {
+      "ok": true,
+      "detail": {
+        "code": 1,
+        "out": [
+          "Forward: no forward history entry (still on http://127.0.0.1:51520/hist/a)"
+        ],
+        "err": []
+      }
+    },
+    "S7-3 H2 forward --expect-url /zzz-never at the edge: exit 1": {
+      "ok": true,
+      "detail": {
+        "code": 1
+      }
+    },
+    "S7-3 H2 earlier back #1: exit 0, \"Navigated back to <url>\", and eval location.href confirms it": {
+      "ok": true,
+      "detail": {
+        "first": "Navigated back to chrome://new-tab-page/",
+        "now": "chrome://new-tab-page/"
+      }
+    },
+    "S7-3 H2 the edge back: exit 1 with \"Back: no history entry to go back to (still on <url>)\"": {
+      "ok": true,
+      "detail": {
+        "code": 1,
+        "out": [
+          "Back: no history entry to go back to (still on chrome://new-tab-page/)"
+        ],
+        "err": []
+      }
+    },
+    "S7-3 H2 the edge line names the real current URL": {
+      "ok": true,
+      "detail": {
+        "first": "Back: no history entry to go back to (still on chrome://new-tab-page/)",
+        "atEdgeUrl": "chrome://new-tab-page/"
+      }
+    },
+    "S7-3 H2 the back-edge was reached within 5 backs": {
+      "ok": true,
+      "detail": [
+        {
+          "i": 0,
+          "code": 0,
+          "first": "Navigated back to chrome://new-tab-page/",
+          "href": "chrome://new-tab-page/"
+        },
+        {
+          "i": 1,
+          "code": 1,
+          "first": "Back: no history entry to go back to (still on chrome://new-tab-page/)"
+        }
+      ]
+    },
+    "S7-3 H2 back --expect-url-changed at the edge: exit 1 (not 4)": {
+      "ok": true,
+      "detail": {
+        "code": 1,
+        "out": [
+          "Back: no history entry to go back to (still on chrome://new-tab-page/)"
+        ]
+      }
+    },
+    "S7-3 H2 back --json at the edge: parseable JSON on stdout containing the go_back.history-edge check, the edge line on stderr, exit 1": {
+      "ok": true,
+      "detail": {
+        "code": 1,
+        "hasDoc": true,
+        "err": [
+          "Back: no history entry to go back to (still on chrome://new-tab-page/)"
+        ]
+      }
+    },
+    "H3 nav /beforeunload exit 0": {
+      "ok": true
+    },
+    "H3 armed by a real CLI click (typeof window.onbeforeunload == function)": {
+      "ok": true
+    },
+    "S7-4 H3 validity: reload --dialog accept on the armed page raised and handled a beforeunload dialog (the handled-dialog line)": {
+      "ok": true,
+      "detail": {
+        "code": 0,
+        "out": [
+          "Reloaded http://127.0.0.1:51520/beforeunload",
+          "Title: Beforeunload page",
+          "Verification: verified (confidence 0.90) — 'reload' verified: a new document committed (loader changed)",
+          "dialogHandled: {\"type\":\"beforeunload\",\"message\":\"\",\"action\":\"accept\",\"promptText\":null,\"by\":\"policy\"}"
+        ]
+      }
+    },
+    "H3 re-armed after the accepted reload": {
+      "ok": true
+    },
+    "S7-4 H3 reload --dialog dismiss: exit 1, the cancel message on stdout, the /beforeunload hit counter unchanged": {
+      "ok": true,
+      "detail": {
+        "code": 1,
+        "ms": 30237,
+        "out": [
+          "Navigate failed: the page's beforeunload dialog was dismissed (--dialog dismiss is in effect), so the navigation to http://127.0.0.1:51520/beforeunload was cancelled. Use --dialog accept to leave pages that ask for confirmation.",
+          "dialogHandled: {\"type\":\"beforeunload\",\"message\":\"\",\"action\":\"dismiss\",\"promptText\":null,\"by\":\"policy\"}"
+        ],
+        "err": [
+          "Note: dialog policy for this session is now \"dismiss\"."
+        ],
+        "hitsBefore": 2,
+        "hitsAfterReload": 2
+      }
+    },
+    "H3 URL unchanged after the cancelled reload": {
+      "ok": true
+    },
+    "H3 re-armed (the handler is still there after the cancelled reload)": {
+      "ok": true
+    },
+    "S7-4 H3 back --dialog dismiss: exit 1, the cancel message on stdout, never \"Navigated\"": {
+      "ok": true,
+      "detail": {
+        "code": 1,
+        "ms": 30269,
+        "out": [
+          "Navigate failed: the page's beforeunload dialog was dismissed (--dialog dismiss is in effect), so the navigation to http://127.0.0.1:51520/beforeunload was cancelled. Use --dialog accept to leave pages that ask for confirmation.",
+          "dialogHandled: {\"type\":\"beforeunload\",\"message\":\"\",\"action\":\"dismiss\",\"promptText\":null,\"by\":\"policy\"}"
+        ],
+        "err": [
+          "Note: dialog policy for this session is now \"dismiss\"."
+        ]
+      }
+    },
+    "S7-4 H3 URL unchanged after the cancelled back": {
+      "ok": true
+    },
+    "close before the no-session check: exit 0": {
+      "ok": true,
+      "detail": {
+        "code": 0
+      }
+    },
+    "S7-5 H4 no-session back: exit 1, the exact S6 hint line, stdout empty, nothing launched": {
+      "ok": true,
+      "detail": {
+        "code": 1,
+        "l": [
+          "Error: no active browser session — \"back\" needs an open page and does not start one. Start a session with: sutradhar nav <url>"
+        ]
+      }
+    },
+    "S7-5 H4 no-session forward: exit 1, the exact S6 hint line, stdout empty, nothing launched": {
+      "ok": true,
+      "detail": {
+        "code": 1,
+        "l": [
+          "Error: no active browser session — \"forward\" needs an open page and does not start one. Start a session with: sutradhar nav <url>"
+        ]
+      }
+    },
+    "S7-5 H4 no-session reload: exit 1, the exact S6 hint line, stdout empty, nothing launched": {
+      "ok": true,
+      "detail": {
+        "code": 1,
+        "l": [
+          "Error: no active browser session — \"reload\" needs an open page and does not start one. Start a session with: sutradhar nav <url>"
+        ]
+      }
+    },
+    "no state.json left in any state dir at the end": {
+      "ok": true,
+      "detail": []
+    },
+    "path-log check exit 0 (>= 1 [cleanup] line, none outside ISO)": {
+      "ok": true,
+      "detail": {
+        "exit": 0,
+        "out": [
+          "cleanup-lines=20 outside-iso=0"
+        ]
+      }
+    },
+    "attribution query: no Chrome with the ISO basename left at the end": {
+      "ok": true,
+      "detail": []
+    },
+    "no timed-out CLI call": {
+      "ok": true
+    }
+  },
+  "notes": {
+    "navTypeAfterBack": "{\"type\":\"navigate\",\"persisted\":true}",
+    "spaHistoryLength": "7",
+    "h2Walk": [
+      {
+        "i": 0,
+        "code": 0,
+        "first": "Navigated back to chrome://new-tab-page/",
+        "href": "chrome://new-tab-page/"
+      },
+      {
+        "i": 1,
+        "code": 1,
+        "first": "Back: no history entry to go back to (still on chrome://new-tab-page/)"
+      }
+    ],
+    "h3ReloadMs": 30237,
+    "h3BackMs": 30269
+  },
+  "realTemp": {
+    "before": 5,
+    "after": 5,
+    "vanished": []
+  },
+  "pathCheck": {
+    "exit": 0,
+    "out": [
+      "cleanup-lines=20 outside-iso=0"
+    ]
+  },
+  "allPass": true
+}
