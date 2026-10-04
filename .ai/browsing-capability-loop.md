@@ -100,6 +100,24 @@ a reconnect to be live-confirmed end-to-end through MCP itself.
 
 Append-only. Newest first.
 
+### 2026-10-04 — Milestone 100: pre-registered, blind-verified WebBench run of the published 0.6.1 CLI — 4 confirmed defects (PROB-047 to PROB-050), 1 usability defect (PROB-051), three bug re-tests
+
+Driven by the host AI through the published `sutradhar@0.6.1` CLI (sha256 `9858726a...5c59b`, checked on every call), 30 seeded fresh READ tasks plus a 6-task re-test set, strict evidence rules, a blind Opus verifier with three canaries (all caught), and orchestrator adjudication. Full report: `tools/webbench/claude-direct-run-2026-10-04.md`; protocol, logs' hashes and rulings in `.ai/loop/webbench-2026-10-04/`. Result: 6 strict completions of 29 in-scope (H1 20.7%, CI 9.8 to 38.4), 1 interpreted, 13 external blocks, 9 agent failures, 0 Sutradhar failures after adjudication. The old "0 Sutradhar-attributable failures" is now explained as a counting convention, not a measurement (see `.ai/competitive-benchmarks.md`).
+
+**Confirmed defects (found by checking logs against controls, not by guessing):**
+- **D1, detached Frame (PROB-047).** On kayak.com `/stays`, `click` and `type` fail with "Attempted to use detached Frame" (2561 seq 33/37/47/49), reproduced 3 times by the verifier through an independent frame inventory; `clickrole` on the same button worked, `text` read the page, and one `snap` returned "Interactive elements (0)". The page has a same-URL child iframe. The task was ruled AGENT-FAIL because the agent also never selected a typeahead suggestion on the working `/hotels` route, so the defect was not shown to be the cause.
+- **D2, silent 4000-character `text` truncation (PROB-048).** `runtime.ts:2959` slices `innerText` to 4000 with no marker; MCP snapshot slices to 2000. 42 of 91 CLI `text` calls in the run returned exactly 4001 characters. On lawinsider.com `text` showed 3 of 10 results while `read body` showed 10. It sits behind the reads for 1379, 2687, 982 and plausibly 2582 and 1371.
+- **D3, `[#N]` printed but `#N` rejected (PROB-049).** `snap` prints `[#5]`; `click "#5"` exits 1 with "pass just the number". 8 failed calls across 6 tasks.
+- **D4, `undefined` printed (PROB-050).** The CLI has no `back` verb; `back` is `eval history.back()`, which prints the literal `undefined` (exit 0, navigation worked).
+
+**Re-tests (separate from the headline):** PROB-044 `click_by_text` across `<mark>`-split text on frontiersin.org: **PASS** (597: `count "mark"` 44, `clicktext` exit 0 verified). Type-append (`type` appending to old input value): **PASS** on aliexpress.us (41) and ca.gov (192). The three tasks themselves: 597 AGENT-FAIL (substitution, "highly cited" unsupported), 41 AGENT-FAIL (substitution, skipped first match), 192 COMPLETED (interpreted, linked-org). ea.com (392): curl control returned `200 HTTP/1.1` while Chrome failed twice with `ERR_HTTP2_PROTOCOL_ERROR`, so EXTERNAL-BLOCK (client-fingerprint) by the pre-registered mapping; a client-side HTTP/2 cause is not ruled out. ford.com (568) now gives a 403 Akamai deny instead of the HTTP/2 error; stackoverflow.com (1691) cleared its Cloudflare interstitial but then showed a captcha on search and an IP-block on tag pages (EXTERNAL-BLOCK, was a completion in August). PROB-043 is not probeable through the one-process-per-command CLI.
+
+**Smoke-test finding (PROB-051).** A read verb run with no session (before any `nav`, or after `close`) silently launches a blank browser and exits 0 (`cli-smoke-2026-10-04.md`, finding 3). The help text says only `nav` launches a session. Empty output with exit 0 is therefore ambiguous.
+
+**Observation (not filed).** `nav` to a page that answers with an HTTP error prints `Verification: NOT verified — contradicted (confidence 0.09)` but exits **0** (e.g. realsimple.com HTTP 402 in slot K; 21 more in the 534 CLI records: 403 x 15, 404 x 3, 429 x 2, 410 x 1). The text is honest; a script trusting the exit code would not see the contradiction.
+
+**Unconfirmed, no control:** a click whose effect applied but reported a 15 s timeout (2388 seq 35); `--expect-url-changed` checking only the original tab when a click opens a new one (2388 seq 17, exit 4); several `occluded` refusals (1925, 2561, 41).
+
 ### 2026-08-19 — Milestone 99: long-session reliability harnesses, current-head sequential evidence, and a real detached-frame crash fixed
 
 Worked the two selected reliability items in order. For PROB-043, added a durable real-MCP soak

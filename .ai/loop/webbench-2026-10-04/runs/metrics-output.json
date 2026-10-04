@@ -1,0 +1,77 @@
+{
+  "inScope": 29,
+  "strict": 6,
+  "interp": 1,
+  "ext": 13,
+  "af": 9,
+  "ti": 1,
+  "sf": 0,
+  "a2AfterBlockCompletions": 0,
+  "H1": "6/29 = 20.7% [9.8, 38.4]",
+  "H1lenient": "7/29 = 24.1% [12.2, 42.1]",
+  "H2": "6/16 = 37.5% [18.5, 61.4]",
+  "H2lenient": "7/16 = 43.8% [23.1, 66.8]",
+  "H1prime": "6/29 = 20.7% [9.8, 38.4]",
+  "H2prime": "6/16 = 37.5% [18.5, 61.4]",
+  "H1lenientPrime": "7/29 = 24.1% [12.2, 42.1]",
+  "H2lenientPrime": "7/16 = 43.8% [23.1, 66.8]",
+  "baseline": {
+    "H1strict": "59/107 = 55.1% [45.7, 64.2]",
+    "H1lenient": "71/107 = 66.4% [57.0, 74.6]",
+    "H2strict": "59/71 = 83.1% [72.7, 90.1]",
+    "H2lenient": "71/71 = 100.0% [94.9, 100.0]"
+  },
+  "diff": {
+    "H1_vs_strict": "-34.5 pp [-48.6, -14.4]",
+    "H1lenient_vs_lenient": "-42.2 pp [-56.7, -21.9]",
+    "H2_vs_strict": "-45.6 pp [-65.9, -19.6]",
+    "H2lenient_vs_lenient": "-56.3 pp [-76.9, -32.6]",
+    "extShare_vs_baseline": "+12.6 pp [-5.7, 31.6]"
+  },
+  "extShareOct": "13/30 = 43.3% [27.4, 60.8]",
+  "extShareAug": "36/117 = 30.8% [23.1, 39.6]",
+  "retests": [
+    "1691:EXTERNAL-BLOCK/edge-deny",
+    "192:COMPLETED/interpreted, linked-org",
+    "392:EXTERNAL-BLOCK/client-fingerprint (curl control 200 HTTP/1.1)",
+    "41:AGENT-FAIL/substitution",
+    "568:EXTERNAL-BLOCK/edge-deny",
+    "597:AGENT-FAIL/substitution"
+  ],
+  "driverAsReported": {
+    "strict": 5,
+    "interpreted": 2,
+    "taskInvalid": 4,
+    "ext": 13,
+    "inScope": 26,
+    "H1": "5/26 = 19.2% [8.5, 37.9]",
+    "H1lenient": "7/26 = 26.9% [13.7, 46.1]",
+    "H2": "5/13 = 38.5% [17.7, 64.5]",
+    "H2lenient": "7/13 = 53.8% [29.1, 76.8]"
+  },
+  "finalTally": {
+    "COMPLETED/strict": 6,
+    "EXTERNAL-BLOCK/challenge": 4,
+    "EXTERNAL-BLOCK/captcha": 2,
+    "AGENT-FAIL/reasoning": 7,
+    "EXTERNAL-BLOCK/geo": 1,
+    "EXTERNAL-BLOCK/edge-deny": 4,
+    "EXTERNAL-BLOCK/protocol": 2,
+    "AGENT-FAIL/substitution": 1,
+    "AGENT-FAIL/partial": 1,
+    "COMPLETED/interpreted": 1,
+    "TASK-INVALID/drift": 1
+  },
+  "a2Used": [
+    1492,
+    1661,
+    1266,
+    2554,
+    1236,
+    781,
+    929,
+    2561,
+    1434,
+    2218
+  ]
+}
