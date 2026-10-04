@@ -1,0 +1,35 @@
+packages/sutradhar/README.md:58:npx sutradhar snap                        # interactive-element listing + page text
+packages/sutradhar/README.md:59:npx sutradhar click 7                     # click [#7] from the last snapshot
+packages/sutradhar/README.md:60:npx sutradhar type 3 "hello world"
+AGENT_SETUP.md:163:sutradhar waitfor --text "Saved successfully"
+AGENT_SETUP.md:164:sutradhar waitfor 20000 --text-gone "Loading…"
+AGENT_SETUP.md:165:sutradhar waitfor --url /dashboard
+AGENT_SETUP.md:166:sutradhar waitfor --js "window.__app?.ready === true"
+AGENT_SETUP.md:167:sutradhar waitfor --url /orders/ --text "Order confirmed"
+AGENT_SETUP.md:258:npx --package=sutradhar sutradhar snap
+AGENT_SETUP.md:259:npx --package=sutradhar sutradhar click 7
+AGENT_SETUP.md:364:  until the crashed tab is closed: run `sutradhar tabs`, then `sutradhar closetab <id>`, using the id
+packages/cli/README.md:40:sutradhar snap                        # prints the interactive-element listing
+packages/cli/README.md:41:sutradhar click 4                     # click by the numeric [#id] from "snap"
+packages/cli/README.md:42:sutradhar text                        # print the page's visible text
+packages/cli/README.md:188:(e.g. `sutradhar click "#delete"` triggering a `confirm()`) would otherwise be invisible to, and
+packages/cli/README.md:196:sutradhar click "#delete"        # opens a confirm() — the click "succeeds", but the
+packages/cli/README.md:247:  long a stuck command runs). Recover with `sutradhar tabs` (lists every tab without attaching to
+packages/cli/README.md:248:  the crashed one and marks it `[crashed]`), then `sutradhar closetab <id>`. `tabs` and
+packages/cli/README.md:270:- Downloads a page starts on its own (not through `sutradhar download`) are not covered by the
+README.md:38:(`browser.wait_for`, `sutradhar waitfor`, `page.waitFor()`) and an opt-in `.sutradhar.json` project config
+README.md:45:crashed tab needs `sutradhar tabs` then `closetab <id>`; wrong-popup closes are possible), downloads
+packages/sutradhar/AGENT_SETUP.md:163:sutradhar waitfor --text "Saved successfully"
+packages/sutradhar/AGENT_SETUP.md:164:sutradhar waitfor 20000 --text-gone "Loading…"
+packages/sutradhar/AGENT_SETUP.md:165:sutradhar waitfor --url /dashboard
+packages/sutradhar/AGENT_SETUP.md:166:sutradhar waitfor --js "window.__app?.ready === true"
+packages/sutradhar/AGENT_SETUP.md:167:sutradhar waitfor --url /orders/ --text "Order confirmed"
+packages/sutradhar/AGENT_SETUP.md:258:npx --package=sutradhar sutradhar snap
+packages/sutradhar/AGENT_SETUP.md:259:npx --package=sutradhar sutradhar click 7
+packages/sutradhar/AGENT_SETUP.md:364:  until the crashed tab is closed: run `sutradhar tabs`, then `sutradhar closetab <id>`, using the id
+docs\22-changelog.md:96:- **Condition waits and settle everywhere (FR2-08).** New `browser.wait_for` (MCP), `sutradhar waitfor`
+docs\22-changelog.md:221:  and matches progress events to its own download by guid. `sutradhar download <ref> <dir>` now
+docs\22-changelog.md:244:  crash events and never treats a crashed target as a blocking unknown dialog; `sutradhar tabs` and
+docs\22-changelog.md:245:  `sutradhar closetab <id>` are served from a browser-level connection that attaches to no page, so a
+docs\22-changelog.md:266:    gated commands (`nav`, `snap`, ...) hang until the crashed tab is closed. Use `sutradhar tabs`,
+docs\22-changelog.md:267:    then `sutradhar closetab <id>`. The crash note also suggests reloading with `nav`; that advice is

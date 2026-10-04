@@ -71,7 +71,7 @@ import {
   type BrokerDialog,
   type CrashedTab,
 } from './dialog-broker.js';
-import { withSessionFlow } from './session-flow.js';
+import { withSessionFlow, isLaunchCapable, NoSessionError } from './session-flow.js';
 import {
   ensureWarden,
   stopWarden,
@@ -453,6 +453,9 @@ async function withSession<T>(
   const verbClass = classifyVerb(verb);
 
   const sessionId = await withSessionFlow<string>({
+    // I-051: only nav/newtab/audit with a url and compare with two may start a browser; every other verb fails with a hint.
+    mayLaunch: isLaunchCapable(verb, cleanArgs),
+    noSession: () => new NoSessionError(verb),
     readState: async () => readState(),
     spawnFresh: async () => spawnFreshSession(runtime),
     gate: async (rawState) => {
@@ -1244,7 +1247,7 @@ async function cmdGrant(origin: string | undefined, permissions: string[]) {
     printErrorAndExit(
       'usage: sutradhar grant <origin> <permission...>  ' +
         '(e.g. sutradhar grant https://example.com clipboard-read clipboard-write — required before ' +
-        'setclipboard/getclipboard will work against most real sites)',
+        'setclipboard/getclipboard will work against most real sites; needs an active session: run nav first)',
     );
   }
   await withSession(async (runtime, sessionId) => {
@@ -1889,7 +1892,10 @@ async function main() {
 Usage: sutradhar <command> [args] [--headed] [--profile <name>] [--allowlist-domains <domains>]
 
 Commands:
-  nav <url>                    Navigate to a URL (launches a session if none is active)
+  nav <url>                    Navigate to a URL (launches a session if none is active). Only nav <url>,
+                                newtab <url>, audit <url> and compare <urlA> <urlB> start a session; every
+                                other command needs one already open ("sutradhar nav <url>" first) and
+                                exits 1 with "no active browser session" otherwise — it does not start one.
   snap                         Print the interactive-element listing for the current page
   snap --json                  Same, plus the raw structured element data as JSON
   snap --no-text                Same elements, drops name/label/placeholder/value text
@@ -1971,6 +1977,7 @@ Commands:
                                 Grant browser permissions for an origin (e.g. clipboard-read,
                                 clipboard-write, geolocation, notifications) — needed before
                                 setclipboard/getclipboard work against most real sites
+                                (needs an active session; run nav first)
   setclipboard <text>          Set the system clipboard (e.g. to then paste into a rich-text
                                 editor via press <ref> v --modifiers Control)
   getclipboard                 Print the current system clipboard contents
@@ -2164,6 +2171,13 @@ if (verb === '__dialog-warden') {
         console.error(DIALOG_HINT(err.dialogs[0]?.dialogType ?? 'unknown'));
         finalExitCode = err.exitCode;
         process.exitCode = err.exitCode;
+        return;
+      }
+      if ((err as Error)?.name === 'NoSessionError') {
+        // I-051: a read/act verb with no session. One line on stderr, exit 1, stdout empty (also with --json).
+        console.error(`Error: ${(err as Error).message}`);
+        finalExitCode = 1;
+        process.exitCode = 1;
         return;
       }
       if (err instanceof ProjectConfigError || (err as Error)?.name === 'ProjectConfigError') {

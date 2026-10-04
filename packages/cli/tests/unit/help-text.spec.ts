@@ -134,3 +134,17 @@ describe('@sutradhar/cli --help text (I-048 text paging)', () => {
     expect(helpText).toContain('sutradhar text --offset');
   });
 });
+
+describe('@sutradhar/cli --help text (I-051: no-session reads fail with a hint)', () => {
+  it('says only nav (and newtab/audit/compare with their urls) start a session, and that every other command needs one', () => {
+    expect(helpText).toContain('does not start one');
+    expect(helpText).toContain('sutradhar nav <url>');
+  });
+
+  it('the grant entry says it needs an active session (run nav first)', () => {
+    const grantIdx = helpText.indexOf('  grant <origin> <permission...>');
+    expect(grantIdx).toBeGreaterThan(-1);
+    const grantBlock = helpText.slice(grantIdx, helpText.indexOf('  setclipboard <text>', grantIdx));
+    expect(grantBlock).toContain('needs an active session; run nav first');
+  });
+});

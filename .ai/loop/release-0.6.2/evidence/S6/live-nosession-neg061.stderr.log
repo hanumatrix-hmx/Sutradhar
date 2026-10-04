@@ -1,0 +1,13 @@
+[iso-guard] tmpdir=e:/ai-cache/tmp/claude/e--hmx-projects-internal-projects-pinchtab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/n6t pid=19724
+[harness] MODE=neg CLI=E:/AI-Cache/tmp/claude/E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/v061/inst/node_modules/sutradhar/dist/cli-bin.js sha256=9858726a291e844e1f84089b18310e90379140e2dfabf7b2fda80eb550b5c59b
+[harness] ISO=E:/AI-Cache/tmp/claude/E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/N6t tmpdir=e:/ai-cache/tmp/claude/e--hmx-projects-internal-projects-pinchtab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/n6t
+[iso-guard] tmpdir=e:/ai-cache/tmp/claude/e--hmx-projects-internal-projects-pinchtab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/n6t pid=58196
+[harness] fixture pid=58196 url=http://127.0.0.1:58363
+PASS S6-5 NEG061 `text` from no state: exit 0 and a state.json appears (it launched a blank browser) {"code":0,"stdout":"\n","stderr":["[cleanup] phase sweep ms=0 removed=0 kept=0","[cleanup] created path=\"E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\N6t\\sutradhar-cli-1791130787904-pCDIE1\""]}
+PASS NEG061 close: state.json gone {"code":0}
+PASS S6-5 NEG061 `snap` from no state also launches (exit 0, state.json) {"code":0,"stdout":"URL: chrome://new-tab-page/\nTitle: New tab\nInteractive eleme"}
+PASS no state.json left in any state dir at the end []
+PASS path-log check exit 0 (>= 1 [cleanup] line, none outside ISO) {"exit":0,"out":["cleanup-lines=20 outside-iso=0"]}
+PASS attribution query: no Chrome with the ISO basename left at the end []
+PASS no timed-out CLI call
+LIVE-NOSESSION OK

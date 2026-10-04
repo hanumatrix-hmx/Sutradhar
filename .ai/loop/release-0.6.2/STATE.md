@@ -22,3 +22,5 @@
 - S4 done (I-047 frame-detach containment, committed). Next: S5 (I-049 `#N` refs). Verify: evidence/S4/README.md AC table; mutants-unit.txt (survivors=0); live-detach-neg.err (NEG061 10/10, 30/30, 5/5 failures) vs live-detach-head.err (all clean). Background processes: none. Notes for S10/S10b in evidence/S4/README.md (goto-after-click hang on churn page, kayak /stays ERR_ABORTED, runtime.ts upload site).
 
 - S5 done (I-049 `#N`/`[#N]`, committed). Next: S6 (I-051 no-session reads). Verify: evidence/S5/README.md AC table; mutants-unit.txt (survivors=0); live-nodeid-head.json allPass. Background processes: none.
+
+- S6 done (I-051 no-session reads, committed). Next: S7 (I-NAV back/forward/reload). Verify: evidence/S6/README.md AC table; mutants-unit.txt (survivors=0) and mutants-live.txt (both live mutants fail the harness); live-nosession-head.json allPass. Background processes: none.

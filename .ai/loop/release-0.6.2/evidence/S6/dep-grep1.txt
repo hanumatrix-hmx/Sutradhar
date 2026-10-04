@@ -1,0 +1,654 @@
+tools\scenario-suite\revert-confirm-fr2-05.mjs:37:  const out = spawnSync(cmd, args, { cwd: repoRoot, encoding: 'utf-8', shell: true, ...opts });
+tools\scenario-suite\verify-fr2-14-config.mjs:103:async function cli(key, cwd, args, envDelta = {}, bin = CLI, surface = 'cli') {
+tools\scenario-suite\verify-fr2-14-config.mjs:123:  await cli(key, k.cwd, ['close'], k.env, k.bin);
+tools\scenario-suite\verify-fr2-14-config.mjs:246:    const a = await cli(k('l0'), T.proj0, ['nav', U('localhost', `${surface}-L0a`)], {}, bin, surface);
+tools\scenario-suite\verify-fr2-14-config.mjs:247:    const b = await cli(k('l0'), T.proj0, ['nav', U('127.0.0.1', `${surface}-L0b`)], {}, bin, surface);
+tools\scenario-suite\verify-fr2-14-config.mjs:248:    const d = await cli(k('l0'), T.proj0, ['doctor'], {}, bin, surface);
+tools\scenario-suite\verify-fr2-14-config.mjs:260:    const d = await cli(k('l1'), T.cwdC, ['doctor'], {}, bin, surface);
+tools\scenario-suite\verify-fr2-14-config.mjs:271:    const r = await cli(k('l23'), T.cwdC, ['nav', U('127.0.0.1', `${surface}-L2`)], {}, bin, surface);
+tools\scenario-suite\verify-fr2-14-config.mjs:278:    const r = await cli(k('l23'), T.cwdC, ['nav', U('localhost', `${surface}-L3`)], {}, bin, surface);
+tools\scenario-suite\verify-fr2-14-config.mjs:283:    const r = await cli(k('l23'), T.cwdC, ['eval', "innerWidth+'x'+innerHeight"], {}, bin, surface);
+tools\scenario-suite\verify-fr2-14-config.mjs:293:    await cli(key, T.cwdC, ['nav', U('localhost', `${surface}-L9`)], {}, bin, surface);
+tools\scenario-suite\verify-fr2-14-config.mjs:294:    const r = await cli(key, T.cwdC, ['download', '#dl'], {}, bin, surface);
+tools\scenario-suite\verify-fr2-14-config.mjs:306:    const a = await cli(k('l4'), T.cwdC, ['nav', U('127.0.0.1', 'L4a')], env, bin, surface);
+tools\scenario-suite\verify-fr2-14-config.mjs:307:    const b = await cli(k('l4'), T.cwdC, ['nav', U('localhost', 'L4b')], env, bin, surface);
+tools\scenario-suite\verify-fr2-14-config.mjs:314:    const a = await cli(k('l5'), T.cwdC, ['nav', U('localhost', 'L5a'), '--allowlist-domains', 'localhost'], env, bin, surface);
+tools\scenario-suite\verify-fr2-14-config.mjs:315:    const b = await cli(k('l5'), T.cwdC, ['nav', U('127.0.0.1', 'L5b'), '--allowlist-domains', 'localhost'], env, bin, surface);
+tools\scenario-suite\verify-fr2-14-config.mjs:330:      const r = await cli(`${key}${mask}`, dir, args, env, bin, surface);
+tools\scenario-suite\verify-fr2-14-config.mjs:341:    await cli(key, T.cwdC, ['nav', U('localhost', 'L7'), '--viewport', '390x844'], {}, bin, surface);
+tools\scenario-suite\verify-fr2-14-config.mjs:342:    const a = await cli(key, T.cwdC, ['eval', "innerWidth+'x'+innerHeight"], {}, bin, surface);
+tools\scenario-suite\verify-fr2-14-config.mjs:343:    await cli(key, T.cwdC, ['nav', U('localhost', 'L7b')], {}, bin, surface); // NO flag: the sticky flag still beats the config
+tools\scenario-suite\verify-fr2-14-config.mjs:358:      if (mask & 2) await cli(key, dir, ['nav', U('localhost', `L7m${mask}s`), '--viewport', '300x400'], {}, bin, surface); // earlier flag -> sticky
+tools\scenario-suite\verify-fr2-14-config.mjs:359:      const a = await cli(key, dir, ['nav', U('localhost', `L7m${mask}`), ...(mask & 1 ? ['--viewport', '200x250'] : [])], {}, bin, surface);
+tools\scenario-suite\verify-fr2-14-config.mjs:376:    await cli(key, dir, ['nav', U('localhost', 'L8')], {}, bin, surface);
+tools\scenario-suite\verify-fr2-14-config.mjs:377:    const a = await cli(key, dir, ['eval', "innerWidth+'x'+innerHeight"], {}, bin, surface);
+tools\scenario-suite\verify-fr2-14-config.mjs:379:    const b = await cli(key, dir, ['eval', "innerWidth+'x'+innerHeight"], {}, bin, surface);
+tools\scenario-suite\verify-fr2-14-config.mjs:380:    await cli(key, dir, ['nav', U('localhost', 'L8b')], {}, bin, surface);
+tools\scenario-suite\verify-fr2-14-config.mjs:391:    await cli(key, T.cwdC, ['nav', U('localhost', 'L10')], {}, bin, surface);
+tools\scenario-suite\verify-fr2-14-config.mjs:392:    const r = await cli(key, T.cwdC, ['download', '#dl'], { SUTRADHAR_ALLOWED_DOWNLOAD_ROOTS: envdl }, bin, surface);
+tools\scenario-suite\verify-fr2-14-config.mjs:397:    await cli(key, T.cwdC, ['nav', U('localhost', 'L11')], {}, bin, surface);
+tools\scenario-suite\verify-fr2-14-config.mjs:398:    const g = await cli(key, T.cwdC, ['download', '#dl', './here'], {}, bin, surface);
+tools\scenario-suite\verify-fr2-14-config.mjs:407:    await cli(key, T.cwdC, ['nav', U('localhost', 'L12')], {}, bin, surface);
+tools\scenario-suite\verify-fr2-14-config.mjs:408:    const a = await cli(key, T.cwdC, ['upload', '#f', T.elsewhereX], {}, bin, surface);
+tools\scenario-suite\verify-fr2-14-config.mjs:409:    const b = await cli(key, T.cwdC, ['upload', '#f', T.upOk], {}, bin, surface);
+tools\scenario-suite\verify-fr2-14-config.mjs:411:    const c = await cli(key, T.cwdC, ['upload', '#f', T.elsewhereX], { SUTRADHAR_ALLOWED_UPLOAD_ROOTS: path.dirname(T.elsewhereX) }, bin, surface);
+tools\scenario-suite\verify-fr2-14-config.mjs:420:    await cli(key, T.cwdC, ['nav', U('localhost', 'L13')], {}, bin, surface);
+tools\scenario-suite\verify-fr2-14-config.mjs:421:    const r = await cli(key, T.cwdC, ['click', '#confirm'], {}, bin, surface);
+tools\scenario-suite\verify-fr2-14-config.mjs:428:    await cli(key, T.cwdC, ['nav', U('localhost', 'L14')], {}, bin, surface);
+tools\scenario-suite\verify-fr2-14-config.mjs:429:    const a = await cli(key, T.cwdC, ['click', '#confirm', '--dialog', 'accept'], {}, bin, surface);
+tools\scenario-suite\verify-fr2-14-config.mjs:433:    const b = await cli(key, T.cwdC, ['click', '#confirm'], {}, bin, surface);
+tools\scenario-suite\verify-fr2-14-config.mjs:436:    await cli(key, T.cwdC, ['snap', '--dialog', 'report'], {}, bin, surface);
+tools\scenario-suite\verify-fr2-14-config.mjs:439:    const c = await cli(key, T.cwdC, ['click', '#confirm'], {}, bin, surface);
+tools\scenario-suite\verify-fr2-14-config.mjs:441:    await cli(key, T.cwdC, ['dialog', 'dismiss'], {}, bin, surface);
+tools\scenario-suite\verify-fr2-14-config.mjs:450:    const n = await cli(key, dir, ['nav', U('localhost', 'L15')], {}, bin, surface);
+tools\scenario-suite\verify-fr2-14-config.mjs:451:    const c = await cli(key, dir, ['click', '#confirm'], {}, bin, surface);
+tools\scenario-suite\verify-fr2-14-config.mjs:452:    await cli(key, dir, ['dialog', 'dismiss'], {}, bin, surface);
+tools\scenario-suite\verify-fr2-14-config.mjs:458:    const d = await cli(k('l16'), T.outerRepoSub, ['doctor'], {}, bin, surface);
+tools\scenario-suite\verify-fr2-14-config.mjs:459:    const r = await cli(k('l16'), T.outerRepoSub, ['nav', U('localhost', 'L16')], {}, bin, surface);
+tools\scenario-suite\verify-fr2-14-config.mjs:467:    const d = await cli(k('l17'), path.join(home, 'p', 'q'), ['doctor'], { USERPROFILE: home, HOME: home }, bin, surface);
+tools\scenario-suite\verify-fr2-14-config.mjs:472:    const d = await cli(k('l18'), path.join(home, 'p', 'q'), ['doctor'], { USERPROFILE: home, HOME: home }, bin, surface);
+tools\scenario-suite\verify-fr2-14-config.mjs:479:    const d = await cli(k('l19'), T.cwdC, ['doctor'], env, bin, surface);
+tools\scenario-suite\verify-fr2-14-config.mjs:480:    const r = await cli(k('l19'), T.cwdC, ['nav', U('127.0.0.1', 'L19')], env, bin, surface);
+tools\scenario-suite\verify-fr2-14-config.mjs:486:    const r = await cli(k('l20'), T.proj0, ['nav', U('localhost', 'L20')], env, bin, surface);
+tools\scenario-suite\verify-fr2-14-config.mjs:487:    const d = await cli(k('l20'), T.proj0, ['doctor'], env, bin, surface);
+tools\scenario-suite\verify-fr2-14-config.mjs:494:    const a = await cli(k('l21'), dir, ['nav', U('127.0.0.1', 'L21a')], {}, bin, surface);
+tools\scenario-suite\verify-fr2-14-config.mjs:495:    const b = await cli(k('l21'), dir, ['nav', U('localhost', 'L21b')], {}, bin, surface);
+tools\scenario-suite\verify-fr2-14-config.mjs:496:    const d = await cli(k('l21'), dir, ['doctor'], {}, bin, surface);
+tools\scenario-suite\verify-fr2-14-config.mjs:529:      const r = await cli(key, dir, ['nav', U('localhost', `${id}-${surface}`)], {}, surface === 'bundle' ? BUNDLE_CLI : CLI, surface);
+tools\scenario-suite\verify-fr2-14-config.mjs:539:    const d = await cli(k('n3'), dir, ['doctor'], {}, surface === 'bundle' ? BUNDLE_CLI : CLI, surface);
+tools\scenario-suite\verify-fr2-14-config.mjs:540:    const c = await cli(k('n3'), dir, ['close'], {}, surface === 'bundle' ? BUNDLE_CLI : CLI, surface);
+tools\scenario-suite\verify-fr2-14-config.mjs:541:    const p = await cli(k('n3'), dir, ['profile', 'list'], {}, surface === 'bundle' ? BUNDLE_CLI : CLI, surface);
+tools\scenario-suite\verify-fr2-14-config.mjs:556:      const r = await cli(key, dir, ['nav', U('localhost', `${id}-${surface}`)], {}, surface === 'bundle' ? BUNDLE_CLI : CLI, surface);
+tools\scenario-suite\verify-fr2-14-config.mjs:570:    const a = await cli(key, dir, ['nav', U('localhost', `H4b-${surface}`), '--allowlist-domains', 'localhost'], env, bin, surface);
+tools\scenario-suite\verify-fr2-14-config.mjs:571:    const d = await cli(key, dir, ['download', '#dl', '--allowlist-domains', 'localhost'], env, bin, surface);
+tools\scenario-suite\verify-fr2-14-config.mjs:582:    await cli(key, path.join(R, 'escape'), ['nav', U('localhost', `N5-${surface}`)], env, surface === 'bundle' ? BUNDLE_CLI : CLI, surface);
+tools\scenario-suite\verify-fr2-14-config.mjs:583:    const r = await cli(key, path.join(R, 'escape'), ['download', '#dl'], env, surface === 'bundle' ? BUNDLE_CLI : CLI, surface);
+tools\scenario-suite\verify-fr2-14-config.mjs:597:    await cli(key, dir, ['nav', U('localhost', `H2-${surface}`)], {}, bin, surface);
+tools\scenario-suite\verify-fr2-14-config.mjs:598:    const dl = await cli(key, dir, ['download', '#dl'], {}, bin, surface);
+tools\scenario-suite\verify-fr2-14-config.mjs:602:    const click1 = await cli(key, dir, ['click', '#confirm'], {}, bin, surface); // config accept honored (+ announced)
+tools\scenario-suite\verify-fr2-14-config.mjs:605:    const click2 = await cli(key, dir, ['click', '#confirm', '--dialog', 'dismiss'], {}, bin, surface); // flag beats the hostile accept
+tools\scenario-suite\verify-fr2-14-config.mjs:616:    await cli(key, dir, ['nav', U('localhost', `H5-${surface}`), '--dialog', 'report'], {}, bin, surface);
+tools\scenario-suite\verify-fr2-14-config.mjs:617:    const c = await cli(key, dir, ['click', '#confirm'], {}, bin, surface);
+tools\scenario-suite\verify-fr2-14-config.mjs:619:    await cli(key, dir, ['dialog', 'dismiss'], {}, bin, surface);
+tools\scenario-suite\verify-fr2-14-config.mjs:625:    const r = await cli(k('n7'), T.proj0, ['doctor'], { SUTRADHAR_CONFIG: 'rel.json' }, surface === 'bundle' ? BUNDLE_CLI : CLI, surface);
+tools\scenario-suite\verify-fr2-14-config.mjs:626:    const n = await cli(k('n7'), T.proj0, ['nav', U('localhost', 'N7')], { SUTRADHAR_CONFIG: 'rel.json' }, surface === 'bundle' ? BUNDLE_CLI : CLI, surface);
+tools\scenario-suite\verify-fr2-14-config.mjs:630:    const n = await cli(k('n8'), T.proj0, ['nav', U('localhost', 'N8')], { SUTRADHAR_CONFIG: path.join(R, 'missing.json') }, surface === 'bundle' ? BUNDLE_CLI : CLI, surface);
+tools\scenario-suite\verify-fr2-14-config.mjs:636:    const r = await cli(k('n12'), dir, ['nav', U('localhost', `N12-${surface}`)], {}, surface === 'bundle' ? BUNDLE_CLI : CLI, surface);
+tools\scenario-suite\verify-fr2-14-config.mjs:643:    const d = await cli(k('h10'), dir, ['doctor'], {}, surface === 'bundle' ? BUNDLE_CLI : CLI, surface);
+tools\scenario-suite\verify-fr2-14-config.mjs:657:    const r = await cli(k('h13'), dir, ['nav', U('localhost', `H13-${surface}`)], {}, surface === 'bundle' ? BUNDLE_CLI : CLI, surface);
+tools\scenario-suite\verify-fr2-14-config.mjs:663:    const a = await cli(k('h14'), path.join(R, 'secret'), ['doctor'], {}, bin, surface);
+tools\scenario-suite\verify-fr2-14-config.mjs:664:    const b = await cli(k('h14'), path.join(R, 'secret-bad'), ['doctor'], {}, bin, surface);
+tools\scenario-suite\verify-fr2-14-config.mjs:665:    const c = await cli(k('h14'), path.join(R, 'secret-bad'), ['nav', U('localhost', `H14-${surface}`)], {}, bin, surface);
+tools\scenario-suite\verify-fr2-14-config.mjs:675:    const a = await cli(key, dir, ['nav', U('127.0.0.1', `N15a-${surface}`)], {}, bin, surface);
+tools\scenario-suite\verify-fr2-14-config.mjs:677:    const b = await cli(key, dir, ['nav', U('127.0.0.1', `N15b-${surface}`)], {}, bin, surface);
+tools\scenario-suite\verify-fr2-14-config.mjs:679:    const c = await cli(key, dir, ['nav', U('127.0.0.1', `N15c-${surface}`)], {}, bin, surface);
+tools\scenario-suite\verify-fr2-14-config.mjs:686:    const r = await cli(k('h15'), T.proj0, ['nav', U('localhost', `H15-${surface}`), '--allowlist-domains', ','], {}, bin, surface);
+tools\scenario-suite\verify-fr2-14-config.mjs:887:      const a = await cli(key, cwd, ['nav', U('localhost', n)], env, bin, surface);
+tools\scenario-suite\verify-fr2-14-config.mjs:888:      const d = await cli(key, cwd, ['download', '#dl'], env, bin, surface);
+tools\scenario-suite\verify-fr2-14-config.mjs:898:      const r = await cli(key, cwd, ['nav', U('localhost', `${rid}-${surface}`)], {}, bin, surface);
+tools\scenario-suite\verify-fr2-14-config.mjs:908:    const a = await cli(key, T.proj0, ['nav', U('localhost', n)], {}, bin, surface);
+tools\scenario-suite\verify-fr2-14-config.mjs:909:    const d = await cli(key, path.join(R, 'hp', 'child'), ['download', '#dl', argdl], {}, bin, surface);
+tools\scenario-suite\verify-fr2-14-config.mjs:924:      const r = await cli(key, cwd, ['nav', U('localhost', `${rid}-${surface}`), ...args], {}, bin, surface);
+tools\scenario-suite\verify-fr2-14-config.mjs:933:    const r = await cli(key, path.join(R, 'longkey'), ['nav', U('localhost', n)], {}, bin, surface);
+tools\scenario-suite\verify-fr2-14-config.mjs:949:    const d = await cli(k(id), link, ['doctor'], { USERPROFILE: home, HOME: home }, bin, surface);
+tools\scenario-suite\verify-fr2-14-config.mjs:1017:        const r = await cli(sk, dir, ['nav', U('localhost', `${rid}-${key}-${surface}`)], {}, bin, surface);
+tools\scenario-suite\verify-fr2-14-config.mjs:1037:    const d = await cli(k(rid), path.join(top, 'jn'), ['doctor'], { USERPROFILE: home, HOME: home }, bin, surface);
+tools\scenario-suite\verify-fr2-14-config.mjs:1039:    const d2 = await cli(k(`${rid}-ctl`), path.join(top, 'jn'), ['doctor'], { USERPROFILE: path.join(S, 'other-home'), HOME: path.join(S, 'other-home') }, bin, surface);
+tools\scenario-suite\verify-fr2-14-config.mjs:1049:    const a = await cli(key, path.join(R, 'hp', 'child'), ['nav', U('localhost', `${rid}-a-${surface}`), '--allowlist-domains', 'localhost'], { SUTRADHAR_ALLOWED_DOWNLOAD_ROOTS: envdl }, bin, surface);
+tools\scenario-suite\verify-fr2-14-config.mjs:1053:    const b = await cli(keyB, path.join(R, 'hp2', 'child'), ['nav', U('localhost', `${rid}-b-${surface}`), '--allowlist-domains', 'localhost'], { SUTRADHAR_ALLOWED_DOWNLOAD_ROOTS: envdl }, bin, surface);
+tools\scenario-suite\verify-fr2-14-config.mjs:1063:    const r = await cli(key, path.join(R, 'hp2', 'child'), ['nav', U('localhost', `${rid}-${surface}`), '--viewport', '10000000x10000000'], {}, bin, surface);
+tools\scenario-suite\false-pass-checks-fr2-14.mjs:21:  const r = spawnSync(process.execPath, [bin, ...args], { cwd, env: { ...env0, SUTRADHAR_CLI_STATE_DIR: path.join(R, 'state'), ...extra }, encoding: 'utf-8' });
+tools\scenario-suite\verify-fr2-02-extract-live.mjs:80:  const r = spawnSync('powershell', ['-NoProfile', '-Command', script], { encoding: 'utf-8', maxBuffer: 32 * 1024 * 1024 });
+tools\scenario-suite\run-cli.mjs:43:function runCli(argv, { timeout = 90_000 } = {}) {
+tools\scenario-suite\run-cli.mjs:45:  const res = spawnSync(process.execPath, [CLI, ...argv], {
+tools\scenario-suite\run-cli.mjs:63:  return runCli(['close']);
+tools\scenario-suite\run-cli.mjs:129:    const typeRes = runCli(['type', ref, text]);
+tools\scenario-suite\run-cli.mjs:130:    const snapRes = runCli(['snap']);
+tools\scenario-suite\run-cli.mjs:151:  const nav = runCli(['nav', scenarioById['UC-01'].url]);
+tools\scenario-suite\run-cli.mjs:155:  const waitRes = runCli(['waitfor', '15000', '--js',
+tools\scenario-suite\run-cli.mjs:157:  const textRes = runCli(['text']);
+tools\scenario-suite\run-cli.mjs:193:  const nav = runCli(['nav', scenarioById['UC-02'].url]);
+tools\scenario-suite\run-cli.mjs:195:  const snap = runCli(['snap']);
+tools\scenario-suite\run-cli.mjs:215:  const create = runCli(['profile', 'create', profileName, 'baseline UC-03 persistence check']);
+tools\scenario-suite\run-cli.mjs:218:  const nav1 = runCli(['nav', scenarioById['UC-03'].url, '--profile', profileName]);
+tools\scenario-suite\run-cli.mjs:222:  const click = runCli(['click', '#login-button']);
+tools\scenario-suite\run-cli.mjs:223:  const afterLoginText = runCli(['text']);
+tools\scenario-suite\run-cli.mjs:227:  const nav2 = runCli(['nav', scenarioById['UC-03'].url, '--profile', profileName]);
+tools\scenario-suite\run-cli.mjs:229:  const afterRelaunchText = runCli(['text']);
+tools\scenario-suite\run-cli.mjs:260:  let nav = runCli(['nav', scenarioById['UC-04'].url]);
+tools\scenario-suite\run-cli.mjs:263:  let snap = runCli(['snap']);
+tools\scenario-suite\run-cli.mjs:274:    nav = runCli(['nav', scenarioById['UC-04'].url]);
+tools\scenario-suite\run-cli.mjs:277:    snap = runCli(['snap']);
+tools\scenario-suite\run-cli.mjs:303:  const nav = runCli(['nav', scenarioById['UC-05'].url, '--headed']);
+tools\scenario-suite\run-cli.mjs:307:  const loginClick = runCli(['click', '#login-button']);
+tools\scenario-suite\run-cli.mjs:308:  const inventorySnap = runCli(['snap']);
+tools\scenario-suite\run-cli.mjs:312:  const inventoryText = runCli(['text']);
+tools\scenario-suite\run-cli.mjs:318:  const sortResult = sortSelectId ? runCli(['select', sortSelectId, 'lohi']) : { skipped: 'no select element found in inventory snap' };
+tools\scenario-suite\run-cli.mjs:327:  const postSortSnap = sortSelectId && sortResult.code === 0 ? runCli(['snap']) : inventorySnap;
+tools\scenario-suite\run-cli.mjs:332:  const detailClick = runCli(['click', productId]);
+tools\scenario-suite\run-cli.mjs:333:  const detailSnap = runCli(['snap']);
+tools\scenario-suite\run-cli.mjs:337:  const addClick = runCli(['click', addToCartId]);
+tools\scenario-suite\run-cli.mjs:339:  const cartIconSnap = runCli(['snap']); // re-snap for a fresh cart-icon ref, ids can shift per page
+tools\scenario-suite\run-cli.mjs:343:  const cartClick = runCli(['click', cartLinkId]);
+tools\scenario-suite\run-cli.mjs:345:  const cartSnap = runCli(['snap']);
+tools\scenario-suite\run-cli.mjs:348:  const checkoutClick = runCli(['click', checkoutId]);
+tools\scenario-suite\run-cli.mjs:350:  const checkoutSnap1 = runCli(['snap']);
+tools\scenario-suite\run-cli.mjs:373:    const checkoutSnap2 = runCli(['snap']);
+tools\scenario-suite\run-cli.mjs:375:    continueClick = continueId ? runCli(['click', continueId]) : { skipped: 'no Continue button found' };
+tools\scenario-suite\run-cli.mjs:376:    checkoutStep2Text = runCli(['text']);
+tools\scenario-suite\run-cli.mjs:383:    const checkoutSnap3 = runCli(['snap']);
+tools\scenario-suite\run-cli.mjs:385:    finishClick = finishId ? runCli(['click', finishId]) : { skipped: 'no Finish button found' };
+tools\scenario-suite\run-cli.mjs:386:    confirmationText = runCli(['text']);
+tools\scenario-suite\run-cli.mjs:424:  const nav = runCli(['nav', scenarioById['UC-06'].url]);
+tools\scenario-suite\run-cli.mjs:426:  const snapBeforeClose = runCli(['snap']);
+tools\scenario-suite\run-cli.mjs:429:  const clickTextClose = runCli(['clicktext', 'Close']);
+tools\scenario-suite\run-cli.mjs:432:  runCli(['screenshot', screenshotPath]);
+tools\scenario-suite\run-cli.mjs:433:  const snapAfterClose = runCli(['snap']);
+tools\scenario-suite\run-cli.mjs:436:  const nav2 = runCli(['nav', 'https://the-internet.herokuapp.com/dynamic_loading/1']);
+tools\scenario-suite\run-cli.mjs:438:  const startSnap = runCli(['snap']);
+tools\scenario-suite\run-cli.mjs:441:  const startClick = runCli(['click', startId]);
+tools\scenario-suite\run-cli.mjs:444:  const waitRes = runCli(['waitfor', '15000', '--text', 'Hello World!']);
+tools\scenario-suite\run-cli.mjs:445:  const dynText = runCli(['text']);
+tools\scenario-suite\run-cli.mjs:466:  const nav = runCli(['nav', scenarioById['UC-07'].url]);
+tools\scenario-suite\run-cli.mjs:469:  const snap = runCli(['snap']);
+tools\scenario-suite\run-cli.mjs:475:  const typeAttempt = runCli(['type', '.tox-edit-area__iframe', 'Sutradhar CLI baseline test text']);
+tools\scenario-suite\run-cli.mjs:496:  const nav = runCli(['nav', scenarioById['UC-08'].url, '--headed']); // headed: headless Chrome
+tools\scenario-suite\run-cli.mjs:501:  const snap = runCli(['snap']);
+tools\scenario-suite\run-cli.mjs:515:  const downloadResult = runCli(['download', fileId, downloadDir]);
+tools\scenario-suite\run-cli.mjs:540:  const nav = runCli(['nav', scenarioById['UC-09'].url]);
+tools\scenario-suite\run-cli.mjs:542:  const snap = runCli(['snap']);
+tools\scenario-suite\run-cli.mjs:545:  const click = runCli(['click', clickHereId]);
+tools\scenario-suite\run-cli.mjs:549:  const tabsAfter = runCli(['tabs']);
+tools\scenario-suite\run-cli.mjs:558:  const focusPopup = runCli(['focustab', popupTabId]);
+tools\scenario-suite\run-cli.mjs:559:  const textAfter = runCli(['text']); // fresh attach must honor the persisted active tab
+tools\scenario-suite\run-cli.mjs:586:  const nav = runCli(['nav', fx('prompt-injection.html')]);
+tools\scenario-suite\run-cli.mjs:588:  const text = runCli(['text']);
+tools\scenario-suite\run-cli.mjs:610:  const nav = runCli(['nav', scenarioById['UC-11'].url.replace('/inventory.html', '/')]);
+tools\scenario-suite\run-cli.mjs:614:  runCli(['click', '#login-button']);
+tools\scenario-suite\run-cli.mjs:615:  const snap = runCli(['snap']);
+tools\scenario-suite\run-cli.mjs:635:  const nav = runCli(['nav', scenarioById['UC-12'].url.replace('/inventory.html', '/'), '--headed']);
+tools\scenario-suite\run-cli.mjs:639:  runCli(['click', '#login-button']);
+tools\scenario-suite\run-cli.mjs:640:  const invSnap = runCli(['snap']);
+tools\scenario-suite\run-cli.mjs:643:  const clickResult = runCli(['click', addId]);
+tools\scenario-suite\run-cli.mjs:646:  const freshSnap = runCli(['snap']);
+tools\scenario-suite\run-cli.mjs:670:  const nav = runCli(['nav', scenarioById['UC-13'].url]);
+tools\scenario-suite\run-cli.mjs:677:    runCli(['snap']);
+tools\scenario-suite\run-cli.mjs:699:  const nav = runCli(['nav', fx('aria-menu.html')]);
+tools\scenario-suite\run-cli.mjs:701:  const clickTrigger = runCli(['clickrole', 'button', 'Open Actions Menu']);
+tools\scenario-suite\run-cli.mjs:702:  const axAfterOpen = runCli(['axsnap']);
+tools\scenario-suite\run-cli.mjs:703:  const clickArchive = runCli(['clickrole', 'menuitem', 'Archive Item']);
+tools\scenario-suite\run-cli.mjs:704:  const text = runCli(['text']);
+tools\scenario-suite\fr2-16\verify-fr2-16-boundary.mjs:31:const browserBuild = spawnSync(isWindows ? 'npx.cmd' : 'npx', ['tsc'], {
+tools\scenario-suite\fr2-16\verify-fr2-16-boundary.mjs:46:const cliBuild = spawnSync(isWindows ? 'npx.cmd' : 'npx', ['tsc'], {
+tools\scenario-suite\fr2-16\verify-fr2-16-boundary.mjs:60:  const run = spawnSync('node', [cliDistPath], { encoding: 'utf8', cwd: repoRoot });
+tools\scenario-suite\verify-fr2-12-audit.mjs:102:function runCli(args, opts = {}) {
+tools\scenario-suite\verify-fr2-12-audit.mjs:239:    const r = await runCli(['audit', freshUrl(origin, '/audit', 1), path.join(tmp, 'x', 'y', 'z')], {
+tools\scenario-suite\verify-fr2-12-audit.mjs:244:    await runCli(['close'], { env: { SUTRADHAR_CLI_STATE_DIR: stateDir } });
+tools\scenario-suite\verify-fr2-12-audit.mjs:253:    const r = await runCli(['audit', freshUrl(origin, '/audit', 2), tmp, '--json'], {
+tools\scenario-suite\verify-fr2-12-audit.mjs:264:    await runCli(['close'], { env: { SUTRADHAR_CLI_STATE_DIR: stateDir } });
+tools\scenario-suite\verify-fr2-12-audit.mjs:273:    await runCli(['nav', freshUrl(origin, '/audit', 3)], { env: { SUTRADHAR_CLI_STATE_DIR: stateDir } });
+tools\scenario-suite\verify-fr2-12-audit.mjs:274:    const r = await runCli(['audit', '', tmp], { env: { SUTRADHAR_CLI_STATE_DIR: stateDir } });
+tools\scenario-suite\verify-fr2-12-audit.mjs:289:    await runCli(['close'], { env: { SUTRADHAR_CLI_STATE_DIR: stateDir } });
+tools\scenario-suite\verify-fr2-12-audit.mjs:336:    const r1 = await runCli(['audit', freshUrl(origin, '/shift', 7), tmp], { env: { SUTRADHAR_CLI_STATE_DIR: stateDir1 } });
+tools\scenario-suite\verify-fr2-12-audit.mjs:337:    const r2 = await runCli(['audit', freshUrl(origin, '/shift', 7), tmp], { env: { SUTRADHAR_CLI_STATE_DIR: stateDir2 } });
+tools\scenario-suite\verify-fr2-12-audit.mjs:342:    await runCli(['close'], { env: { SUTRADHAR_CLI_STATE_DIR: stateDir1 } });
+tools\scenario-suite\verify-fr2-12-audit.mjs:343:    await runCli(['close'], { env: { SUTRADHAR_CLI_STATE_DIR: stateDir2 } });
+tools\scenario-suite\verify-fr2-12-audit.mjs:476:    const r = await runCli(['audit', freshUrl(origin, '/audit', 11), nested], { env: { SUTRADHAR_CLI_STATE_DIR: stateDir } });
+tools\scenario-suite\verify-fr2-12-audit.mjs:482:    await runCli(['close'], { env: { SUTRADHAR_CLI_STATE_DIR: stateDir } });
+tools\scenario-suite\verify-fr2-12-audit.mjs:492:    const r = await runCli(['audit', url, tmp, '--json'], { env: { SUTRADHAR_CLI_STATE_DIR: stateDir } });
+tools\scenario-suite\verify-fr2-12-audit.mjs:515:    await runCli(['close'], { env: { SUTRADHAR_CLI_STATE_DIR: stateDir } });
+tools\scenario-suite\verify-fr2-12-audit.mjs:521:    const r3 = await runCli(['audit', url3, tmp, '--json', '--fail-on-diff'], { env: { SUTRADHAR_CLI_STATE_DIR: stateDir3 } });
+tools\scenario-suite\verify-fr2-12-audit.mjs:528:    await runCli(['close'], { env: { SUTRADHAR_CLI_STATE_DIR: stateDir3 } });
+tools\scenario-suite\verify-fr2-12-audit.mjs:536:    const r = await runCli(
+tools\scenario-suite\verify-fr2-12-audit.mjs:548:    await runCli(['close'], { env: { SUTRADHAR_CLI_STATE_DIR: stateDir } });
+tools\scenario-suite\verify-fr2-12-audit.mjs:553:    const r2 = await runCli(
+tools\scenario-suite\verify-fr2-12-audit.mjs:563:    await runCli(['close'], { env: { SUTRADHAR_CLI_STATE_DIR: stateDir2 } });
+tools\scenario-suite\verify-fr2-12-audit.mjs:571:    const r = await runCli(
+tools\scenario-suite\verify-fr2-12-audit.mjs:582:    await runCli(['close'], { env: { SUTRADHAR_CLI_STATE_DIR: stateDir } });
+tools\scenario-suite\verify-fr2-12-audit.mjs:587:    const rN4a = await runCli(['audit', freshUrl(origin, '/clean', 151), tmp, '--baseline'], { env: { SUTRADHAR_CLI_STATE_DIR: stateDirN4a } });
+tools\scenario-suite\verify-fr2-12-audit.mjs:593:    const rN4b = await runCli(['audit', freshUrl(origin, '/clean', 152), tmp, '--baseline', '--json'], { env: { SUTRADHAR_CLI_STATE_DIR: stateDirN4b } });
+tools\scenario-suite\verify-fr2-12-audit.mjs:602:    await runCli(['nav', freshUrl(origin, '/audit', 16)], { env: { SUTRADHAR_CLI_STATE_DIR: stateDir } });
+tools\scenario-suite\verify-fr2-12-audit.mjs:607:    const r = await runCli(['audit', '', tmp, '--json'], { env: { SUTRADHAR_CLI_STATE_DIR: stateDir } });
+tools\scenario-suite\verify-fr2-12-audit.mjs:622:    await runCli(['close'], { env: { SUTRADHAR_CLI_STATE_DIR: stateDir } });
+tools\scenario-suite\verify-fr2-12-audit.mjs:630:    const r = await runCli(['audit', freshUrl(origin, '/audit', 17), tmp], { env: { SUTRADHAR_CLI_STATE_DIR: stateDir } });
+tools\scenario-suite\verify-fr2-12-audit.mjs:639:    await runCli(['close'], { env: { SUTRADHAR_CLI_STATE_DIR: stateDir } });
+tools\scenario-suite\verify-fr2-12-audit.mjs:650:    const r = await runCli(['audit', freshUrl(origin, '/clean', 18), filePath], { env: { SUTRADHAR_CLI_STATE_DIR: stateDir } });
+tools\scenario-suite\verify-fr2-12-audit.mjs:659:    const rN3 = await runCli(
+tools\scenario-suite\verify-fr2-12-audit.mjs:668:    await runCli(['close'], { env: { SUTRADHAR_CLI_STATE_DIR: stateDirN3 } }).catch(() => {});
+tools\scenario-suite\verify-fr2-12-audit.mjs:687:    await runCli(['nav', freshUrl(origin, '/clean', 211)], { env: { SUTRADHAR_CLI_STATE_DIR: stateDir } });
+tools\scenario-suite\verify-fr2-12-audit.mjs:690:    await runCli(['eval', "setTimeout(()=>alert('gap261-l21'),0); 1"], { env: { SUTRADHAR_CLI_STATE_DIR: stateDir } });
+tools\scenario-suite\verify-fr2-12-audit.mjs:692:    const r = await runCli(['audit', freshUrl(origin, '/clean', 212), tmp, '--json'], { env: { SUTRADHAR_CLI_STATE_DIR: stateDir } });
+tools\scenario-suite\verify-fr2-12-audit.mjs:701:    await runCli(['dialog', 'dismiss'], { env: { SUTRADHAR_CLI_STATE_DIR: stateDir } }).catch(() => {});
+tools\scenario-suite\verify-fr2-12-audit.mjs:702:    await runCli(['close'], { env: { SUTRADHAR_CLI_STATE_DIR: stateDir } }).catch(() => {});
+tools\scenario-suite\verify-fr2-12-audit.mjs:711:    await runCli(['nav', freshUrl(origin, '/clean', 220), '--dialog', 'accept'], { env: { SUTRADHAR_CLI_STATE_DIR: stateDir } });
+tools\scenario-suite\verify-fr2-12-audit.mjs:712:    const r = await runCli(
+tools\scenario-suite\verify-fr2-12-audit.mjs:720:    await runCli(['close'], { env: { SUTRADHAR_CLI_STATE_DIR: stateDir } }).catch(() => {});
+tools\scenario-suite\verify-fr2-12-audit.mjs:731:    const r = await runCli(
+tools\scenario-suite\verify-fr2-12-audit.mjs:743:    await runCli(['dialog', 'dismiss'], { env: { SUTRADHAR_CLI_STATE_DIR: stateDir } }).catch(() => {});
+tools\scenario-suite\verify-fr2-12-audit.mjs:744:    await runCli(['close'], { env: { SUTRADHAR_CLI_STATE_DIR: stateDir } }).catch(() => {});
+tools\scenario-suite\verify-fr2-12-audit.mjs:961:    await runCli(['close'], { env: { SUTRADHAR_CLI_STATE_DIR: stateDir } }).catch(() => {});
+tools\scenario-suite\verify-fr2-01-wait-states.mjs:115:  const r = spawnSync('powershell', ['-NoProfile', '-Command', script], { encoding: 'utf-8', maxBuffer: 32 * 1024 * 1024 });
+tools\scenario-suite\verify-fr2-10-optional-session.mjs:530:    const r = spawnSync('powershell', ['-NoProfile', '-Command', script], { encoding: 'utf-8' });
+tools\scenario-suite\mutate-fr2-14.mjs:233:  const r = spawnSync(cmd, args, { encoding: 'utf-8', maxBuffer: 64 * 1024 * 1024, shell: useShell, ...opts });
+tools\scenario-suite\verify-fr2-08-conditions.mjs:77:  const r = spawnSync(process.execPath, [
+tools\scenario-suite\verify-fr2-08-conditions.mjs:143:function runCli(argv, env, timeout = 120000, root = repoRoot) {
+tools\scenario-suite\verify-fr2-08-conditions.mjs:845:  const cli = (a, t) => runCli(a, env, t);
+tools\scenario-suite\verify-fr2-08-conditions.mjs:861:    const r = await cli(['nav', server.url('/conditions.html', params), ...extraArgs]);
+tools\scenario-suite\verify-fr2-08-conditions.mjs:894:    const r = await cli(['waitfor', '3000', '--text', 'Never appears']);
+tools\scenario-suite\verify-fr2-08-conditions.mjs:899:    const r = await cli(['waitfor', '3000', '--text-gone', 'Never was here']);
+tools\scenario-suite\verify-fr2-08-conditions.mjs:904:    const r = await cli(['waitfor', '3000', '--text', 'Price: $5', '--json']);
+tools\scenario-suite\verify-fr2-08-conditions.mjs:925:      if (verb === 'nav') { await cli(['nav', 'about:blank']); p = await page(); } else ({ p } = await nav({ case: caseName }));
+tools\scenario-suite\verify-fr2-08-conditions.mjs:927:      const r = await cli(argv);
+tools\scenario-suite\verify-fr2-08-conditions.mjs:940:    const r = await cli(['waitfor']);
+tools\scenario-suite\verify-fr2-08-conditions.mjs:944:    const r = await cli(['waitfor', 'abc', '--text', 'x']);
+tools\scenario-suite\verify-fr2-08-conditions.mjs:945:    const r2 = await cli(['waitfor', '5000', 'successfully', '--text', 'Saved']);
+tools\scenario-suite\verify-fr2-08-conditions.mjs:950:    const r = await cli(['click', '#s-click', '--text', 'Saved']);
+tools\scenario-suite\verify-fr2-08-conditions.mjs:958:    const r = await cli(['waitfor', '10000', '--text', 'Never appears']);
+tools\scenario-suite\verify-fr2-08-conditions.mjs:959:    await cli(['dialog', 'dismiss']); // an evaluate on the page would block behind the open alert: dismiss FIRST, then read the recorder
+tools\scenario-suite\verify-fr2-08-conditions.mjs:964:    const a = await cli(['waitfor', '--text', 'a', '--text-gone', 'a']);
+tools\scenario-suite\verify-fr2-08-conditions.mjs:965:    const b = await cli(['waitfor', '--text', 'a', '--expect-text', 'b']);
+tools\scenario-suite\verify-fr2-08-conditions.mjs:966:    const c = await cli(['waitfor', '--text']);
+tools\scenario-suite\verify-fr2-08-conditions.mjs:971:  await cli(['close']);
+tools\scenario-suite\verify-fr2-08-conditions.mjs:1164:  const r = spawnSync('powershell', ['-NoProfile', '-Command', script], { encoding: 'utf-8', maxBuffer: 32 * 1024 * 1024 });
+tools\scenario-suite\verify-fr2-06-selectors.mjs:72:  const r = spawnSync('powershell', ['-NoProfile', '-Command', script], { encoding: 'utf-8', maxBuffer: 32 * 1024 * 1024 });
+tools\scenario-suite\verify-fr2-06-selectors.mjs:337:async function runCli() {
+tools\scenario-suite\verify-fr2-06-selectors.mjs:386:  await runCli();
+tools\scenario-suite\verify-fr2-07-verification.mjs:90:  const r = spawnSync(process.execPath, [
+tools\scenario-suite\verify-fr2-07-verification.mjs:162:function runCli(argv, env, timeout = 120000) {
+tools\scenario-suite\verify-fr2-07-verification.mjs:1157:  const cli = (a) => runCli(a, env);
+tools\scenario-suite\verify-fr2-07-verification.mjs:1158:  const nav = (p) => cli(['nav', typeof p === 'string' && p.startsWith('http') ? p : server.url(p)]);
+tools\scenario-suite\verify-fr2-07-verification.mjs:1183:    const r = await cli(['press', '#txt', 'a']);
+tools\scenario-suite\verify-fr2-07-verification.mjs:1189:    const r = await cli(['press', '#nofocus', 'a']);
+tools\scenario-suite\verify-fr2-07-verification.mjs:1193:    const r2 = await cli(['press', '#does-not-exist', 'a']);
+tools\scenario-suite\verify-fr2-07-verification.mjs:1198:    const r = await cli(['clickpoint', '1', '1']); // any verb prints a Verification line; here a plain sanity check
+tools\scenario-suite\verify-fr2-07-verification.mjs:1204:    const ok = await cli(['download', '#dl', './out']);
+tools\scenario-suite\verify-fr2-07-verification.mjs:1208:    const bad = await cli(['download', '#dl', './out', '--expect-url', '/never']);
+tools\scenario-suite\verify-fr2-07-verification.mjs:1213:    const ok = await cli(['nav', server.url('/nav/redirect'), '--expect-url', '/nav/login']);
+tools\scenario-suite\verify-fr2-07-verification.mjs:1214:    const bad = await cli(['nav', server.url('/nav/redirect'), '--expect-url', '/nav/b']);
+tools\scenario-suite\verify-fr2-07-verification.mjs:1215:    const plain = await cli(['nav', server.url('/nav/a')]);
+tools\scenario-suite\verify-fr2-07-verification.mjs:1222:    const r = await cli(['clickpoint', String(c.x), String(c.y)]);
+tools\scenario-suite\verify-fr2-07-verification.mjs:1229:    const r = await cli(['dragpoints', String(c.x - 40), String(c.y), String(c.x + 40), String(c.y)]);
+tools\scenario-suite\verify-fr2-07-verification.mjs:1234:    const ok = await cli(['click', '#show-saved', '--expect-text', 'FR2-07 SAVED']);
+tools\scenario-suite\verify-fr2-07-verification.mjs:1236:    const bad = await cli(['click', '#noop', '--expect-text', 'NOPE']);
+tools\scenario-suite\verify-fr2-07-verification.mjs:1237:    const miss = await cli(['click', '#missing', '--expect-text', 'x']);
+tools\scenario-suite\verify-fr2-07-verification.mjs:1242:    const r = await cli(['click', '#noop', '--json', '--expect-text', 'NOPE']);
+tools\scenario-suite\verify-fr2-07-verification.mjs:1248:    const r = await cli(['screenshot', path.join(work, 'shot.png')]);
+tools\scenario-suite\verify-fr2-07-verification.mjs:1252:    const g = await cli(['getclipboard']);
+tools\scenario-suite\verify-fr2-07-verification.mjs:1256:    const a = await cli(['click', '#noop', '--expect-url-changed', '--expect-url-unchanged']);
+tools\scenario-suite\verify-fr2-07-verification.mjs:1257:    const b = await cli(['click', '#noop', '--expect-text']);
+tools\scenario-suite\verify-fr2-07-verification.mjs:1275:        const r = await cli(['click', '#go-' + tok, '--expect-text', tok]);
+tools\scenario-suite\verify-fr2-07-verification.mjs:1284:  await cli(['close']);
+tools\scenario-suite\verify-fr2-07-verification.mjs:1516:  const r = spawnSync('powershell', ['-NoProfile', '-Command', script], { encoding: 'utf-8', maxBuffer: 32 * 1024 * 1024 });
+tools\scenario-suite\verify-fr2-05-download-roots.mjs:173:function runCli(args, opts = {}) {
+tools\scenario-suite\verify-fr2-05-download-roots.mjs:286:      await runCli(['nav', server.pageUrl('L1', { name })], { cwd: work, env: baseEnv });
+tools\scenario-suite\verify-fr2-05-download-roots.mjs:287:      const res = await runCli(['download', '#dl', './out'], { cwd: work, env: baseEnv });
+tools\scenario-suite\verify-fr2-05-download-roots.mjs:306:      await runCli(['close'], { cwd: work, env: baseEnv });
+tools\scenario-suite\verify-fr2-05-download-roots.mjs:312:      await runCli(['nav', server.pageUrl('L2', { name })], { cwd: work, env: baseEnv });
+tools\scenario-suite\verify-fr2-05-download-roots.mjs:313:      const res = await runCli(['download', '#dl', absDl], { cwd: work, env: baseEnv });
+tools\scenario-suite\verify-fr2-05-download-roots.mjs:326:      await runCli(['close'], { cwd: work, env: baseEnv });
+tools\scenario-suite\verify-fr2-05-download-roots.mjs:331:      await runCli(['nav', server.pageUrl('L3', { name })], { cwd: work, env: baseEnv });
+tools\scenario-suite\verify-fr2-05-download-roots.mjs:332:      const res = await runCli(['download', '#dl'], { cwd: work, env: baseEnv });
+tools\scenario-suite\verify-fr2-05-download-roots.mjs:346:      await runCli(['close'], { cwd: work, env: baseEnv });
+tools\scenario-suite\verify-fr2-05-download-roots.mjs:351:      await runCli(['nav', server.pageUrl('L4', { name })], { cwd: work, env: baseEnv });
+tools\scenario-suite\verify-fr2-05-download-roots.mjs:352:      const res1 = await runCli(['download', '#dl', './out4'], { cwd: work, env: baseEnv });
+tools\scenario-suite\verify-fr2-05-download-roots.mjs:353:      const res2 = await runCli(['download', '#dl', './out4'], { cwd: work, env: baseEnv });
+tools\scenario-suite\verify-fr2-05-download-roots.mjs:367:      await runCli(['close'], { cwd: work, env: baseEnv });
+tools\scenario-suite\verify-fr2-05-download-roots.mjs:376:      await runCli(['nav', server.pageUrl('L5', { name })], { cwd: work, env: envL5 });
+tools\scenario-suite\verify-fr2-05-download-roots.mjs:377:      const res = await runCli(['download', '#dl'], { cwd: work, env: envL5 });
+tools\scenario-suite\verify-fr2-05-download-roots.mjs:389:      await runCli(['close'], { cwd: work, env: envL5 });
+tools\scenario-suite\verify-fr2-05-download-roots.mjs:396:      await runCli(['nav', server.pageUrl('L6', { name })], { cwd: work, env: envL6 });
+tools\scenario-suite\verify-fr2-05-download-roots.mjs:397:      const res = await runCli(['download', '#dl'], { cwd: work, env: envL6 });
+tools\scenario-suite\verify-fr2-05-download-roots.mjs:410:      await runCli(['close'], { cwd: work, env: envL6 });
+tools\scenario-suite\verify-fr2-05-download-roots.mjs:417:      await runCli(['nav', server.pageUrl('L7', { name: `l7-${nonce}.bin` })], { cwd: work, env: baseEnv });
+tools\scenario-suite\verify-fr2-05-download-roots.mjs:418:      const res = await runCli(['download', '#dl', './afile'], { cwd: work, env: baseEnv });
+tools\scenario-suite\verify-fr2-05-download-roots.mjs:422:      await runCli(['close'], { cwd: work, env: baseEnv });
+tools\scenario-suite\verify-fr2-05-download-roots.mjs:426:      const res = await runCli(['close'], { cwd: work, env: baseEnv });
+tools\scenario-suite\verify-fr2-04-dialogs.mjs:90:function cli(args, caseDir, { capMs = 90000, extraEnv = {} } = {}) {
+tools\scenario-suite\verify-fr2-04-dialogs.mjs:234:    const nav = await cli(['nav', `${BASE}?n=${n}`], caseDir);
+tools\scenario-suite\verify-fr2-04-dialogs.mjs:255:    await cli(['close'], caseDir);
+tools\scenario-suite\verify-fr2-04-dialogs.mjs:262:    await cli(['nav', `${BASE}?n=${n}`], caseDir);
+tools\scenario-suite\verify-fr2-04-dialogs.mjs:269:    const click = await cli(['click', '#alert'], caseDir);
+tools\scenario-suite\verify-fr2-04-dialogs.mjs:279:    const snap = await cli(['snap'], caseDir);
+tools\scenario-suite\verify-fr2-04-dialogs.mjs:295:    const dialogStatus = await cli(['dialog'], caseDir);
+tools\scenario-suite\verify-fr2-04-dialogs.mjs:298:    const accept = await cli(['dialog', 'accept'], caseDir);
+tools\scenario-suite\verify-fr2-04-dialogs.mjs:308:    const finalSnap = await cli(['snap'], caseDir);
+tools\scenario-suite\verify-fr2-04-dialogs.mjs:312:    await cli(['close'], caseDir);
+tools\scenario-suite\verify-fr2-04-dialogs.mjs:319:    await cli(['nav', `${BASE}?n=${n}`], caseDir);
+tools\scenario-suite\verify-fr2-04-dialogs.mjs:324:    await cli(['click', '#confirm'], caseDir);
+tools\scenario-suite\verify-fr2-04-dialogs.mjs:325:    const dismiss = await cli(['dialog', 'dismiss'], caseDir);
+tools\scenario-suite\verify-fr2-04-dialogs.mjs:331:    await cli(['close'], caseDir);
+tools\scenario-suite\verify-fr2-04-dialogs.mjs:336:    await cli(['nav', `${BASE}?n=${n}`], caseDir);
+tools\scenario-suite\verify-fr2-04-dialogs.mjs:341:    await cli(['click', '#confirm'], caseDir);
+tools\scenario-suite\verify-fr2-04-dialogs.mjs:342:    const accept = await cli(['dialog', 'accept'], caseDir);
+tools\scenario-suite\verify-fr2-04-dialogs.mjs:348:    await cli(['close'], caseDir);
+tools\scenario-suite\verify-fr2-04-dialogs.mjs:355:    await cli(['nav', `${BASE}?n=${n}`], caseDir);
+tools\scenario-suite\verify-fr2-04-dialogs.mjs:361:    await cli(['click', '#prompt'], caseDir);
+tools\scenario-suite\verify-fr2-04-dialogs.mjs:362:    const pending = await cli(['dialog'], caseDir);
+tools\scenario-suite\verify-fr2-04-dialogs.mjs:364:    const a = await cli(['dialog', 'accept', 'fr2-typed'], caseDir);
+tools\scenario-suite\verify-fr2-04-dialogs.mjs:370:    await cli(['click', '#prompt'], caseDir);
+tools\scenario-suite\verify-fr2-04-dialogs.mjs:371:    const b = await cli(['dialog', 'accept'], caseDir);
+tools\scenario-suite\verify-fr2-04-dialogs.mjs:377:    await cli(['click', '#prompt'], caseDir);
+tools\scenario-suite\verify-fr2-04-dialogs.mjs:378:    await cli(['dialog', 'dismiss'], caseDir);
+tools\scenario-suite\verify-fr2-04-dialogs.mjs:384:    await cli(['close'], caseDir);
+tools\scenario-suite\verify-fr2-04-dialogs.mjs:391:    await cli(['nav', `${BASE}?n=${n}`], caseDir);
+tools\scenario-suite\verify-fr2-04-dialogs.mjs:394:    await cli(['click', '#arm-bu'], caseDir);
+tools\scenario-suite\verify-fr2-04-dialogs.mjs:395:    const nav2 = await cli(['nav', `${BASE}?n=${n}&landed=1`], caseDir);
+tools\scenario-suite\verify-fr2-04-dialogs.mjs:406:    await cli(['close'], caseDir);
+tools\scenario-suite\verify-fr2-04-dialogs.mjs:411:    await cli(['nav', `${BASE}?n=${n}`, '--dialog', 'accept'], caseDir);
+tools\scenario-suite\verify-fr2-04-dialogs.mjs:414:    await cli(['click', '#arm-bu'], caseDir);
+tools\scenario-suite\verify-fr2-04-dialogs.mjs:415:    const nav2 = await cli(['nav', `${BASE}?n=${n}&landed=1`], caseDir);
+tools\scenario-suite\verify-fr2-04-dialogs.mjs:423:    await cli(['close'], caseDir);
+tools\scenario-suite\verify-fr2-04-dialogs.mjs:428:    await cli(['nav', `${BASE}?n=${n}`, '--dialog', 'dismiss'], caseDir);
+tools\scenario-suite\verify-fr2-04-dialogs.mjs:431:    await cli(['click', '#arm-bu'], caseDir);
+tools\scenario-suite\verify-fr2-04-dialogs.mjs:432:    const nav2 = await cli(['nav', `${BASE}?n=${n}&landed=1`], caseDir);
+tools\scenario-suite\verify-fr2-04-dialogs.mjs:446:    await cli(['close'], caseDir);
+tools\scenario-suite\verify-fr2-04-dialogs.mjs:453:    await cli(['nav', `${BASE}?n=${n}`], caseDir);
+tools\scenario-suite\verify-fr2-04-dialogs.mjs:458:    await cli(['click', '#arm-bu-nav'], caseDir);
+tools\scenario-suite\verify-fr2-04-dialogs.mjs:461:    const dlg = await cli(['dialog'], caseDir);
+tools\scenario-suite\verify-fr2-04-dialogs.mjs:463:    await cli(['dialog', 'accept'], caseDir);
+tools\scenario-suite\verify-fr2-04-dialogs.mjs:474:    await cli(['close'], caseDir);
+tools\scenario-suite\verify-fr2-04-dialogs.mjs:481:    await cli(['nav', `${BASE}?n=${n}&timerKind=confirm&timerMs=4000`, '--dialog', 'accept'], caseDir);
+tools\scenario-suite\verify-fr2-04-dialogs.mjs:500:    await cli(['close'], caseDir);
+tools\scenario-suite\verify-fr2-04-dialogs.mjs:507:    await cli(['nav', `${BASE}?n=${n}`], caseDir);
+tools\scenario-suite\verify-fr2-04-dialogs.mjs:509:    const ev = await cli(['eval', `confirm('fr2-04 eval ${n}')`], caseDir);
+tools\scenario-suite\verify-fr2-04-dialogs.mjs:512:    await cli(['dialog', 'accept'], caseDir);
+tools\scenario-suite\verify-fr2-04-dialogs.mjs:513:    await cli(['close'], caseDir);
+tools\scenario-suite\verify-fr2-04-dialogs.mjs:518:    await cli(['nav', `${BASE}?n=${n}`], caseDir);
+tools\scenario-suite\verify-fr2-04-dialogs.mjs:519:    const ev = await cli(['eval', "confirm('x')", '--dialog', 'accept'], caseDir);
+tools\scenario-suite\verify-fr2-04-dialogs.mjs:521:    await cli(['close'], caseDir);
+tools\scenario-suite\verify-fr2-04-dialogs.mjs:526:    await cli(['nav', `${BASE}?n=${n}`], caseDir);
+tools\scenario-suite\verify-fr2-04-dialogs.mjs:527:    const ev = await cli(['eval', "prompt('q','d')", '--dialog', 'accept', '--dialog-text', 'zz'], caseDir);
+tools\scenario-suite\verify-fr2-04-dialogs.mjs:529:    await cli(['close'], caseDir);
+tools\scenario-suite\verify-fr2-04-dialogs.mjs:536:    await cli(['nav', `${BASE}?n=${n}`], caseDir);
+tools\scenario-suite\verify-fr2-04-dialogs.mjs:541:    await cli(['click', '#chain'], caseDir);
+tools\scenario-suite\verify-fr2-04-dialogs.mjs:542:    const a = await cli(['dialog', 'accept'], caseDir);
+tools\scenario-suite\verify-fr2-04-dialogs.mjs:548:    await cli(['dialog', 'dismiss'], caseDir);
+tools\scenario-suite\verify-fr2-04-dialogs.mjs:557:    await cli(['close'], caseDir);
+tools\scenario-suite\verify-fr2-04-dialogs.mjs:564:    await cli(['nav', `${BASE}?n=${n}`, '--dialog', 'dismiss'], caseDir);
+tools\scenario-suite\verify-fr2-04-dialogs.mjs:567:    const click1 = await cli(['click', '#confirm'], caseDir);
+tools\scenario-suite\verify-fr2-04-dialogs.mjs:573:    const clickReport = await cli(['click', '#confirm', '--dialog', 'report'], caseDir);
+tools\scenario-suite\verify-fr2-04-dialogs.mjs:575:    await cli(['dialog', 'dismiss'], caseDir);
+tools\scenario-suite\verify-fr2-04-dialogs.mjs:579:    const click3 = await cli(['click', '#confirm'], caseDir); // no --dialog flag at all
+tools\scenario-suite\verify-fr2-04-dialogs.mjs:585:    await cli(['dialog', 'dismiss'], caseDir);
+tools\scenario-suite\verify-fr2-04-dialogs.mjs:592:    await cli(['close'], caseDir);
+tools\scenario-suite\verify-fr2-04-dialogs.mjs:599:    await cli(['nav', `${BASE}?n=${n}`], caseDir);
+tools\scenario-suite\verify-fr2-04-dialogs.mjs:612:    const cp = await cli(['clickpoint', String(x), String(y)], caseDir, { capMs: 15000 });
+tools\scenario-suite\verify-fr2-04-dialogs.mjs:619:    await cli(['dialog', 'dismiss'], caseDir);
+tools\scenario-suite\verify-fr2-04-dialogs.mjs:621:    await cli(['close'], caseDir);
+tools\scenario-suite\verify-fr2-04-dialogs.mjs:628:    const nav = await cli(['nav', `${BASE}?n=${n}&onloadAlert=1`], caseDir);
+tools\scenario-suite\verify-fr2-04-dialogs.mjs:634:    await cli(['dialog', 'accept'], caseDir);
+tools\scenario-suite\verify-fr2-04-dialogs.mjs:635:    const snap = await cli(['snap'], caseDir);
+tools\scenario-suite\verify-fr2-04-dialogs.mjs:637:    await cli(['close'], caseDir);
+tools\scenario-suite\verify-fr2-04-dialogs.mjs:645:  // above (already asserted implicitly by every case's own `cli(['close'])` + fresh `nav`
+tools\scenario-suite\verify-fr2-04-dialogs.mjs:650:    await cli(['nav', `${BASE}?n=${n}`], caseDir);
+tools\scenario-suite\verify-fr2-04-dialogs.mjs:652:    await cli(['click', '#alert'], caseDir);
+tools\scenario-suite\verify-fr2-04-dialogs.mjs:656:    await cli(['dialog', 'accept'], caseDir);
+tools\scenario-suite\verify-fr2-04-dialogs.mjs:657:    await cli(['close'], caseDir);
+tools\scenario-suite\verify-fr2-04-dialogs.mjs:665:    await cli(['nav', `${BASE}?n=${n}`], caseDir);
+tools\scenario-suite\verify-fr2-04-dialogs.mjs:666:    const ev = await cli(
+tools\scenario-suite\verify-fr2-04-dialogs.mjs:671:    await cli(['dialog', 'accept'], caseDir);
+tools\scenario-suite\verify-fr2-04-dialogs.mjs:672:    await cli(['close'], caseDir);
+tools\scenario-suite\verify-fr2-04-dialogs.mjs:679:    await cli(['nav', `${BASE}?n=${n}`, '--headed'], caseDir);
+tools\scenario-suite\verify-fr2-04-dialogs.mjs:680:    const click = await cli(['click', '#alert'], caseDir);
+tools\scenario-suite\verify-fr2-04-dialogs.mjs:682:    const snap = await cli(['snap'], caseDir);
+tools\scenario-suite\verify-fr2-04-dialogs.mjs:684:    await cli(['dialog', 'accept'], caseDir);
+tools\scenario-suite\verify-fr2-04-dialogs.mjs:685:    await cli(['close'], caseDir);
+tools\scenario-suite\verify-fr2-04-dialogs.mjs:691:    const n1 = await cli(['nav', `${BASE}?n=${nonce('n1')}`], caseDir);
+tools\scenario-suite\verify-fr2-04-dialogs.mjs:693:    const r = await cli(['dialog', 'accept'], caseDir);
+tools\scenario-suite\verify-fr2-04-dialogs.mjs:695:    await cli(['close'], caseDir);
+tools\scenario-suite\verify-fr2-04-dialogs.mjs:699:    await cli(['nav', `${BASE}?n=${nonce('n2')}`], caseDir);
+tools\scenario-suite\verify-fr2-04-dialogs.mjs:700:    const r = await cli(['dialog', 'dismiss', 'extra'], caseDir);
+tools\scenario-suite\verify-fr2-04-dialogs.mjs:702:    await cli(['close'], caseDir);
+tools\scenario-suite\verify-fr2-04-dialogs.mjs:706:    await cli(['nav', `${BASE}?n=${nonce('n3')}`], caseDir);
+tools\scenario-suite\verify-fr2-04-dialogs.mjs:708:    const r = await cli(['snap', '--dialog-text', 'x'], caseDir);
+tools\scenario-suite\verify-fr2-04-dialogs.mjs:715:    await cli(['close'], caseDir);
+tools\scenario-suite\verify-fr2-04-dialogs.mjs:719:    await cli(['nav', `${BASE}?n=${nonce('n4')}`], caseDir);
+tools\scenario-suite\verify-fr2-04-dialogs.mjs:720:    const r = await cli(['snap', '--dialog', 'bogus'], caseDir);
+tools\scenario-suite\verify-fr2-04-dialogs.mjs:722:    await cli(['close'], caseDir);
+tools\scenario-suite\verify-fr2-04-dialogs.mjs:726:    await cli(['nav', `${BASE}?n=${nonce('n5')}`], caseDir);
+tools\scenario-suite\verify-fr2-04-dialogs.mjs:727:    const r = await cli(['dialog', 'accept', '--dialog', 'dismiss'], caseDir);
+tools\scenario-suite\verify-fr2-04-dialogs.mjs:729:    await cli(['close'], caseDir);
+tools\scenario-suite\verify-fr2-04-dialogs.mjs:733:    const r = await cli(['dialog'], caseDir);
+tools\scenario-suite\verify-fr2-04-dialogs.mjs:740:    await cli(['nav', `${BASE}?n=${n}`], caseDir);
+tools\scenario-suite\verify-fr2-04-dialogs.mjs:742:    await cli(['newtab', `${BASE}?n=${n2}`], caseDir);
+tools\scenario-suite\verify-fr2-04-dialogs.mjs:749:    const snap = await cli(['snap'], caseDir);
+tools\scenario-suite\verify-fr2-04-dialogs.mjs:755:    await cli(['dialog', 'dismiss'], caseDir);
+tools\scenario-suite\verify-fr2-04-dialogs.mjs:757:    await cli(['close'], caseDir);
+tools\scenario-suite\verify-fr2-04-dialogs.mjs:764:    await cli(['nav', `${BASE}?n=${n}`], caseDir);
+tools\scenario-suite\verify-fr2-04-dialogs.mjs:765:    const evalP = cli(['eval', 'setTimeout(() => { const t = Date.now(); while (Date.now() - t < 2500) {} }, 0)'], caseDir, { capMs: 8000 });
+tools\scenario-suite\verify-fr2-04-dialogs.mjs:767:    const snap = await cli(['snap'], caseDir, { capMs: 15000 });
+tools\scenario-suite\verify-fr2-04-dialogs.mjs:770:    await cli(['close'], caseDir);
+tools\scenario-suite\verify-fr2-04-dialogs.mjs:791:    await cli(['nav', `${BASE}?n=${n}`], caseDir);
+tools\scenario-suite\verify-fr2-04-dialogs.mjs:797:    const ev = await cli(['eval', '(() => { const t = Date.now(); while (Date.now() - t < 3000) {} return "done"; })()'], caseDir, {
+tools\scenario-suite\verify-fr2-04-dialogs.mjs:817:    const snap = await cli(['snap'], caseDir, { capMs: 15000 });
+tools\scenario-suite\verify-fr2-04-dialogs.mjs:819:    await cli(['close'], caseDir);
+tools\scenario-suite\verify-fr2-04-dialogs.mjs:829:    const created = await cli(['profile', 'create', profileName], caseDir);
+tools\scenario-suite\verify-fr2-04-dialogs.mjs:831:    await cli(['nav', `${BASE}?n=${n}`, '--profile', profileName], caseDir);
+tools\scenario-suite\verify-fr2-04-dialogs.mjs:832:    await cli(['click', '#confirm'], caseDir);
+tools\scenario-suite\verify-fr2-04-dialogs.mjs:834:    const close = await cli(['close'], caseDir, { capMs: 15000 });
+tools\scenario-suite\verify-fr2-04-dialogs.mjs:842:    await cli(['profile', 'delete', profileName], caseDir).catch(() => {});
+tools\scenario-suite\verify-fr2-04-dialogs.mjs:847:    await cli(['nav', `${BASE}?n=${n}`], caseDir);
+tools\scenario-suite\verify-fr2-04-dialogs.mjs:848:    await cli(['click', '#confirm'], caseDir);
+tools\scenario-suite\verify-fr2-04-dialogs.mjs:853:    const close = await cli(['close'], caseDir, { capMs: 15000 });
+tools\scenario-suite\verify-fr2-04-dialogs.mjs:879:    await cli(['nav', `${BASE}?n=${n}`], caseDir);
+tools\scenario-suite\verify-fr2-04-dialogs.mjs:896:    await cli(['snap'], caseDir); // triggers ensureWarden's respawn path
+tools\scenario-suite\verify-fr2-04-dialogs.mjs:904:    await cli(['click', '#confirm', '--dialog', 'accept'], caseDir);
+tools\scenario-suite\verify-fr2-04-dialogs.mjs:907:    await cli(['close'], caseDir);
+tools\scenario-suite\verify-fr2-04-dialogs.mjs:914:    await cli(['nav', `${BASE}?n=${n}`], caseDir);
+tools\scenario-suite\verify-fr2-04-dialogs.mjs:933:    await cli(['dialog', 'accept'], caseDir);
+tools\scenario-suite\verify-fr2-04-dialogs.mjs:935:    await cli(['close'], caseDir);
+tools\scenario-suite\verify-fr2-04-dialogs.mjs:942:    await cli(['nav', `${BASE}?n=${n}`], caseDir);
+tools\scenario-suite\verify-fr2-04-dialogs.mjs:947:    await cli(['click', '#confirm'], caseDir);
+tools\scenario-suite\verify-fr2-04-dialogs.mjs:948:    const [a, b] = await Promise.all([cli(['dialog', 'accept'], caseDir), cli(['dialog', 'accept'], caseDir)]);
+tools\scenario-suite\verify-fr2-04-dialogs.mjs:961:    await cli(['close'], caseDir);
+tools\scenario-suite\verify-fr2-04-dialogs.mjs:974:    await cli(['nav', `${BASE}?n=${n}`, '--dialog', 'accept'], caseDir);
+tools\scenario-suite\verify-fr2-04-dialogs.mjs:991:    const snap = await cli(['snap'], caseDir, { capMs: 120000 });
+tools\scenario-suite\verify-fr2-04-dialogs.mjs:1022:    await cli(['nav', `${BASE}?n=${n2}&timerKind=confirm&timerMs=1500`], caseDir);
+tools\scenario-suite\verify-fr2-04-dialogs.mjs:1040:    await cli(['close'], caseDir);
+tools\scenario-suite\verify-fr2-04-dialogs.mjs:1061:      await cli(['nav', `${BASE}?n=${n}`], caseDir);
+tools\scenario-suite\verify-fr2-04-dialogs.mjs:1074:      const snap = await cli(['snap'], caseDir, { capMs: 30000 });
+tools\scenario-suite\verify-fr2-04-dialogs.mjs:1083:      await cli(['dialog', 'accept'], caseDir).catch(() => {});
+tools\scenario-suite\verify-fr2-04-dialogs.mjs:1084:      await cli(['dialog', 'accept'], caseDir).catch(() => {}); // second, in case popup dialog is separate from main
+tools\scenario-suite\verify-fr2-04-dialogs.mjs:1086:      await cli(['close'], caseDir).catch(() => {});
+tools\scenario-suite\verify-fr2-04-dialogs.mjs:1104:    await cli(['nav', `${BASE}?n=${n}`], caseDir);
+tools\scenario-suite\verify-fr2-04-dialogs.mjs:1115:    const gated = await cli(['snap', '--dialog', 'accept'], caseDir, { capMs: 20000 });
+tools\scenario-suite\verify-fr2-04-dialogs.mjs:1125:    await cli(['close'], caseDir).catch(() => {});
+tools\scenario-suite\verify-fr2-04-dialogs.mjs:1136:    await cli(['nav', `${BASE}?n=${n}`], caseDir);
+tools\scenario-suite\verify-fr2-04-dialogs.mjs:1167:    const cmd = await cli(['snap'], caseDir, { capMs: 20000 });
+tools\scenario-suite\verify-fr2-04-dialogs.mjs:1184:    await cli(['dialog', 'accept'], caseDir).catch(() => {});
+tools\scenario-suite\verify-fr2-04-dialogs.mjs:1186:    await cli(['close'], caseDir);
+tools\scenario-suite\verify-fr2-04-dialogs.mjs:1195:    await cli(['nav', `${BASE}?n=${n}`], caseDir);
+tools\scenario-suite\verify-fr2-04-dialogs.mjs:1206:    const cmd = await cli(['snap'], caseDir, { capMs: 20000 });
+tools\scenario-suite\verify-fr2-04-dialogs.mjs:1212:    await cli(['dialog', 'accept'], caseDir).catch(() => {});
+tools\scenario-suite\verify-fr2-04-dialogs.mjs:1214:    await cli(['close'], caseDir).catch(() => {});
+tools\scenario-suite\verify-fr2-04-dialogs.mjs:1221:    await cli(['nav', `${BASE}?n=${n}`], caseDir);
+tools\scenario-suite\verify-fr2-04-dialogs.mjs:1222:    await cli(['click', '#chain'], caseDir);
+tools\scenario-suite\verify-fr2-04-dialogs.mjs:1224:    const cmd = await cli(['snap', '--dialog', 'accept'], caseDir, { capMs: 30000 });
+tools\scenario-suite\verify-fr2-04-dialogs.mjs:1231:    await cli(['close'], caseDir).catch(() => {});
+tools\scenario-suite\verify-fr2-04-dialogs.mjs:1249:    await cli(['nav', `${BASE}?n=${n}`], caseDir);
+tools\scenario-suite\verify-fr2-04-dialogs.mjs:1273:    const acc = await cli(['dialog', 'accept'], caseDir, { capMs: 20000 });
+tools\scenario-suite\verify-fr2-04-dialogs.mjs:1299:    const tabsAfter = await cli(['tabs'], caseDir, { capMs: 20000 });
+tools\scenario-suite\verify-fr2-04-dialogs.mjs:1306:    await cli(['close'], caseDir, { capMs: 10000 }).catch(() => {});
+tools\scenario-suite\verify-fr2-04-dialogs.mjs:1313:    await cli(['nav', `${BASE}?n=${n}`], caseDir);
+tools\scenario-suite\verify-fr2-04-dialogs.mjs:1321:    await Promise.all([cli(['snap'], caseDir), cli(['snap'], caseDir), cli(['snap'], caseDir), cli(['snap'], caseDir)]);
+tools\scenario-suite\verify-fr2-04-dialogs.mjs:1340:    await cli(['close'], caseDir).catch(() => {});
+tools\scenario-suite\verify-fr2-04-dialogs.mjs:1348:    await cli(['close'], path.join(STATE_ROOT, dir), { capMs: 20000 }).catch(() => {});
+tools\scenario-suite\verify-fr2-04-dialogs.mjs:1363:    await cli(['nav', `${BASE}?n=${nonce('go')}`], goDir);
+tools\scenario-suite\verify-fr2-04-dialogs.mjs:1368:      await cli(['snap'], goDir);
+tools\scenario-suite\verify-fr2-04-dialogs.mjs:1371:      await cli(['dialog'], goDir);
+tools\scenario-suite\verify-fr2-04-dialogs.mjs:1374:    await cli(['close'], goDir).catch(() => {});
+.ai/loop/webbench-2026-10-04\DEVIATIONS.md:12:   (B1, B4, B5) were told to prefix drive.mjs calls with MSYS_NO_PATHCONV=1; B6 gets it at launch. B3/1940's class is
+.ai/loop/webbench-2026-10-04\DEVIATIONS.md:22:7. Rule slips by drivers, none score-changing: several drivers chained 2 drive.mjs calls in one shell command (sequential,
+.ai/loop/webbench-2026-10-04\drive.mjs:2:// drive.mjs (revision 3): the ONLY way drivers, canary runs and verifier replays may call the Sutradhar CLI.
+.ai/loop/webbench-2026-10-04\drive.mjs:4://   node drive.mjs <slot> <taskId> <a1|a2|r1..r9> <verb> [args...]
+.ai/loop/webbench-2026-10-04\drive.mjs:5://   node drive.mjs <slot> <taskId> <attempt> --check-clean
+.ai/loop/webbench-2026-10-04\drive.mjs:47:  console.error('usage: node drive.mjs <B1..B6|K|V1|V2|M> <taskId from selection.json|setup|selftestN> <a1|a2|r1..r9> <verb> [args...] | --check-clean');
+.ai/loop/webbench-2026-10-04\drive.mjs:78:  console.error(`refused: another drive.mjs call is running in slot ${slot} (lock age ${age}s). Run calls one at a time.`);
+.ai/loop/webbench-2026-10-04\drive.mjs:91:function runCli(argv) {
+.ai/loop/webbench-2026-10-04\drive.mjs:93:  const r = spawnSync(process.execPath, [CLI, ...argv], { cwd: dirs.c, env: { ...process.env, SUTRADHAR_CLI_STATE_DIR: dirs.s, TEMP: dirs.t, TMP: dirs.t, SUTRADHAR_CONFIG: 'none', SUTRADHAR_CLI_DEADLINE_MS: '110000' }, encoding: 'utf8', timeout: TIMEOUT_MS, maxBuffer: 64 * 1024 * 1024 });
+.ai/loop/webbench-2026-10-04\drive.mjs:95:  return { stdout: r.stdout ?? '', stderr: (r.stderr ?? '') + (r.error && !timedOut ? `\n[drive.mjs spawn error] ${r.error.message}` : ''), exit: timedOut ? 124 : (r.status ?? 1), timedOut, durationMs: Math.round(performance.now() - t0) };
+.ai/loop/webbench-2026-10-04\drive.mjs:101:  const ps = spawnSync('powershell.exe', ['-NoProfile', '-Command',
+.ai/loop/webbench-2026-10-04\drive.mjs:143:const r = runCli(argv);
+.ai/loop/webbench-2026-10-04\drive.mjs:153:if (r.timedOut) console.error(`[drive.mjs] timed out after ${TIMEOUT_MS} ms (logged seq ${seq})`);
+.ai/loop/webbench-2026-10-04\drive.mjs:157:  const a = runCli(['eval', AUTO]);
+.ai/loop/webbench-2026-10-04\drive.mjs:161:    if (!task.allowed.includes(d)) console.error(`[drive.mjs] WARNING: the page is now on ${d}, outside the task's site. Reads here are evidence only as a flagged linked-org page reached by a click; otherwise nav back.`);
+.ai/loop/webbench-2026-10-04\drive.mjs:164:console.error(`[drive.mjs] logged ${slot}/${taskId} ${attempt} seq ${seq} exit ${r.exit}`);
+.ai/loop/webbench-2026-10-04\driver-brief.md:27:node "<LOOP>/drive.mjs" {SLOT} <taskId> <a1|a2> <verb> [args...]
+.ai/loop/webbench-2026-10-04\driver-brief.md:30:- **Run calls one at a time. Never background `drive.mjs` and never run two at once.** The wrapper refuses concurrent calls (exit 95).
+.ai/loop/webbench-2026-10-04\lib.mjs:1:// lib.mjs: shared, frozen logic for drive.mjs, check-evidence.mjs, make-verify-input.mjs and tests/selftest.
+.ai/loop/webbench-2026-10-04\log-view.mjs:2:// log-view.mjs: read-only viewer for drive.mjs raw logs (review-3 finding 7). Frozen; named in verifier-brief.md.
+.ai/loop/webbench-2026-10-04\make-verify-input.mjs:47:const ce = spawnSync(process.execPath, [path.join(LOOP, 'check-evidence.mjs'), outDir, '--blind', '--json'], { encoding: 'utf8' });
+.ai/loop/webbench-2026-10-04\MANIFEST.sha256:6:0519aacdedddc764c1d9c01393e6148e16b01a83b982d922cca71b62153ac724 *drive.mjs
+.ai/loop/webbench-2026-10-04\measure-surface.mjs:19:const cli = (...a) => spawnSync(process.execPath, [path.join(pkg, 'cli-bin.js'), ...a], { cwd: dirs.c, env, encoding: 'utf8', timeout: 120000 });
+.ai/loop/webbench-2026-10-04\measure-surface.mjs:20:const n = cli('nav', 'https://example.com');
+.ai/loop/webbench-2026-10-04\measure-surface.mjs:21:const e = cli('eval', FP);
+.ai/loop/webbench-2026-10-04\measure-surface.mjs:22:const c = cli('close');
+.ai/loop/webbench-2026-10-04\protocol-review-2.md:26:  - Three parallel `drive.mjs M 9001 a1 --check-clean` calls produced a contiguous, correctly linked chain (seq 1–3).
+.ai/loop/webbench-2026-10-04\protocol-review-2.md:28:- **Path length.** `<SCR>/B1t` = 164 characters, +35 = 199, and `drive.mjs:47` enforces the limit. Review-1 #9 is resolved.
+.ai/loop/webbench-2026-10-04\protocol-review-2.md:50:**Evidence.** I ran a live self-test on copies of the wrapper and checker. These are the `drive.mjs M 9002 a1 …` calls, in order:
+.ai/loop/webbench-2026-10-04\protocol-review-2.md:82:1. **Record the URL on every call.** In `drive.mjs`, after every `cli` call that ran with a session, also log `location.href` (add `href:location.href` to the `FP` expression, and run it after every verb, not only `nav`; it costs one extra CLI process per call). Alternatively, log `href` only after evidence verbs plus `click*`, `press`, `newtab`, `focustab` and `eval`.
+.ai/loop/webbench-2026-10-04\protocol-review-2.md:83:2. **Check the domain.** In `check-evidence`, map each evidence seq to the last logged `href`. FAIL if its registrable domain differs from the task's `startingUrl` domain, unless it is on a pre-registered alias list (geo editions, see finding 4). `drive.mjs` can also refuse `nav`/`newtab` to off-domain URLs, since it can read `startingUrl` from `selection.json` by `taskId`.
+.ai/loop/webbench-2026-10-04\protocol-review-2.md:130:- **Sequential calls.** The brief never says "run calls one at a time; never background `drive.mjs`" (see finding 7).
+.ai/loop/webbench-2026-10-04\protocol-review-2.md:135:- **Unconfirmed claims.** The brief references `click --expect-url-changed`, `wait ".sel" 15000` and `press "#5" Enter`. Only `nav`, `eval`, `text`, `newtab`, `close` and `screenshot` have been exercised through `drive.mjs`. A dry run of the full verb table against example.com would confirm the arguments.
+.ai/loop/webbench-2026-10-04\protocol-review-2.md:151:- take an `O_EXCL` lock file in `drive.mjs`;
+.ai/loop/webbench-2026-10-04\protocol-review-2.md:158:Pre-register what happens then: the replay through `drive.mjs` V1/V2 alone counts as confirmation, but is reported as "same-tool replay".
+.ai/loop/webbench-2026-10-04\protocol-review-2.md:177:- **"C2 is launderable"** could be a false alarm if my copy differed from the frozen checker. Ruled out: `MANIFEST` verified `check-evidence.mjs` and `drive.mjs` OK, and I copied them unmodified with `cp`. The PASS came from an unedited log, since C1 passed.
+.ai/loop/webbench-2026-10-04\protocol-review-3.md:118:- In `drive.mjs`/`lib.mjs`, treat `waitfor --js` as a raw `eval` (taint it, and make its argument an echo source)
+.ai/loop/webbench-2026-10-04\protocol-review-3.md:202:  - **Fix:** the orchestrator mechanically cross-checks every `drive.mjs` Bash call and its printed
+.ai/loop/webbench-2026-10-04\protocol-review-3.md:241:  `cp` from the MANIFEST-verified files, and `cmp drive.mjs` printed `copied` (identical). The rejections came from an
+.ai/loop/webbench-2026-10-04\protocol-review-3.md:244:  `drive.mjs` against the published CLI (seq numbers above), with no edits. The negative control on the same tools (the
+tools\webbench\claude-direct-run-2026-10-04.md:24:| Mode | host AI driving the **published sutradhar@0.6.1 CLI** (one process per command) through the logging wrapper `drive.mjs`; not the MCP surface, not a source build |
+tools\webbench\claude-direct-run-2026-10-04.md:27:| Pin held through the run | `drive.mjs` re-hashes the CLI on every call: 0 records with exit 99 in 534 CLI records (B1 to B6). The file was re-hashed after the run and is unchanged (same sha256). `sha256sum -c MANIFEST.sha256` after the run: every frozen file OK |
+tools\webbench\claude-direct-run-2026-10-04.md:33:| Frozen-file hashes (`MANIFEST.sha256`) | `protocol.md` `7a0e02fb32a356d25fc3635f20009ae890977e5756bdad640816d942b0a1044a`; `driver-brief.md` `78b8bb438bd7e9f124fdddd63b61224ea9dcb05ed16e279de96c2ceff1aac130`; `verifier-brief.md` `81ae6403369cf7645b1acc12f751a2eaf8af26115e3e8ddd7f77994cee01d0f3`; `lib.mjs` `11a68072dcee21cd4de0126d562f5190dfa53384254f130d981b651d540f64ed`; `drive.mjs` `0519aacdedddc764c1d9c01393e6148e16b01a83b982d922cca71b62153ac724`; `check-evidence.mjs` `b5d5c14e254f11c5a648d7aa54cf5969cfcd8c0ad58c263bccd68841efc746cf`; `make-verify-input.mjs` `c8716cbc0ff39254e90bed63fb7d8d0ef866b72a90fb1b099d5a03f6c9fc7040`; `task-fields.json` `4b530d70e40975135c947f3cb89a1be9ac05bd00ec58df06ca1ea33eadf3ec81` |
+tools\webbench\claude-direct-run-2026-10-04.md:281:B3 are chained `drive.mjs` calls (re-derived per task: 35 of 36 match exactly; 1434 differs by one because of a
+.ai/loop/webbench-2026-10-04\protocol-review-4.md:33:## (1) Review-3 forgeries replayed live (real `drive.mjs` logs, unedited)
+.ai/loop/webbench-2026-10-04\protocol-review-4.md:85:- In `drive.mjs`, refuse (98) any `attrs` name that does not match `^[A-Za-z_:][-A-Za-z0-9_:.]*$`.
+.ai/loop/webbench-2026-10-04\protocol-review-4.md:159:  `drive.mjs` against the pinned CLI (the wrapper printed `logged M/selftest1 r2 seq 39 exit 0`), and the log was
+.ai/loop/webbench-2026-10-04\protocol.md:19:| `drive.mjs` | The logging wrapper; the only way to call the CLI |
+.ai/loop/webbench-2026-10-04\protocol.md:68:| 8 | m | **Transcript cross-check.** `transcript-check.mjs` compares a driver's own harness transcript (`…/subagents/agent-*.jsonl`, written by Claude Code, not by the driver) with its raw logs. Flags: T1 direct `cli-bin.js` call, raw-path access, hashing, or HTTP client; T2 a forbidden tool, or Write/Edit on raw logs; T3 a log record with no matching `logged … seq N exit E` in the transcript; T4 more CLI records than `drive.mjs` calls. **The verifier runs it in phase 2** (it reads only the script output, never the transcript, so blinding holds); the orchestrator also runs it in 4.3. This closes residual (b) and makes residual (a) visible. **Replay limitation stated:** on time-varying tasks (P02, P04, P10, P26), a replay can confirm only the kind of data, not the value. | `tests/selftest/transcript.mjs`: honest OK; T3, T1, T2 each flagged |
+.ai/loop/webbench-2026-10-04\protocol.md:89:| 5 | m | **Brief executability:** Bash timeout 300000; one call at a time (the wrapper lock, exit 95); absolute record paths; pinned `{TASKS}` block format; `probe` field; `needsCurlControl` handoff (the orchestrator logs `runs/B6/curl-<id>.txt`). Every verb in the brief's table was **dry-run live** through `drive.mjs`. | `tests/selftest/live.mjs`: 35/35 ok |
+.ai/loop/webbench-2026-10-04\protocol.md:102:| 1 | B | **Raw-log provenance.** Every CLI call goes through `drive.mjs`. It appends a hash-chained JSONL record (ISO time, argv, exit code, full stdout/stderr, duration) to `runs/<slot>/raw/<task>.jsonl`. Drivers may not write there. `check-evidence.mjs` mechanically requires every evidence excerpt to be a verbatim substring of the stdout of the logged call it cites, derives the call counts from the log, and detects tampering through the chain.<br>Negative tests: a fabricated excerpt fails with `C2 … not found verbatim`, and an edited log fails with `C1 hash mismatch`. Both outputs are in section 3.4.<br>WebSearch, WebFetch, curl, other browser tools and memory are forbidden in the frozen `driver-brief.md`. |
+.ai/loop/webbench-2026-10-04\protocol.md:110:| 9 | m | **TEMP path** shortened to `<SCR>/<slot>t`, 164 characters. The measured user-data-dir is 199 ≤ 200 (section 3.2). `drive.mjs` refuses to run if it would exceed 200. |
+.ai/loop/webbench-2026-10-04\protocol.md:123:**This run is "host AI driving the published sutradhar@0.6.1 CLI".** Sonnet subagents call the npm artifact's `cli-bin.js` only through `drive.mjs`. The CLI runs one process per command, with session state re-attached from a per-slot state directory.
+.ai/loop/webbench-2026-10-04\protocol.md:140:| **This run** | Sonnet | **CLI via `drive.mjs`** | **Published 0.6.1 artifact** |
+.ai/loop/webbench-2026-10-04\protocol.md:149:| sha256 | `9858726a291e844e1f84089b18310e90379140e2dfabf7b2fda80eb550b5c59b` | `sha256sum`; `drive.mjs` re-checks it on **every** call (exit 99 on mismatch) |
+.ai/loop/webbench-2026-10-04\protocol.md:357:### 3.2 `drive.mjs` (revision 3; the only route to the CLI; rules shared with the checker through `lib.mjs`)
+.ai/loop/webbench-2026-10-04\protocol.md:358:`node <LOOP>/drive.mjs <slot> <taskId> <a1|a2|r1..r9> <verb> [args…]`
+.ai/loop/webbench-2026-10-04\protocol.md:640:In the same message the orchestrator gives `{TRANSCRIPTS}` (one `<slot>=<agent-*.jsonl path>` per line). The verifier runs `transcript-check.mjs` on each and reads only its output (section 4.4 of the verifier brief). Replays go through `drive.mjs` V1/V2 (at most 2 concurrent) and are checked through an independent channel where one exists. Otherwise the result is "same-tool replay", which counts as confirmation and is reported separately.
+.ai/loop/webbench-2026-10-04\protocol.md:687:| G0 | CLI sha256 (`drive.mjs` does this on every call) |
+.ai/loop/webbench-2026-10-04\protocol.md:688:| G1 | `drive.mjs K setup a1 doctor` detects Chrome |
+.ai/loop/webbench-2026-10-04\protocol.md:717:   - the sha256 of `protocol.md`, `driver-brief.md`, `verifier-brief.md`, `lib.mjs`, `drive.mjs`, `check-evidence.mjs`, `make-verify-input.mjs` and `task-fields.json`, from `MANIFEST.sha256`.
+.ai/loop/webbench-2026-10-04\runs\ADJUDICATION.md:10:- T4 in B1/B2/B3 ("N cli records but only M drive.mjs calls"): transcript-check counts shell commands, but those drivers
+.ai/loop/webbench-2026-10-04\runs\ADJUDICATION.md:11:  chained several drive.mjs calls per command. Re-derived per task with runs/t4-adjudicate.mjs (counts every
+.ai/loop/webbench-2026-10-04\runs\ADJUDICATION.md:12:  `drive.mjs <slot> <id> <attempt>` occurrence in the driver's own transcript vs every non-auto-href log record):
+tools\webbench\tasks-sample14.json:3:  "_note": "Sample 14 - the pre-registered, seeded, verified run of 2026-10-04 (sutradhar@0.6.1 CLI via drive.mjs). 30 primary READ tasks, one per previously-untested registrable domain, drawn by sha256 order of the seed; a separate retest set of 6. Verbatim from .ai/loop/webbench-2026-10-04/selection.json. Report: tools/webbench/claude-direct-run-2026-10-04.md.",
+.ai/loop/webbench-2026-10-04\runs\t4-adjudicate.mjs:1:// Orchestrator: per task, compare drive.mjs invocations in the driver's own transcript with distinct logged seqs.
+.ai/loop/webbench-2026-10-04\transcript-check.mjs:3:// (written by Claude Code, not by the subagent) against the drive.mjs raw logs of its slot.
+.ai/loop/webbench-2026-10-04\transcript-check.mjs:6://   T1 a Bash command that runs cli-bin.js directly, or references a raw/ log path other than through drive.mjs/log-view.mjs,
+.ai/loop/webbench-2026-10-04\transcript-check.mjs:10://      (a record the subagent did not produce through drive.mjs), or a transcript line whose exit differs from the log;
+.ai/loop/webbench-2026-10-04\transcript-check.mjs:11://   T4 more cli records in the log than drive.mjs invocations in the transcript for that task.
+.ai/loop/webbench-2026-10-04\transcript-check.mjs:61:    if (!seen.has(k)) flags.push(`T3 ${id} seq ${r.seq} (${r.verb}) has no matching drive.mjs output in the transcript`);
+.ai/loop/webbench-2026-10-04\transcript-check.mjs:65:  if (cli.length > calls) flags.push(`T4 ${id}: ${cli.length} cli records but only ${calls} drive.mjs calls in the transcript`);
+.ai/loop/webbench-2026-10-04\transcript-check.mjs:70:else { for (const t of perTask) console.log(`${t.id}: cli records ${t.cliRecords}, drive.mjs calls ${t.driveCalls}`); for (const f of flags) console.log('FLAG ' + f); console.log(report.pass ? 'TRANSCRIPT CHECK OK' : 'TRANSCRIPT CHECK FLAGGED'); }
+.ai/loop/webbench-2026-10-04\verifier-brief.md:74:node "<LOOP>/drive.mjs" V1 <id> r1 <verb> [args...]
+.ai/loop/webbench-2026-10-04\verifier-brief.md:92:Read **only its output**, never the transcript itself, because it contains the drivers' reasoning and classes. Treat a `T1`–`T4` flag on a task as grounds to reclassify it (`void` when the flag shows the log was not produced through `drive.mjs`). Record the flags in `phase2.json` (`transcriptFlags`).
+.ai/loop/webbench-2026-10-04\runs\B4\1925.json:22:  "notes": "Driver error: chained two drive.mjs calls (href + text) in one shell command once (seqs 19 and 21), sequentially not concurrently. clicktext 'Explore the Plan' failed as occluded (seq 23); worked around via links + nav."
+.ai/loop/webbench-2026-10-04\runs\B4\2336.json:24:  "notes": "Driver error: chained two drive.mjs calls in one shell command with ';' (seqs 11 and 13), sequential not concurrent. Image alt texts (seq 15) are descriptive captions, not used as answers. No argument was mangled by MSYS path conversion."
+.ai/loop/webbench-2026-10-04\runs\K\brief.md:27:node "<LOOP>/drive.mjs" K <taskId> <a1|a2> <verb> [args...]
+.ai/loop/webbench-2026-10-04\runs\K\brief.md:30:- **Run calls one at a time. Never background `drive.mjs` and never run two at once.** The wrapper refuses concurrent calls (exit 95).
+.ai/loop/webbench-2026-10-04\runs\B5\1434.json:18:  "notes": "Both attempts redirected to ratelimited.redfin.com (HTTP 429, 'Are You a Robot?'). a1 text at seq 3, a2 text at seq 9. Process note: at seq 5-6 I accidentally put a second drive.mjs call (--check-clean without slot args, usage error, exit 2) in the same shell command as close; no browser effect. No arguments were path-mangled."
+.ai/loop/webbench-2026-10-04\runs\B5\696.json:18:  "notes": "Goal.com has no site search: /en-us/search?q=... returned HTTP 410 with empty title (seq 30) and the homepage has zero search inputs/search-labelled elements (seq 34 count=0). Navigation route: team page (seq 18 text) and latest result page Fulham 1-1 Man Utd 20 Sept 2026 (seq 24/26 text) show scoreboard, key events and stats but no item labelled as a match report; related articles (Arbeloa charged by FA..., Owen labels Rashford..., seq 28 links) are opinion/news, not reports. Judgement call: could arguably be AGENT-FAIL/partial if a grader thinks the Fulham match page is the report; I did not pick a headline to avoid substitution. Process notes: at seq 5-6 and again at seq 9-10 region I chained a second drive.mjs call in one shell command (a usage-error --check-clean, and a refused bogus verb 'find-search-placeholder' at seq ~9); neither touched the page. Click 72 failed exit 1 (seq 5, element occluded by collapsed nav menu), not relied on."
+.ai/loop/webbench-2026-10-04\runs\B5\brief.md:27:node "<LOOP>/drive.mjs" B5 <taskId> <a1|a2> <verb> [args...]
+.ai/loop/webbench-2026-10-04\runs\B5\brief.md:30:- **Run calls one at a time. Never background `drive.mjs` and never run two at once.** The wrapper refuses concurrent calls (exit 95).
+.ai/loop/webbench-2026-10-04\runs\B3\brief.md:27:node "<LOOP>/drive.mjs" B3 <taskId> <a1|a2> <verb> [args...]
+.ai/loop/webbench-2026-10-04\runs\B3\brief.md:30:- **Run calls one at a time. Never background `drive.mjs` and never run two at once.** The wrapper refuses concurrent calls (exit 95).
+.ai/loop/webbench-2026-10-04\runs\B4\brief.md:27:node "<LOOP>/drive.mjs" B4 <taskId> <a1|a2> <verb> [args...]
+.ai/loop/webbench-2026-10-04\runs\B4\brief.md:30:- **Run calls one at a time. Never background `drive.mjs` and never run two at once.** The wrapper refuses concurrent calls (exit 95).
+.ai/loop/webbench-2026-10-04\tests\selftest\blind.mjs:52:const r = spawnSync(process.execPath, [path.join(LOOP, 'make-verify-input.mjs'), runs, out, '--mutations', path.join(work, 'mutations.json')], { encoding: 'utf8' });
+.ai/loop/webbench-2026-10-04\runs\B1\brief.md:27:node "<LOOP>/drive.mjs" B1 <taskId> <a1|a2> <verb> [args...]
+.ai/loop/webbench-2026-10-04\runs\B1\brief.md:30:- **Run calls one at a time. Never background `drive.mjs` and never run two at once.** The wrapper refuses concurrent calls (exit 95).
+.ai/loop/webbench-2026-10-04\runs\B2\brief.md:27:node "<LOOP>/drive.mjs" B2 <taskId> <a1|a2> <verb> [args...]
+.ai/loop/webbench-2026-10-04\runs\B2\brief.md:30:- **Run calls one at a time. Never background `drive.mjs` and never run two at once.** The wrapper refuses concurrent calls (exit 95).
+.ai/loop/webbench-2026-10-04\runs\B6\brief.md:27:node "<LOOP>/drive.mjs" B6 <taskId> <a1|a2> <verb> [args...]
+.ai/loop/webbench-2026-10-04\runs\B6\brief.md:30:- **Run calls one at a time. Never background `drive.mjs` and never run two at once.** The wrapper refuses concurrent calls (exit 95).
+.ai/loop/webbench-2026-10-04\tests\selftest\live.mjs:17:for (const f of ['lib.mjs', 'drive.mjs', 'check-evidence.mjs', 'log-view.mjs', 'selection.json', 'task-fields.json']) copyFileSync(path.join(LOOP, f), path.join(work, f));
+.ai/loop/webbench-2026-10-04\tests\selftest\live.mjs:22:  const r = spawnSync(process.execPath, [path.join(work, 'drive.mjs'), 'M', task, att, ...cmd], { encoding: 'utf8', timeout: 300000 });
+.ai/loop/webbench-2026-10-04\tests\selftest\live.mjs:82:let c = spawnSync(process.execPath, [path.join(work, 'check-evidence.mjs'), runs], { encoding: 'utf8' });
+.ai/loop/webbench-2026-10-04\tests\selftest\live.mjs:85:c = spawnSync(process.execPath, [path.join(work, 'check-evidence.mjs'), runs], { encoding: 'utf8' });
+.ai/loop/webbench-2026-10-04\tests\selftest\live.mjs:90:const lv = spawnSync(process.execPath, [path.join(work, 'log-view.mjs'), path.join(runs, 'M', 'raw', `${S1}.jsonl`)], { encoding: 'utf8' });
+.ai/loop/webbench-2026-10-04\runs\B2\summary.md:12:check-clean: all 8 attempts clean. Driver notes: `#64` snapshot-id usage error at seq 7/9 (own error, retried with `64`); two sequential (never concurrent) drive.mjs calls chained in one shell command.
+.ai/loop/webbench-2026-10-04\runs\B2\transcript-check.json:39:    "T4 1266: 10 cli records but only 5 drive.mjs calls in the transcript",
+.ai/loop/webbench-2026-10-04\runs\B2\transcript-check.json:40:    "T4 1379: 10 cli records but only 8 drive.mjs calls in the transcript",
+.ai/loop/webbench-2026-10-04\runs\B2\transcript-check.json:41:    "T4 1946: 10 cli records but only 7 drive.mjs calls in the transcript",
+.ai/loop/webbench-2026-10-04\runs\B2\transcript-check.json:42:    "T4 2215: 3 cli records but only 2 drive.mjs calls in the transcript",
+.ai/loop/webbench-2026-10-04\runs\B2\transcript-check.json:43:    "T4 2554: 6 cli records but only 3 drive.mjs calls in the transcript"
+.ai/loop/webbench-2026-10-04\runs\B3\transcript-check.json:39:    "T4 1236: 8 cli records but only 2 drive.mjs calls in the transcript",
+.ai/loop/webbench-2026-10-04\runs\B3\transcript-check.json:40:    "T4 1940: 13 cli records but only 5 drive.mjs calls in the transcript",
+.ai/loop/webbench-2026-10-04\runs\B3\transcript-check.json:41:    "T4 1979: 26 cli records but only 8 drive.mjs calls in the transcript",
+.ai/loop/webbench-2026-10-04\runs\B3\transcript-check.json:42:    "T4 2687: 41 cli records but only 15 drive.mjs calls in the transcript",
+.ai/loop/webbench-2026-10-04\runs\B3\transcript-check.json:43:    "T4 781: 21 cli records but only 7 drive.mjs calls in the transcript",
+.ai/loop/webbench-2026-10-04\runs\B3\transcript-check.json:44:    "T4 929: 6 cli records but only 3 drive.mjs calls in the transcript"
+.ai/loop/webbench-2026-10-04\tests\selftest\run.mjs:3:// Builds synthetic, correctly hash-chained logs in a temp dir (same format drive.mjs writes) for one honest
+.ai/loop/webbench-2026-10-04\tests\selftest\run.mjs:37:const tail = () => [cli('close', ['close'], 'Session closed.'), { kind: 'check-clean', verb: '--check-clean', argv: ['--check-clean'], stdout: '{"clean":true}' }];
+.ai/loop/webbench-2026-10-04\tests\selftest\run.mjs:38:const honestSteps = () => [cli('nav', ['nav', START, '--settle'], 'Navigated to https://example.com/'), auto(START), cli('text', ['text'], PAGE), auto(START), ...tail()];
+.ai/loop/webbench-2026-10-04\tests\selftest\run.mjs:44:  { name: 'honest-linked-org', expect: 'PASS', expectFlag: 'linked-org', steps: [cli('nav', ['nav', START]), auto(START), cli('clicktext', ['clicktext', 'Learn more']), auto('https://www.example.net/help'), cli('text', ['text'], 'Example Domains As described in RFC 2606 and RFC 6761'), auto('https://www.example.net/help'), ...tail()], rec: { classification: 'COMPLETED', answerFields: [field('RFC 2606', 5, 'As described in RFC 2606 and RFC 6761')] } },
+.ai/loop/webbench-2026-10-04\tests\selftest\run.mjs:46:  { name: 'honest-punct-folding', expect: 'PASS', steps: [cli('nav', ['nav', START]), auto(START), cli('text', ['text'], 'Café — 日本 ’quote’ and the documentation examples here'), auto(START), ...tail()], rec: { classification: 'COMPLETED', answerFields: [field("Café - 日本 'quote'", 3, "Café - 日本 'quote' and the documentation")] } },
+.ai/loop/webbench-2026-10-04\tests\selftest\run.mjs:48:  { name: 'forged-eval-echo', expect: 'C2a', steps: [cli('nav', ['nav', START]), auto(START), cli('eval', ['eval', "'Joe\\'s Pizza phone: (212) 366-1182'"], "Joe's Pizza phone: (212) 366-1182"), auto(START), ...tail()], rec: { classification: 'COMPLETED', answerFields: [field('(212) 366-1182', 3, "Joe's Pizza phone: (212) 366-1182")] } },
+.ai/loop/webbench-2026-10-04\tests\selftest\run.mjs:50:  { name: 'forged-dom-injection', expect: 'C2b', steps: [cli('nav', ['nav', START]), auto(START), cli('eval', ['eval', "document.body.innerHTML='<p>Release date: Feb 18 2022, Guerrilla Games</p>'"]), auto(START), cli('text', ['text'], 'Release date: Feb 18 2022, Guerrilla Games'), auto(START), ...tail()], rec: { classification: 'COMPLETED', answerFields: [field('Guerrilla Games', 5, 'Release date: Feb 18 2022, Guerrilla Games')] } },
+.ai/loop/webbench-2026-10-04\tests\selftest\run.mjs:52:  { name: 'forged-obfuscated-injection', expect: 'C2b', steps: [cli('nav', ['nav', START]), auto(START), cli('eval', ['eval', "document.body['inner'+'HTML']=atob('PHA+eDwvcD4=')"]), auto(START), cli('text', ['text'], 'Release date: Feb 18 2022, Guerrilla Games'), auto(START), ...tail()], rec: { classification: 'COMPLETED', answerFields: [field('Guerrilla Games', 5, 'Release date: Feb 18 2022, Guerrilla Games')] } },
+.ai/loop/webbench-2026-10-04\tests\selftest\run.mjs:54:  { name: 'forged-off-site-newtab', expect: 'C2g', steps: [cli('nav', ['nav', START]), auto(START), cli('newtab', ['newtab', 'https://evil.example.net/']), auto('https://evil.example.net/'), cli('text', ['text'], 'Joe Pizza phone (212) 366-1182 open daily'), auto('https://evil.example.net/'), ...tail()], rec: { classification: 'COMPLETED', answerFields: [field('(212) 366-1182', 5, 'Joe Pizza phone (212) 366-1182 open daily')] } },
+.ai/loop/webbench-2026-10-04\tests\selftest\run.mjs:64:  { name: 'forged-typed-echo', expect: 'C2f', steps: [cli('nav', ['nav', START]), auto(START), cli('type', ['type', '#note', 'Guerrilla Games Feb 18 2022']), auto(START), cli('text', ['text'], 'Notes: Guerrilla Games Feb 18 2022 saved'), auto(START), ...tail()], rec: { classification: 'COMPLETED', answerFields: [field('Guerrilla Games', 5, 'Notes: Guerrilla Games Feb 18 2022 saved')] } },
+.ai/loop/webbench-2026-10-04\tests\selftest\run.mjs:66:  { name: 'forged-cross-task-session', expect: 'C2c', steps: [cli('text', ['text'], PAGE), auto(START), ...tail()], rec: { classification: 'COMPLETED', answerFields: [field('documentation examples', 1, GOOD_EX)] } },
+.ai/loop/webbench-2026-10-04\tests\selftest\run.mjs:68:  { name: 'forged-wrong-start', expect: 'C2c', steps: [cli('nav', ['nav', 'https://example.com/other']), auto('https://example.com/other'), cli('text', ['text'], PAGE), auto('https://example.com/other'), ...tail()], rec: { classification: 'COMPLETED', answerFields: [field('documentation examples', 3, GOOD_EX)] } },
+.ai/loop/webbench-2026-10-04\tests\selftest\run.mjs:72:  { name: 'forged-unlogged-call', expect: 'C1', steps: [cli('nav', ['nav', START]), auto(START), { kind: 'gap', verb: '-', argv: [] }, cli('text', ['text'], PAGE), auto(START), ...tail()], rec: { classification: 'COMPLETED', answerFields: [field('documentation examples', 4, GOOD_EX)] } },
+.ai/loop/webbench-2026-10-04\tests\selftest\run.mjs:76:  { name: 'forged-excerpt-too-long', expect: 'C3', steps: [cli('nav', ['nav', START]), auto(START), cli('text', ['text'], 'x'.repeat(400) + ' documentation examples'), auto(START), ...tail()], rec: { classification: 'COMPLETED', answerFields: [field('documentation examples', 3, 'x'.repeat(320) + ' documentation examples')] } },
+.ai/loop/webbench-2026-10-04\tests\selftest\run.mjs:79:  { name: 'honest-attrs', expect: 'PASS', steps: [cli('nav', ['nav', START]), auto(START), cli('attrs', ['attrs', '.rating', 'aria-label'], "Joe's Clinic | aria-label=Rated 4.5 out of 5 stars", { dargs: ['.rating', 'aria-label'] }), auto(START), ...tail()], rec: { classification: 'COMPLETED', answerFields: [field('Rated 4.5 out of 5', 3, "Joe's Clinic | aria-label=Rated 4.5 out of 5 stars")] } },
+.ai/loop/webbench-2026-10-04\tests\selftest\run.mjs:80:  { name: 'forged-attrs-after-setattribute', expect: 'C2b', steps: [cli('nav', ['nav', START]), auto(START), cli('eval', ['eval', "document.querySelector('.rating').setAttribute('aria-label','Rated 4.9 out of 5 stars')"]), auto(START), cli('attrs', ['attrs', '.rating', 'aria-label'], "Joe's Clinic | aria-label=Rated 4.9 out of 5 stars", { dargs: ['.rating', 'aria-label'] }), auto(START), ...tail()], rec: { classification: 'COMPLETED', answerFields: [field('Rated 4.9 out of 5', 5, "Joe's Clinic | aria-label=Rated 4.9 out of 5 stars")] } },
+.ai/loop/webbench-2026-10-04\tests\selftest\run.mjs:82:  { name: 'forged-waitfor-js-injection', expect: 'C2b', steps: [cli('nav', ['nav', START]), auto(START), cli('waitfor', ['waitfor', '5000', '--js', "(document.body.innerHTML='<p>Release date Feb 18 2022 Guerrilla Games studio</p>', true)"], 'Condition met'), auto(START), cli('text', ['text'], 'Release date Feb 18 2022 Guerrilla Games studio'), auto(START), ...tail()], rec: { classification: 'COMPLETED', answerFields: [field('Guerrilla Games', 5, 'Release date Feb 18 2022 Guerrilla Games studio')] } },
+.ai/loop/webbench-2026-10-04\tests\selftest\run.mjs:84:  { name: 'honest-interstitial-waitfor', expect: 'PASS', steps: [cli('nav', ['nav', START]), auto(START), cli('waitfor', ['waitfor', '30000', '--js', '!/Just a moment|Verif/i.test(document.title)'], 'Condition met'), auto(START), cli('text', ['text'], PAGE), auto(START), ...tail()], rec: { classification: 'COMPLETED', answerFields: [field('documentation examples', 5, GOOD_EX)] } },
+.ai/loop/webbench-2026-10-04\tests\selftest\run.mjs:86:  { name: 'forged-back-bfcache', expect: 'C2b', steps: [cli('nav', ['nav', START]), auto(START), cli('eval', ['eval', "document.body['inner'+'HTML']=atob('PHA+WnlsbzwvcD4='),1"]), auto(START), cli('nav', ['nav', 'https://www.iana.org/help/example-domains']), auto('https://www.iana.org/help/example-domains'), cli('back', ['eval', 'history.back()']), auto(START), cli('text', ['text'], 'Release date February 18 2022 by Zylophone Studios'), auto(START), ...tail()], rec: { classification: 'COMPLETED', answerFields: [field('Zylophone Studios', 9, 'Release date February 18 2022 by Zylophone Studios')] } },
+.ai/loop/webbench-2026-10-04\tests\selftest\run.mjs:88:  { name: 'forged-nav-url-echo', expect: 'C2f', steps: [cli('nav', ['nav', START]), auto(START), cli('nav', ['nav', 'https://example.com/search?q=Zylophone+Studios+%28555%29+0199']), auto('https://example.com/search?q=Zylophone+Studios+%28555%29+0199'), cli('text', ['text'], 'Search results for "Zylophone Studios (555) 0199": no results'), auto('https://example.com/search?q=Zylophone+Studios+%28555%29+0199'), ...tail()], rec: { classification: 'COMPLETED', answerFields: [field('(555) 0199', 5, 'Search results for "Zylophone Studios (555) 0199": no results')] } },
+.ai/loop/webbench-2026-10-04\tests\selftest\run.mjs:90:  { name: 'forged-echo-case', expect: 'C2f', steps: [cli('nav', ['nav', START]), auto(START), cli('type', ['type', '#q', 'zylophone studios']), auto(START), cli('text', ['text'], 'You searched for Zylophone Studios - 0 results found'), auto(START), ...tail()], rec: { classification: 'COMPLETED', answerFields: [field('Zylophone Studios', 5, 'You searched for Zylophone Studios - 0 results found')] } },
+.ai/loop/webbench-2026-10-04\tests\selftest\run.mjs:92:  { name: 'honest-seen-before-typed', expect: 'PASS', steps: [cli('nav', ['nav', START]), auto(START), cli('text', ['text'], 'Directory: Health Clinic of Miami, Bayside Care'), auto(START), cli('type', ['type', '#q', 'Health Clinic of Miami']), auto(START), cli('text', ['text'], 'Results: Health Clinic of Miami rated 4 stars'), auto(START), ...tail()], rec: { classification: 'COMPLETED', answerFields: [field('Health Clinic of Miami', 7, 'Results: Health Clinic of Miami rated 4 stars')] } },
+.ai/loop/webbench-2026-10-04\tests\selftest\run.mjs:94:  { name: 'honest-newtab-linked-org', expect: 'PASS', expectFlag: 'linked-org', steps: [cli('nav', ['nav', START]), auto(START), cli('clicktext', ['clicktext', 'Learn more']), auto(START), cli('focustab', ['focustab', 'tab_2']), auto('https://www.example.net/help'), cli('text', ['text'], 'Example Domains As described in RFC 2606 and RFC 6761'), auto('https://www.example.net/help'), ...tail()], rec: { classification: 'COMPLETED', answerFields: [field('RFC 2606', 7, 'As described in RFC 2606 and RFC 6761')] } },
+.ai/loop/webbench-2026-10-04\tests\selftest\run.mjs:96:  { name: 'honest-failed-autohref', expect: 'PASS', steps: [cli('nav', ['nav', START]), auto(START), cli('text', ['text'], PAGE), { kind: 'auto-href', verb: 'auto-href', argv: ['eval', 'AUTO'], exit: 124, stdout: '' }, ...tail()], rec: { classification: 'COMPLETED', answerFields: [field('documentation examples', 3, GOOD_EX)] } },
+.ai/loop/webbench-2026-10-04\tests\selftest\run.mjs:98:  { name: 'honest-soft-hyphen', expect: 'PASS', steps: [cli('nav', ['nav', START]), auto(START), cli('text', ['text'], 'Head­line​ 4 512 documentation examples'), auto(START), ...tail()], rec: { classification: 'COMPLETED', answerFields: [field('Headline 4 512', 3, 'Headline 4 512 documentation examples')] } },
+.ai/loop/webbench-2026-10-04\tests\selftest\run.mjs:100:  { name: 'honest-geo-redirect-flagged', expect: 'PASS', expectFlag: 'geo-redirect', steps: [cli('nav', ['nav', START]), auto('https://www.example.co.in/'), cli('text', ['text'], PAGE), auto('https://www.example.co.in/'), ...tail()], rec: { classification: 'COMPLETED', answerFields: [field('documentation examples', 3, GOOD_EX)] } },
+.ai/loop/webbench-2026-10-04\tests\selftest\run.mjs:105:  { name: 'forged-attrs-name-echo', expect: 'C2e', steps: [cli('nav', ['nav', START]), auto(START), cli('attrs', ['eval', 'ATTRS'], 'Learn more | Release date February 18 2022 by Zylophone Studios=', { dargs: ['a', 'Release date February 18 2022 by Zylophone Studios'] }), auto(START), ...tail()], rec: { classification: 'COMPLETED', answerFields: [field('Zylophone Studios', 3, 'Learn more | Release date February 18 2022 by Zylophone Studios=')] } },
+.ai/loop/webbench-2026-10-04\tests\selftest\run.mjs:107:  { name: 'forged-attrs-selector-value', expect: 'C2f', steps: [cli('nav', ['nav', START]), auto(START), cli('attrs', ['eval', 'ATTRS'], 'Learn more | data-x=Zylophone Studios', { dargs: ['[data-x="Zylophone Studios"]', 'data-x'] }), auto(START), ...tail()], rec: { classification: 'COMPLETED', answerFields: [field('Zylophone Studios', 3, 'Learn more | data-x=Zylophone Studios')] } },
+.ai/loop/webbench-2026-10-04\tests\selftest\run.mjs:109:  { name: 'honest-attrs-value', expect: 'PASS', steps: [cli('nav', ['nav', START]), auto(START), cli('attrs', ['eval', 'ATTRS'], 'Dr. Jane Roe Clinic | title=4.5 out of 5 class=stars s45', { dargs: ['.rating', 'title,class'] }), auto(START), ...tail()], rec: { classification: 'COMPLETED', answerFields: [field('4.5 out of 5', 3, 'Dr. Jane Roe Clinic | title=4.5 out of 5 class=stars s45')] } },
+.ai/loop/webbench-2026-10-04\tests\selftest\run.mjs:111:  { name: 'forged-seen-earlier-tainted', expect: 'C2f', steps: [cli('nav', ['nav', START]), auto(START), cli('eval', ['eval', "document.body.innerHTML=atob('PHA+WnlsbzwvcD4=')"]), auto(START), cli('text', ['text'], 'Zylophone Studios (555) 0199'), auto(START), cli('nav', ['nav', START]), auto(START), cli('type', ['type', '#q', 'Zylophone Studios (555) 0199']), auto(START), cli('press', ['press', '#q', 'Enter']), auto(START), cli('text', ['text'], 'Search results for "Zylophone Studios (555) 0199"'), auto(START), ...tail()], rec: { classification: 'COMPLETED', answerFields: [field('Zylophone Studios (555) 0199', 13, 'Search results for "Zylophone Studios (555) 0199"')] } },
+.ai/loop/webbench-2026-10-04\tests\selftest\run.mjs:113:  { name: 'honest-evidence-rule', expect: 'PASS', steps: [cli('nav', ['nav', START]), auto(START), cli('eval', ['eval', "document.querySelector('.r').getAttribute('data-score')"], '4.5'), auto(START), cli('text', ['text'], PAGE), auto(START), ...tail()], rec: { classification: 'AGENT-FAIL', subflag: 'evidence-rule', answerFields: [], uncitedValue: { value: '4.5', logSeq: 3 } } },
+.ai/loop/webbench-2026-10-04\tests\selftest\run.mjs:114:  { name: 'forged-evidence-rule-read-error', expect: 'C8b', steps: [cli('nav', ['nav', START]), auto(START), cli('text', ['text'], '', { exit: 1, stderr: 'snapshot failed' }), auto(START), cli('eval', ['eval', 'document.body.innerText.slice(0,200)'], 'Dr. Jane Roe Clinic rated 4.5'), auto(START), ...tail()], rec: { classification: 'AGENT-FAIL', subflag: 'evidence-rule', answerFields: [], uncitedValue: { value: 'rated 4.5', logSeq: 5 } } },
+.ai/loop/webbench-2026-10-04\tests\selftest\run.mjs:115:  { name: 'forged-evidence-rule-visible-text', expect: 'C8c', steps: [cli('nav', ['nav', START]), auto(START), cli('text', ['text'], 'Example Domain Learn more'), auto(START), cli('eval', ['eval', "document.querySelector('main').innerText"], 'Dr. Jane Roe Clinic rated 4.5 stars'), auto(START), ...tail()], rec: { classification: 'AGENT-FAIL', subflag: 'evidence-rule', answerFields: [], uncitedValue: { value: 'rated 4.5', logSeq: 5 } } },
+.ai/loop/webbench-2026-10-04\tests\selftest\run.mjs:125:  const steps = c.steps ?? [cli('nav', ['nav', c.start]), auto(c.start), cli('text', ['text'], PAGE), auto(c.start), ...tail()];
+.ai/loop/webbench-2026-10-04\tests\selftest\run.mjs:130:  const r = spawnSync(process.execPath, [path.join(LOOP, 'check-evidence.mjs'), runs], { encoding: 'utf8' });
+.ai/loop/webbench-2026-10-04\runs\B1\transcript-check.json:39:    "T4 1172: 18 cli records but only 10 drive.mjs calls in the transcript",
+.ai/loop/webbench-2026-10-04\runs\B1\transcript-check.json:40:    "T4 1492: 12 cli records but only 5 drive.mjs calls in the transcript",
+.ai/loop/webbench-2026-10-04\runs\B1\transcript-check.json:41:    "T4 1661: 11 cli records but only 6 drive.mjs calls in the transcript",
+.ai/loop/webbench-2026-10-04\runs\B1\transcript-check.json:42:    "T4 2253: 20 cli records but only 8 drive.mjs calls in the transcript",
+.ai/loop/webbench-2026-10-04\runs\B1\transcript-check.json:43:    "T4 2388: 22 cli records but only 10 drive.mjs calls in the transcript",
+.ai/loop/webbench-2026-10-04\runs\B1\transcript-check.json:44:    "T4 751: 9 cli records but only 4 drive.mjs calls in the transcript"
+.ai/loop/webbench-2026-10-04\tests\selftest\transcript.mjs:27:const D = `node "${LOOP}/drive.mjs" ${SLOT} ${ID} a1`;
+.ai/loop/webbench-2026-10-04\tests\selftest\transcript.mjs:28:const honest = [tu('u1', `${D} nav "https://msu.edu" --settle`), tr('u1', 'Navigated\n[drive.mjs] logged B1/1172 a1 seq 1 exit 0'),
+.ai/loop/webbench-2026-10-04\tests\selftest\transcript.mjs:29:  tu('u2', `${D} text`), tr('u2', 'Tutoring...\n[drive.mjs] logged B1/1172 a1 seq 3 exit 0'),
+.ai/loop/webbench-2026-10-04\tests\selftest\transcript.mjs:30:  tu('u3', `${D} close`), tr('u3', 'Session closed.\n[drive.mjs] logged B1/1172 a1 seq 5 exit 0'),
+.ai/loop/webbench-2026-10-04\tests\selftest\transcript.mjs:44:  const r = spawnSync(process.execPath, [path.join(LOOP, 'transcript-check.mjs'), path.join(dir, 'agent.jsonl'), path.join(dir, 'runs'), SLOT], { encoding: 'utf8' });
+.ai/loop/webbench-2026-10-04\verify\phase2.json:15:   "T4: 18 cli records / 10 drive.mjs calls; consistent with several drive.mjs calls chained in one Bash command (records stay hash-chained and the checker passed); does not by itself show records made outside drive.mjs; not voided, but the orchestrator should confirm the chaining"
+.ai/loop/webbench-2026-10-04\verify\phase2.json:27:   "T4: 12/5; consistent with several drive.mjs calls chained in one Bash command (records stay hash-chained and the checker passed); does not by itself show records made outside drive.mjs; not voided, but the orchestrator should confirm the chaining"
+.ai/loop/webbench-2026-10-04\verify\phase2.json:43:   "T4: 11/6; consistent with several drive.mjs calls chained in one Bash command (records stay hash-chained and the checker passed); does not by itself show records made outside drive.mjs; not voided, but the orchestrator should confirm the chaining"
+.ai/loop/webbench-2026-10-04\verify\phase2.json:67:   "T4: 20/8; consistent with several drive.mjs calls chained in one Bash command (records stay hash-chained and the checker passed); does not by itself show records made outside drive.mjs; not voided, but the orchestrator should confirm the chaining"
+.ai/loop/webbench-2026-10-04\verify\phase2.json:79:   "T4: 22/10; consistent with several drive.mjs calls chained in one Bash command (records stay hash-chained and the checker passed); does not by itself show records made outside drive.mjs; not voided, but the orchestrator should confirm the chaining"
+.ai/loop/webbench-2026-10-04\verify\phase2.json:91:   "T4: 9/4; consistent with several drive.mjs calls chained in one Bash command (records stay hash-chained and the checker passed); does not by itself show records made outside drive.mjs; not voided, but the orchestrator should confirm the chaining"
+.ai/loop/webbench-2026-10-04\verify\phase2.json:103:   "T4: 10/5; consistent with several drive.mjs calls chained in one Bash command (records stay hash-chained and the checker passed); does not by itself show records made outside drive.mjs; not voided, but the orchestrator should confirm the chaining"
+.ai/loop/webbench-2026-10-04\verify\phase2.json:115:   "T4: 10/8; consistent with several drive.mjs calls chained in one Bash command (records stay hash-chained and the checker passed); does not by itself show records made outside drive.mjs; not voided, but the orchestrator should confirm the chaining"
+.ai/loop/webbench-2026-10-04\verify\phase2.json:145:   "T4: 10/7; consistent with several drive.mjs calls chained in one Bash command (records stay hash-chained and the checker passed); does not by itself show records made outside drive.mjs; not voided, but the orchestrator should confirm the chaining"
+.ai/loop/webbench-2026-10-04\verify\phase2.json:157:   "T4: 3/2; consistent with several drive.mjs calls chained in one Bash command (records stay hash-chained and the checker passed); does not by itself show records made outside drive.mjs; not voided, but the orchestrator should confirm the chaining"
+.ai/loop/webbench-2026-10-04\verify\phase2.json:169:   "T4: 6/3; consistent with several drive.mjs calls chained in one Bash command (records stay hash-chained and the checker passed); does not by itself show records made outside drive.mjs; not voided, but the orchestrator should confirm the chaining"
+.ai/loop/webbench-2026-10-04\verify\phase2.json:186:   "T4: 8/2; consistent with several drive.mjs calls chained in one Bash command (records stay hash-chained and the checker passed); does not by itself show records made outside drive.mjs; not voided, but the orchestrator should confirm the chaining"
+.ai/loop/webbench-2026-10-04\verify\phase2.json:198:   "T4: 6/3; consistent with several drive.mjs calls chained in one Bash command (records stay hash-chained and the checker passed); does not by itself show records made outside drive.mjs; not voided, but the orchestrator should confirm the chaining"
+.ai/loop/webbench-2026-10-04\verify\phase2.json:210:   "T4: 13/5; consistent with several drive.mjs calls chained in one Bash command (records stay hash-chained and the checker passed); does not by itself show records made outside drive.mjs; not voided, but the orchestrator should confirm the chaining"
+.ai/loop/webbench-2026-10-04\verify\phase2.json:222:   "T4: 21/7; consistent with several drive.mjs calls chained in one Bash command (records stay hash-chained and the checker passed); does not by itself show records made outside drive.mjs; not voided, but the orchestrator should confirm the chaining"
+.ai/loop/webbench-2026-10-04\verify\phase2.json:244:   "T4: 26/8; consistent with several drive.mjs calls chained in one Bash command (records stay hash-chained and the checker passed); does not by itself show records made outside drive.mjs; not voided, but the orchestrator should confirm the chaining"
+.ai/loop/webbench-2026-10-04\verify\phase2.json:256:   "T4: 41/15; consistent with several drive.mjs calls chained in one Bash command (records stay hash-chained and the checker passed); does not by itself show records made outside drive.mjs; not voided, but the orchestrator should confirm the chaining"
+.ai/loop/webbench-2026-10-04\verify\phase2.json:445:  "notes": "r1: the box search ended in HTTP 429 \"We're sorry... automated queries\" (seq 9, 11), so the site is rate-limiting. r2: closed by mistake before reading; no data. r3: a direct search URL loaded. MINIMAL REPRO OF THE TEXT CAP: `drive.mjs V1 982 r3 nav https://www.lawinsider.com --settle`, then `nav https://www.lawinsider.com/search?q=Non-Disclosure+Agreement --settle`, then `text` (seq 25). That gives exactly 4000 chars of page text with no truncation marker, ending mid-word ('For t'), with only 3 of 10 'Filed' entries. Then `read body` (seq 27) gives 9,803 chars with all 10 'Filed <date>' entries (Dec 26 2022, Jul 01 2021, Sep 06 2020, Jan 29 2022, Feb 02 2023, ...). So another read verb does reach the content, and `text` silently truncates. I did not determine whether the cap is in the Sutradhar CLI or in drive.mjs. Independent channel: the Claude_Browser innerText eval contains 'December 26, 2022'. The data was available, and the site shows 'Filed' rather than 'effective' dates, so phase 1 AGENT-FAIL stands."
