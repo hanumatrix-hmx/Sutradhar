@@ -26,7 +26,7 @@ Nothing was pushed, published or PR'd. Every ISO dir was deleted afterwards with
 | 8c-x | path-log check on all S11 CLI logs + controls | PASS | `item8c-pathcheck.txt` | S7-rerun logs `cleanup-lines=15 outside-iso=0` exit 0; wrong-root control `outside-iso=9` exit 1; S1 neg log exit 1 |
 | 8d | real TEMP `sutradhar-cli-*` before == after | PASS | `realtemp-before.txt`, `realtemp-after.txt`, `item-final-checks.txt` | 45 == 45, byte-identical name lists; the same 45 names as the S8b end snapshot; per-run before/after pairs identical (`mcp/`, `sdk-realtemp-*`, `s7rerun/`) |
 | 9a | changelog placeholder check (case-insensitive) | PASS | `item-final-checks.txt` | grep prints nothing (exit 1); same pattern prints 7 on the saved template; `check-s10.mjs` all PASS |
-| 9b | commit gate evidence, `check-release-ready` OK, tree clean | see `item9-check-release-ready.txt` (second evidence commit) and the final report | | |
+| 9b | commit gate evidence, then `check-release-ready` OK | PASS | `item9-check-release-ready.txt` (second evidence commit) | tree clean (0 status lines) at commit 7852f50 -> `[check-release-ready] working tree clean, all workspace dependencies fresh — OK to publish.` exit 0; negative control with a scratch untracked file -> `REFUSING TO PUBLISH`; real TEMP still 45 == 45 (`realtemp-after-item9.txt`) |
 | - | leftover processes | PASS (none) | `leftover-processes.txt`, `item-final-checks.txt` | CIM query for any command line referencing the S11 ISO roots: `hits=[]` (positive control with a dummy argv finds it first); all PIDs the S11 runs created (harness, page server, Chrome, MCP child) confirmed gone |
 
 dist sha256 (built from this tree): `index.js` `ddaaa00191710fc772db1c93a14e469381f0a40020de930ffae198834fd8db19`, `cli-bin.js`
@@ -43,6 +43,7 @@ dist sha256 (built from this tree): `index.js` `ddaaa00191710fc772db1c93a14e4693
 3. **`audit --prod` `totalDependencies` is 160, not ~518.** 518 is the full audit; the prod audit was 160 at S1 and S3a as well. Counts are consistent, advisories 0.
 4. **Spec typecheck comparison** needed CR and path-prefix normalisation (baseline produced from the repo root); recorded with a mutant of the comparison.
 5. **P7 self-match** in the first leftover query (4 `bash.exe`: my own launching shells, because the needle text was in the command). Re-run with the needle assembled from pieces: `hits=[]`, and the positive control finds a dummy and loses it after it is killed.
+7. **Process slips while recording item 9 (disclosed).** (a) A first attempt piped its output through `tee /tmp/never`; in Git Bash `/tmp` is the real TEMP, so one 623-byte file `E:/AI-Cache/tmp/never` was created. It is not a `sutradhar-cli-*` entry; I verified its first line, removed exactly that path, and the 45-name list is unchanged (`realtemp-after-item9.txt`). (b) A second attempt wrote its output into the repo, which dirtied the tree, so `check-release-ready` correctly REFUSED; the file was deleted and the run repeated with output captured outside the repo. Neither affected the gate result.
 6. **Two evidence commits for S11** (the gate evidence, then `item9-check-release-ready.txt`): `check-release-ready` needs a clean tree, so its own output cannot be inside the commit it validates.
 
 ## False-pass analysis
