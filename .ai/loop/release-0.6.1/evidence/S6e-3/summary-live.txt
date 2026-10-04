@@ -1,0 +1,10 @@
+win-plant head v25 exit=0 pathcheck=0 2 PASS 0 FAIL guard=1 isoguardfail=0 realtemp-before=45 after=45 realtemp-same=yes cleanup-lines=8 outside-iso=0
+win-plant head v18 exit=0 pathcheck=0 2 PASS 0 FAIL guard=1 isoguardfail=0 realtemp-before=45 after=45 realtemp-same=yes cleanup-lines=8 outside-iso=0
+win-plant head v20 exit=0 pathcheck=0 2 PASS 0 FAIL guard=1 isoguardfail=0 realtemp-before=45 after=45 realtemp-same=yes cleanup-lines=8 outside-iso=0
+win-plant head v22 exit=0 pathcheck=0 2 PASS 0 FAIL guard=1 isoguardfail=0 realtemp-before=45 after=45 realtemp-same=yes cleanup-lines=8 outside-iso=0
+win-plant mutantF3 v18 exit=1 pathcheck=0 1 PASS 1 FAIL guard=1 isoguardfail=0 realtemp-before=45 after=45 realtemp-same=yes cleanup-lines=8 outside-iso=0
+win-plant mutantF3 v25 exit=0 pathcheck=0 2 PASS 0 FAIL guard=1 isoguardfail=0 realtemp-before=45 after=45 realtemp-same=yes cleanup-lines=8 outside-iso=0
+kill-probe head v25 exit=0 pathcheck=1 1 PASS 0 FAIL guard=1 isoguardfail=0 realtemp-before=45 after=45 realtemp-same=yes cleanup-lines=0 outside-iso=0
+kill-probe head v18 exit=0 pathcheck=1 1 PASS 0 FAIL guard=1 isoguardfail=0 realtemp-before=45 after=45 realtemp-same=yes cleanup-lines=0 outside-iso=0
+kill-probe head v20 exit=0 pathcheck=1 1 PASS 0 FAIL guard=1 isoguardfail=0 realtemp-before=45 after=45 realtemp-same=yes cleanup-lines=0 outside-iso=0
+kill-probe head v22 exit=0 pathcheck=1 1 PASS 0 FAIL guard=1 isoguardfail=0 realtemp-before=45 after=45 realtemp-same=yes cleanup-lines=0 outside-iso=0

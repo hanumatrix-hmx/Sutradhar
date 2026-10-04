@@ -1,0 +1,19 @@
+## M-b: exit=1 signal= Tests  1 failed | 54 passed (55)
+   sha-before=346572f5b6baff4c8a3fc1b8315a057a8d9338e274fc9401655346430100a0fd sha-after=346572f5b6baff4c8a3fc1b8315a057a8d9338e274fc9401655346430100a0fd restored=true
+   must-fail=[T5:] caught=true
+   FAILED: tests/unit/temp-profile.spec.ts > S6a: bounded cleanup (fake scan / fake rm, monotonic clock) > T5: no rm attempt starts with less than MIN_RM_START_MS left (absolute deadlineAt), asserted on the module's own remaining-ms value
+## M-b2-half-threshold: exit=1 signal= Tests  1 failed | 54 passed (55)
+   sha-before=346572f5b6baff4c8a3fc1b8315a057a8d9338e274fc9401655346430100a0fd sha-after=346572f5b6baff4c8a3fc1b8315a057a8d9338e274fc9401655346430100a0fd restored=true
+   must-fail=[T5:] caught=true
+   FAILED: tests/unit/temp-profile.spec.ts > S6a: bounded cleanup (fake scan / fake rm, monotonic clock) > T5: no rm attempt starts with less than MIN_RM_START_MS left (absolute deadlineAt), asserted on the module's own remaining-ms value
+## M-b3-constant-100: exit=1 signal= Tests  2 failed | 53 passed (55)
+   sha-before=346572f5b6baff4c8a3fc1b8315a057a8d9338e274fc9401655346430100a0fd sha-after=346572f5b6baff4c8a3fc1b8315a057a8d9338e274fc9401655346430100a0fd restored=true
+   must-fail=[exports the seven constants] caught=true
+   FAILED: tests/unit/temp-profile.spec.ts > S6a: bounded cleanup (fake scan / fake rm, monotonic clock) > exports the seven constants with the planned values
+   FAILED: tests/unit/temp-profile.spec.ts > S6a: bounded cleanup (fake scan / fake rm, monotonic clock) > T3: a slow scan eats the sweep budget, so NO dir is removed (deadline starts before the scan)
+## M-b4-no-attempt-log: exit=1 signal= Tests  2 failed | 53 passed (55)
+   sha-before=346572f5b6baff4c8a3fc1b8315a057a8d9338e274fc9401655346430100a0fd sha-after=346572f5b6baff4c8a3fc1b8315a057a8d9338e274fc9401655346430100a0fd restored=true
+   must-fail=[T5:] caught=true
+   FAILED: tests/unit/temp-profile.spec.ts > S6a: bounded cleanup (fake scan / fake rm, monotonic clock) > T5: no rm attempt starts with less than MIN_RM_START_MS left (absolute deadlineAt), asserted on the module's own remaining-ms value
+   FAILED: tests/unit/temp-profile.spec.ts > S6a: debug seam (SUTRADHAR_CLI_DEBUG_CLEANUP=1) > T6: [cleanup] lines appear only with the env set; every path is written as path="<abs>"
+ALL-MUTANTS-CAUGHT-AND-RESTORED

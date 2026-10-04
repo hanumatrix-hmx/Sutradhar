@@ -1,0 +1,18 @@
+# S11 item 9: after committing the gate evidence (7852f50 = 7852f5097c00156e05620b7c5a9d1cd989c121ab)
+$ git status --porcelain (expect empty)
+status-lines=0
+$ node scripts/check-release-ready.mjs
+[check-release-ready] working tree clean, all workspace dependencies fresh — OK to publish.
+check-release-ready-exit=0
+# negative control: with a dirty tree it must refuse (a scratch untracked file is created and removed by exact path)
+
+[check-release-ready] REFUSING TO PUBLISH:
+
+  - Working tree has uncommitted changes:
+    ?? .s11-dirty-probe.tmp
+  Commit or stash them before publishing — a published artifact must be traceable to a real commit.
+status-lines-after-removal=0
+# process notes: (1) a first attempt of this command mistakenly wrote its output to Git Bash /tmp (= E:/AI-Cache/tmp/never); that single file (created by me, first line verified) was removed by exact path; no sutradhar-cli-* entry was touched (45 before and after).
+# (2) a second attempt wrote its output INTO the repo, which made the tree dirty and the check (correctly) refuse; that file was deleted and the run repeated with output captured outside the repo.
+REALTEMP-IDENTICAL (S11 start == after item 9)
+stray 'never' file absent

@@ -1,0 +1,20 @@
+# cmd: timeout 300 wsl.exe -e sh -c 'D=$(mktemp -d) && cp /mnt/e/AI-Cache/tmp/claude/E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/S6d/mod/temp-profile.mjs /mnt/e/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/.ai/loop/release-0.6.1/evidence/S4/probes/common.mjs /mnt/e/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/.ai/loop/release-0.6.1/evidence/S4/probes/wsl/*.mjs "$D"/ && cd "$D" && sha256sum temp-profile.mjs && R=$(mktemp -d -p "$PWD") && echo PROBE_ROOT=$R && node -v && TMPDIR="$R" PROBE_ROOT="$R" TP_MODULE="$PWD/temp-profile.mjs" timeout 240 node  wsl-c5b.mjs 2>&1; echo "# exit=$?"; cd /; case "$D" in /tmp/tmp.*) rm -rf -- "$D" && echo "# removed own D=$D";; *) echo REFUSE;; esac' ; start=2026-10-04T06:11:00+05:30
+c7561ea1bc456670dd54307fd45479d0ce38828c724384a4c57c691f1d13f4f8  temp-profile.mjs
+PROBE_ROOT=/tmp/tmp.pDBlzpnCw8/tmp.ajIep7iiET
+v20.20.2
+[wsl-guard] root=/tmp/tmp.pDBlzpnCw8/tmp.ajIep7iiET
+== wsl-c5b SingletonLock owner, no marker node=v20.20.2 platform=linux tmpdir=/tmp/tmp.pDBlzpnCw8/tmp.ajIep7iiET pid=6731
+[cleanup] probe dir path="/tmp/tmp.pDBlzpnCw8/tmp.ajIep7iiET/c5b-ijdp6H/sutradhar-cli-1790000000500-AbC123"
+[cleanup] probe dir path="/tmp/tmp.pDBlzpnCw8/tmp.ajIep7iiET/c5b-ijdp6H/sutradhar-cli-1790000000501"
+PASS C5b no marker present
+INFO readOwnerPid d1=6742 d2=6742 dummy=6742
+PASS C5b live SingletonLock pid -> owner-alive (both) :: ["owner-alive","owner-alive"]
+PASS C5b close path owner-alive :: {"removed":false,"reason":"owner-alive"}
+PASS C5b dummy killed by PID
+[cleanup] probe removed path="/tmp/tmp.pDBlzpnCw8/tmp.ajIep7iiET/c5b-ijdp6H/sutradhar-cli-1790000000500-AbC123"
+[cleanup] probe removed path="/tmp/tmp.pDBlzpnCw8/tmp.ajIep7iiET/c5b-ijdp6H/sutradhar-cli-1790000000501"
+PASS C5b dead pid -> removed :: []
+RESULT fails=0
+# exit=0
+# removed own D=/tmp/tmp.pDBlzpnCw8
+# end=2026-10-04T06:11:01+05:30

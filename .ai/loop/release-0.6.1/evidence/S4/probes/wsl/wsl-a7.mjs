@@ -1,0 +1,26 @@
+import os from 'node:os'; import path from 'node:path';
+const ROOT = process.env.PROBE_ROOT ?? ''; const chk = (p) => { const r = path.resolve(p); return r.startsWith('/mnt/') || !(ROOT && (r === ROOT || r.startsWith(ROOT + '/'))) || !ROOT.startsWith('/tmp/'); };
+for (const p of [os.tmpdir(), ROOT, ...(process.env.PROBE_TMPROOTS ?? '').split(':').filter(Boolean)]) if (!p || chk(p)) { console.error(`WSL GUARD: refusing ${p}`); process.exit(97); }
+console.error(`[wsl-guard] root=${ROOT}`);
+import fsp from 'node:fs/promises'; import { pathToFileURL } from 'node:url'; import { spawn } from 'node:child_process';
+const TP = await import(pathToFileURL(process.env.TP_MODULE).href);
+const C = await import(new URL('./common.mjs', import.meta.url).href);
+const { P, check, done, tree, sameTree, exists, setOld, profileDir, header, sleep } = C;
+const ISO = os.tmpdir();
+const under = (p) => { const r = path.resolve(p); return r.startsWith(ROOT + '/') && !r.startsWith('/mnt/'); };
+const mkroot = async (pfx) => { const t = await fsp.mkdtemp(path.join(ISO, pfx)); if (!under(t)) { console.error(`WSL GUARD: tmpRoot ${t} outside ROOT`); process.exit(97); } return t; };
+header('wsl-a7 fail closed');
+const T = await mkroot('a7-');
+const d = await profileDir(path.join(T, 'sutradhar-cli-1790000000300-AbC123'), { lockfile: false }); await setOld(d); P('dir', d);
+const sw = await TP.sweepStaleTempProfiles({ tmpRoot: T, scan: async () => null, minAgeMs: 0 });
+check('A7 null scan sweep keeps', sw.removed.length === 0 && sw.kept[0]?.reason === 'scan-unavailable' && (await exists(d)));
+const r = await TP.removeSessionTempProfile(d, undefined, { tmpRoot: T, scan: async () => null });
+check('A7 null scan close keeps', r.removed === false && r.reason === 'scan-unavailable' && (await exists(d)), JSON.stringify(r));
+const s1 = await TP.scanCommandLines(1); check('A7 scanCommandLines(1) -> null', s1 === null, `got=${JSON.stringify(s1)}`);
+const real = await TP.scanCommandLines(); check('A7 query ran and matched nothing -> []', Array.isArray(real) && real.length === 0, JSON.stringify(real));
+const sp = process.env.PATH; process.env.PATH = '';
+const s2 = await TP.scanCommandLines(); const r2 = await TP.removeSessionTempProfile(d, undefined, { tmpRoot: T });
+process.env.PATH = sp;
+check('A7 ps unresolvable -> null', s2 === null, `got=${JSON.stringify(s2)}`);
+check('A7 ps unresolvable -> close keeps', r2.removed === false && r2.reason === 'scan-unavailable' && (await exists(d)), JSON.stringify(r2));
+done();

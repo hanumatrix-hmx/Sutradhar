@@ -1,0 +1,400 @@
+# start 2026-10-04T08:37:35+05:30
+[iso-guard] tmpdir=e:/ai-cache/tmp/claude/e--hmx-projects-internal-projects-pinchtab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/q7 pid=65780
+[iso-guard-harness] tmpdir=e:/ai-cache/tmp/claude/e--hmx-projects-internal-projects-pinchtab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/q7 pid=65780 node=v25.0.0
+[iso-guard] tmpdir=e:/ai-cache/tmp/claude/e--hmx-projects-internal-projects-pinchtab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/q7 pid=78060
+INFO harness start 2026-10-04T03:07:36.056Z CASES=L1,L1s,L2,L3,L4,L5a,L5b,L7,L9,L12,L12m ITER=10 ISO=E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\Q7 cli-bin sha256=9858726a291e844e1f84089b18310e90379140e2dfabf7b2fda80eb550b5c59b
+INFO profile path length for ISO: 198 (limit 200), for ISO_SP: 199
+PASS P5: ISO leaves room for a 34-char profile name within 200 chars :: 198/199
+PASS ISO starts with no sutradhar-cli-* entries
+REALTEMP start count=45 baseline=45 disappeared=[] appeared=[]
+INFO == L1: 10x nav+close on packages\sutradhar\dist\cli-bin.js
+INFO canary planted E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\Q7\sutradhar-cli-1700000000009-CANARY
+CLI L1-nav1-1 [nav http://127.0.0.1:62065/?n=L11] exit=0 1347ms
+PASS L1 iter 1: nav exit 0 :: exit=0 1347ms
+PASS L1 iter 1: tempProfile true
+PASS L1 iter 1: (ii) dirname(userDataDir) == ISO :: dirname=e:/ai-cache/tmp/claude/e--hmx-projects-internal-projects-pinchtab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/q7
+PASS L1 iter 1: --user-data-dir length <= 200 (P5) :: len=198
+PASS L1 iter 1: dir exists after nav
+CLI L1-close1-2 [close] exit=0 1069ms
+PASS L1 iter 1: close exit 0 :: exit=0 1069ms
+PASS L1 iter 1: dir gone after close
+PASS L1 iter 1: Chrome PID gone :: pid=84660
+PASS L1 iter 1: debug order phase kill -> state-cleared -> phase cleanup :: idx=193,221,1226
+PASS L1 iter 1: state.json absent after close
+PASS L1 iter 1: no new sutradhar-cli-* left in TEMP :: before=[] after=[]
+PASS (i) canary dir swept by the first session start :: gone=true removed-line=true
+CLI L1-nav2-3 [nav http://127.0.0.1:62065/?n=L12] exit=0 764ms
+PASS L1 iter 2: nav exit 0 :: exit=0 764ms
+PASS L1 iter 2: tempProfile true
+PASS L1 iter 2: (ii) dirname(userDataDir) == ISO :: dirname=e:/ai-cache/tmp/claude/e--hmx-projects-internal-projects-pinchtab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/q7
+PASS L1 iter 2: --user-data-dir length <= 200 (P5) :: len=198
+PASS L1 iter 2: dir exists after nav
+CLI L1-close2-4 [close] exit=0 1067ms
+PASS L1 iter 2: close exit 0 :: exit=0 1067ms
+PASS L1 iter 2: dir gone after close
+PASS L1 iter 2: Chrome PID gone :: pid=76404
+PASS L1 iter 2: debug order phase kill -> state-cleared -> phase cleanup :: idx=193,221,1226
+PASS L1 iter 2: state.json absent after close
+PASS L1 iter 2: no new sutradhar-cli-* left in TEMP :: before=[] after=[]
+CLI L1-nav3-5 [nav http://127.0.0.1:62065/?n=L13] exit=0 740ms
+PASS L1 iter 3: nav exit 0 :: exit=0 740ms
+PASS L1 iter 3: tempProfile true
+PASS L1 iter 3: (ii) dirname(userDataDir) == ISO :: dirname=e:/ai-cache/tmp/claude/e--hmx-projects-internal-projects-pinchtab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/q7
+PASS L1 iter 3: --user-data-dir length <= 200 (P5) :: len=198
+PASS L1 iter 3: dir exists after nav
+CLI L1-close3-6 [close] exit=0 1180ms
+PASS L1 iter 3: close exit 0 :: exit=0 1180ms
+PASS L1 iter 3: dir gone after close
+PASS L1 iter 3: Chrome PID gone :: pid=23444
+PASS L1 iter 3: debug order phase kill -> state-cleared -> phase cleanup :: idx=193,221,1226
+PASS L1 iter 3: state.json absent after close
+PASS L1 iter 3: no new sutradhar-cli-* left in TEMP :: before=[] after=[]
+CLI L1-nav4-7 [nav http://127.0.0.1:62065/?n=L14] exit=0 817ms
+PASS L1 iter 4: nav exit 0 :: exit=0 817ms
+PASS L1 iter 4: tempProfile true
+PASS L1 iter 4: (ii) dirname(userDataDir) == ISO :: dirname=e:/ai-cache/tmp/claude/e--hmx-projects-internal-projects-pinchtab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/q7
+PASS L1 iter 4: --user-data-dir length <= 200 (P5) :: len=198
+PASS L1 iter 4: dir exists after nav
+CLI L1-close4-8 [close] exit=0 1123ms
+PASS L1 iter 4: close exit 0 :: exit=0 1123ms
+PASS L1 iter 4: dir gone after close
+PASS L1 iter 4: Chrome PID gone :: pid=83132
+PASS L1 iter 4: debug order phase kill -> state-cleared -> phase cleanup :: idx=193,221,1226
+PASS L1 iter 4: state.json absent after close
+PASS L1 iter 4: no new sutradhar-cli-* left in TEMP :: before=[] after=[]
+CLI L1-nav5-9 [nav http://127.0.0.1:62065/?n=L15] exit=0 725ms
+PASS L1 iter 5: nav exit 0 :: exit=0 725ms
+PASS L1 iter 5: tempProfile true
+PASS L1 iter 5: (ii) dirname(userDataDir) == ISO :: dirname=e:/ai-cache/tmp/claude/e--hmx-projects-internal-projects-pinchtab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/q7
+PASS L1 iter 5: --user-data-dir length <= 200 (P5) :: len=198
+PASS L1 iter 5: dir exists after nav
+CLI L1-close5-10 [close] exit=0 1091ms
+PASS L1 iter 5: close exit 0 :: exit=0 1091ms
+PASS L1 iter 5: dir gone after close
+PASS L1 iter 5: Chrome PID gone :: pid=82444
+PASS L1 iter 5: debug order phase kill -> state-cleared -> phase cleanup :: idx=193,221,1226
+PASS L1 iter 5: state.json absent after close
+PASS L1 iter 5: no new sutradhar-cli-* left in TEMP :: before=[] after=[]
+CLI L1-nav6-11 [nav http://127.0.0.1:62065/?n=L16] exit=0 812ms
+PASS L1 iter 6: nav exit 0 :: exit=0 812ms
+PASS L1 iter 6: tempProfile true
+PASS L1 iter 6: (ii) dirname(userDataDir) == ISO :: dirname=e:/ai-cache/tmp/claude/e--hmx-projects-internal-projects-pinchtab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/q7
+PASS L1 iter 6: --user-data-dir length <= 200 (P5) :: len=198
+PASS L1 iter 6: dir exists after nav
+CLI L1-close6-12 [close] exit=0 1148ms
+PASS L1 iter 6: close exit 0 :: exit=0 1148ms
+PASS L1 iter 6: dir gone after close
+PASS L1 iter 6: Chrome PID gone :: pid=81540
+PASS L1 iter 6: debug order phase kill -> state-cleared -> phase cleanup :: idx=193,221,1226
+PASS L1 iter 6: state.json absent after close
+PASS L1 iter 6: no new sutradhar-cli-* left in TEMP :: before=[] after=[]
+CLI L1-nav7-13 [nav http://127.0.0.1:62065/?n=L17] exit=0 828ms
+PASS L1 iter 7: nav exit 0 :: exit=0 828ms
+PASS L1 iter 7: tempProfile true
+PASS L1 iter 7: (ii) dirname(userDataDir) == ISO :: dirname=e:/ai-cache/tmp/claude/e--hmx-projects-internal-projects-pinchtab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/q7
+PASS L1 iter 7: --user-data-dir length <= 200 (P5) :: len=198
+PASS L1 iter 7: dir exists after nav
+CLI L1-close7-14 [close] exit=0 1077ms
+PASS L1 iter 7: close exit 0 :: exit=0 1077ms
+PASS L1 iter 7: dir gone after close
+PASS L1 iter 7: Chrome PID gone :: pid=75532
+PASS L1 iter 7: debug order phase kill -> state-cleared -> phase cleanup :: idx=193,221,1226
+PASS L1 iter 7: state.json absent after close
+PASS L1 iter 7: no new sutradhar-cli-* left in TEMP :: before=[] after=[]
+CLI L1-nav8-15 [nav http://127.0.0.1:62065/?n=L18] exit=0 843ms
+PASS L1 iter 8: nav exit 0 :: exit=0 843ms
+PASS L1 iter 8: tempProfile true
+PASS L1 iter 8: (ii) dirname(userDataDir) == ISO :: dirname=e:/ai-cache/tmp/claude/e--hmx-projects-internal-projects-pinchtab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/q7
+PASS L1 iter 8: --user-data-dir length <= 200 (P5) :: len=198
+PASS L1 iter 8: dir exists after nav
+CLI L1-close8-16 [close] exit=0 1129ms
+PASS L1 iter 8: close exit 0 :: exit=0 1129ms
+PASS L1 iter 8: dir gone after close
+PASS L1 iter 8: Chrome PID gone :: pid=77752
+PASS L1 iter 8: debug order phase kill -> state-cleared -> phase cleanup :: idx=193,221,1226
+PASS L1 iter 8: state.json absent after close
+PASS L1 iter 8: no new sutradhar-cli-* left in TEMP :: before=[] after=[]
+CLI L1-nav9-17 [nav http://127.0.0.1:62065/?n=L19] exit=0 823ms
+PASS L1 iter 9: nav exit 0 :: exit=0 823ms
+PASS L1 iter 9: tempProfile true
+PASS L1 iter 9: (ii) dirname(userDataDir) == ISO :: dirname=e:/ai-cache/tmp/claude/e--hmx-projects-internal-projects-pinchtab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/q7
+PASS L1 iter 9: --user-data-dir length <= 200 (P5) :: len=198
+PASS L1 iter 9: dir exists after nav
+CLI L1-close9-18 [close] exit=0 1067ms
+PASS L1 iter 9: close exit 0 :: exit=0 1067ms
+PASS L1 iter 9: dir gone after close
+PASS L1 iter 9: Chrome PID gone :: pid=47680
+PASS L1 iter 9: debug order phase kill -> state-cleared -> phase cleanup :: idx=193,221,1226
+PASS L1 iter 9: state.json absent after close
+PASS L1 iter 9: no new sutradhar-cli-* left in TEMP :: before=[] after=[]
+CLI L1-nav10-19 [nav http://127.0.0.1:62065/?n=L110] exit=0 723ms
+PASS L1 iter 10: nav exit 0 :: exit=0 723ms
+PASS L1 iter 10: tempProfile true
+PASS L1 iter 10: (ii) dirname(userDataDir) == ISO :: dirname=e:/ai-cache/tmp/claude/e--hmx-projects-internal-projects-pinchtab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/q7
+PASS L1 iter 10: --user-data-dir length <= 200 (P5) :: len=198
+PASS L1 iter 10: dir exists after nav
+CLI L1-close10-20 [close] exit=0 1094ms
+PASS L1 iter 10: close exit 0 :: exit=0 1094ms
+PASS L1 iter 10: dir gone after close
+PASS L1 iter 10: Chrome PID gone :: pid=77888
+PASS L1 iter 10: debug order phase kill -> state-cleared -> phase cleanup :: idx=193,221,1226
+PASS L1 iter 10: state.json absent after close
+PASS L1 iter 10: no new sutradhar-cli-* left in TEMP :: before=[] after=[]
+PASS L1 timing phase kill (ms) max <= 10500 :: n=10 p50=342 max=389
+PASS L1 timing phase cleanup (ms) max <= 15500 :: n=10 p50=516 max=602
+PASS L1 timing scan max <= 4000 ms (flag for S8 if not) :: n=11 p50=497 max=583
+TIMING L1 whole-nav-ms n=10 p50=814.5 max=1347
+TIMING L1 whole-close-ms n=10 p50=1092.5 max=1180
+TIMING L1 phase-sweep-ms n=10 p50=0 max=496
+TIMING L1 phase-kill-ms n=10 p50=342 max=389
+TIMING L1 phase-cleanup-ms n=10 p50=516 max=602
+TIMING L1 scan-ms (nav+close) n=11 p50=497 max=583  nav-scan n=1 p50=492 max=492 close-scan n=10 p50=498.5 max=583
+PASS after L1: no process referencing ISO is still running :: left=none
+REALTEMP after L1 count=45 baseline=45 disappeared=[] appeared=[]
+INFO == L1s: TEMP containing a space
+PASS L1s TEMP really contains a space :: E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S 7
+CLI L1s-nav1-21 [nav http://127.0.0.1:62065/?n=L1s1] exit=0 855ms
+PASS L1s iter 1: nav exit 0 :: exit=0 855ms
+PASS L1s iter 1: tempProfile true
+PASS L1s iter 1: (ii) dirname(userDataDir) == ISO :: dirname=e:/ai-cache/tmp/claude/e--hmx-projects-internal-projects-pinchtab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/s 7
+PASS L1s iter 1: --user-data-dir length <= 200 (P5) :: len=199
+PASS L1s iter 1: dir exists after nav
+CLI L1s-close1-22 [close] exit=0 1108ms
+PASS L1s iter 1: close exit 0 :: exit=0 1108ms
+PASS L1s iter 1: dir gone after close
+PASS L1s iter 1: Chrome PID gone :: pid=64456
+PASS L1s iter 1: debug order phase kill -> state-cleared -> phase cleanup :: idx=194,222,1231
+PASS L1s iter 1: state.json absent after close
+PASS L1s iter 1: no new sutradhar-cli-* left in TEMP :: before=[] after=[]
+CLI L1s-nav2-23 [nav http://127.0.0.1:62065/?n=L1s2] exit=0 821ms
+PASS L1s iter 2: nav exit 0 :: exit=0 821ms
+PASS L1s iter 2: tempProfile true
+PASS L1s iter 2: (ii) dirname(userDataDir) == ISO :: dirname=e:/ai-cache/tmp/claude/e--hmx-projects-internal-projects-pinchtab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/s 7
+PASS L1s iter 2: --user-data-dir length <= 200 (P5) :: len=199
+PASS L1s iter 2: dir exists after nav
+CLI L1s-close2-24 [close] exit=0 1071ms
+PASS L1s iter 2: close exit 0 :: exit=0 1071ms
+PASS L1s iter 2: dir gone after close
+PASS L1s iter 2: Chrome PID gone :: pid=82120
+PASS L1s iter 2: debug order phase kill -> state-cleared -> phase cleanup :: idx=194,222,1231
+PASS L1s iter 2: state.json absent after close
+PASS L1s iter 2: no new sutradhar-cli-* left in TEMP :: before=[] after=[]
+PASS after L1s: no process referencing ISO is still running :: left=none
+REALTEMP after L1s count=45 baseline=45 disappeared=[] appeared=[]
+INFO == L2: 3x nav+close on packages\cli\dist\cli.js
+CLI L2-nav1-25 [nav http://127.0.0.1:62065/?n=L21] exit=0 890ms
+PASS L2 iter 1: nav exit 0 :: exit=0 890ms
+PASS L2 iter 1: tempProfile true
+PASS L2 iter 1: (ii) dirname(userDataDir) == ISO :: dirname=e:/ai-cache/tmp/claude/e--hmx-projects-internal-projects-pinchtab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/q7
+PASS L2 iter 1: --user-data-dir length <= 200 (P5) :: len=198
+PASS L2 iter 1: dir exists after nav
+CLI L2-close1-26 [close] exit=0 1132ms
+PASS L2 iter 1: close exit 0 :: exit=0 1132ms
+PASS L2 iter 1: dir gone after close
+PASS L2 iter 1: Chrome PID gone :: pid=11520
+PASS L2 iter 1: debug order phase kill -> state-cleared -> phase cleanup :: idx=193,221,1226
+PASS L2 iter 1: state.json absent after close
+PASS L2 iter 1: no new sutradhar-cli-* left in TEMP :: before=[] after=[]
+CLI L2-nav2-27 [nav http://127.0.0.1:62065/?n=L22] exit=0 898ms
+PASS L2 iter 2: nav exit 0 :: exit=0 898ms
+PASS L2 iter 2: tempProfile true
+PASS L2 iter 2: (ii) dirname(userDataDir) == ISO :: dirname=e:/ai-cache/tmp/claude/e--hmx-projects-internal-projects-pinchtab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/q7
+PASS L2 iter 2: --user-data-dir length <= 200 (P5) :: len=198
+PASS L2 iter 2: dir exists after nav
+CLI L2-close2-28 [close] exit=0 1133ms
+PASS L2 iter 2: close exit 0 :: exit=0 1133ms
+PASS L2 iter 2: dir gone after close
+PASS L2 iter 2: Chrome PID gone :: pid=74856
+PASS L2 iter 2: debug order phase kill -> state-cleared -> phase cleanup :: idx=193,221,1226
+PASS L2 iter 2: state.json absent after close
+PASS L2 iter 2: no new sutradhar-cli-* left in TEMP :: before=[] after=[]
+CLI L2-nav3-29 [nav http://127.0.0.1:62065/?n=L23] exit=0 875ms
+PASS L2 iter 3: nav exit 0 :: exit=0 875ms
+PASS L2 iter 3: tempProfile true
+PASS L2 iter 3: (ii) dirname(userDataDir) == ISO :: dirname=e:/ai-cache/tmp/claude/e--hmx-projects-internal-projects-pinchtab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/q7
+PASS L2 iter 3: --user-data-dir length <= 200 (P5) :: len=198
+PASS L2 iter 3: dir exists after nav
+CLI L2-close3-30 [close] exit=0 1117ms
+PASS L2 iter 3: close exit 0 :: exit=0 1117ms
+PASS L2 iter 3: dir gone after close
+PASS L2 iter 3: Chrome PID gone :: pid=43828
+PASS L2 iter 3: debug order phase kill -> state-cleared -> phase cleanup :: idx=193,221,1226
+PASS L2 iter 3: state.json absent after close
+PASS L2 iter 3: no new sutradhar-cli-* left in TEMP :: before=[] after=[]
+PASS after L2: no process referencing ISO is still running :: left=none
+REALTEMP after L2 count=45 baseline=45 disappeared=[] appeared=[]
+INFO == L3: in use (own Chrome on a stale-named, dead-marker dir)
+PASS L3 own Chrome is up and holds the dir :: pid=83224 port=54754
+CLI L3-nav1-31 [nav http://127.0.0.1:62065/?n=L3-1] exit=0 1401ms
+CLI L3-close1-32 [close] exit=0 1251ms
+PASS L3 session 1: nav/close exit 0 :: 0/0
+PASS L3 session 1: NEG315 survives
+PASS L3 session 1: the sweep logged decision reason=in-use for NEG315
+CLI L3-nav2-33 [nav http://127.0.0.1:62065/?n=L3-2] exit=0 1232ms
+CLI L3-close2-34 [close] exit=0 1124ms
+PASS L3 session 2: nav/close exit 0 :: 0/0
+PASS L3 session 2: NEG315 survives
+PASS L3 session 2: the sweep logged decision reason=in-use for NEG315
+CLI L3-nav3-35 [nav http://127.0.0.1:62065/?n=L3-3] exit=0 1324ms
+CLI L3-close3-36 [close] exit=0 1100ms
+PASS L3 session 3: nav/close exit 0 :: 0/0
+PASS L3 session 3: NEG315 survives
+PASS L3 session 3: the sweep logged decision reason=in-use for NEG315
+[cleanup] consider path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\Q7\sutradhar-cli-1700000000000-NEG315" mode=close
+[cleanup] scan ms=503 result=49
+[cleanup] decision path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\Q7\sutradhar-cli-1700000000000-NEG315" reason=in-use
+[cleanup] kept path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\Q7\sutradhar-cli-1700000000000-NEG315" reason=in-use
+[cleanup] phase cleanup ms=505
+PASS L3 direct removeSessionTempProfile -> removed:false reason in-use :: {"removed":false,"reason":"in-use"}
+PASS L3 P4(1) every pre-call entry still present :: pre=283 missing=[]
+PASS L3 P4(2) lockfile present
+PASS L3 P4(3) /json/version still answers
+PASS L3 attribution: >=1 process references the dir, ALL are inside our Chrome tree, none is the harness :: refs=10 outsideTree=
+PASS L3 module scan sees the dir as referenced :: scanLines=49
+INFO ownership confirmed for pid 83224 (L3 own Chrome); taskkill /T /F
+INFO taskkill status=0 SUCCESS: The process with PID 78756 (child process of PID 83224) has been terminated.
+PASS L3 own Chrome killed (owned) and exited within 15 s :: {"killed":true,"owned":true,"gone":true}
+[cleanup] consider path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\Q7\sutradhar-cli-1700000000000-NEG315" mode=close
+[cleanup] scan ms=490 result=39
+[cleanup] decision path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\Q7\sutradhar-cli-1700000000000-NEG315" reason=remove
+[cleanup] rm-attempt path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\Q7\sutradhar-cli-1700000000000-NEG315" n=1 remaining-ms=14508
+[cleanup] removed path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\Q7\sutradhar-cli-1700000000000-NEG315"
+[cleanup] phase cleanup ms=511
+PASS L3 after the Chrome exited the same call returns removed:true and the dir is gone :: {"removed":true}
+PASS L3: no process referencing ISO is still running :: left=none
+PASS after L3: no process referencing ISO is still running :: left=none
+REALTEMP after L3 count=45 baseline=45 disappeared=[] appeared=[]
+INFO == L4: stale sweep
+CLI L4-nav-37 [nav http://127.0.0.1:62065/?n=L4] exit=0 1315ms
+CLI L4-close-38 [close] exit=0 1083ms
+PASS L4 nav/close exit 0
+PASS L4 STALE1 removed
+PASS L4 YOUNG1 kept
+PASS L4 not-sutradhar-1700000000003 kept
+PASS L4 sutradhar-downloads kept
+INFO L4 decisions:
+[cleanup] decision path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\Q7\sutradhar-cli-1700000000001-STALE1" reason=remove
+[cleanup] removed path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\Q7\sutradhar-cli-1700000000001-STALE1"
+[cleanup] decision path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\Q7\sutradhar-cli-1700000000002-YOUNG1" reason=too-young
+[cleanup] kept path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\Q7\sutradhar-cli-1700000000002-YOUNG1" reason=too-young
+PASS L4 sweep log shows STALE1 removed and YOUNG1 not removed
+[cleanup] consider path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\Q7\sutradhar-cli-1700000000002-YOUNG1" mode=close
+[cleanup] scan ms=486 result=39
+[cleanup] decision path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\Q7\sutradhar-cli-1700000000002-YOUNG1" reason=remove
+[cleanup] rm-attempt path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\Q7\sutradhar-cli-1700000000002-YOUNG1" n=1 remaining-ms=14513
+[cleanup] removed path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\Q7\sutradhar-cli-1700000000002-YOUNG1"
+[cleanup] phase cleanup ms=489
+PASS L4 YOUNG1 removed by removeSessionTempProfile (test cleanup) :: {"removed":true}
+PASS after L4: no process referencing ISO is still running :: left=none
+REALTEMP after L4 count=45 baseline=45 disappeared=[] appeared=[]
+INFO == L5a (P0): CHROME_PATH is a non-executable file
+CLI L5a-nav-39 [nav http://127.0.0.1:62065/?n=L5a] exit=1 700ms
+PASS L5a exit 1 :: exit=1 700ms
+PASS L5a stderr/stdout mention EFTYPE :: Error: Failed to spawn Chrome (EFTYPE): spawn EFTYPE
+PASS L5a created and removed lines name the same path :: created=e:/ai-cache/tmp/claude/e--hmx-projects-internal-projects-pinchtab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/q7/sutradhar-cli-1791083335492-u5lyfd removed=e:/ai-cache/tmp/claude/e--hmx-projects-internal-projects-pinchtab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/q7/sutradhar-cli-1791083335492-u5lyfd
+PASS L5a no dir left :: after=[]
+PASS after L5a: no process referencing ISO is still running :: left=none
+REALTEMP after L5a count=45 baseline=45 disappeared=[] appeared=[]
+INFO == L5b (P2x): CHROME_PATH is a copy of node.exe (exits 9 at once)
+CLI L5b-nav-40 [nav http://127.0.0.1:62065/?n=L5b] exit=1 1230ms
+PASS L5b exit 1 :: exit=1
+PASS L5b well under 10 s (< 8000 ms) :: 1230ms
+PASS L5b a "Chrome exited (code N) before it was ready" line :: Error: Chrome exited (code 9) before it was ready on port 51643.
+PASS L5b discard line carries alive=false (the no-kill branch) and no kill phase ran :: [cleanup] discard path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\Q7\sutradhar-cli-1791083342400-436sjS" pid=78720 alive=false temp=true
+PASS L5b dir created then removed, none left :: created=e:/ai-cache/tmp/claude/e--hmx-projects-internal-projects-pinchtab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/q7/sutradhar-cli-1791083342400-436sjs removed=e:/ai-cache/tmp/claude/e--hmx-projects-internal-projects-pinchtab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/q7/sutradhar-cli-1791083342400-436sjs
+PASS after L5b: no process referencing ISO is still running :: left=none
+REALTEMP after L5b count=45 baseline=45 disappeared=[] appeared=[]
+INFO == L7: mutant bundle with the cleanup call inside stopSpawnedChrome disabled
+INFO mutant L7: occurrences-replaced=1 marker-count=1 -> E:\HMX_Projects\Internal_Projects\PinchTab\.claude\worktrees\project-understanding-696041\packages\sutradhar\dist\cli-bin.mutant.js
+CLI L7-nav-41 [nav http://127.0.0.1:62065/?n=L7] exit=0 827ms
+PASS L7 mutant nav exit 0 and dir exists
+CLI L7-close-42 [close] exit=0 577ms
+PASS L7 mutant close exit 0
+PASS L7 EXPECTED: the dir REMAINS after the mutant close (so L1 passing is due to the cleanup, not the sweep) :: dir=E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\Q7\sutradhar-cli-1791083349933-lXtwSq
+PASS L7 no cleanup phase ran in the mutant close
+[cleanup] consider path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\Q7\sutradhar-cli-1791083349933-lXtwSq" mode=close
+[cleanup] scan ms=488 result=39
+[cleanup] decision path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\Q7\sutradhar-cli-1791083349933-lXtwSq" reason=remove
+[cleanup] rm-attempt path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\Q7\sutradhar-cli-1791083349933-lXtwSq" n=1 remaining-ms=14511
+[cleanup] removed path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\Q7\sutradhar-cli-1791083349933-lXtwSq"
+[cleanup] phase cleanup ms=505
+PASS L7 leftover dir removed through removeSessionTempProfile :: {"removed":true}
+PASS L7 mutant file deleted and the real cli-bin.js sha256 unchanged :: sha=9858726a291e844e1f84089b18310e90379140e2dfabf7b2fda80eb550b5c59b
+PASS L7: no process referencing ISO is still running :: left=none
+PASS after L7: no process referencing ISO is still running :: left=none
+REALTEMP after L7 count=45 baseline=45 disappeared=[] appeared=[]
+INFO == L9: interrupted close (kill the CLI child as soon as state-cleared appears)
+CLI L9-nav-43 [nav http://127.0.0.1:62065/?n=L9] exit=0 844ms
+PASS L9 session up
+PASS L9 the CLI child was killed after state-cleared appeared (not exited by itself first) :: {"code":null,"signal":"SIGTERM"}
+INFO L9 cleanup finished before the kill landed: false (O2 is the authority if true)
+PASS L9 state.json absent or has no chromePid :: absent
+CLI L9-close2-44 [close] exit=0 202ms
+PASS L9 second close reports no session and kills nothing :: exit=0 out=No active session.
+PASS L9 the Chrome is gone (killed by the first close before state-cleared) :: pid=12076
+INFO L9 dir exists after the interrupt: true
+[cleanup] consider path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\Q7\sutradhar-cli-1791083364870-Eg6vO7" mode=close
+[cleanup] scan ms=511 result=39
+[cleanup] decision path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\Q7\sutradhar-cli-1791083364870-Eg6vO7" reason=remove
+[cleanup] rm-attempt path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\Q7\sutradhar-cli-1791083364870-Eg6vO7" n=1 remaining-ms=14488
+[cleanup] removed path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\Q7\sutradhar-cli-1791083364870-Eg6vO7"
+[cleanup] phase cleanup ms=526
+PASS L9 the dir is removed afterwards by removeSessionTempProfile :: {"removed":true}
+PASS L9: no process referencing ISO is still running :: left=none
+PASS after L9: no process referencing ISO is still running :: left=none
+REALTEMP after L9 count=45 baseline=45 disappeared=[] appeared=[]
+INFO == L12: legacy state (no chromePid) + open dialog, on cli-bin.js
+CLI L12-nav-45 [nav http://127.0.0.1:62065/c?n=L12] exit=0 817ms
+PASS L12 nav exit 0 with state :: exit=0 817ms
+PASS L12 state.json rewritten without chromePid (legacy shape)
+CLI L12-close-46 [close] exit=0 231ms
+PASS L12 close exit 0 :: exit=0 231ms
+PASS L12 close fast (< 10 s, no 180 s attach hang) :: 231ms
+PASS L12 "Session closed." printed :: Session closed.
+PASS L12 the dialog really was open (close warned about it) :: Warning: a confirm dialog is open. Handle it first ("sutradhar dialog accept|dismiss") if you need it handled.
+PASS L12 state.json ABSENT :: state.json present=false
+PASS L12 the legacy close did not kill the Chrome (as on master) :: pid=83992
+INFO ownership confirmed for pid 83992 (L12 Chrome); taskkill /T /F
+INFO taskkill status=0 SUCCESS: The process with PID 66372 (child process of PID 83992) has been terminated.
+PASS L12 own Chrome killed after the ownership check and exited :: {"killed":true,"owned":true,"gone":true}
+[cleanup] consider path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\Q7\sutradhar-cli-1791083380944-9JT09J" mode=close
+[cleanup] scan ms=494 result=39
+[cleanup] decision path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\Q7\sutradhar-cli-1791083380944-9JT09J" reason=remove
+[cleanup] rm-attempt path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\Q7\sutradhar-cli-1791083380944-9JT09J" n=1 remaining-ms=14504
+[cleanup] removed path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\Q7\sutradhar-cli-1791083380944-9JT09J"
+[cleanup] phase cleanup ms=515
+PASS L12 dir removed through removeSessionTempProfile :: {"removed":true}
+PASS L12: no process referencing ISO is still running :: left=none
+PASS after L12: no process referencing ISO is still running :: left=none
+REALTEMP after L12 count=45 baseline=45 disappeared=[] appeared=[]
+INFO mutant O6: occurrences-replaced=1 marker-count=1 -> E:\HMX_Projects\Internal_Projects\PinchTab\.claude\worktrees\project-understanding-696041\packages\sutradhar\dist\cli-bin.mutant-o6.js
+INFO == L12m: legacy state (no chromePid) + open dialog, on cli-bin.mutant-o6.js
+CLI L12m-nav-47 [nav http://127.0.0.1:62065/c?n=L12m] exit=0 828ms
+PASS L12m nav exit 0 with state :: exit=0 828ms
+PASS L12m state.json rewritten without chromePid (legacy shape)
+CLI L12m-close-48 [close] exit=0 228ms
+PASS L12m close exit 0 :: exit=0 228ms
+PASS L12m close fast (< 10 s, no 180 s attach hang) :: 228ms
+PASS L12m "Session closed." printed :: Session closed.
+PASS L12m the dialog really was open (close warned about it) :: Warning: a confirm dialog is open. Handle it first ("sutradhar dialog accept|dismiss") if you need it handled.
+PASS L12m EXPECTED under M-O6: state.json REMAINS (L12 must fail on the mutant) :: state.json present=true
+PASS L12m the legacy close did not kill the Chrome (as on master) :: pid=74808
+INFO ownership confirmed for pid 74808 (L12m Chrome); taskkill /T /F
+INFO taskkill status=0 SUCCESS: The process with PID 36784 (child process of PID 74808) has been terminated.
+PASS L12m own Chrome killed after the ownership check and exited :: {"killed":true,"owned":true,"gone":true}
+[cleanup] consider path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\Q7\sutradhar-cli-1791083400907-yHTIsM" mode=close
+[cleanup] scan ms=473 result=39
+[cleanup] decision path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\Q7\sutradhar-cli-1791083400907-yHTIsM" reason=remove
+[cleanup] rm-attempt path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\Q7\sutradhar-cli-1791083400907-yHTIsM" n=1 remaining-ms=14525
+[cleanup] removed path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\Q7\sutradhar-cli-1791083400907-yHTIsM"
+[cleanup] phase cleanup ms=493
+PASS L12m dir removed through removeSessionTempProfile :: {"removed":true}
+PASS L12m: no process referencing ISO is still running :: left=none
+PASS L12m mutant file deleted and the real cli-bin.js sha256 unchanged
+PASS after L12m: no process referencing ISO is still running :: left=none
+REALTEMP after L12m count=45 baseline=45 disappeared=[] appeared=[]
+REALTEMP end count=45 baseline=45 disappeared=[] appeared=[]
+PASS real TEMP sutradhar-cli-* list is IDENTICAL at the end (or every difference is external) :: gone= added=
+ALL PASS
+# exit=0 end 2026-10-04T08:40:21+05:30
+REALTEMP-IDENTICAL

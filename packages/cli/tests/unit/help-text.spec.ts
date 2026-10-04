@@ -114,3 +114,15 @@ describe('@sutradhar/cli --help text (FR2-14 fix-1)', () => {
     expect(helpText).toContain('each side 1..10000000');
   });
 });
+
+describe('@sutradhar/cli --help text (GAP-315 cleanup diagnostics)', () => {
+  it('T7: the Environment section documents SUTRADHAR_CLI_DEBUG_CLEANUP as a diagnostics switch', () => {
+    const envStart = helpText.indexOf('Environment:');
+    const envEnd = helpText.indexOf('Project config:');
+    expect(envStart).toBeGreaterThan(-1);
+    expect(envEnd).toBeGreaterThan(envStart);
+    const envSection = helpText.slice(envStart, envEnd);
+    expect(envSection).toContain('SUTRADHAR_CLI_DEBUG_CLEANUP');
+    expect(envSection).toContain('[cleanup]');
+  });
+});

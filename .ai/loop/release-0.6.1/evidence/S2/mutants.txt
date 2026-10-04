@@ -1,0 +1,3 @@
+# mutant: one-character change in the ledger row
+mutant-vs-live diff exit=1 (S2-1 compares live to branch-row.txt: a mutated live row would give exit 1)
+stale (pre-S2 HEAD) row vs branch-row diff exit=1 (1 = S2-1 check fails on the unreconciled ledger, as it must)

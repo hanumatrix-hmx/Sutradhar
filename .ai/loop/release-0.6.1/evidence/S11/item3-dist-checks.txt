@@ -1,0 +1,29 @@
+$ grep -cF 'SUTRADHAR_VERSION = "0.6.1"' packages/sutradhar/dist/index.js   # >= 1
+1
+$ grep -cF '0.6.1' packages/sutradhar/dist/mcp-cli.js   # >= 1
+1
+$ grep -cE '0\.6\.[01]' packages/sutradhar/dist/cli-bin.js   # = 0 (CLI embeds no version)
+0
+$ grep -cE "(SUTRADHAR_VERSION|MCP_SERVER_VERSION) = [\"']0\.6\.0[\"']" packages/sutradhar/dist/*.js   # 0 for each
+packages/sutradhar/dist/cli-bin.js:0
+packages/sutradhar/dist/index.js:0
+packages/sutradhar/dist/mcp-cli.js:0
+# stray 0.6.0 anywhere in the three bundles (any context):
+packages/sutradhar/dist/index.js:0
+packages/sutradhar/dist/cli-bin.js:0
+packages/sutradhar/dist/mcp-cli.js:0
+# the version lines themselves:
+packages/sutradhar/dist/index.js:45041:var SUTRADHAR_VERSION = "0.6.1";
+packages/sutradhar/dist/mcp-cli.js:69284:var MCP_SERVER_VERSION = "0.6.1";
+$ grep -n "killChromeTree(" packages/cli/src/*.ts | wc -l   # = 1 (definition)
+1
+packages/cli/src/spawn-chrome.ts:237:export async function killChromeTree(
+$ system-binary grep, excluding system-binaries.ts   # = 0
+0
+# same grep WITHOUT the exclusion (positive control: must be > 0)
+2
+# package.json version
+0.6.1
+# seam leakage into library/MCP bundles (expect 0 0)
+packages/sutradhar/dist/index.js:0
+packages/sutradhar/dist/mcp-cli.js:0

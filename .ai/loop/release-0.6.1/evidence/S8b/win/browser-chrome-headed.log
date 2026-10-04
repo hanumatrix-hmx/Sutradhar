@@ -1,0 +1,306 @@
+# cmd: TEMP=ISO TMP=ISO TMPDIR=ISO NODE_OPTIONS=--import=file:///$SP/iso/assert-tmp.mjs SUTRADHAR_CLI_DEBUG_CLEANUP=1 TP_MODULE=E:/AI-Cache/tmp/claude/E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/S8b/mod/temp-profile.mjs BROWSER_KIND=chrome-headed timeout 900 node $EV/S4/probes/win-browser.mjs; ISO=E:/AI-Cache/tmp/claude/E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/Qb module-sha=676162d0104416177e1dc8eb6ed64b145c9cad9a3ba748985c5350443537e6b5 start=2026-10-04T08:35:37+05:30
+[iso-guard] tmpdir=e:/ai-cache/tmp/claude/e--hmx-projects-internal-projects-pinchtab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/qb pid=78252
+[probe-guard] tmpdir=e:/ai-cache/tmp/claude/e--hmx-projects-internal-projects-pinchtab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/qb pid=78252
+== win-browser harness kind=chrome-headed node=v25.0.0 platform=win32 tmpdir=E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\Qb pid=78252
+[cleanup] probe tmpRoot path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\Qb\r-2QHB8K"
+[cleanup] probe dir path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\Qb\r-2QHB8K\sutradhar-cli-1791083137113-Ai2x"
+STARTED browser pid=80920 exe=C:/Program Files/Google/Chrome/Application/chrome.exe
+INFO version=Chrome/154.0.8037.97
+PASS browser up
+---- child v25
+[v25] == win-a4child (A4-pre, A4, B2, A5 on a live browser) node=v25.0.0 platform=win32 tmpdir=E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\Qb pid=74476
+[v25] [cleanup] probe dir path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\Qb\r-2QHB8K\sutradhar-cli-1791083137113-Ai2x"
+[v25] [cleanup] probe tmpRoot path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\Qb\r-2QHB8K"
+[v25] PASS PROBE_DIR under os.tmpdir()
+[v25] PASS browser answers /json/version at start
+[v25] [cleanup] probe lockfile path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\Qb\r-2QHB8K\sutradhar-cli-1791083137113-Ai2x\lockfile"
+[v25] PASS A4-pre lockfile exists
+[v25] PASS A4-pre rm(lockfile) rejects EBUSY/EPERM :: code=EBUSY
+[v25] PASS A4-pre lockfile still there
+[v25] INFO churn-control count 230->232 bytes 14083451->18294227 missing=[]
+[v25] PASS A4 no marker present (isolation)
+[v25] [cleanup] probe close-result path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\Qb\r-2QHB8K\sutradhar-cli-1791083137113-Ai2x" removed=false reason="EBUSY: resource busy or locked, unlink 'E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\Qb\\r-2QHB8K\\sutradhar-cli-1791083137113-Ai2x\\lockfile'"
+[v25] PASS A4 close removed:false :: {"removed":false,"reason":"EBUSY: resource busy or locked, unlink 'E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\Qb\\r-2QHB8K\\sutradhar-cli-1791083137113-Ai2x\\lockfile'"}
+[v25] PASS A4 close no file missing :: count 232->247 bytes 18294227->18426793 missing=[]
+[v25] INFO A4 close count 232->247 bytes 18294227->18426793
+[v25] PASS A4 /json/version still answers after close attempt
+[v25] [cleanup] probe sweep-kept path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\Qb\r-2QHB8K\sutradhar-cli-1791083137113-Ai2x" reason="EBUSY: resource busy or locked, unlink 'E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\Qb\\r-2QHB8K\\sutradhar-cli-1791083137113-Ai2x\\lockfile'"
+[v25] PASS A4 sweep kept the live dir
+[v25] PASS A4 sweep no file missing :: count 270->272 bytes 18428112->18428245 missing=[]
+[v25] PASS A4 /json/version still answers after sweep
+[v25] INFO B2 dir ageMin=25.0
+[v25] [cleanup] probe b2-kept path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\Qb\r-2QHB8K\sutradhar-cli-1791083137113-Ai2x" reason="in-use"
+[v25] PASS B2 real-scan sweep keeps backdated live dir as in-use :: ["in-use"]
+[v25] PASS B2 marker variant keeps as owner-alive :: ["owner-alive"]
+[v25] [cleanup] probe a5-close-result path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\Qb\r-2QHB8K\sutradhar-cli-1791083137113-Ai2x" removed=false reason="in-use"
+[v25] PASS A5 real scan -> in-use :: {"removed":false,"reason":"in-use"}
+[v25] INFO A5 attribution hits=["80920/78252/chrome.exe","78516/80920/chrome.exe","74888/80920/chrome.exe","81808/80920/chrome.exe","79016/80920/chrome.exe","80804/80920/chrome.exe","50808/80920/chrome.exe","84068/80920/chrome.exe","82416/80920/chrome.exe","83952/80920/chrome.exe","75612/80920/chrome.exe"]
+[v25] PASS A5 attribution non-empty
+[v25] PASS A5 attribution only our browser tree :: []
+[v25] PASS A5 attribution excludes the probe
+[v25] PASS final /json/version answers
+[v25] RESULT fails=0
+[v25] [iso-guard] tmpdir=e:/ai-cache/tmp/claude/e--hmx-projects-internal-projects-pinchtab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/qb pid=74476
+[v25] [probe-guard] tmpdir=e:/ai-cache/tmp/claude/e--hmx-projects-internal-projects-pinchtab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/qb pid=74476
+[v25] [cleanup] consider path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\Qb\r-2QHB8K\sutradhar-cli-1791083137113-Ai2x" mode=close
+[v25] [cleanup] scan ms=0 result=0
+[v25] [cleanup] decision path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\Qb\r-2QHB8K\sutradhar-cli-1791083137113-Ai2x" reason=remove
+[v25] [cleanup] rm-attempt path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\Qb\r-2QHB8K\sutradhar-cli-1791083137113-Ai2x" n=1 remaining-ms=14999
+[v25] [cleanup] rm-attempt path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\Qb\r-2QHB8K\sutradhar-cli-1791083137113-Ai2x" n=2 remaining-ms=14747
+[v25] [cleanup] rm-attempt path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\Qb\r-2QHB8K\sutradhar-cli-1791083137113-Ai2x" n=3 remaining-ms=14485
+[v25] [cleanup] rm-attempt path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\Qb\r-2QHB8K\sutradhar-cli-1791083137113-Ai2x" n=4 remaining-ms=14235
+[v25] [cleanup] rm-attempt path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\Qb\r-2QHB8K\sutradhar-cli-1791083137113-Ai2x" n=5 remaining-ms=13982
+[v25] [cleanup] rm-attempt path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\Qb\r-2QHB8K\sutradhar-cli-1791083137113-Ai2x" n=6 remaining-ms=13719
+[v25] [cleanup] kept path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\Qb\r-2QHB8K\sutradhar-cli-1791083137113-Ai2x" reason="EBUSY: resource busy or locked, unlink 'E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\Qb\\r-2QHB8K\\sutradhar-cli-1791083137113-Ai2x\\lockfile'"
+[v25] [cleanup] phase cleanup ms=1514
+[v25] [cleanup] consider path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\Qb\r-2QHB8K\sutradhar-cli-1791083137113-Ai2x" mode=sweep
+[v25] [cleanup] scan ms=0 result=0
+[v25] [cleanup] decision path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\Qb\r-2QHB8K\sutradhar-cli-1791083137113-Ai2x" reason=remove
+[v25] [cleanup] rm-attempt path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\Qb\r-2QHB8K\sutradhar-cli-1791083137113-Ai2x" n=1 remaining-ms=14999
+[v25] [cleanup] rm-attempt path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\Qb\r-2QHB8K\sutradhar-cli-1791083137113-Ai2x" n=2 remaining-ms=14749
+[v25] [cleanup] rm-attempt path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\Qb\r-2QHB8K\sutradhar-cli-1791083137113-Ai2x" n=3 remaining-ms=14485
+[v25] [cleanup] rm-attempt path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\Qb\r-2QHB8K\sutradhar-cli-1791083137113-Ai2x" n=4 remaining-ms=14222
+[v25] [cleanup] kept path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\Qb\r-2QHB8K\sutradhar-cli-1791083137113-Ai2x" reason="EBUSY: resource busy or locked, unlink 'E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\Qb\\r-2QHB8K\\sutradhar-cli-1791083137113-Ai2x\\lockfile'"
+[v25] [cleanup] phase sweep ms=1012 removed=0 kept=1
+[v25] [cleanup] consider path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\Qb\r-2QHB8K\sutradhar-cli-1791083137113-Ai2x" mode=sweep
+[v25] [cleanup] scan ms=508 result=46
+[v25] [cleanup] decision path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\Qb\r-2QHB8K\sutradhar-cli-1791083137113-Ai2x" reason=in-use
+[v25] [cleanup] kept path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\Qb\r-2QHB8K\sutradhar-cli-1791083137113-Ai2x" reason=in-use
+[v25] [cleanup] phase sweep ms=508 removed=0 kept=1
+[v25] [cleanup] consider path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\Qb\r-2QHB8K\sutradhar-cli-1791083137113-Ai2x" mode=sweep
+[v25] [cleanup] scan ms=0 result=0
+[v25] [cleanup] decision path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\Qb\r-2QHB8K\sutradhar-cli-1791083137113-Ai2x" reason=owner-alive
+[v25] [cleanup] kept path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\Qb\r-2QHB8K\sutradhar-cli-1791083137113-Ai2x" reason=owner-alive
+[v25] [cleanup] phase sweep ms=1 removed=0 kept=1
+[v25] [cleanup] consider path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\Qb\r-2QHB8K\sutradhar-cli-1791083137113-Ai2x" mode=close
+[v25] [cleanup] scan ms=521 result=46
+[v25] [cleanup] decision path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\Qb\r-2QHB8K\sutradhar-cli-1791083137113-Ai2x" reason=in-use
+[v25] [cleanup] kept path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\Qb\r-2QHB8K\sutradhar-cli-1791083137113-Ai2x" reason=in-use
+[v25] [cleanup] phase cleanup ms=521
+PASS child v25 exit 0 :: status=0 signal=null
+---- child v18
+[v18] == win-a4child (A4-pre, A4, B2, A5 on a live browser) node=v18.20.8 platform=win32 tmpdir=E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\Qb pid=84456
+[v18] [cleanup] probe dir path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\Qb\r-2QHB8K\sutradhar-cli-1791083137113-Ai2x"
+[v18] [cleanup] probe tmpRoot path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\Qb\r-2QHB8K"
+[v18] PASS PROBE_DIR under os.tmpdir()
+[v18] PASS browser answers /json/version at start
+[v18] [cleanup] probe lockfile path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\Qb\r-2QHB8K\sutradhar-cli-1791083137113-Ai2x\lockfile"
+[v18] PASS A4-pre lockfile exists
+[v18] PASS A4-pre rm(lockfile) rejects EBUSY/EPERM :: code=EBUSY
+[v18] PASS A4-pre lockfile still there
+[v18] INFO churn-control count 272->274 bytes 18434505->18493257 missing=[]
+[v18] PASS A4 no marker present (isolation)
+[v18] [cleanup] probe close-result path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\Qb\r-2QHB8K\sutradhar-cli-1791083137113-Ai2x" removed=false reason="EBUSY: resource busy or locked, unlink 'E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\Qb\\r-2QHB8K\\sutradhar-cli-1791083137113-Ai2x\\lockfile'"
+[v18] PASS A4 close removed:false :: {"removed":false,"reason":"EBUSY: resource busy or locked, unlink 'E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\Qb\\r-2QHB8K\\sutradhar-cli-1791083137113-Ai2x\\lockfile'"}
+[v18] PASS A4 close no file missing :: count 274->274 bytes 18493257->18493257 missing=[]
+[v18] INFO A4 close count 274->274 bytes 18493257->18493257
+[v18] PASS A4 /json/version still answers after close attempt
+[v18] [cleanup] probe sweep-kept path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\Qb\r-2QHB8K\sutradhar-cli-1791083137113-Ai2x" reason="EBUSY: resource busy or locked, unlink 'E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\Qb\\r-2QHB8K\\sutradhar-cli-1791083137113-Ai2x\\lockfile'"
+[v18] PASS A4 sweep kept the live dir
+[v18] PASS A4 sweep no file missing :: count 274->279 bytes 18493257->18508569 missing=[]
+[v18] PASS A4 /json/version still answers after sweep
+[v18] INFO B2 dir ageMin=25.0
+[v18] [cleanup] probe b2-kept path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\Qb\r-2QHB8K\sutradhar-cli-1791083137113-Ai2x" reason="in-use"
+[v18] PASS B2 real-scan sweep keeps backdated live dir as in-use :: ["in-use"]
+[v18] PASS B2 marker variant keeps as owner-alive :: ["owner-alive"]
+[v18] [cleanup] probe a5-close-result path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\Qb\r-2QHB8K\sutradhar-cli-1791083137113-Ai2x" removed=false reason="in-use"
+[v18] PASS A5 real scan -> in-use :: {"removed":false,"reason":"in-use"}
+[v18] INFO A5 attribution hits=["80920/78252/chrome.exe","78516/80920/chrome.exe","74888/80920/chrome.exe","81808/80920/chrome.exe","79016/80920/chrome.exe","80804/80920/chrome.exe","50808/80920/chrome.exe","84068/80920/chrome.exe","82416/80920/chrome.exe","75612/80920/chrome.exe"]
+[v18] PASS A5 attribution non-empty
+[v18] PASS A5 attribution only our browser tree :: []
+[v18] PASS A5 attribution excludes the probe
+[v18] PASS final /json/version answers
+[v18] RESULT fails=0
+[v18] [iso-guard] tmpdir=e:/ai-cache/tmp/claude/e--hmx-projects-internal-projects-pinchtab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/qb pid=84456
+[v18] [probe-guard] tmpdir=e:/ai-cache/tmp/claude/e--hmx-projects-internal-projects-pinchtab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/qb pid=84456
+[v18] [cleanup] consider path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\Qb\r-2QHB8K\sutradhar-cli-1791083137113-Ai2x" mode=close
+[v18] [cleanup] scan ms=0 result=0
+[v18] [cleanup] decision path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\Qb\r-2QHB8K\sutradhar-cli-1791083137113-Ai2x" reason=remove
+[v18] [cleanup] rm-attempt path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\Qb\r-2QHB8K\sutradhar-cli-1791083137113-Ai2x" n=1 remaining-ms=14998
+[v18] [cleanup] rm-attempt path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\Qb\r-2QHB8K\sutradhar-cli-1791083137113-Ai2x" n=2 remaining-ms=14742
+[v18] [cleanup] rm-attempt path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\Qb\r-2QHB8K\sutradhar-cli-1791083137113-Ai2x" n=3 remaining-ms=14478
+[v18] [cleanup] rm-attempt path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\Qb\r-2QHB8K\sutradhar-cli-1791083137113-Ai2x" n=4 remaining-ms=14213
+[v18] [cleanup] rm-attempt path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\Qb\r-2QHB8K\sutradhar-cli-1791083137113-Ai2x" n=5 remaining-ms=13951
+[v18] [cleanup] rm-attempt path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\Qb\r-2QHB8K\sutradhar-cli-1791083137113-Ai2x" n=6 remaining-ms=13686
+[v18] [cleanup] kept path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\Qb\r-2QHB8K\sutradhar-cli-1791083137113-Ai2x" reason="EBUSY: resource busy or locked, unlink 'E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\Qb\\r-2QHB8K\\sutradhar-cli-1791083137113-Ai2x\\lockfile'"
+[v18] [cleanup] phase cleanup ms=1517
+[v18] [cleanup] consider path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\Qb\r-2QHB8K\sutradhar-cli-1791083137113-Ai2x" mode=sweep
+[v18] [cleanup] scan ms=0 result=0
+[v18] [cleanup] decision path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\Qb\r-2QHB8K\sutradhar-cli-1791083137113-Ai2x" reason=remove
+[v18] [cleanup] rm-attempt path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\Qb\r-2QHB8K\sutradhar-cli-1791083137113-Ai2x" n=1 remaining-ms=14998
+[v18] [cleanup] rm-attempt path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\Qb\r-2QHB8K\sutradhar-cli-1791083137113-Ai2x" n=2 remaining-ms=14747
+[v18] [cleanup] rm-attempt path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\Qb\r-2QHB8K\sutradhar-cli-1791083137113-Ai2x" n=3 remaining-ms=14484
+[v18] [cleanup] rm-attempt path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\Qb\r-2QHB8K\sutradhar-cli-1791083137113-Ai2x" n=4 remaining-ms=14220
+[v18] [cleanup] kept path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\Qb\r-2QHB8K\sutradhar-cli-1791083137113-Ai2x" reason="EBUSY: resource busy or locked, unlink 'E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\Qb\\r-2QHB8K\\sutradhar-cli-1791083137113-Ai2x\\lockfile'"
+[v18] [cleanup] phase sweep ms=1013 removed=0 kept=1
+[v18] [cleanup] consider path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\Qb\r-2QHB8K\sutradhar-cli-1791083137113-Ai2x" mode=sweep
+[v18] [cleanup] scan ms=525 result=45
+[v18] [cleanup] decision path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\Qb\r-2QHB8K\sutradhar-cli-1791083137113-Ai2x" reason=in-use
+[v18] [cleanup] kept path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\Qb\r-2QHB8K\sutradhar-cli-1791083137113-Ai2x" reason=in-use
+[v18] [cleanup] phase sweep ms=526 removed=0 kept=1
+[v18] [cleanup] consider path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\Qb\r-2QHB8K\sutradhar-cli-1791083137113-Ai2x" mode=sweep
+[v18] [cleanup] scan ms=0 result=0
+[v18] [cleanup] decision path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\Qb\r-2QHB8K\sutradhar-cli-1791083137113-Ai2x" reason=owner-alive
+[v18] [cleanup] kept path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\Qb\r-2QHB8K\sutradhar-cli-1791083137113-Ai2x" reason=owner-alive
+[v18] [cleanup] phase sweep ms=4 removed=0 kept=1
+[v18] [cleanup] consider path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\Qb\r-2QHB8K\sutradhar-cli-1791083137113-Ai2x" mode=close
+[v18] [cleanup] scan ms=530 result=45
+[v18] [cleanup] decision path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\Qb\r-2QHB8K\sutradhar-cli-1791083137113-Ai2x" reason=in-use
+[v18] [cleanup] kept path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\Qb\r-2QHB8K\sutradhar-cli-1791083137113-Ai2x" reason=in-use
+[v18] [cleanup] phase cleanup ms=531
+PASS child v18 exit 0 :: status=0 signal=null
+---- child v20
+[v20] == win-a4child (A4-pre, A4, B2, A5 on a live browser) node=v20.20.2 platform=win32 tmpdir=E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\Qb pid=45152
+[v20] [cleanup] probe dir path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\Qb\r-2QHB8K\sutradhar-cli-1791083137113-Ai2x"
+[v20] [cleanup] probe tmpRoot path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\Qb\r-2QHB8K"
+[v20] PASS PROBE_DIR under os.tmpdir()
+[v20] PASS browser answers /json/version at start
+[v20] [cleanup] probe lockfile path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\Qb\r-2QHB8K\sutradhar-cli-1791083137113-Ai2x\lockfile"
+[v20] PASS A4-pre lockfile exists
+[v20] PASS A4-pre rm(lockfile) rejects EBUSY/EPERM :: code=EBUSY
+[v20] PASS A4-pre lockfile still there
+[v20] INFO churn-control count 279->279 bytes 18511479->18515964 missing=[]
+[v20] PASS A4 no marker present (isolation)
+[v20] [cleanup] probe close-result path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\Qb\r-2QHB8K\sutradhar-cli-1791083137113-Ai2x" removed=false reason="EBUSY: resource busy or locked, unlink 'E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\Qb\\r-2QHB8K\\sutradhar-cli-1791083137113-Ai2x\\lockfile'"
+[v20] PASS A4 close removed:false :: {"removed":false,"reason":"EBUSY: resource busy or locked, unlink 'E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\Qb\\r-2QHB8K\\sutradhar-cli-1791083137113-Ai2x\\lockfile'"}
+[v20] PASS A4 close no file missing :: count 279->279 bytes 18515964->18515983 missing=[]
+[v20] INFO A4 close count 279->279 bytes 18515964->18515983
+[v20] PASS A4 /json/version still answers after close attempt
+[v20] [cleanup] probe sweep-kept path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\Qb\r-2QHB8K\sutradhar-cli-1791083137113-Ai2x" reason="EBUSY: resource busy or locked, unlink 'E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\Qb\\r-2QHB8K\\sutradhar-cli-1791083137113-Ai2x\\lockfile'"
+[v20] PASS A4 sweep kept the live dir
+[v20] PASS A4 sweep no file missing :: count 279->279 bytes 18515983->18515983 missing=[]
+[v20] PASS A4 /json/version still answers after sweep
+[v20] INFO B2 dir ageMin=25.0
+[v20] [cleanup] probe b2-kept path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\Qb\r-2QHB8K\sutradhar-cli-1791083137113-Ai2x" reason="in-use"
+[v20] PASS B2 real-scan sweep keeps backdated live dir as in-use :: ["in-use"]
+[v20] PASS B2 marker variant keeps as owner-alive :: ["owner-alive"]
+[v20] [cleanup] probe a5-close-result path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\Qb\r-2QHB8K\sutradhar-cli-1791083137113-Ai2x" removed=false reason="in-use"
+[v20] PASS A5 real scan -> in-use :: {"removed":false,"reason":"in-use"}
+[v20] INFO A5 attribution hits=["80920/78252/chrome.exe","78516/80920/chrome.exe","74888/80920/chrome.exe","81808/80920/chrome.exe","79016/80920/chrome.exe","80804/80920/chrome.exe","50808/80920/chrome.exe","82416/80920/chrome.exe","75612/80920/chrome.exe"]
+[v20] PASS A5 attribution non-empty
+[v20] PASS A5 attribution only our browser tree :: []
+[v20] PASS A5 attribution excludes the probe
+[v20] PASS final /json/version answers
+[v20] RESULT fails=0
+[v20] [iso-guard] tmpdir=e:/ai-cache/tmp/claude/e--hmx-projects-internal-projects-pinchtab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/qb pid=45152
+[v20] [probe-guard] tmpdir=e:/ai-cache/tmp/claude/e--hmx-projects-internal-projects-pinchtab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/qb pid=45152
+[v20] [cleanup] consider path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\Qb\r-2QHB8K\sutradhar-cli-1791083137113-Ai2x" mode=close
+[v20] [cleanup] scan ms=0 result=0
+[v20] [cleanup] decision path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\Qb\r-2QHB8K\sutradhar-cli-1791083137113-Ai2x" reason=remove
+[v20] [cleanup] rm-attempt path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\Qb\r-2QHB8K\sutradhar-cli-1791083137113-Ai2x" n=1 remaining-ms=14998
+[v20] [cleanup] rm-attempt path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\Qb\r-2QHB8K\sutradhar-cli-1791083137113-Ai2x" n=2 remaining-ms=14741
+[v20] [cleanup] rm-attempt path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\Qb\r-2QHB8K\sutradhar-cli-1791083137113-Ai2x" n=3 remaining-ms=14489
+[v20] [cleanup] rm-attempt path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\Qb\r-2QHB8K\sutradhar-cli-1791083137113-Ai2x" n=4 remaining-ms=14226
+[v20] [cleanup] rm-attempt path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\Qb\r-2QHB8K\sutradhar-cli-1791083137113-Ai2x" n=5 remaining-ms=13961
+[v20] [cleanup] rm-attempt path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\Qb\r-2QHB8K\sutradhar-cli-1791083137113-Ai2x" n=6 remaining-ms=13699
+[v20] [cleanup] kept path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\Qb\r-2QHB8K\sutradhar-cli-1791083137113-Ai2x" reason="EBUSY: resource busy or locked, unlink 'E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\Qb\\r-2QHB8K\\sutradhar-cli-1791083137113-Ai2x\\lockfile'"
+[v20] [cleanup] phase cleanup ms=1503
+[v20] [cleanup] consider path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\Qb\r-2QHB8K\sutradhar-cli-1791083137113-Ai2x" mode=sweep
+[v20] [cleanup] scan ms=0 result=0
+[v20] [cleanup] decision path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\Qb\r-2QHB8K\sutradhar-cli-1791083137113-Ai2x" reason=remove
+[v20] [cleanup] rm-attempt path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\Qb\r-2QHB8K\sutradhar-cli-1791083137113-Ai2x" n=1 remaining-ms=14999
+[v20] [cleanup] rm-attempt path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\Qb\r-2QHB8K\sutradhar-cli-1791083137113-Ai2x" n=2 remaining-ms=14743
+[v20] [cleanup] rm-attempt path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\Qb\r-2QHB8K\sutradhar-cli-1791083137113-Ai2x" n=3 remaining-ms=14483
+[v20] [cleanup] rm-attempt path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\Qb\r-2QHB8K\sutradhar-cli-1791083137113-Ai2x" n=4 remaining-ms=14217
+[v20] [cleanup] kept path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\Qb\r-2QHB8K\sutradhar-cli-1791083137113-Ai2x" reason="EBUSY: resource busy or locked, unlink 'E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\Qb\\r-2QHB8K\\sutradhar-cli-1791083137113-Ai2x\\lockfile'"
+[v20] [cleanup] phase sweep ms=1002 removed=0 kept=1
+[v20] [cleanup] consider path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\Qb\r-2QHB8K\sutradhar-cli-1791083137113-Ai2x" mode=sweep
+[v20] [cleanup] scan ms=547 result=44
+[v20] [cleanup] decision path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\Qb\r-2QHB8K\sutradhar-cli-1791083137113-Ai2x" reason=in-use
+[v20] [cleanup] kept path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\Qb\r-2QHB8K\sutradhar-cli-1791083137113-Ai2x" reason=in-use
+[v20] [cleanup] phase sweep ms=548 removed=0 kept=1
+[v20] [cleanup] consider path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\Qb\r-2QHB8K\sutradhar-cli-1791083137113-Ai2x" mode=sweep
+[v20] [cleanup] scan ms=0 result=0
+[v20] [cleanup] decision path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\Qb\r-2QHB8K\sutradhar-cli-1791083137113-Ai2x" reason=owner-alive
+[v20] [cleanup] kept path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\Qb\r-2QHB8K\sutradhar-cli-1791083137113-Ai2x" reason=owner-alive
+[v20] [cleanup] phase sweep ms=5 removed=0 kept=1
+[v20] [cleanup] consider path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\Qb\r-2QHB8K\sutradhar-cli-1791083137113-Ai2x" mode=close
+[v20] [cleanup] scan ms=511 result=44
+[v20] [cleanup] decision path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\Qb\r-2QHB8K\sutradhar-cli-1791083137113-Ai2x" reason=in-use
+[v20] [cleanup] kept path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\Qb\r-2QHB8K\sutradhar-cli-1791083137113-Ai2x" reason=in-use
+[v20] [cleanup] phase cleanup ms=512
+PASS child v20 exit 0 :: status=0 signal=null
+---- child v22
+[v22] == win-a4child (A4-pre, A4, B2, A5 on a live browser) node=v22.23.3 platform=win32 tmpdir=E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\Qb pid=68792
+[v22] [cleanup] probe dir path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\Qb\r-2QHB8K\sutradhar-cli-1791083137113-Ai2x"
+[v22] [cleanup] probe tmpRoot path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\Qb\r-2QHB8K"
+[v22] PASS PROBE_DIR under os.tmpdir()
+[v22] PASS browser answers /json/version at start
+[v22] [cleanup] probe lockfile path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\Qb\r-2QHB8K\sutradhar-cli-1791083137113-Ai2x\lockfile"
+[v22] PASS A4-pre lockfile exists
+[v22] PASS A4-pre rm(lockfile) rejects EBUSY/EPERM :: code=EBUSY
+[v22] PASS A4-pre lockfile still there
+[v22] INFO churn-control count 279->279 bytes 18515983->18515983 missing=[]
+[v22] PASS A4 no marker present (isolation)
+[v22] [cleanup] probe close-result path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\Qb\r-2QHB8K\sutradhar-cli-1791083137113-Ai2x" removed=false reason="EBUSY: resource busy or locked, unlink 'E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\Qb\\r-2QHB8K\\sutradhar-cli-1791083137113-Ai2x\\lockfile'"
+[v22] PASS A4 close removed:false :: {"removed":false,"reason":"EBUSY: resource busy or locked, unlink 'E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\Qb\\r-2QHB8K\\sutradhar-cli-1791083137113-Ai2x\\lockfile'"}
+[v22] PASS A4 close no file missing :: count 279->279 bytes 18515983->18516462 missing=[]
+[v22] INFO A4 close count 279->279 bytes 18515983->18516462
+[v22] PASS A4 /json/version still answers after close attempt
+[v22] [cleanup] probe sweep-kept path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\Qb\r-2QHB8K\sutradhar-cli-1791083137113-Ai2x" reason="EBUSY: resource busy or locked, unlink 'E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\Qb\\r-2QHB8K\\sutradhar-cli-1791083137113-Ai2x\\lockfile'"
+[v22] PASS A4 sweep kept the live dir
+[v22] PASS A4 sweep no file missing :: count 279->279 bytes 18516462->18516462 missing=[]
+[v22] PASS A4 /json/version still answers after sweep
+[v22] INFO B2 dir ageMin=25.0
+[v22] [cleanup] probe b2-kept path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\Qb\r-2QHB8K\sutradhar-cli-1791083137113-Ai2x" reason="in-use"
+[v22] PASS B2 real-scan sweep keeps backdated live dir as in-use :: ["in-use"]
+[v22] PASS B2 marker variant keeps as owner-alive :: ["owner-alive"]
+[v22] [cleanup] probe a5-close-result path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\Qb\r-2QHB8K\sutradhar-cli-1791083137113-Ai2x" removed=false reason="in-use"
+[v22] PASS A5 real scan -> in-use :: {"removed":false,"reason":"in-use"}
+[v22] INFO A5 attribution hits=["80920/78252/chrome.exe","78516/80920/chrome.exe","74888/80920/chrome.exe","81808/80920/chrome.exe","79016/80920/chrome.exe","80804/80920/chrome.exe","50808/80920/chrome.exe","82416/80920/chrome.exe","75612/80920/chrome.exe"]
+[v22] PASS A5 attribution non-empty
+[v22] PASS A5 attribution only our browser tree :: []
+[v22] PASS A5 attribution excludes the probe
+[v22] PASS final /json/version answers
+[v22] RESULT fails=0
+[v22] [iso-guard] tmpdir=e:/ai-cache/tmp/claude/e--hmx-projects-internal-projects-pinchtab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/qb pid=68792
+[v22] [probe-guard] tmpdir=e:/ai-cache/tmp/claude/e--hmx-projects-internal-projects-pinchtab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/qb pid=68792
+[v22] [cleanup] consider path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\Qb\r-2QHB8K\sutradhar-cli-1791083137113-Ai2x" mode=close
+[v22] [cleanup] scan ms=0 result=0
+[v22] [cleanup] decision path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\Qb\r-2QHB8K\sutradhar-cli-1791083137113-Ai2x" reason=remove
+[v22] [cleanup] rm-attempt path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\Qb\r-2QHB8K\sutradhar-cli-1791083137113-Ai2x" n=1 remaining-ms=14999
+[v22] [cleanup] rm-attempt path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\Qb\r-2QHB8K\sutradhar-cli-1791083137113-Ai2x" n=2 remaining-ms=14747
+[v22] [cleanup] rm-attempt path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\Qb\r-2QHB8K\sutradhar-cli-1791083137113-Ai2x" n=3 remaining-ms=14497
+[v22] [cleanup] rm-attempt path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\Qb\r-2QHB8K\sutradhar-cli-1791083137113-Ai2x" n=4 remaining-ms=14231
+[v22] [cleanup] rm-attempt path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\Qb\r-2QHB8K\sutradhar-cli-1791083137113-Ai2x" n=5 remaining-ms=13968
+[v22] [cleanup] rm-attempt path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\Qb\r-2QHB8K\sutradhar-cli-1791083137113-Ai2x" n=6 remaining-ms=13704
+[v22] [cleanup] kept path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\Qb\r-2QHB8K\sutradhar-cli-1791083137113-Ai2x" reason="EBUSY: resource busy or locked, unlink 'E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\Qb\\r-2QHB8K\\sutradhar-cli-1791083137113-Ai2x\\lockfile'"
+[v22] [cleanup] phase cleanup ms=1512
+[v22] [cleanup] consider path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\Qb\r-2QHB8K\sutradhar-cli-1791083137113-Ai2x" mode=sweep
+[v22] [cleanup] scan ms=0 result=0
+[v22] [cleanup] decision path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\Qb\r-2QHB8K\sutradhar-cli-1791083137113-Ai2x" reason=remove
+[v22] [cleanup] rm-attempt path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\Qb\r-2QHB8K\sutradhar-cli-1791083137113-Ai2x" n=1 remaining-ms=14999
+[v22] [cleanup] rm-attempt path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\Qb\r-2QHB8K\sutradhar-cli-1791083137113-Ai2x" n=2 remaining-ms=14741
+[v22] [cleanup] rm-attempt path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\Qb\r-2QHB8K\sutradhar-cli-1791083137113-Ai2x" n=3 remaining-ms=14477
+[v22] [cleanup] rm-attempt path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\Qb\r-2QHB8K\sutradhar-cli-1791083137113-Ai2x" n=4 remaining-ms=14212
+[v22] [cleanup] kept path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\Qb\r-2QHB8K\sutradhar-cli-1791083137113-Ai2x" reason="EBUSY: resource busy or locked, unlink 'E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\Qb\\r-2QHB8K\\sutradhar-cli-1791083137113-Ai2x\\lockfile'"
+[v22] [cleanup] phase sweep ms=1008 removed=0 kept=1
+[v22] [cleanup] consider path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\Qb\r-2QHB8K\sutradhar-cli-1791083137113-Ai2x" mode=sweep
+[v22] [cleanup] scan ms=513 result=44
+[v22] [cleanup] decision path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\Qb\r-2QHB8K\sutradhar-cli-1791083137113-Ai2x" reason=in-use
+[v22] [cleanup] kept path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\Qb\r-2QHB8K\sutradhar-cli-1791083137113-Ai2x" reason=in-use
+[v22] [cleanup] phase sweep ms=514 removed=0 kept=1
+[v22] [cleanup] consider path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\Qb\r-2QHB8K\sutradhar-cli-1791083137113-Ai2x" mode=sweep
+[v22] [cleanup] scan ms=0 result=0
+[v22] [cleanup] decision path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\Qb\r-2QHB8K\sutradhar-cli-1791083137113-Ai2x" reason=owner-alive
+[v22] [cleanup] kept path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\Qb\r-2QHB8K\sutradhar-cli-1791083137113-Ai2x" reason=owner-alive
+[v22] [cleanup] phase sweep ms=5 removed=0 kept=1
+[v22] [cleanup] consider path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\Qb\r-2QHB8K\sutradhar-cli-1791083137113-Ai2x" mode=close
+[v22] [cleanup] scan ms=517 result=44
+[v22] [cleanup] decision path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\Qb\r-2QHB8K\sutradhar-cli-1791083137113-Ai2x" reason=in-use
+[v22] [cleanup] kept path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\Qb\r-2QHB8K\sutradhar-cli-1791083137113-Ai2x" reason=in-use
+[v22] [cleanup] phase cleanup ms=518
+PASS child v22 exit 0 :: status=0 signal=null
+PASS browser pid exited within 15 s
+INFO browser process exit code=1 signal=null
+INFO post-kill references=0
+[cleanup] consider path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\Qb\r-2QHB8K\sutradhar-cli-1791083137113-Ai2x" mode=close
+[cleanup] scan ms=535 result=35
+[cleanup] decision path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\Qb\r-2QHB8K\sutradhar-cli-1791083137113-Ai2x" reason=remove
+[cleanup] rm-attempt path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\Qb\r-2QHB8K\sutradhar-cli-1791083137113-Ai2x" n=1 remaining-ms=14463
+[cleanup] removed path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\Qb\r-2QHB8K\sutradhar-cli-1791083137113-Ai2x"
+[cleanup] phase cleanup ms=565
+[cleanup] probe postkill-close-result path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\Qb\r-2QHB8K\sutradhar-cli-1791083137113-Ai2x" removed=true reason=undefined
+PASS post-kill close removes the now-dead profile (positive control) :: {"removed":true}
+RESULT fails=0
+# exit=0 end=2026-10-04T08:36:02+05:30

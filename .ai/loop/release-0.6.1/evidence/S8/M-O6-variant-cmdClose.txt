@@ -1,0 +1,25 @@
+if (state.chromePid) {
+    // attach()-ed sessions only ever DETACH on shutdown (by design — see spawn-chrome.ts's
+    // SpawnedChrome doc comment), so for a Chrome process THIS CLI spawned, runtime.shutdown()
+    // alone would leak it. Kill the actual process (and its child renderer/GPU processes). Never
+    // attaches, so it's unaffected by closeBlocked (no 180s hang risk here either way).
+    // 0.6.1 order (close-session.ts): kill -> clearState -> bounded temp-profile cleanup. The state
+    // is cleared INSIDE stopSpawnedChrome, before the slow cleanup, so no recorded PID can outlive
+    // its kill; there is deliberately no second state clear on this path (a late clear would delete
+    // a state.json that a concurrent command wrote during the cleanup).
+    await stopSpawnedChrome(state, sessionStopDeps());
+  } else {
+    if (!closeBlocked) {
+      // FR2-04 N11: this attach WOULD hang for up to 180s against a dialog-blocked page — skipped
+      // whenever the gate reported 'blocked' above.
+      const runtime = new SutradharRuntime({ logger });
+      try {
+        const { sessionId } = await runtime.attach({ endpoint: state.wsEndpoint, sessionId: state.sessionId });
+        await runtime.shutdown(sessionId);
+      } catch {
+        // Already gone (browser closed externally, etc.) — clearing state is still the right move.
+      }
+      await clearState();
+    }
+  }
+  console.log('Session closed.')

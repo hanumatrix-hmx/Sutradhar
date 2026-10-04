@@ -1,0 +1,19 @@
+# cmd: TEMP=ISO TMP=ISO TMPDIR=ISO NODE_OPTIONS=--import=file:///$SP/iso/assert-tmp.mjs SUTRADHAR_CLI_DEBUG_CLEANUP=1 TP_MODULE=$SP/S4/mod/temp-profile.mjs timeout 600 "C:/Users/Varad M/AppData/Local/npm-cache/_npx/83786caec519d9fd/node_modules/node/bin/node.exe" $SP/S4/win-a6.mjs ; ISO=E:/AI-Cache/tmp/claude/E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/S4-tmp-win-a6-v18 ; start=2026-10-04T05:01:35+05:30
+[iso-guard] tmpdir=e:/ai-cache/tmp/claude/e--hmx-projects-internal-projects-pinchtab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/s4-tmp-win-a6-v18 pid=44936
+[probe-guard] tmpdir=e:/ai-cache/tmp/claude/e--hmx-projects-internal-projects-pinchtab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/s4-tmp-win-a6-v18 pid=44936
+== win-a6 rule 3 isolated (live dummy owner) node=v18.20.8 platform=win32 tmpdir=E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S4-tmp-win-a6-v18 pid=44936
+INFO dummy pid=70572
+[cleanup] probe dir path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S4-tmp-win-a6-v18\a6-y2GX6G\sutradhar-cli-1790000000200-AbC123"
+[cleanup] probe dir path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S4-tmp-win-a6-v18\a6-y2GX6G\sutradhar-cli-1790000000201"
+[cleanup] probe kept path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S4-tmp-win-a6-v18\a6-y2GX6G\sutradhar-cli-1790000000200-AbC123" reason=owner-alive
+[cleanup] probe kept path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S4-tmp-win-a6-v18\a6-y2GX6G\sutradhar-cli-1790000000201" reason=owner-alive
+PASS A6 sweep: both kept owner-alive :: ["owner-alive","owner-alive"]
+[cleanup] probe close-result path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S4-tmp-win-a6-v18\a6-y2GX6G\sutradhar-cli-1790000000200-AbC123" removed=false reason=owner-alive
+PASS A6 close: owner-alive :: {"removed":false,"reason":"owner-alive"}
+PASS A6 close with live chromePid: kept (did not exit in time) :: {"removed":false,"reason":"Chrome (pid 70572) did not exit in time"}
+PASS A6 dummy dead (killed by its PID)
+[cleanup] probe removed path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S4-tmp-win-a6-v18\a6-y2GX6G\sutradhar-cli-1790000000200-AbC123"
+[cleanup] probe removed path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S4-tmp-win-a6-v18\a6-y2GX6G\sutradhar-cli-1790000000201"
+PASS A6 after kill: both removed :: []
+RESULT fails=0
+# exit=0 end=2026-10-04T05:01:37+05:30

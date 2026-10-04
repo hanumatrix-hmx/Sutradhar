@@ -1,0 +1,10 @@
+win-plant b v18 exit=1 pathcheck=0 1 PASS 1 FAIL guard=1 isoguardfail=0 realtemp-before=45 after=45 realtemp-same=yes cleanup-lines=3 outside-iso=0
+win-plant h v25 exit=0 pathcheck=0 2 PASS 0 FAIL guard=1 isoguardfail=0 realtemp-before=45 after=45 realtemp-same=yes cleanup-lines=8 outside-iso=0
+win-plant h v18 exit=0 pathcheck=0 2 PASS 0 FAIL guard=1 isoguardfail=0 realtemp-before=45 after=45 realtemp-same=yes cleanup-lines=8 outside-iso=0
+win-plant h v20 exit=0 pathcheck=0 2 PASS 0 FAIL guard=1 isoguardfail=0 realtemp-before=45 after=45 realtemp-same=yes cleanup-lines=8 outside-iso=0
+win-plant h v22 exit=0 pathcheck=0 2 PASS 0 FAIL guard=1 isoguardfail=0 realtemp-before=45 after=45 realtemp-same=yes cleanup-lines=8 outside-iso=0
+kill-probe old v18 exit=1 0 PASS 1 FAIL guard=1 INFO killChromeTree resolved in ms=43 child-exited=false
+kill-probe new v25 exit=0 1 PASS 0 FAIL guard=1 INFO killChromeTree resolved in ms=384 child-exited=true
+kill-probe new v18 exit=0 1 PASS 0 FAIL guard=1 INFO killChromeTree resolved in ms=378 child-exited=true
+kill-probe new v20 exit=0 1 PASS 0 FAIL guard=1 INFO killChromeTree resolved in ms=397 child-exited=true
+kill-probe new v22 exit=0 1 PASS 0 FAIL guard=1 INFO killChromeTree resolved in ms=409 child-exited=true

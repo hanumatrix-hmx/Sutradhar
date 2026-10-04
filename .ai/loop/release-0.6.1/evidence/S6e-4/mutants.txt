@@ -1,0 +1,39 @@
+## M-N1: exit=1 signal= Tests  9 failed | 45 passed (54)
+   sha-before=346572f5b6baff4c8a3fc1b8315a057a8d9338e274fc9401655346430100a0fd sha-after=346572f5b6baff4c8a3fc1b8315a057a8d9338e274fc9401655346430100a0fd restored=true
+   must-fail=[N1-a, N1-b, N1-c] caught=true
+   FAILED: tests/unit/temp-profile.spec.ts > S6e-4 (N1): an unreadable or corrupt owner marker fails CLOSED (owner-unknown) > N1-a corrupt JSON: sweep and close keep the dir with owner-unknown
+   FAILED: tests/unit/temp-profile.spec.ts > S6e-4 (N1): an unreadable or corrupt owner marker fails CLOSED (owner-unknown) > N1-b chromePid is a string: sweep and close keep the dir with owner-unknown
+   FAILED: tests/unit/temp-profile.spec.ts > S6e-4 (N1): an unreadable or corrupt owner marker fails CLOSED (owner-unknown) > N1-c the marker path is a directory (EISDIR): sweep and close keep the dir with owner-unknown
+   FAILED: tests/unit/temp-profile.spec.ts > S6e-4 (N1): an unreadable or corrupt owner marker fails CLOSED (owner-unknown) > chromePid is 0: sweep and close keep the dir with owner-unknown
+   FAILED: tests/unit/temp-profile.spec.ts > S6e-4 (N1): an unreadable or corrupt owner marker fails CLOSED (owner-unknown) > chromePid is negative: sweep and close keep the dir with owner-unknown
+   FAILED: tests/unit/temp-profile.spec.ts > S6e-4 (N1): an unreadable or corrupt owner marker fails CLOSED (owner-unknown) > chromePid is fractional: sweep and close keep the dir with owner-unknown
+   FAILED: tests/unit/temp-profile.spec.ts > S6e-4 (N1): an unreadable or corrupt owner marker fails CLOSED (owner-unknown) > chromePid is missing: sweep and close keep the dir with owner-unknown
+   FAILED: tests/unit/temp-profile.spec.ts > S6e-4 (N1): an unreadable or corrupt owner marker fails CLOSED (owner-unknown) > marker is JSON null: sweep and close keep the dir with owner-unknown
+## M-N1b-read-error-is-absent: exit=1 signal= Tests  1 failed | 53 passed (54)
+   sha-before=346572f5b6baff4c8a3fc1b8315a057a8d9338e274fc9401655346430100a0fd sha-after=346572f5b6baff4c8a3fc1b8315a057a8d9338e274fc9401655346430100a0fd restored=true
+   must-fail=[N1-c] caught=true
+   FAILED: tests/unit/temp-profile.spec.ts > S6e-4 (N1): an unreadable or corrupt owner marker fails CLOSED (owner-unknown) > N1-c the marker path is a directory (EISDIR): sweep and close keep the dir with owner-unknown
+## M-N1c-any-number-is-valid: exit=1 signal= Tests  3 failed | 51 passed (54)
+   sha-before=346572f5b6baff4c8a3fc1b8315a057a8d9338e274fc9401655346430100a0fd sha-after=346572f5b6baff4c8a3fc1b8315a057a8d9338e274fc9401655346430100a0fd restored=true
+   must-fail=[chromePid is 0, chromePid is negative, chromePid is fractional] caught=true
+   FAILED: tests/unit/temp-profile.spec.ts > S6e-4 (N1): an unreadable or corrupt owner marker fails CLOSED (owner-unknown) > chromePid is 0: sweep and close keep the dir with owner-unknown
+   FAILED: tests/unit/temp-profile.spec.ts > S6e-4 (N1): an unreadable or corrupt owner marker fails CLOSED (owner-unknown) > chromePid is negative: sweep and close keep the dir with owner-unknown
+   FAILED: tests/unit/temp-profile.spec.ts > S6e-4 (N1): an unreadable or corrupt owner marker fails CLOSED (owner-unknown) > chromePid is fractional: sweep and close keep the dir with owner-unknown
+## M-N1d-parse-failure-is-absent: exit=1 signal= Tests  2 failed | 52 passed (54)
+   sha-before=346572f5b6baff4c8a3fc1b8315a057a8d9338e274fc9401655346430100a0fd sha-after=346572f5b6baff4c8a3fc1b8315a057a8d9338e274fc9401655346430100a0fd restored=true
+   must-fail=[N1-a, empty file] caught=true
+   FAILED: tests/unit/temp-profile.spec.ts > S6e-4 (N1): an unreadable or corrupt owner marker fails CLOSED (owner-unknown) > N1-a corrupt JSON: sweep and close keep the dir with owner-unknown
+   FAILED: tests/unit/temp-profile.spec.ts > S6e-4 (N1): an unreadable or corrupt owner marker fails CLOSED (owner-unknown) > marker is an empty file: sweep and close keep the dir with owner-unknown
+## M-N1e-order-after-owner-alive: exit=1 signal= Tests  1 failed | 53 passed (54)
+   sha-before=346572f5b6baff4c8a3fc1b8315a057a8d9338e274fc9401655346430100a0fd sha-after=346572f5b6baff4c8a3fc1b8315a057a8d9338e274fc9401655346430100a0fd restored=true
+   must-fail=[decideRemoval: ownerState invalid] caught=true
+   FAILED: tests/unit/temp-profile.spec.ts > S6e-4 (N1): an unreadable or corrupt owner marker fails CLOSED (owner-unknown) > decideRemoval: ownerState invalid is owner-unknown (after in-use, before owner-alive); absent/undefined are unchanged
+## M-N1f-valid-marker-ignored: exit=1 signal= Tests  5 failed | 49 passed (54)
+   sha-before=346572f5b6baff4c8a3fc1b8315a057a8d9338e274fc9401655346430100a0fd sha-after=346572f5b6baff4c8a3fc1b8315a057a8d9338e274fc9401655346430100a0fd restored=true
+   must-fail=[VALID marker whose owner is dead] caught=true
+   FAILED: tests/unit/temp-profile.spec.ts > filesystem paths (scratch temp root) > sweep removes only stale, unreferenced, dead-owner temp dirs
+   FAILED: tests/unit/temp-profile.spec.ts > S6a: bounded cleanup (fake scan / fake rm, monotonic clock) > isAlive seam: the injected probe drives BOTH the exit wait and the ownerAlive fact
+   FAILED: tests/unit/temp-profile.spec.ts > S6b amendment N2: cleanup never throws on malformed input (the documented contract) > an unexpected internal error becomes {removed:false, reason:"error"} (never a throw)
+   FAILED: tests/unit/temp-profile.spec.ts > S6b amendment N2: cleanup never throws on malformed input (the documented contract) > a sweep that hits an unexpected internal error resolves (keeping the dir) instead of throwing
+   FAILED: tests/unit/temp-profile.spec.ts > S6e-4 (N1): an unreadable or corrupt owner marker fails CLOSED (owner-unknown) > a VALID marker whose owner is dead is still removed; with an alive owner it is owner-alive (unchanged)
+ALL-MUTANTS-CAUGHT-AND-RESTORED

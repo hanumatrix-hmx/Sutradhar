@@ -1,0 +1,18 @@
+# check-cleanup-paths on the cli log (ISO=$SP/S11-tmp)
+cleanup-lines=395 outside-iso=0
+pathcheck-cli-exit=0
+# negative control: wrong-root S1 neg log (expect exit 1 + OUTSIDE-ISO)
+OUTSIDE-ISO e:/ai-cache/tmp/sutradhar-cli-1790000000000 <= [cleanup] decision path="E:/AI-Cache/tmp/sutradhar-cli-1790000000000" reason=too-young
+cleanup-lines=1 outside-iso=1
+neg-exit=1
+# other matrix logs with [cleanup] lines
+test-cli.log: 395
+# S11-tmp contents after matrix (own ISO only)
+sutradhar-cross-run-memory-9U7uhO/
+sutradhar-cross-run-memory-FLrMvF/
+sutradhar-cross-run-memory-FWETWb/
+sutradhar-cross-run-memory-haxchH/
+sutradhar-cross-run-memory-jm5WK1/
+sutradhar-cross-run-memory-v64CTr/
+sutradhar-download-locks/
+# test count deltas vs S1: cli 243 -> 360 passed (+117; 2 skipped = platform skips, S8b same); all other packages equal

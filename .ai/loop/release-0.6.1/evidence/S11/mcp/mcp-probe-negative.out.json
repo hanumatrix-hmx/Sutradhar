@@ -1,0 +1,80 @@
+{
+  "checks": {
+    "version": "FAIL",
+    "toolCount": "PASS",
+    "hasWaitFor": "PASS",
+    "launch": "PASS",
+    "navigateNoError": "PASS",
+    "serverSawRequest": "PASS",
+    "navigateResultMentionsPage": "PASS",
+    "shutdownAll": "PASS",
+    "childExited": "PASS",
+    "noLeftoverChromeUnderTmp": "PASS"
+  },
+  "mcpCli": "E:\\HMX_Projects\\Internal_Projects\\PinchTab\\.claude\\worktrees\\project-understanding-696041\\packages\\sutradhar\\dist\\mcp-cli.js",
+  "port": 54191,
+  "childPid": 7096,
+  "serverInfo": {
+    "name": "sutradhar",
+    "version": "0.6.1"
+  },
+  "protocolVersion": "2025-06-18",
+  "version": "0.6.1",
+  "toolCount": 73,
+  "launch": {
+    "sessionId": "sess_1791086047212_1",
+    "activeTabId": "tab_sess_1791086047212_1_1",
+    "hasRealBrowser": true
+  },
+  "navigate": {
+    "tabId": "tab_sess_1791086047212_1_1",
+    "url": "http://127.0.0.1:54191/s3a-probe",
+    "title": "S3a-probe-title",
+    "verification": {
+      "verified": true,
+      "urlChanged": true,
+      "elementFound": true,
+      "confidence": 0.9,
+      "reason": "'navigate' verified: a new document committed at http://127.0.0.1:54191/s3a-probe",
+      "evidence": {
+        "tier": "verified",
+        "checks": [
+          {
+            "check": "navigate.document",
+            "outcome": "pass",
+            "expected": "new-document or url change",
+            "observed": "new-document",
+            "detail": "a new document committed at http://127.0.0.1:54191/s3a-probe"
+          },
+          {
+            "check": "navigate.http-status",
+            "outcome": "pass",
+            "expected": "<400",
+            "observed": 200
+          }
+        ]
+      }
+    }
+  },
+  "serverSawRequest": {
+    "hits": 2,
+    "hitPaths": [
+      "/s3a-probe",
+      "/favicon.ico"
+    ]
+  },
+  "shutdown_all": {
+    "success": true
+  },
+  "childExited": {
+    "code": 0,
+    "sig": null
+  },
+  "leftoverProcesses": [],
+  "noLeftoverChromeUnderTmp": [],
+  "elapsedMs": 4098,
+  "stderrTail": [
+    "[iso-guard] tmpdir=e:/ai-cache/tmp/claude/e--hmx-projects-internal-projects-pinchtab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/s11-tmp pid=7096",
+    "[sutradhar-mcp] config: disabled (SUTRADHAR_CONFIG=none)"
+  ]
+}

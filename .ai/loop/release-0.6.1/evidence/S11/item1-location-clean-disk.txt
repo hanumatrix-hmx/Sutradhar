@@ -1,0 +1,30 @@
+# S11 item 1
+Sun Oct  4 09:16:46 IST 2026
+$ git rev-parse --show-toplevel
+E:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041
+$ git branch --show-current
+release/0.6.1
+$ git rev-parse HEAD
+05a2cf184dd40e2cda39693efffab920487a48e7
+$ git status --porcelain (expect empty)
+?? .ai/loop/release-0.6.1/evidence/S11/
+status-lines=1
+$ git ls-files --others --exclude-standard (untracked incl. evidence; expect empty)
+.ai/loop/release-0.6.1/evidence/S11/item1-location-clean-disk.txt
+$ df -h /e
+Filesystem      Size  Used Avail Use% Mounted on
+E:              210G  161G   49G  77% /e
+$ git log origin/master..HEAD --oneline | wc -l
+27
+$ git branch -vv (is anything pushed? release/0.6.1 tracking)
+* release/0.6.1                                 05a2cf1 [origin/master: ahead 27] 0.6.1: log follow-up gaps (GAP-379..398; FR2-11 branch numbers avoided)
+no origin/release/0.6.1 (nothing pushed)
+$ guard tools sha (must equal S1 iso-tools.sha256)
+dff422804dbddf5d61893bcd1ec9bd7bd3e6535547192e67c4d5c9d2781835e6 *E:/AI-Cache/tmp/claude/E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/iso/assert-tmp.mjs
+bde6b53335aca9cdc9136f96a62c4315b7b69590083029cf14eb121f52a6d55e *E:/AI-Cache/tmp/claude/E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/iso/check-cleanup-paths.mjs
+dff422804dbddf5d61893bcd1ec9bd7bd3e6535547192e67c4d5c9d2781835e6 *E:/AI-Cache/tmp/claude/E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/iso/assert-tmp.mjs
+bde6b53335aca9cdc9136f96a62c4315b7b69590083029cf14eb121f52a6d55e *E:/AI-Cache/tmp/claude/E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/iso/check-cleanup-paths.mjs
+# real TEMP snapshot BEFORE (read-only)
+45
+45
+# processes referencing any of our S11 dirs: none expected (none started yet)

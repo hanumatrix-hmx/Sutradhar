@@ -1,0 +1,11 @@
+import os from 'node:os'; import path from 'node:path';
+const ROOT = process.env.PROBE_ROOT ?? ''; const chk = (p) => { const r = path.resolve(p); return r.startsWith('/mnt/') || !(ROOT && (r === ROOT || r.startsWith(ROOT + '/'))) || !ROOT.startsWith('/tmp/'); };
+for (const p of [os.tmpdir(), ROOT, ...(process.env.PROBE_TMPROOTS ?? '').split(':').filter(Boolean)]) if (!p || chk(p)) { console.error(`WSL GUARD: refusing ${p}`); process.exit(97); }
+console.error(`[wsl-guard] root=${ROOT}`);
+import fsp from 'node:fs/promises'; import { pathToFileURL } from 'node:url'; import { spawn } from 'node:child_process';
+const TP = await import(pathToFileURL(process.env.TP_MODULE).href);
+const C = await import(new URL('./common.mjs', import.meta.url).href);
+const { P, check, done, tree, sameTree, exists, setOld, profileDir, header, sleep } = C;
+const ISO = os.tmpdir();
+const under = (p) => { const r = path.resolve(p); return r.startsWith(ROOT + '/') && !r.startsWith('/mnt/'); };
+const mkroot = async (pfx) => { const t = await fsp.mkdtemp(path.join(ISO, pfx)); if (!under(t)) { console.error(`WSL GUARD: tmpRoot ${t} outside ROOT`); process.exit(97); } return t; };

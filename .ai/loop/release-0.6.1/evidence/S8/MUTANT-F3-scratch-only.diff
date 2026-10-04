@@ -1,0 +1,4 @@
+283c283
+<     const out = await run(powershellExe(), ['-NoProfile', '-NonInteractive', '-Command', script], timeoutMs);
+---
+>     const out = await run("powershell.exe", ['-NoProfile', '-NonInteractive', '-Command', script], timeoutMs);

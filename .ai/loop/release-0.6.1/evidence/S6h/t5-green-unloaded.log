@@ -1,0 +1,14 @@
+The CJS build of Vite's Node API is deprecated. See https://vite.dev/guide/troubleshooting.html#vite-cjs-node-api-deprecated for more details.
+
+ RUN  v1.6.1 E:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/packages/cli
+
+stdout | tests/unit/temp-profile.spec.ts > S6a: bounded cleanup (fake scan / fake rm, monotonic clock) > T5: no rm attempt starts with less than MIN_RM_START_MS left (absolute deadlineAt), asserted on the module's own remaining-ms value
+T5 INFO: module remaining-ms at each attempt=1999,1322; the fake's own reading=1999,1322
+
+ ✓ tests/unit/temp-profile.spec.ts > S6a: bounded cleanup (fake scan / fake rm, monotonic clock) > T5: no rm attempt starts with less than MIN_RM_START_MS left (absolute deadlineAt), asserted on the module's own remaining-ms value 1353ms
+
+ Test Files  1 passed (1)
+      Tests  1 passed | 54 skipped (55)
+   Start at  08:19:07
+   Duration  1.71s (transform 44ms, setup 0ms, collect 47ms, tests 1.35s, environment 0ms, prepare 119ms)
+

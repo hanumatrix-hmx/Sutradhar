@@ -1,0 +1,123 @@
+{
+  "startedAt": "2026-10-04T03:56:52.733Z",
+  "cases": [
+    "L1"
+  ],
+  "iter": 1,
+  "fails": 0,
+  "results": [
+    {
+      "name": "P5: ISO leaves room for a 34-char profile name within 200 chars",
+      "ok": true,
+      "detail": "199/199"
+    },
+    {
+      "name": "ISO starts with no sutradhar-cli-* entries",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "L1 iter 1: nav exit 0",
+      "ok": true,
+      "detail": "exit=0 1334ms"
+    },
+    {
+      "name": "L1 iter 1: tempProfile true",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "L1 iter 1: (ii) dirname(userDataDir) == ISO",
+      "ok": true,
+      "detail": "dirname=e:/ai-cache/tmp/claude/e--hmx-projects-internal-projects-pinchtab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/s11"
+    },
+    {
+      "name": "L1 iter 1: --user-data-dir length <= 200 (P5)",
+      "ok": true,
+      "detail": "len=199"
+    },
+    {
+      "name": "L1 iter 1: dir exists after nav",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "L1 iter 1: close exit 0",
+      "ok": true,
+      "detail": "exit=0 1172ms"
+    },
+    {
+      "name": "L1 iter 1: dir gone after close",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "L1 iter 1: Chrome PID gone",
+      "ok": true,
+      "detail": "pid=78448"
+    },
+    {
+      "name": "L1 iter 1: debug order phase kill -> state-cleared -> phase cleanup",
+      "ok": true,
+      "detail": "idx=194,222,1231"
+    },
+    {
+      "name": "L1 iter 1: state.json absent after close",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "L1 iter 1: no new sutradhar-cli-* left in TEMP",
+      "ok": true,
+      "detail": "before=[] after=[]"
+    },
+    {
+      "name": "(i) canary dir swept by the first session start",
+      "ok": true,
+      "detail": "gone=true removed-line=true"
+    },
+    {
+      "name": "L1 timing phase kill (ms) max <= 10500",
+      "ok": true,
+      "detail": "n=1 p50=341 max=341"
+    },
+    {
+      "name": "L1 timing phase cleanup (ms) max <= 15500",
+      "ok": true,
+      "detail": "n=1 p50=597 max=597"
+    },
+    {
+      "name": "L1 timing scan max <= 4000 ms (flag for S8 if not)",
+      "ok": true,
+      "detail": "n=2 p50=544 max=578"
+    },
+    {
+      "name": "after L1: no process referencing ISO is still running",
+      "ok": true,
+      "detail": "left=none"
+    }
+  ],
+  "timing": {
+    "sweep": [
+      514
+    ],
+    "navScan": [
+      510
+    ],
+    "closeScan": [
+      578
+    ],
+    "kill": [
+      341
+    ],
+    "cleanup": [
+      597
+    ],
+    "navMs": [
+      1334
+    ],
+    "closeMs": [
+      1172
+    ]
+  }
+}

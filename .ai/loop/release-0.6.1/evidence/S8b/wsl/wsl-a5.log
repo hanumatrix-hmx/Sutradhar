@@ -1,0 +1,21 @@
+# cmd: timeout 700 wsl.exe -e sh -c 'D=$(mktemp -d) && cp /mnt/e/AI-Cache/tmp/claude/E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/S8b/mod/temp-profile.mjs /mnt/e/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/.ai/loop/release-0.6.1/evidence/S4/probes/common.mjs /mnt/e/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/.ai/loop/release-0.6.1/evidence/S4/probes/wsl/*.mjs /mnt/e/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/.ai/loop/release-0.6.1/evidence/S6e/probes/wsl-a7b.mjs "$D"/ && cd "$D" && sha256sum temp-profile.mjs wsl-a5.mjs && R=$(mktemp -d -p "$PWD") && echo PROBE_ROOT=$R && node -v && TMPDIR="$R" PROBE_ROOT="$R" TP_MODULE="$PWD/temp-profile.mjs" timeout 600 node  wsl-a5.mjs 2>&1; echo "# exit=$?"; cd /; case "$D" in /tmp/tmp.*) rm -rf -- "$D" && echo "# removed own D=$D";; *) echo REFUSE;; esac' ; start=2026-10-04T08:34:12+05:30
+676162d0104416177e1dc8eb6ed64b145c9cad9a3ba748985c5350443537e6b5  temp-profile.mjs
+2547406a8af459d11a03972784169f765609079a5df92d8cc3e1c7dd42db0049  wsl-a5.mjs
+PROBE_ROOT=/tmp/tmp.8qWUdVykoj/tmp.SwmEKX0tOX
+v20.20.2
+[wsl-guard] root=/tmp/tmp.8qWUdVykoj/tmp.SwmEKX0tOX
+== wsl-a5 rule 2 isolated + B2 (stand-in, real ps scan) node=v20.20.2 platform=linux tmpdir=/tmp/tmp.8qWUdVykoj/tmp.SwmEKX0tOX pid=893
+[cleanup] probe dir path="/tmp/tmp.8qWUdVykoj/tmp.SwmEKX0tOX/a5-z9CYQ5/sutradhar-cli-1790000000100-AbC123"
+[cleanup] probe close-result path="/tmp/tmp.8qWUdVykoj/tmp.SwmEKX0tOX/a5-z9CYQ5/sutradhar-cli-1790000000100-AbC123" removed=false reason=in-use
+PASS A5 real ps scan -> in-use :: {"removed":false,"reason":"in-use"}
+INFO attribution=["904/893"] standin=904 probe=893
+PASS A5 attribution only the stand-in, not the probe :: ["904/893"]
+PASS B2 backdated live dir kept (real scan, default minAge) :: ["in-use"]
+PASS B2 marker variant -> owner-alive :: ["owner-alive"]
+PASS stand-in stopped
+[cleanup] probe close-result-after path="/tmp/tmp.8qWUdVykoj/tmp.SwmEKX0tOX/a5-z9CYQ5/sutradhar-cli-1790000000100-AbC123" removed=true
+PASS A5 control: removed after stand-in died :: {"removed":true}
+RESULT fails=0
+# exit=0
+# removed own D=/tmp/tmp.8qWUdVykoj
+# end=2026-10-04T08:34:13+05:30

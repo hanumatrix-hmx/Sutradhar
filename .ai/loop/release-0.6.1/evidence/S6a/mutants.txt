@@ -1,0 +1,45 @@
+## M-a: exit=1 signal= Tests  2 failed | 46 passed (48)
+   sha-before=538c543d5aeaf6970700801d01730d9960b86616b90e8cf62108c766a231e8e6 sha-after=538c543d5aeaf6970700801d01730d9960b86616b90e8cf62108c766a231e8e6 restored=true
+   must-fail=[T1:, T4:] caught=true
+   FAILED: tests/unit/temp-profile.spec.ts > S6a: bounded cleanup (fake scan / fake rm, monotonic clock) > T1: a scan that only returns at its own timeout is clamped to the remaining deadline
+   FAILED: tests/unit/temp-profile.spec.ts > S6a: bounded cleanup (fake scan / fake rm, monotonic clock) > T4: the scan timeout passed by sweep and by close never exceeds the time remaining at the call
+## M-b: exit=1 signal= Tests  1 failed | 47 passed (48)
+   sha-before=538c543d5aeaf6970700801d01730d9960b86616b90e8cf62108c766a231e8e6 sha-after=538c543d5aeaf6970700801d01730d9960b86616b90e8cf62108c766a231e8e6 restored=true
+   must-fail=[T5:] caught=true
+   FAILED: tests/unit/temp-profile.spec.ts > S6a: bounded cleanup (fake scan / fake rm, monotonic clock) > T5: no rm attempt starts with less than MIN_RM_START_MS left (absolute deadlineAt)
+## M-c: exit=1 signal= Tests  1 failed | 47 passed (48)
+   sha-before=538c543d5aeaf6970700801d01730d9960b86616b90e8cf62108c766a231e8e6 sha-after=538c543d5aeaf6970700801d01730d9960b86616b90e8cf62108c766a231e8e6 restored=true
+   must-fail=[T3:] caught=true
+   FAILED: tests/unit/temp-profile.spec.ts > S6a: bounded cleanup (fake scan / fake rm, monotonic clock) > T3: a slow scan eats the sweep budget, so NO dir is removed (deadline starts before the scan)
+## M-d: exit=1 signal= Tests  1 failed | 47 passed (48)
+   sha-before=538c543d5aeaf6970700801d01730d9960b86616b90e8cf62108c766a231e8e6 sha-after=538c543d5aeaf6970700801d01730d9960b86616b90e8cf62108c766a231e8e6 restored=true
+   must-fail=[T6:] caught=true
+   FAILED: tests/unit/temp-profile.spec.ts > S6a: debug seam (SUTRADHAR_CLI_DEBUG_CLEANUP=1) > T6: [cleanup] lines appear only with the env set; every path is written as path="<abs>"
+## M-e: exit=1 signal= Tests  2 failed | 46 passed (48)
+   sha-before=538c543d5aeaf6970700801d01730d9960b86616b90e8cf62108c766a231e8e6 sha-after=538c543d5aeaf6970700801d01730d9960b86616b90e8cf62108c766a231e8e6 restored=true
+   must-fail=[T8:] caught=true
+   FAILED: tests/unit/temp-profile.spec.ts > filesystem paths (scratch temp root) > sweep deletes nothing when the process scan fails
+   FAILED: tests/unit/temp-profile.spec.ts > S6a: bounded cleanup (fake scan / fake rm, monotonic clock) > T8: a scan that fails (null) keeps the dir, for close and for sweep (fail closed)
+## M-f: exit=1 signal= Tests  1 failed | 47 passed (48)
+   sha-before=538c543d5aeaf6970700801d01730d9960b86616b90e8cf62108c766a231e8e6 sha-after=538c543d5aeaf6970700801d01730d9960b86616b90e8cf62108c766a231e8e6 restored=true
+   must-fail=[T6b:] caught=true
+   FAILED: tests/unit/temp-profile.spec.ts > S6a: debug seam (SUTRADHAR_CLI_DEBUG_CLEANUP=1) > T6b: the pure predicates never log, even with the debug env set
+## M-exitclamp: exit=1 signal= Tests  2 failed | 46 passed (48)
+   sha-before=538c543d5aeaf6970700801d01730d9960b86616b90e8cf62108c766a231e8e6 sha-after=538c543d5aeaf6970700801d01730d9960b86616b90e8cf62108c766a231e8e6 restored=true
+   must-fail=[A.4:] caught=true
+   FAILED: tests/unit/temp-profile.spec.ts > S6a: bounded cleanup (fake scan / fake rm, monotonic clock) > T2: an owner that never exits is only ever probed with signal 0, never killed, and the deadline ends the wait
+   FAILED: tests/unit/temp-profile.spec.ts > S6a: bounded cleanup (fake scan / fake rm, monotonic clock) > A.4: exitTimeoutMs / removeTimeoutMs stay as caps, clamped to the overall deadline
+## M-isalive: exit=1 signal= Tests  1 failed | 47 passed (48)
+   sha-before=538c543d5aeaf6970700801d01730d9960b86616b90e8cf62108c766a231e8e6 sha-after=538c543d5aeaf6970700801d01730d9960b86616b90e8cf62108c766a231e8e6 restored=true
+   must-fail=[isAlive seam:] caught=true
+   FAILED: tests/unit/temp-profile.spec.ts > S6a: bounded cleanup (fake scan / fake rm, monotonic clock) > isAlive seam: the injected probe drives BOTH the exit wait and the ownerAlive fact
+## M-sysroot: exit=1 signal= Tests  2 failed | 46 passed (48)
+   sha-before=4c4db6d3b63c705ed6a69d2202839bcca3989142b2f1ddf4edb309072a1470cd sha-after=4c4db6d3b63c705ed6a69d2202839bcca3989142b2f1ddf4edb309072a1470cd restored=true
+   must-fail=[reads SystemRoot on every call] caught=true
+   FAILED: tests/unit/system-binaries.spec.ts > system-binaries > builds absolute Windows paths under %SystemRoot%\System32
+   FAILED: tests/unit/system-binaries.spec.ts > system-binaries > reads SystemRoot on every call, not once at module load
+## M-helptext: exit=1 signal= Tests  1 failed | 47 passed (48)
+   sha-before=86a652a259996ccbae764143be51f87619a5d6f73107b0dc24c54b737523b26a sha-after=86a652a259996ccbae764143be51f87619a5d6f73107b0dc24c54b737523b26a restored=true
+   must-fail=[T7:] caught=true
+   FAILED: tests/unit/help-text.spec.ts > @sutradhar/cli --help text (GAP-315 cleanup diagnostics) > T7: the Environment section documents SUTRADHAR_CLI_DEBUG_CLEANUP as a diagnostics switch
+ALL-MUTANTS-CAUGHT-AND-RESTORED

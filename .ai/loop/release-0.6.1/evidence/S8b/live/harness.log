@@ -1,0 +1,69 @@
+# start 2026-10-04T09:01:08+05:30 CASES=B1,B5,C4,B4 (CLR deliberately excluded: F4; replaced by ab/)
+[iso-guard] tmpdir=e:/ai-cache/tmp/claude/e--hmx-projects-internal-projects-pinchtab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/q8 pid=25596
+[iso-guard-harness] tmpdir=e:/ai-cache/tmp/claude/e--hmx-projects-internal-projects-pinchtab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/q8 pid=25596 node=v25.0.0
+[iso-guard] tmpdir=e:/ai-cache/tmp/claude/e--hmx-projects-internal-projects-pinchtab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/q8 pid=80792
+INFO start 2026-10-04T03:31:08.311Z CASES=B1,B5,C4,B4 cli-bin=E:\HMX_Projects\Internal_Projects\PinchTab\.claude\worktrees\project-understanding-696041\packages\sutradhar\dist\cli-bin.js
+==== B1 two sessions at once (+ a third session sweeping while both are live, backdated)
+CLI B1-navA [nav http://127.0.0.1:65294/?b1a] exit=0 948ms (async)
+CLI B1-navB [nav http://127.0.0.1:65294/?b1b] exit=0 981ms (async)
+PASS B1 both concurrent navs exit 0 :: A=0 B=0
+PASS B1 distinct temp dirs under ISO :: sutradhar-cli-1791084668541-cPbSID sutradhar-cli-1791084668541-p2UMcN
+PASS B1 neither concurrent start removed the other dir
+INFO B1 backdated both dirs by 25 min; A entries=242 B entries=242
+CLI B1-navC [nav http://127.0.0.1:65294/?b1c] exit=0 1411ms
+PASS B1 third session start exit 0
+PASS B1 third session sweep CONSIDERED both live dirs and kept them (in-use/owner-alive) :: A=in-use,in-use B=in-use,in-use
+PASS B1 no pre-existing entry missing in either live dir :: missA=[] missB=[]
+CLI B1-evalA [eval 1+41] exit=0 269ms
+CLI B1-evalB [eval 2+40] exit=0 245ms
+PASS B1 both sessions still work after the third start :: A=0:42 B=0:42
+CLI B1-closeB [close] exit=0 1466ms (async)
+CLI B1-closeA [close] exit=0 1502ms (async)
+PASS B1 concurrent closes exit 0 :: A=0 B=0
+PASS B1 each close removed its own dir
+PASS B1 the third session dir survived both closes
+CLI B1-evalC [eval 6*7] exit=0 293ms
+PASS B1 third session still works
+CLI B1-closeC [close] exit=0 1199ms
+PASS B1 third close exit 0 + dir gone
+PASS B1 chrome 79140 gone
+PASS B1 chrome 80236 gone
+PASS B1 chrome 75396 gone
+REALTEMP B1 count=45 baseline=45 disappeared=[] appeared=[]
+==== B5 TEMP mismatch between nav and close
+CLI B5-nav [nav http://127.0.0.1:65294/?b5] exit=0 753ms
+CLI B5-closeOtherTemp [close] exit=0 658ms
+PASS B5 close exit 0 :: exit=0
+PASS B5 warning names not-auto-temp :: Warning: could not remove temp profile E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\Q8\sutradhar-cli-1791084675319-9927Jg (not-auto-temp); a CLI session started 10 or more minutes from now will retry it.
+PASS B5 dir kept
+PASS B5 state cleared
+PASS B5 chrome gone (kill unchanged)
+[cleanup] consider path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\Q8\sutradhar-cli-1791084675319-9927Jg" mode=close
+[cleanup] scan ms=502 result=39
+[cleanup] decision path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\Q8\sutradhar-cli-1791084675319-9927Jg" reason=remove
+[cleanup] rm-attempt path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\Q8\sutradhar-cli-1791084675319-9927Jg" n=1 remaining-ms=14496
+[cleanup] removed path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\Q8\sutradhar-cli-1791084675319-9927Jg"
+[cleanup] phase cleanup ms=522
+PASS B5 leftover removed via the module with the right root :: {"removed":true}
+REALTEMP B5 count=45 baseline=45 disappeared=[] appeared=[]
+==== C4 FR2-14: nav with a real .sutradhar.json (viewport) in cwd, SUTRADHAR_CONFIG unset
+CLI C4-nav [nav http://127.0.0.1:65294/?c4] exit=0 835ms
+PASS C4 nav exit 0
+CLI C4-eval [eval innerWidth+'x'+innerHeight] exit=0 264ms
+PASS C4 viewport from .sutradhar.json applied (901x677) :: 901x677
+CLI C4-close [close] exit=0 1096ms
+PASS C4 close exit 0, temp dir removed
+REALTEMP C4 count=45 baseline=45 disappeared=[] appeared=[]
+==== B4 sweep: 50 small stale dirs + one ~200 MB stale dir, via a real session start
+INFO B4 created 51 dirs, big=2000x100KiB in 298 ms
+CLI B4-nav [nav http://127.0.0.1:65294/?b4] exit=0 1630ms
+INFO B4 phase sweep ms=779 removed=51 kept-deadline=0 whole-nav=1630
+PASS B4 nav exit 0
+PASS B4 sweep phase <= 15 s + one in-flight rm (<= 20 s observed bound) :: sweep=779
+PASS B4 every candidate either removed or kept with reason=deadline :: removed=51 keptDeadline=0
+CLI B4-close [close] exit=0 1103ms
+PASS B4 close exit 0
+REALTEMP B4 count=45 baseline=45 disappeared=[] appeared=[]
+RESULT fails=0
+# exit=0 end 2026-10-04T09:01:24+05:30
+REALTEMP-IDENTICAL

@@ -1,0 +1,3 @@
+packages/cli/src/spawn-chrome.ts:85:  const child = spawn(chromePath, args, { detached: true, stdio: 'ignore' });
+packages/cli/src/spawn-chrome.ts:121:      const tk = spawn(taskkillExe(), ['/PID', String(pid), '/T', '/F'], { stdio: 'ignore', windowsHide: true });
+packages/cli/src/temp-profile.ts:193:      execFile(file, args, { timeout: timeoutMs, windowsHide: true, maxBuffer: 64 * 1024 * 1024 }, (err, stdout) =>

@@ -1,0 +1,129 @@
+[33mThe CJS build of Vite's Node API is deprecated. See https://vite.dev/guide/troubleshooting.html#vite-cjs-node-api-deprecated for more details.[39m
+
+ RUN  v1.6.1 E:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/packages/cli
+
+ ✓ tests/unit/close-session.spec.ts > stopSpawnedChrome (close/recovery order) > O1: normal close runs kill -> clearState -> cleanup, and cleanup sees NO chromePid in the store
+ ✓ tests/unit/scan-command-lines.spec.ts > scanCommandLines: Linux reads /proc (no ps) > D1: returns only the lines that carry the prefix, from the injected /proc reader; `ps` is never run
+ ✓ tests/unit/scan-command-lines.spec.ts > scanCommandLines: Linux reads /proc (no ps) > D2: an unreadable /proc is null (fail closed), and a close with that scan keeps the dir (scan-unavailable)
+ ✓ tests/unit/scan-command-lines.spec.ts > scanCommandLines: Linux reads /proc (no ps) > D2b: a reader that matched nothing is [] (the query ran), distinct from null
+ ✓ tests/unit/scan-command-lines.spec.ts > scanCommandLines: macOS / other POSIX use ps -ww > D3: darwin runs the absolute ps with exactly -A -ww -o args= and the given timeout
+ ✓ tests/unit/scan-command-lines.spec.ts > scanCommandLines: macOS / other POSIX use ps -ww > D4: a failed ps (null output) is null
+ ✓ tests/unit/scan-command-lines.spec.ts > readProcCommandLines (the /proc reader) > D5: NUL separators become spaces, non-numeric entries are skipped, empty cmdlines (kernel threads) are dropped
+ ✓ tests/unit/scan-command-lines.spec.ts > readProcCommandLines (the /proc reader) > D6: a process that exits between readdir and read is skipped, not an error
+ ✓ tests/unit/scan-command-lines.spec.ts > readProcCommandLines (the /proc reader) > D7: an unreadable /proc (readdir fails) is null
+ ✓ tests/unit/scan-command-lines.spec.ts > readProcCommandLines (the /proc reader) > D8: a /proc that lists processes but where NOTHING can be read is null, never []
+ ✓ tests/unit/scan-command-lines.spec.ts > readProcCommandLines (the /proc reader) > D9: the deadline is honoured: a timeout of 0 is null
+ ✓ tests/unit/temp-profile.spec.ts > isAutoTempProfileDir (rule 1) > accepts legacy and mkdtemp-suffixed names directly in the temp root
+ ✓ tests/unit/temp-profile.spec.ts > isAutoTempProfileDir (rule 1) > rejects named profiles, nested dirs, other roots and look-alikes
+ ✓ tests/unit/temp-profile.spec.ts > commandLinesReference (rule 2 matcher) > matches the basename as a whole token, case-insensitively, whatever the path form
+ ✓ tests/unit/temp-profile.spec.ts > commandLinesReference (rule 2 matcher) > does not match a longer name that merely starts with it
+ ✓ tests/unit/temp-profile.spec.ts > decideRemoval > removes only when every rule holds
+ ✓ tests/unit/temp-profile.spec.ts > decideRemoval > keeps a named/non-temp dir even when everything else says remove
+ ✓ tests/unit/temp-profile.spec.ts > decideRemoval > fails closed when the process scan failed
+ ✓ tests/unit/temp-profile.spec.ts > decideRemoval > keeps a dir a running process has on its command line, even if the owner PID is dead and it is old
+ ✓ tests/unit/temp-profile.spec.ts > decideRemoval > keeps a dir whose owning Chrome PID is alive
+ ✓ tests/unit/temp-profile.spec.ts > decideRemoval > keeps a dir younger than the threshold
+ ✓ tests/unit/scan-command-lines.spec.ts > readProcCommandLines (the /proc reader) > D9b: the deadline stops the scan EARLY (slow reads: null after a few, not after all of them)
+ ✓ tests/unit/scan-command-lines.spec.ts > readProcCommandLines (the /proc reader) > D10: on a host without /proc the default reader is null (so a linux scan fails closed)
+ ✓ tests/unit/scan-command-lines.spec.ts > S6e-2 (F2): case-insensitive scan post-filter > F2-a: raw CRLF output with an upper-case, a lower-case and an unrelated line keeps exactly the two prefixed lines
+ ✓ tests/unit/scan-command-lines.spec.ts > S6e-2 (F2): case-insensitive scan post-filter > F2-b: a dir referenced only in UPPER case is in-use for close (the rule-2 scan sees it)
+ ✓ tests/unit/scan-command-lines.spec.ts > S6e-2 (F2): case-insensitive scan post-filter > N4-b: the filter is only a SUBSTRING pre-filter: a line whose token merely contains the prefix is still returned; the word boundary lives in commandLinesReference
+ ✓ tests/unit/scan-command-lines.spec.ts > S6e-2 (F2): case-insensitive scan post-filter > F2-c: the same filter applies to the Linux /proc reader and to macOS ps output
+ ✓ tests/unit/close-session.spec.ts > stopSpawnedChrome (close/recovery order) > O2: an interrupted (never-settling) cleanup leaves the state already cleared; a second stop makes 0 kill calls
+ ✓ tests/unit/close-session.spec.ts > stopSpawnedChrome (close/recovery order) > O3: a rejecting cleanup is a warning, never a throw; kill ran once; state is cleared
+ ✓ tests/unit/temp-profile.spec.ts > waitForPidExit > returns false at the hard timeout for a PID that never exits 329ms
+ ✓ tests/unit/close-session.spec.ts > stopSpawnedChrome (close/recovery order) > O4: a slow kill (resolves only at its cap) still gets the state cleared and the cleanup run, after kill-end
+ ✓ tests/unit/close-session.spec.ts > stopSpawnedChrome (close/recovery order) > O5: an attached session (no chromePid) makes 0 kill calls, clears the state, and runs no cleanup without tempProfile
+ ✓ tests/unit/close-session.spec.ts > stopSpawnedChrome (close/recovery order) > O6: cli.ts wiring (source guard): exactly 2 `await stopSpawnedChrome(` calls, kill by reference, monotonic now
+ ✓ tests/unit/close-session.spec.ts > stopSpawnedChrome (close/recovery order) > O7: a state record written during the cleanup (a concurrent `nav` from the same cwd) survives
+ ✓ tests/unit/close-session.spec.ts > stopSpawnedChrome (close/recovery order) > O7 source guard: cmdClose clears the state exactly where the plan says > located the real cmdClose body (ends with the Session closed message)
+ ✓ tests/unit/close-session.spec.ts > stopSpawnedChrome (close/recovery order) > O7 source guard: cmdClose clears the state exactly where the plan says > (a) no clearState( between `await stopSpawnedChrome(` and the end of the enclosing `if (state.chromePid)` block
+ ✓ tests/unit/close-session.spec.ts > stopSpawnedChrome (close/recovery order) > O7 source guard: cmdClose clears the state exactly where the plan says > (b) exactly one clearState( in cmdClose, inside the else of `if (state.chromePid)` and OUTSIDE `if (!closeBlocked) {...}`
+ ✓ tests/unit/close-session.spec.ts > stopSpawnedChrome (close/recovery order) > O8: with the real default clock, the cleanup deadline is ~15 s ahead on the performance.now() scale
+ ✓ tests/unit/close-session.spec.ts > stopSpawnedChrome (close/recovery order) > O9: a malformed userDataDir is not passed to the cleanup, but a valid chromePid is still killed once and the state cleared
+ ✓ tests/unit/close-session.spec.ts > stopSpawnedChrome (close/recovery order) > O10: a malformed chromePid is never killed (never reaches taskkill); state cleared; resolves
+ ✓ tests/unit/close-session.spec.ts > stopSpawnedChrome (close/recovery order) > a failing kill never throws (N2) and the later steps still run; the kill error is debug-only
+ ✓ tests/unit/close-session.spec.ts > stopSpawnedChrome (close/recovery order) > S6g: a failing clearState is rethrown (0.6.0 failure semantics), after the cleanup > G6g-1 (AC1): clearState rejects -> the cleanup still runs with the same args -> rejects with the SAME error object, no extra warning
+ ✓ tests/unit/system-binaries.spec.ts > system-binaries > builds absolute Windows paths under %SystemRoot%\System32
+ ✓ tests/unit/system-binaries.spec.ts > system-binaries > reads SystemRoot on every call, not once at module load
+ ✓ tests/unit/system-binaries.spec.ts > system-binaries > falls back to C:\Windows when SystemRoot is unset or empty
+ ✓ tests/unit/system-binaries.spec.ts > system-binaries > psBin is the absolute /bin/ps
+ ✓ tests/unit/system-binaries.spec.ts > S6e-3 (F3): the executables actually run are absolute helper paths > F3-a: the Windows scan runs powershellExe() (absolute), and follows SystemRoot (so it is the helper, not a literal)
+ ✓ tests/unit/system-binaries.spec.ts > S6e-3 (F3): the executables actually run are absolute helper paths > F3-b: the POSIX scan (macOS) runs the absolute psBin(), never the bare name `ps`
+ ✓ tests/unit/system-binaries.spec.ts > S6e-3 (F3): the executables actually run are absolute helper paths > F3-c (Windows): killChromeTree runs taskkillExe() (absolute) with exactly /PID <pid> /T /F
+ ✓ tests/unit/system-binaries.spec.ts > S6e-3 (F3): the executables actually run are absolute helper paths > F3-d: every spawn/execFile call site in packages/cli/src runs a helper path, process.execPath, the resolved Chrome path or an injected seam, never a bare tool name
+ ✓ tests/unit/close-session.spec.ts > stopSpawnedChrome (close/recovery order) > S6g: a failing clearState is rethrown (0.6.0 failure semantics), after the cleanup > G6g-1b: the rethrow happens only AFTER the (slow) cleanup has finished
+ ✓ tests/unit/close-session.spec.ts > stopSpawnedChrome (close/recovery order) > S6g: a failing clearState is rethrown (0.6.0 failure semantics), after the cleanup > G6g-2 (AC2): clearState resolves -> nothing is thrown (the O1-O10 order is unchanged)
+ ✓ tests/unit/close-session.spec.ts > stopSpawnedChrome (close/recovery order) > S6g: a failing clearState is rethrown (0.6.0 failure semantics), after the cleanup > G6g-3 (F7-i): clearState AND cleanup reject -> rejects with the clearState error, exactly one cleanup warning
+ ✓ tests/unit/spawn-failure-cleanup.spec.ts > GAP-349: spawn-failure paths remove their own temp dir > G1 (P0): a synchronous spawn throw (EFTYPE) removes the dir; nothing is killed
+ ✓ tests/unit/spawn-failure-cleanup.spec.ts > GAP-349: spawn-failure paths remove their own temp dir > G2 (P1): no PID plus an async ENOENT removes the dir and reports ENOENT; nothing is killed
+ ✓ tests/unit/temp-profile.spec.ts > waitForPidExit > returns true once the PID is gone
+ ✓ tests/unit/temp-profile.spec.ts > filesystem paths (scratch temp root) > createTempProfileDir makes unique, rule-1-matching dirs; the marker round-trips
+ ✓ tests/unit/temp-profile.spec.ts > filesystem paths (scratch temp root) > sweep removes only stale, unreferenced, dead-owner temp dirs
+ ✓ tests/unit/temp-profile.spec.ts > filesystem paths (scratch temp root) > sweep deletes nothing when the process scan fails
+ ✓ tests/unit/temp-profile.spec.ts > filesystem paths (scratch temp root) > close removes its own fresh temp dir (no age threshold) once the owner is gone
+ ✓ tests/unit/temp-profile.spec.ts > filesystem paths (scratch temp root) > close never removes a dir still referenced by a running process
+ ✓ tests/unit/temp-profile.spec.ts > filesystem paths (scratch temp root) > close never removes a named profile dir
+ ✓ tests/unit/close-session.spec.ts > stopSpawnedChrome (close/recovery order) > S6g: a failing clearState is rethrown (0.6.0 failure semantics), after the cleanup > G6g-4 (F7-ii): clearState rejects with tempProfile false or absent -> rejects, the cleanup is not called
+ ✓ tests/unit/close-session.spec.ts > stopSpawnedChrome (close/recovery order) > S6g: a failing clearState is rethrown (0.6.0 failure semantics), after the cleanup > G6g-5 (F7-iii): clearState AND kill reject -> rejects with the clearState error; the kill error is debug-only
+ ✓ tests/unit/close-session.spec.ts > stopSpawnedChrome (close/recovery order) > S6g: a failing clearState is rethrown (0.6.0 failure semantics), after the cleanup > G6g-6: a non-Error rejection value is rethrown unchanged too
+ ✓ tests/unit/close-session.spec.ts > stopSpawnedChrome (close/recovery order) > O6b source guard: neither `await stopSpawnedChrome(` call site swallows the rejection > located both real bodies
+ ✓ tests/unit/close-session.spec.ts > stopSpawnedChrome (close/recovery order) > O6b source guard: neither `await stopSpawnedChrome(` call site swallows the rejection > self-heal: the call is not followed by .catch/.then and not inside a try block
+ ✓ tests/unit/close-session.spec.ts > stopSpawnedChrome (close/recovery order) > O6b source guard: neither `await stopSpawnedChrome(` call site swallows the rejection > cmdClose: the call is not followed by .catch/.then and not inside a try block
+ ✓ tests/unit/close-session.spec.ts > stopSpawnedChrome (close/recovery order) > O6b source guard: neither `await stopSpawnedChrome(` call site swallows the rejection > the detector itself flags every swallowing form (positive controls) and passes the plain call
+ ✓ tests/unit/temp-profile.spec.ts > filesystem paths (scratch temp root) > close keeps the dir if Chrome does not exit within the timeout
+ ✓ tests/unit/temp-profile.spec.ts > S6a: bounded cleanup (fake scan / fake rm, monotonic clock) > exports the seven constants with the planned values
+ ✓ tests/unit/spawn-failure-cleanup.spec.ts > GAP-349: spawn-failure paths remove their own temp dir > G3 (P2): timeout with the child alive kills once, then removes with the pid and the forwarded isAlive seam 316ms
+ ✓ tests/unit/spawn-failure-cleanup.spec.ts > GAP-349: spawn-failure paths remove their own temp dir > G3b (P2, dying child): the dir is removed only after the killed child is really gone 635ms
+ ✓ tests/unit/spawn-failure-cleanup.spec.ts > GAP-349: spawn-failure paths remove their own temp dir > G4 (P2x): a child that already exited is NOT killed (its pid may be reused); the dir is removed fast
+ ✓ tests/unit/spawn-failure-cleanup.spec.ts > GAP-349: spawn-failure paths remove their own temp dir > G6: a named profile creates nothing in tmpRoot and is never removed (its Chrome is still killed) 319ms
+ ✓ tests/unit/spawn-failure-cleanup.spec.ts > GAP-349: spawn-failure paths remove their own temp dir > success path: returns the endpoint and keeps the dir (no discard)
+ ✓ tests/unit/spawn-failure-cleanup.spec.ts > GAP-349 F8: attachOrDiscard > G5: order is attach, discard-start, discard-end, rethrow-original (the discard is awaited first)
+ ✓ tests/unit/spawn-failure-cleanup.spec.ts > GAP-349 F8: attachOrDiscard > G5: on attach success the result is returned and nothing is discarded
+ ✓ tests/unit/spawn-failure-cleanup.spec.ts > GAP-349 F8: attachOrDiscard > G5: a failing discard cannot replace the original error
+ ✓ tests/unit/spawn-failure-cleanup.spec.ts > GAP-349: discardSpawnedProfile > F8 shape (alive unknown): kills the pid, then removes the temp dir WITH that pid; a named profile is only killed
+ ✓ tests/unit/spawn-failure-cleanup.spec.ts > GAP-349: discardSpawnedProfile > never throws: a throwing kill and a rejecting removeProfile are both contained, and the removal still runs after a failed kill
+ ✓ tests/unit/temp-profile.spec.ts > S6a: bounded cleanup (fake scan / fake rm, monotonic clock) > T1: a scan that only returns at its own timeout is clamped to the remaining deadline 1505ms
+ ✓ tests/unit/temp-profile.spec.ts > S6a: bounded cleanup (fake scan / fake rm, monotonic clock) > T2: an owner that never exits is only ever probed with signal 0, never killed, and the deadline ends the wait 1087ms
+ ✓ tests/unit/temp-profile.spec.ts > S6a: bounded cleanup (fake scan / fake rm, monotonic clock) > A.4: exitTimeoutMs / removeTimeoutMs stay as caps, clamped to the overall deadline 870ms
+ ✓ tests/unit/temp-profile.spec.ts > S6a: bounded cleanup (fake scan / fake rm, monotonic clock) > T3: a slow scan eats the sweep budget, so NO dir is removed (deadline starts before the scan) 1520ms
+ ✓ tests/unit/temp-profile.spec.ts > S6a: bounded cleanup (fake scan / fake rm, monotonic clock) > T3b: the same sweep with enough budget removes all three 811ms
+ ✓ tests/unit/temp-profile.spec.ts > S6a: bounded cleanup (fake scan / fake rm, monotonic clock) > T4: the scan timeout passed by sweep and by close never exceeds the time remaining at the call
+stdout | tests/unit/temp-profile.spec.ts > S6a: bounded cleanup (fake scan / fake rm, monotonic clock) > T5: no rm attempt starts with less than MIN_RM_START_MS left (absolute deadlineAt), asserted on the module's own remaining-ms value
+T5 INFO: module remaining-ms at each attempt=2000,1327; the fake's own reading=2000,1326
+
+ ✓ tests/unit/temp-profile.spec.ts > S6a: bounded cleanup (fake scan / fake rm, monotonic clock) > T5: no rm attempt starts with less than MIN_RM_START_MS left (absolute deadlineAt), asserted on the module's own remaining-ms value 1344ms
+ ✓ tests/unit/temp-profile.spec.ts > S6a: bounded cleanup (fake scan / fake rm, monotonic clock) > T8: a scan that fails (null) keeps the dir, for close and for sweep (fail closed)
+ ✓ tests/unit/temp-profile.spec.ts > S6a: bounded cleanup (fake scan / fake rm, monotonic clock) > isAlive seam: the injected probe drives BOTH the exit wait and the ownerAlive fact 325ms
+ ✓ tests/unit/temp-profile.spec.ts > S6a: debug seam (SUTRADHAR_CLI_DEBUG_CLEANUP=1) > T6: [cleanup] lines appear only with the env set; every path is written as path="<abs>"
+ ✓ tests/unit/temp-profile.spec.ts > S6a: debug seam (SUTRADHAR_CLI_DEBUG_CLEANUP=1) > T6b: the pure predicates never log, even with the debug env set
+ ✓ tests/unit/temp-profile.spec.ts > S6b amendment N2: cleanup never throws on malformed input (the documented contract) > T9: a non-string dir (hand-corrupted state.json) resolves with not-auto-temp instead of throwing
+ ✓ tests/unit/temp-profile.spec.ts > S6b amendment N2: cleanup never throws on malformed input (the documented contract) > T10: a scan that REJECTS is treated as null (scan-unavailable, fail closed), for close and for sweep
+ ✓ tests/unit/temp-profile.spec.ts > S6b amendment N2: cleanup never throws on malformed input (the documented contract) > an unexpected internal error becomes {removed:false, reason:"error"} (never a throw)
+ ✓ tests/unit/temp-profile.spec.ts > S6b amendment N2: cleanup never throws on malformed input (the documented contract) > a sweep that hits an unexpected internal error resolves (keeping the dir) instead of throwing
+ ✓ tests/unit/temp-profile.spec.ts > S6e-1 (F1/N3): links and non-directories are kept, never followed > F1-a: a junction (Windows) / symlink (POSIX) named like a profile is kept by sweep and close; the victim, incl. lockfile, is intact
+ ✓ tests/unit/temp-profile.spec.ts > S6e-1 (F1/N3): links and non-directories are kept, never followed > F1-b: a dir symlink named like a profile is kept (skipped with a logged reason where symlinks need privilege)
+ ✓ tests/unit/temp-profile.spec.ts > S6e-1 (F1/N3): links and non-directories are kept, never followed > F1-c (N3): a regular FILE named like a profile is kept by sweep and close
+ ✓ tests/unit/temp-profile.spec.ts > S6e-1 (F1/N3): links and non-directories are kept, never followed > F1-d (positive control): a real dir under the same setup is still removed by sweep and close
+ ✓ tests/unit/temp-profile.spec.ts > S6e-1 (F1/N3): links and non-directories are kept, never followed > F1-e: a dir swapped for a junction/symlink between the facts and a retry is NOT followed (re-check inside the retry loop)
+ ✓ tests/unit/temp-profile.spec.ts > S6e-1 (F1/N3): links and non-directories are kept, never followed > decideRemoval: realDir === false is not-a-directory (after not-auto-temp, before every other rule); undefined keeps the old behaviour
+ ✓ tests/unit/temp-profile.spec.ts > S6e-4 (N1): an unreadable or corrupt owner marker fails CLOSED (owner-unknown) > N1-a corrupt JSON: sweep and close keep the dir with owner-unknown
+ ✓ tests/unit/temp-profile.spec.ts > S6e-4 (N1): an unreadable or corrupt owner marker fails CLOSED (owner-unknown) > N1-b chromePid is a string: sweep and close keep the dir with owner-unknown
+ ✓ tests/unit/temp-profile.spec.ts > S6e-4 (N1): an unreadable or corrupt owner marker fails CLOSED (owner-unknown) > N1-c the marker path is a directory (EISDIR): sweep and close keep the dir with owner-unknown
+ ✓ tests/unit/temp-profile.spec.ts > S6e-4 (N1): an unreadable or corrupt owner marker fails CLOSED (owner-unknown) > chromePid is 0: sweep and close keep the dir with owner-unknown
+ ✓ tests/unit/temp-profile.spec.ts > S6e-4 (N1): an unreadable or corrupt owner marker fails CLOSED (owner-unknown) > chromePid is negative: sweep and close keep the dir with owner-unknown
+ ✓ tests/unit/temp-profile.spec.ts > S6e-4 (N1): an unreadable or corrupt owner marker fails CLOSED (owner-unknown) > chromePid is fractional: sweep and close keep the dir with owner-unknown
+ ✓ tests/unit/temp-profile.spec.ts > S6e-4 (N1): an unreadable or corrupt owner marker fails CLOSED (owner-unknown) > chromePid is missing: sweep and close keep the dir with owner-unknown
+ ✓ tests/unit/temp-profile.spec.ts > S6e-4 (N1): an unreadable or corrupt owner marker fails CLOSED (owner-unknown) > marker is JSON null: sweep and close keep the dir with owner-unknown
+ ✓ tests/unit/temp-profile.spec.ts > S6e-4 (N1): an unreadable or corrupt owner marker fails CLOSED (owner-unknown) > marker is an empty file: sweep and close keep the dir with owner-unknown
+ ✓ tests/unit/temp-profile.spec.ts > S6e-4 (N1): an unreadable or corrupt owner marker fails CLOSED (owner-unknown) > N1-d (positive control): no marker and no lock is still removed by sweep and close
+ ✓ tests/unit/temp-profile.spec.ts > S6e-4 (N1): an unreadable or corrupt owner marker fails CLOSED (owner-unknown) > a VALID marker whose owner is dead is still removed; with an alive owner it is owner-alive (unchanged)
+ ✓ tests/unit/temp-profile.spec.ts > S6e-4 (N1): an unreadable or corrupt owner marker fails CLOSED (owner-unknown) > readOwnerPid keeps its old behaviour (the S4 probes call it): corrupt marker -> undefined, valid marker -> pid
+ ✓ tests/unit/temp-profile.spec.ts > S6e-4 (N1): an unreadable or corrupt owner marker fails CLOSED (owner-unknown) > decideRemoval: ownerState invalid is owner-unknown (after in-use, before owner-alive); absent/undefined are unchanged
+ ✓ tests/unit/temp-profile.spec.ts > S6e-5 (N4-a): a lockfile held open by a live process protects the whole profile (Windows rule 5) > N4-a (Windows only; rule 5 is Windows-only, so this is skipped on POSIX): 21 entries survive while lockfile is held with FileShare.None 1213ms
+
+ Test Files  5 passed (5)
+      Tests  116 passed | 2 skipped (118)
+   Start at  09:05:30
+   Duration  10.26s (transform 474ms, setup 0ms, collect 1.43s, tests 11.96s, environment 1ms, prepare 702ms)
+

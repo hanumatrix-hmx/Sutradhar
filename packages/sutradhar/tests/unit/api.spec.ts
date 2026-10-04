@@ -39,7 +39,7 @@ function makePngBase64(w: number, h: number): string {
 
 describe('sutradhar SDK public API', () => {
   it('exports its package version', () => {
-    expect(SUTRADHAR_VERSION).toBe('0.6.0');
+    expect(SUTRADHAR_VERSION).toBe('0.6.1');
   });
 
   it('exposes the launch entry point and the Browser/Page classes', () => {

@@ -1,0 +1,24 @@
+# cmd: timeout 300 wsl.exe -e sh -c 'D=$(mktemp -d) && cp /mnt/e/AI-Cache/tmp/claude/E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/S6e-1/mod/temp-profile.mjs /mnt/e/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/.ai/loop/release-0.6.1/evidence/S4/probes/common.mjs /mnt/e/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/.ai/loop/release-0.6.1/evidence/S4/probes/wsl/*.mjs /mnt/e/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/.ai/loop/release-0.6.1/evidence/S4/probes/wsl/*.mjs "$D"/ && cd "$D" && sha256sum temp-profile.mjs && R=$(mktemp -d -p "$PWD") && echo PROBE_ROOT=$R && node -v && TMPDIR="$R" PROBE_ROOT="$R" TP_MODULE="$PWD/temp-profile.mjs" timeout 240 node  wsl-c5b.mjs 2>&1; echo "# exit=$?"; cd /; case "$D" in /tmp/tmp.*) rm -rf -- "$D" && echo "# removed own D=$D";; *) echo REFUSE;; esac' ; start=2026-10-04T06:17:28+05:30
+9eb16c956ae72c47f21aef795e957e2dcbbdf1bf5dcff6d7e6693998cc22ba76  temp-profile.mjs
+PROBE_ROOT=/tmp/tmp.3KDUKsuaQJ/tmp.JT4PKvuOgU
+v20.20.2
+[wsl-guard] root=/tmp/tmp.3KDUKsuaQJ/tmp.JT4PKvuOgU
+== wsl-c5b SingletonLock owner, no marker node=v20.20.2 platform=linux tmpdir=/tmp/tmp.3KDUKsuaQJ/tmp.JT4PKvuOgU pid=14069
+[cleanup] probe dir path="/tmp/tmp.3KDUKsuaQJ/tmp.JT4PKvuOgU/c5b-VlHN8r/sutradhar-cli-1790000000500-AbC123"
+[cleanup] probe dir path="/tmp/tmp.3KDUKsuaQJ/tmp.JT4PKvuOgU/c5b-VlHN8r/sutradhar-cli-1790000000501"
+PASS C5b no marker present
+INFO readOwnerPid d1=14080 d2=14080 dummy=14080
+PASS C5b live SingletonLock pid -> owner-alive (both) :: ["owner-alive","owner-alive"]
+PASS C5b close path owner-alive :: {"removed":false,"reason":"owner-alive"}
+PASS C5b dummy killed by PID
+[cleanup] probe removed path="/tmp/tmp.3KDUKsuaQJ/tmp.JT4PKvuOgU/c5b-VlHN8r/sutradhar-cli-1790000000500-AbC123"
+[cleanup] probe removed path="/tmp/tmp.3KDUKsuaQJ/tmp.JT4PKvuOgU/c5b-VlHN8r/sutradhar-cli-1790000000501"
+PASS C5b dead pid -> removed :: []
+RESULT fails=0
+# exit=0
+# removed own D=/tmp/tmp.3KDUKsuaQJ
+rees/project-understanding-696041/.ai/loop/release-0.6.1/evidence/S4/probes/wsl/wsl-a7.mjs' specified more than once
+cp: warning: source file '/mnt/e/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/.ai/loop/release-0.6.1/evidence/S4/probes/wsl/wsl-c5a.mjs' specified more than once
+cp: warning: source file '/mnt/e/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/.ai/loop/release-0.6.1/evidence/S4/probes/wsl/wsl-c5b.mjs' specified more than once
+cp: warning: source file '/mnt/e/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/.ai/loop/release-0.6.1/evidence/S4/probes/wsl/wsl-port.mjs' specified more than once
+# end=2026-10-04T06:17:29+05:30

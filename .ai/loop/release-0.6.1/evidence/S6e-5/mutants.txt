@@ -1,0 +1,38 @@
+## M1_null_scan_fail_open: exit=1 signal= Tests  6 failed | 343 passed | 2 skipped (351)
+   sha-before=346572f5b6baff4c8a3fc1b8315a057a8d9338e274fc9401655346430100a0fd sha-after=346572f5b6baff4c8a3fc1b8315a057a8d9338e274fc9401655346430100a0fd restored=true
+   must-fail=[] caught=true
+   FAILED: tests/unit/scan-command-lines.spec.ts > scanCommandLines: Linux reads /proc (no ps) > D2: an unreadable /proc is null (fail closed), and a close with that scan keeps the dir (scan-unavailable)
+   FAILED: tests/unit/temp-profile.spec.ts > decideRemoval > fails closed when the process scan failed
+   FAILED: tests/unit/temp-profile.spec.ts > filesystem paths (scratch temp root) > sweep deletes nothing when the process scan fails
+   FAILED: tests/unit/temp-profile.spec.ts > S6a: bounded cleanup (fake scan / fake rm, monotonic clock) > T8: a scan that fails (null) keeps the dir, for close and for sweep (fail closed)
+   FAILED: tests/unit/temp-profile.spec.ts > S6b amendment N2: cleanup never throws on malformed input (the documented contract) > T10: a scan that REJECTS is treated as null (scan-unavailable, fail closed), for close and for sweep
+   FAILED: tests/unit/temp-profile.spec.ts > S6e-4 (N1): an unreadable or corrupt owner marker fails CLOSED (owner-unknown) > decideRemoval: ownerState invalid is owner-unknown (after in-use, before owner-alive); absent/undefined are unchanged
+## M2_no_win_lockfile_probe: exit=1 signal= Tests  1 failed | 348 passed | 2 skipped (351)
+   sha-before=346572f5b6baff4c8a3fc1b8315a057a8d9338e274fc9401655346430100a0fd sha-after=346572f5b6baff4c8a3fc1b8315a057a8d9338e274fc9401655346430100a0fd restored=true
+   must-fail=[N4-a] caught=true
+   FAILED: tests/unit/temp-profile.spec.ts > S6e-5 (N4-a): a lockfile held open by a live process protects the whole profile (Windows rule 5) > N4-a (Windows only; rule 5 is Windows-only, so this is skipped on POSIX): 21 entries survive while lockfile is held with FileShare.None
+## M3_owner_alive_ignored: exit=1 signal= Tests  5 failed | 344 passed | 2 skipped (351)
+   sha-before=346572f5b6baff4c8a3fc1b8315a057a8d9338e274fc9401655346430100a0fd sha-after=346572f5b6baff4c8a3fc1b8315a057a8d9338e274fc9401655346430100a0fd restored=true
+   must-fail=[] caught=true
+   FAILED: tests/unit/temp-profile.spec.ts > decideRemoval > keeps a dir whose owning Chrome PID is alive
+   FAILED: tests/unit/temp-profile.spec.ts > filesystem paths (scratch temp root) > sweep removes only stale, unreferenced, dead-owner temp dirs
+   FAILED: tests/unit/temp-profile.spec.ts > S6a: bounded cleanup (fake scan / fake rm, monotonic clock) > isAlive seam: the injected probe drives BOTH the exit wait and the ownerAlive fact
+   FAILED: tests/unit/temp-profile.spec.ts > S6e-4 (N1): an unreadable or corrupt owner marker fails CLOSED (owner-unknown) > a VALID marker whose owner is dead is still removed; with an alive owner it is owner-alive (unchanged)
+   FAILED: tests/unit/temp-profile.spec.ts > S6e-4 (N1): an unreadable or corrupt owner marker fails CLOSED (owner-unknown) > decideRemoval: ownerState invalid is owner-unknown (after in-use, before owner-alive); absent/undefined are unchanged
+## M4_age_ignored: exit=1 signal= Tests  2 failed | 347 passed | 2 skipped (351)
+   sha-before=346572f5b6baff4c8a3fc1b8315a057a8d9338e274fc9401655346430100a0fd sha-after=346572f5b6baff4c8a3fc1b8315a057a8d9338e274fc9401655346430100a0fd restored=true
+   must-fail=[] caught=true
+   FAILED: tests/unit/temp-profile.spec.ts > decideRemoval > keeps a dir younger than the threshold
+   FAILED: tests/unit/temp-profile.spec.ts > filesystem paths (scratch temp root) > sweep removes only stale, unreferenced, dead-owner temp dirs
+## M5_scan_case_sensitive_kept: exit=1 signal= Tests  4 failed | 345 passed | 2 skipped (351)
+   sha-before=346572f5b6baff4c8a3fc1b8315a057a8d9338e274fc9401655346430100a0fd sha-after=346572f5b6baff4c8a3fc1b8315a057a8d9338e274fc9401655346430100a0fd restored=true
+   must-fail=[F2-a] caught=true
+   FAILED: tests/unit/scan-command-lines.spec.ts > scanCommandLines: Linux reads /proc (no ps) > D1: returns only the lines that carry the prefix, from the injected /proc reader; `ps` is never run
+   FAILED: tests/unit/scan-command-lines.spec.ts > scanCommandLines: macOS / other POSIX use ps -ww > D3: darwin runs the absolute ps with exactly -A -ww -o args= and the given timeout
+   FAILED: tests/unit/scan-command-lines.spec.ts > S6e-2 (F2): case-insensitive scan post-filter > F2-a: raw CRLF output with an upper-case, a lower-case and an unrelated line keeps exactly the two prefixed lines
+   FAILED: tests/unit/scan-command-lines.spec.ts > S6e-2 (F2): case-insensitive scan post-filter > N4-b: the filter is only a SUBSTRING pre-filter: a line whose token merely contains the prefix is still returned; the word boundary lives in commandLinesReference
+## M6_no_root_check: exit=1 signal= Tests  1 failed | 348 passed | 2 skipped (351)
+   sha-before=346572f5b6baff4c8a3fc1b8315a057a8d9338e274fc9401655346430100a0fd sha-after=346572f5b6baff4c8a3fc1b8315a057a8d9338e274fc9401655346430100a0fd restored=true
+   must-fail=[] caught=true
+   FAILED: tests/unit/temp-profile.spec.ts > isAutoTempProfileDir (rule 1) > rejects named profiles, nested dirs, other roots and look-alikes
+ALL-MUTANTS-CAUGHT-AND-RESTORED

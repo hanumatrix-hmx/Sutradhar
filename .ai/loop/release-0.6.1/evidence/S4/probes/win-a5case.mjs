@@ -1,0 +1,26 @@
+import os from 'node:os'; import path from 'node:path'; import fsp from 'node:fs/promises'; import { pathToFileURL } from 'node:url';
+const SPR = 'e:/ai-cache/tmp/claude/e--hmx-projects-internal-projects-pinchtab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad';
+const nrmG = (p) => path.resolve(p).split(path.sep).join('/').toLowerCase().replace(/[/]+$/, '');
+if (process.platform !== 'win32' || !nrmG(os.tmpdir()).startsWith(SPR + '/')) { console.error(`PROBE GUARD: tmpdir=${os.tmpdir()} not under scratchpad`); process.exit(97); }
+console.error(`[probe-guard] tmpdir=${nrmG(os.tmpdir())} pid=${process.pid}`);
+const TP = await import(pathToFileURL(process.env.TP_MODULE).href);
+const C = await import(new URL('./common.mjs', import.meta.url).href);
+const { P, check, done, tree, sameTree, exists, setOld, profileDir, header, sleep } = C;
+import { spawn, execFile } from 'node:child_process';
+header('win-a5case: where is the upper-case reference dropped?');
+const T = await fsp.mkdtemp(path.join(os.tmpdir(), 'a5c-'));
+const dir = await profileDir(path.join(T, 'sutradhar-cli-1790000000777-AbC123'), { lockfile: false }); P('dir', dir);
+const sb = spawn(process.execPath, ['-e', 'setInterval(()=>{},1000)', '--', `--user-data-dir=${dir.toUpperCase()}`], { stdio: 'ignore', windowsHide: true }); await sleep(1500);
+const script = "$ErrorActionPreference='Stop'; Get-CimInstance Win32_Process -Filter " + String.fromCharCode(34) + "CommandLine LIKE '%sutradhar-cli-%'" + String.fromCharCode(34) + " | ForEach-Object { $_.CommandLine }";
+const raw = await new Promise((res) => execFile('C:/Windows/System32/WindowsPowerShell/v1.0/powershell.exe', ['-NoProfile', '-NonInteractive', '-Command', script], { windowsHide: true, maxBuffer: 64 << 20 }, (e, so) => res(e ? null : so)));
+const base = path.basename(dir).toLowerCase();
+const rawHit = raw.split(/\r?\n/).filter((l) => l.toLowerCase().includes(base));
+console.log(`INFO raw WQL output lines mentioning basename (any case): ${rawHit.length} -> ${JSON.stringify(rawHit.map((l) => l.slice(-60)))}`);
+const scanned = await TP.scanCommandLines();
+const modHit = scanned.filter((l) => l.toLowerCase().includes(base));
+console.log(`INFO module scanCommandLines() lines mentioning basename: ${modHit.length}`);
+check('CASE: WQL LIKE is case-insensitive (raw output has the upper-case line)', rawHit.length === 1);
+check('CASE: module scan keeps it (expected FAIL: JS filter is case-sensitive)', modHit.length === 1);
+sb.kill('SIGKILL'); const t0 = performance.now(); while (performance.now() - t0 < 15000 && sb.exitCode === null && sb.signalCode === null) await sleep(100);
+console.log(`INFO stand-in exited=${sb.exitCode !== null || sb.signalCode !== null}`);
+done();

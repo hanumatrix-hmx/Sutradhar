@@ -1,0 +1,20 @@
+# cmd: timeout 700 wsl.exe -e sh -c 'D=$(mktemp -d) && cp /mnt/e/AI-Cache/tmp/claude/E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/S4/mod/temp-profile.mjs /mnt/e/AI-Cache/tmp/claude/E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/S4/common.mjs /mnt/e/AI-Cache/tmp/claude/E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/S4/wsl/*.mjs "$D"/ && cd "$D" && sha256sum temp-profile.mjs && R=$(mktemp -d -p "$PWD") && echo PROBE_ROOT=$R && node -v && TMPDIR="$R" PROBE_ROOT="$R" TP_MODULE="$PWD/temp-profile.mjs" timeout 600 node  wsl-a5.mjs 2>&1; echo "# exit=$?"; cd /; case "$D" in /tmp/tmp.*) rm -rf -- "$D" && echo "# removed own D=$D";; *) echo REFUSE;; esac' ; start=2026-10-04T05:08:42+05:30
+2bb9570a93c9dd819ba22c2bfe03ef88ef377d9632b4ba470ccd8cdbd4542ec4  temp-profile.mjs
+PROBE_ROOT=/tmp/tmp.t2gU0AXScZ/tmp.jEfXQYD987
+v20.20.2
+[wsl-guard] root=/tmp/tmp.t2gU0AXScZ/tmp.jEfXQYD987
+== wsl-a5 rule 2 isolated + B2 (stand-in, real ps scan) node=v20.20.2 platform=linux tmpdir=/tmp/tmp.t2gU0AXScZ/tmp.jEfXQYD987 pid=862
+[cleanup] probe dir path="/tmp/tmp.t2gU0AXScZ/tmp.jEfXQYD987/a5-gFPcUq/sutradhar-cli-1790000000100-AbC123"
+[cleanup] probe close-result path="/tmp/tmp.t2gU0AXScZ/tmp.jEfXQYD987/a5-gFPcUq/sutradhar-cli-1790000000100-AbC123" removed=false reason=in-use
+PASS A5 real ps scan -> in-use :: {"removed":false,"reason":"in-use"}
+INFO attribution=["873/862"] standin=873 probe=862
+PASS A5 attribution only the stand-in, not the probe :: ["873/862"]
+PASS B2 backdated live dir kept (real scan, default minAge) :: ["in-use"]
+PASS B2 marker variant -> owner-alive :: ["owner-alive"]
+PASS stand-in stopped
+[cleanup] probe close-result-after path="/tmp/tmp.t2gU0AXScZ/tmp.jEfXQYD987/a5-gFPcUq/sutradhar-cli-1790000000100-AbC123" removed=true
+PASS A5 control: removed after stand-in died :: {"removed":true}
+RESULT fails=0
+# exit=0
+# removed own D=/tmp/tmp.t2gU0AXScZ
+# end=2026-10-04T05:08:44+05:30

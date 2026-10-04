@@ -1,0 +1,45 @@
+cpu-load-percent before generator: 6
+loadgen: cores=32 workers=16 (<= half) self-terminate-after-ms=270000 pids=80008,82748,76164,76872,68784,37456,78932,11240,39016,80300,72428,73008,77836,83580,78108,81032 controller-pid=83400
+POSITIVE-CONTROL (workers must be found): marker-processes=16 pids=80008,82748,76164,76872,68784,37456,78932,11240,39016,80300,72428,73008,77836,83580,78108,81032
+cpu-load-percent during load: 63
+run 1 PASS T5 INFO: module remaining-ms at each attempt=1998,1323 Duration  1.78s
+run 2 PASS T5 INFO: module remaining-ms at each attempt=1997,1330 Duration  1.82s
+run 3 PASS T5 INFO: module remaining-ms at each attempt=1997,1322 Duration  1.94s
+run 4 PASS T5 INFO: module remaining-ms at each attempt=1998,1335 Duration  1.77s
+run 5 PASS T5 INFO: module remaining-ms at each attempt=1998,1336 Duration  1.79s
+run 6 PASS T5 INFO: module remaining-ms at each attempt=1998,1339 Duration  1.87s
+run 7 PASS T5 INFO: module remaining-ms at each attempt=1998,1327 Duration  1.86s
+run 8 PASS T5 INFO: module remaining-ms at each attempt=1997,1333 Duration  1.86s
+run 9 PASS T5 INFO: module remaining-ms at each attempt=1998,1327 Duration  1.95s
+run 10 PASS T5 INFO: module remaining-ms at each attempt=1998,1329 Duration  2.01s
+run 11 PASS T5 INFO: module remaining-ms at each attempt=1998,1324 Duration  1.86s
+run 12 PASS T5 INFO: module remaining-ms at each attempt=1998,1329 Duration  1.89s
+run 13 PASS T5 INFO: module remaining-ms at each attempt=1997,1322 Duration  1.91s
+run 14 PASS T5 INFO: module remaining-ms at each attempt=1998,1322 Duration  1.96s
+run 15 PASS T5 INFO: module remaining-ms at each attempt=1998,1330 Duration  1.87s
+run 16 PASS T5 INFO: module remaining-ms at each attempt=1998,1319 Duration  1.90s
+run 17 PASS T5 INFO: module remaining-ms at each attempt=1998,1326 Duration  1.85s
+run 18 PASS T5 INFO: module remaining-ms at each attempt=1998,1324 Duration  1.89s
+run 19 PASS T5 INFO: module remaining-ms at each attempt=1997,1321 Duration  1.87s
+run 20 PASS T5 INFO: module remaining-ms at each attempt=1998,1326 Duration  1.96s
+RESULT pass=20 fail=0 elapsed=58s
+before stop: marker-processes=16; logged=16
+pid 80008: ownership confirmed by marker, taskkill status=0
+pid 82748: ownership confirmed by marker, taskkill status=0
+pid 76164: ownership confirmed by marker, taskkill status=0
+pid 76872: ownership confirmed by marker, taskkill status=0
+pid 68784: ownership confirmed by marker, taskkill status=0
+pid 37456: ownership confirmed by marker, taskkill status=0
+pid 78932: ownership confirmed by marker, taskkill status=0
+pid 11240: ownership confirmed by marker, taskkill status=0
+pid 39016: ownership confirmed by marker, taskkill status=0
+pid 80300: ownership confirmed by marker, taskkill status=0
+pid 72428: ownership confirmed by marker, taskkill status=0
+pid 73008: ownership confirmed by marker, taskkill status=0
+pid 77836: ownership confirmed by marker, taskkill status=0
+pid 83580: ownership confirmed by marker, taskkill status=0
+pid 78108: ownership confirmed by marker, taskkill status=0
+pid 81032: ownership confirmed by marker, taskkill status=0
+after stop: marker-processes=0
+FINAL LEFTOVER QUERY: marker-processes=0 pids=
+cpu-load-percent after: 9

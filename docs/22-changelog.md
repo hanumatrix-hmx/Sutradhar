@@ -24,6 +24,44 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 Nothing yet.
 
+## [0.6.1] - unreleased
+
+Prepared on branch `release/0.6.1`; the date and the published-to-npm line are filled in after `npm publish`.
+A patch release: no SDK or MCP API or tool changes (still 72 `browser.*` tools plus `agent.runGoal`). CLI exit codes
+are unchanged, including when `close` or session recovery cannot clear its state file: that still fails with the same
+error and a non-zero exit code, as in 0.6.0.
+
+### Security
+- The MCP server bundle (`sutradhar-mcp`, `dist/mcp-cli.js`) inlines `fast-uri` (through the MCP SDK's `ajv`); it is
+  now 3.1.8 (was 3.1.5), fixing GHSA-5jgf-p345-68v8, GHSA-f65p-4m7j-42xc, GHSA-fph4-wmhf-6fwf, GHSA-jqff-g426-hqxp,
+  GHSA-qw65-cvwx-89v3 and GHSA-hrr3-gc8f-f4qj. These were the only advisories that reached the published package (the
+  SDK's HTTP transports, which pull in express/qs/hono/ip-address, are not bundled). The monorepo lockfile also moves qs
+  to 6.16.0 (was 6.15.3), hono to 4.13.12 (was 4.13.1), @hono/node-server to 2.1.3 (was 2.1.0) and ip-address to 10.7.3 (was 10.3.1) within the SDK's existing
+  ranges; `@modelcontextprotocol/sdk` stays at 1.30.0. The dev-only brace-expansion, js-yaml and nanoid were refreshed
+  in the lockfile too; none of them ship.
+
+### Fixed
+- **The CLI removes its own temp Chrome profiles (GAP-315, GAP-349).** Without `--profile`, the CLI starts Chrome in a
+  throwaway `sutradhar-cli-*` directory in the OS temp dir. `close` now deletes it once Chrome has exited; a failed
+  start deletes its own; and each new session sweeps leftovers older than 10 minutes that no running process uses
+  (owner process gone; on Windows, Chrome's lock file free). If the CLI cannot tell whether a directory is in use, it
+  leaves it alone. Named `--profile` directories are never touched.
+
+### Changed
+- `close` (and recovery from a dead session) now forgets the recorded Chrome process ID immediately after stopping
+  Chrome, before cleaning up the profile directory, so a slow or interrupted cleanup no longer leaves a stale ID
+  behind. How Chrome is stopped is unchanged. If the state file itself cannot be cleared, the command still fails
+  exactly as in 0.6.0 (same error, non-zero exit code, and the ID stays recorded), but the profile directory cleanup
+  runs first.
+- `close` can take longer: stopping Chrome is capped at about 10 s and the directory cleanup at about 15 s more
+  (measured: about 1.1 s in total); one delete already in progress may run past that. A directory that cannot be removed is
+  reported and retried by a CLI session started 10 or more minutes later.
+- Starting a new CLI session can take longer: it first sweeps old temp profiles, which on Windows includes a process
+  query, capped at about 15 s in total (measured: typically under a millisecond when there is nothing to sweep, about half a second when a stale temp dir exists).
+- When Chrome exits before it is ready, starting a session now fails at once with "Chrome exited (code N) before it
+  was ready" instead of polling for the full 10 s start window.
+- New diagnostics switch `SUTRADHAR_CLI_DEBUG_CLEANUP=1` prints what the cleanup considers and deletes.
+
 ## [0.6.0] - 2026-10-03
 
 Published to npm as `sutradhar@0.6.0` on 2026-10-03.

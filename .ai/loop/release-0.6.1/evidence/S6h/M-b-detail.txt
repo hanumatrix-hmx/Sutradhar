@@ -1,0 +1,7 @@
+     → expected 661 to be greater than or equal to 1000
+      Tests  1 failed | 54 skipped (55)
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+ FAIL  tests/unit/temp-profile.spec.ts > S6a: bounded cleanup (fake scan / fake rm, monotonic clock) > T5: no rm attempt starts with less than MIN_RM_START_MS left (absolute deadlineAt), asserted on the module's own rema
+AssertionError: expected 661 to be greater than or equal to 1000
+    359|     console.info(`T5 INFO: module remaining-ms at each attempt=${attem…
+restored=true

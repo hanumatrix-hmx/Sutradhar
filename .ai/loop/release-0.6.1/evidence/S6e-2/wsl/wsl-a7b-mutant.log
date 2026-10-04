@@ -1,0 +1,41 @@
+# cmd: timeout 300 wsl.exe -e sh -c 'D=$(mktemp -d) && cp /mnt/e/AI-Cache/tmp/claude/E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/S6e-2/mod-mutant/temp-profile.mjs /mnt/e/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/.ai/loop/release-0.6.1/evidence/S4/probes/common.mjs /mnt/e/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/.ai/loop/release-0.6.1/evidence/S4/probes/wsl/*.mjs /mnt/e/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/.ai/loop/release-0.6.1/evidence/S6e/probes/*.mjs "$D"/ && cd "$D" && sha256sum temp-profile.mjs && R=$(mktemp -d -p "$PWD") && echo PROBE_ROOT=$R && node -v && TMPDIR="$R" PROBE_ROOT="$R" TP_MODULE="$PWD/temp-profile.mjs" timeout 240 node  wsl-a7b.mjs 2>&1; echo "# exit=$?"; cd /; case "$D" in /tmp/tmp.*) rm -rf -- "$D" && echo "# removed own D=$D";; *) echo REFUSE;; esac' ; start=2026-10-04T06:21:56+05:30
+75dc608fa16fe068a0045913337d416e5ccbb6cbb27bc755cb970224edea58fe  temp-profile.mjs
+PROBE_ROOT=/tmp/tmp.a9bi4nAvBM/tmp.LCJwFwE6Pq
+v20.20.2
+[wsl-guard] root=/tmp/tmp.a9bi4nAvBM/tmp.LCJwFwE6Pq
+== wsl-a7b scanner unavailable -> null -> dir KEPT (additive to wsl-a7; replaces its two PATH checks) node=v20.20.2 platform=linux tmpdir=/tmp/tmp.a9bi4nAvBM/tmp.LCJwFwE6Pq pid=790
+[cleanup] probe dir path="/tmp/tmp.a9bi4nAvBM/tmp.LCJwFwE6Pq/a7b-5WVmwi/sutradhar-cli-179000000050-AbC123"
+PASS A7b [readdir of /proc fails (ENOENT)] -> scan is null :: got=null
+[cleanup] probe close-result path="/tmp/tmp.a9bi4nAvBM/tmp.LCJwFwE6Pq/a7b-5WVmwi/sutradhar-cli-179000000050-AbC123" removed=true reason=undefined
+FAIL A7b [readdir of /proc fails (ENOENT)] -> close keeps (scan-unavailable) :: {"removed":true}
+FAIL A7b [readdir of /proc fails (ENOENT)] -> sweep keeps (scan-unavailable) :: []
+[cleanup] probe dir path="/tmp/tmp.a9bi4nAvBM/tmp.LCJwFwE6Pq/a7b-5WVmwi/sutradhar-cli-179000000051-AbC123"
+PASS A7b [every /proc/<pid>/cmdline unreadable (EACCES)] -> scan is null :: got=null
+[cleanup] probe close-result path="/tmp/tmp.a9bi4nAvBM/tmp.LCJwFwE6Pq/a7b-5WVmwi/sutradhar-cli-179000000051-AbC123" removed=true reason=undefined
+FAIL A7b [every /proc/<pid>/cmdline unreadable (EACCES)] -> close keeps (scan-unavailable) :: {"removed":true}
+FAIL A7b [every /proc/<pid>/cmdline unreadable (EACCES)] -> sweep keeps (scan-unavailable) :: []
+[cleanup] probe dir path="/tmp/tmp.a9bi4nAvBM/tmp.LCJwFwE6Pq/a7b-5WVmwi/sutradhar-cli-179000000052-AbC123"
+PASS A7b [scanner binary missing (absolute path does not exist)] -> scan is null :: got=null
+[cleanup] probe close-result path="/tmp/tmp.a9bi4nAvBM/tmp.LCJwFwE6Pq/a7b-5WVmwi/sutradhar-cli-179000000052-AbC123" removed=true reason=undefined
+FAIL A7b [scanner binary missing (absolute path does not exist)] -> close keeps (scan-unavailable) :: {"removed":true}
+FAIL A7b [scanner binary missing (absolute path does not exist)] -> sweep keeps (scan-unavailable) :: []
+[cleanup] probe dir path="/tmp/tmp.a9bi4nAvBM/tmp.LCJwFwE6Pq/a7b-5WVmwi/sutradhar-cli-179000000053-AbC123"
+PASS A7b [scan timed out (1 ms) on the real /proc reader] -> scan is null :: got=null
+[cleanup] probe close-result path="/tmp/tmp.a9bi4nAvBM/tmp.LCJwFwE6Pq/a7b-5WVmwi/sutradhar-cli-179000000053-AbC123" removed=true reason=undefined
+FAIL A7b [scan timed out (1 ms) on the real /proc reader] -> close keeps (scan-unavailable) :: {"removed":true}
+FAIL A7b [scan timed out (1 ms) on the real /proc reader] -> sweep keeps (scan-unavailable) :: []
+[cleanup] probe dir path="/tmp/tmp.a9bi4nAvBM/tmp.LCJwFwE6Pq/a7b-5WVmwi/sutradhar-cli-1790000000590-AbC123"
+PASS A7b control: real /proc scan works (array, not null) :: len=0
+[cleanup] probe close-result path="/tmp/tmp.a9bi4nAvBM/tmp.LCJwFwE6Pq/a7b-5WVmwi/sutradhar-cli-1790000000590-AbC123" removed=true reason=undefined
+PASS A7b control: scanner available + dir not in use -> removed (close) :: {"removed":true}
+[cleanup] probe dir path="/tmp/tmp.a9bi4nAvBM/tmp.LCJwFwE6Pq/a7b-5WVmwi/sutradhar-cli-1790000000591-AbC123"
+PASS A7b control: scanner available + dir not in use -> removed (sweep) :: {"removed":["/tmp/tmp.a9bi4nAvBM/tmp.LCJwFwE6Pq/a7b-5WVmwi/sutradhar-cli-1790000000591-AbC123"],"kept":[]}
+[cleanup] probe dir path="/tmp/tmp.a9bi4nAvBM/tmp.LCJwFwE6Pq/a7b-5WVmwi/sutradhar-cli-1790000000592-AbC123"
+[cleanup] probe close-result path="/tmp/tmp.a9bi4nAvBM/tmp.LCJwFwE6Pq/a7b-5WVmwi/sutradhar-cli-1790000000592-AbC123" removed=false reason=in-use
+PASS A7b control: scanner available + dir in use -> in-use (kept) :: {"removed":false,"reason":"in-use"}
+PASS A7b control: stand-in exited
+PASS A7b control: after the stand-in died the same dir is removed :: {"removed":true}
+RESULT fails=8
+# exit=1
+# removed own D=/tmp/tmp.a9bi4nAvBM
+# end=2026-10-04T06:22:01+05:30

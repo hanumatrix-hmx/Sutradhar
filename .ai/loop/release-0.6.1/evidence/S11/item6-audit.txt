@@ -1,0 +1,11 @@
+# item 6 start 09:22:58
+audit-full-exit=1
+audit-prod-exit=0 (pnpm audit exits 1 when advisories exist; 0 expected for --prod)
+audit-full advisories=6 metadata.vulnerabilities={"info":0,"low":0,"moderate":3,"high":2,"critical":1} totalDependencies=518 error=null
+ full-audit by module/severity: {"esbuild/moderate":1,"vite/moderate":2,"vite/high":1,"vitest/critical":1,"braces/high":1}
+audit-prod advisories=0 metadata.vulnerabilities={"info":0,"low":0,"moderate":0,"high":0,"critical":0} totalDependencies=160 error=null
+# bundle inventory vs the FRESH audit
+== dist/index.js: pdf-parse@2.4.5, pdfjs-dist@5.4.296, pixelmatch@7.2.0, pngjs@7.0.0
+== dist/cli-bin.js: pdf-parse@2.4.5, pdfjs-dist@5.4.296, pixelmatch@7.2.0, pngjs@7.0.0
+== dist/mcp-cli.js: @modelcontextprotocol/sdk@1.30.0, ajv-formats@3.0.1, ajv@8.20.0, fast-deep-equal@3.1.3, fast-uri@3.1.8, json-schema-traverse@1.0.0, pdf-parse@2.4.5, pdfjs-dist@5.4.296, pixelmatch@7.2.0, pngjs@7.0.0, zod-to-json-schema@3.25.2, zod@3.25.76
+shipped advisories: 0

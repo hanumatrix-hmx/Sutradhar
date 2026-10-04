@@ -1,0 +1,77 @@
+{
+  "label": "v060",
+  "kase": "close",
+  "bin": "E:/AI-Cache/tmp/claude/E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/verify060/inst/node_modules/sutradhar/dist/cli-bin.js",
+  "iso": "E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\A1",
+  "checks": [
+    {
+      "name": "setup nav exit 0",
+      "ok": true,
+      "d": "code=0 "
+    },
+    {
+      "name": "Chrome command line references our ISO (ownership) and yields the profile dir",
+      "ok": true,
+      "d": "dir=E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\A1\\sutradhar-cli-1791083534073"
+    },
+    {
+      "name": "--user-data-dir length <= 200 (P5)",
+      "ok": true,
+      "d": "len=191"
+    },
+    {
+      "name": "profile dir exists after nav",
+      "ok": true,
+      "d": ""
+    },
+    {
+      "name": "lock holder ready (FileShare ReadWrite, no Delete)",
+      "ok": true,
+      "d": ""
+    },
+    {
+      "name": "lock holder released and exited",
+      "ok": true,
+      "d": "exit=0 out=ready,released"
+    },
+    {
+      "name": "leftover query positive control finds the dummy",
+      "ok": true,
+      "d": "83708 node.exe"
+    },
+    {
+      "name": "no process references the ISO at the end",
+      "ok": true,
+      "d": ""
+    },
+    {
+      "name": "real TEMP sutradhar-cli-* list unchanged",
+      "ok": true,
+      "d": ""
+    }
+  ],
+  "measured": {
+    "code": 1,
+    "signal": null,
+    "timedOut": false,
+    "ms": 537,
+    "aliveAtReturn": false,
+    "dirAtReturn": true,
+    "fatalLine": "Fatal: EBUSY: resource busy or locked, unlink 'E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\A1\\st\\state.json'",
+    "errno": "EBUSY",
+    "fatalStatePath": "E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\A1\\st\\state.json",
+    "fatalIdx": 1,
+    "removedIdx": -1,
+    "sessionClosed": false,
+    "noteUnreachable": false,
+    "phaseKill": false,
+    "stateCleared": false,
+    "couldNotClear": false
+  },
+  "stateAfter": {
+    "chromePid": 76796,
+    "userDataDir": null
+  },
+  "chromeGoneFinal": true,
+  "fails": 0
+}

@@ -233,7 +233,7 @@ it never searches the disk itself.
 
 ## Known limitations
 
-These are open, reproduced problems as of 0.6.0.
+These are open, reproduced problems as of 0.6.1.
 
 - **`browser.download_file` (best-effort overlap protection).** Path containment
   (`SUTRADHAR_ALLOWED_DOWNLOAD_ROOTS`/`SUTRADHAR_ALLOWED_UPLOAD_ROOTS`) is verified, including symlink,

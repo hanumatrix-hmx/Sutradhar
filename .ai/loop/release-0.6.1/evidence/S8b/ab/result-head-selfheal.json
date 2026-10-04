@@ -1,0 +1,82 @@
+{
+  "label": "head",
+  "kase": "selfheal",
+  "bin": "E:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/packages/sutradhar/dist/cli-bin.js",
+  "iso": "E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\A5",
+  "checks": [
+    {
+      "name": "setup nav exit 0",
+      "ok": true,
+      "d": "code=0 "
+    },
+    {
+      "name": "Chrome command line references our ISO (ownership) and yields the profile dir",
+      "ok": true,
+      "d": "dir=E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\A5\\sutradhar-cli-1791083557069-6W4cWi"
+    },
+    {
+      "name": "state.userDataDir equals the CIM-derived dir",
+      "ok": true,
+      "d": ""
+    },
+    {
+      "name": "--user-data-dir length <= 200 (P5)",
+      "ok": true,
+      "d": "len=198"
+    },
+    {
+      "name": "profile dir exists after nav",
+      "ok": true,
+      "d": ""
+    },
+    {
+      "name": "lock holder ready (FileShare ReadWrite, no Delete)",
+      "ok": true,
+      "d": ""
+    },
+    {
+      "name": "lock holder released and exited",
+      "ok": true,
+      "d": "exit=0 out=ready,released"
+    },
+    {
+      "name": "leftover query positive control finds the dummy",
+      "ok": true,
+      "d": "79948 node.exe"
+    },
+    {
+      "name": "no process references the ISO at the end",
+      "ok": true,
+      "d": ""
+    },
+    {
+      "name": "real TEMP sutradhar-cli-* list unchanged",
+      "ok": true,
+      "d": ""
+    }
+  ],
+  "measured": {
+    "code": 1,
+    "signal": null,
+    "timedOut": false,
+    "ms": 4062,
+    "aliveAtReturn": false,
+    "dirAtReturn": false,
+    "fatalLine": "Fatal: EBUSY: resource busy or locked, unlink 'E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\A5\\st\\state.json'",
+    "errno": "EBUSY",
+    "fatalStatePath": "E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\A5\\st\\state.json",
+    "fatalIdx": 9,
+    "removedIdx": 7,
+    "sessionClosed": false,
+    "noteUnreachable": true,
+    "phaseKill": true,
+    "stateCleared": false,
+    "couldNotClear": false
+  },
+  "stateAfter": {
+    "chromePid": 59564,
+    "userDataDir": "E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\A5\\sutradhar-cli-1791083557069-6W4cWi"
+  },
+  "chromeGoneFinal": true,
+  "fails": 0
+}

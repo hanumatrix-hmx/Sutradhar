@@ -1,0 +1,26 @@
+== final live re-query 2026-10-04T07:15:53+05:30
+-- processes referencing S7 dirs:
+processes referencing S7 dirs: 0
+-- scratch S7 dirs under SP:
+S7h/
+-- real TEMP sutradhar-cli-* now vs before S7:
+45
+45
+IDENTICAL
+-- entries with mtime newer than the S7 start stamp (all must be pre-existing names = other sessions' live dirs):
+sutradhar-cli-1791046206553 NOT IN BEFORE LIST
+sutradhar-cli-1791046359999 NOT IN BEFORE LIST
+sutradhar-cli-1791046494240 NOT IN BEFORE LIST
+sutradhar-cli-1791043911380 NOT IN BEFORE LIST
+-- dist: mutant files / real bundle sha256 / git
+no mutant files
+48c1756c0b7944351f9352151ab79c39d3ddc60382aa45278b3481e25a657ac4 *packages/sutradhar/dist/cli-bin.js
+?? .ai/loop/release-0.6.1/evidence/S7/
+-- guard lines in evidence: logs=49 harness.log=3 R1=1 R2=1; real guard failures (lines starting with the guard text): 0
+-- crosscheck re-run
+pairs=16 bad=0
+-- (correction of the membership test above: the saved lists carry a trailing slash from 'ls')
+sutradhar-cli-1791046206553 (in before-list: pre-existing, mtime changed by its owner)
+sutradhar-cli-1791046359999 (in before-list: pre-existing, mtime changed by its owner)
+sutradhar-cli-1791046494240 (in before-list: pre-existing, mtime changed by its owner)
+sutradhar-cli-1791043911380 (in before-list: pre-existing, mtime changed by its owner)

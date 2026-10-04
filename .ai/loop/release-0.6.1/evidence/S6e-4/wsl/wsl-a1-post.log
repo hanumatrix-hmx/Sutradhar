@@ -1,0 +1,121 @@
+# cmd: timeout 300 wsl.exe -e sh -c 'D=$(mktemp -d) && cp /mnt/e/AI-Cache/tmp/claude/E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/S6e-4/mod/temp-profile.mjs /mnt/e/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/.ai/loop/release-0.6.1/evidence/S4/probes/common.mjs /mnt/e/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/.ai/loop/release-0.6.1/evidence/S4/probes/wsl/*.mjs /mnt/e/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/.ai/loop/release-0.6.1/evidence/S4/probes/wsl/*.mjs "$D"/ && cd "$D" && sha256sum temp-profile.mjs && R=$(mktemp -d -p "$PWD") && echo PROBE_ROOT=$R && node -v && TMPDIR="$R" PROBE_ROOT="$R" TP_MODULE="$PWD/temp-profile.mjs" timeout 240 node  wsl-a1.mjs 2>&1; echo "# exit=$?"; cd /; case "$D" in /tmp/tmp.*) rm -rf -- "$D" && echo "# removed own D=$D";; *) echo REFUSE;; esac' ; start=2026-10-04T06:36:15+05:30
+676162d0104416177e1dc8eb6ed64b145c9cad9a3ba748985c5350443537e6b5  temp-profile.mjs
+PROBE_ROOT=/tmp/tmp.LqxYRzrrXb/tmp.eSpfCUFYDv
+v20.20.2
+[wsl-guard] root=/tmp/tmp.LqxYRzrrXb/tmp.eSpfCUFYDv
+== wsl-a1 scope node=v20.20.2 platform=linux tmpdir=/tmp/tmp.LqxYRzrrXb/tmp.eSpfCUFYDv pid=6357
+[cleanup] probe tmpRoot path="/tmp/tmp.LqxYRzrrXb/tmp.eSpfCUFYDv/a1-root-tuWz6M"
+[cleanup] probe otherRoot path="/tmp/tmp.LqxYRzrrXb/tmp.eSpfCUFYDv/a1-other-KOFk27"
+[cleanup] probe created path="/tmp/tmp.LqxYRzrrXb/tmp.eSpfCUFYDv/a1-root-tuWz6M/sutradhar-cli-123"
+[cleanup] probe created path="/tmp/tmp.LqxYRzrrXb/tmp.eSpfCUFYDv/a1-root-tuWz6M/sutradhar-cli-1790000000000-AAAAAAAAAAAAAAAAA"
+[cleanup] probe created path="/tmp/tmp.LqxYRzrrXb/tmp.eSpfCUFYDv/a1-root-tuWz6M/sutradhar-cli-1790000000000..x"
+[cleanup] probe created path="/tmp/tmp.LqxYRzrrXb/tmp.eSpfCUFYDv/a1-root-tuWz6M/sutradhar-cli-..1790000000000"
+[cleanup] probe created path="/tmp/tmp.LqxYRzrrXb/tmp.eSpfCUFYDv/a1-root-tuWz6M/sutradhar-cli-1790000000000-a..b"
+[cleanup] probe created path="/tmp/tmp.LqxYRzrrXb/tmp.eSpfCUFYDv/a1-root-tuWz6M/sutradhar-cli-1790000000000.."
+[cleanup] probe created path="/tmp/tmp.LqxYRzrrXb/tmp.eSpfCUFYDv/a1-root-tuWz6M/sutradhar-downloads"
+[cleanup] probe created path="/tmp/tmp.LqxYRzrrXb/tmp.eSpfCUFYDv/a1-root-tuWz6M/sutradhar-download-locks"
+[cleanup] probe created path="/tmp/tmp.LqxYRzrrXb/tmp.eSpfCUFYDv/a1-root-tuWz6M/sutradhar-cli-work"
+[cleanup] probe created path="/tmp/tmp.LqxYRzrrXb/tmp.eSpfCUFYDv/a1-root-tuWz6M/work"
+[cleanup] probe created path="/tmp/tmp.LqxYRzrrXb/tmp.eSpfCUFYDv/a1-root-tuWz6M/SUTRADHAR-CLI-1790000000005"
+[cleanup] probe created path="/tmp/tmp.LqxYRzrrXb/tmp.eSpfCUFYDv/a1-root-tuWz6M/sutradhar-cli-1790000000000-AbC1_3"
+[cleanup] probe created path="/tmp/tmp.LqxYRzrrXb/tmp.eSpfCUFYDv/a1-root-tuWz6M/sutradhar-cli-1790000000000."
+[cleanup] probe created path="/tmp/tmp.LqxYRzrrXb/tmp.eSpfCUFYDv/a1-root-tuWz6M/sub/sutradhar-cli-1790000000001"
+[cleanup] probe created path="/tmp/tmp.LqxYRzrrXb/tmp.eSpfCUFYDv/a1-root-tuWz6M/profiles/sutradhar-cli-1790000000006"
+[cleanup] probe created path="/tmp/tmp.LqxYRzrrXb/tmp.eSpfCUFYDv/a1-other-KOFk27/sutradhar-cli-1790000000002"
+[cleanup] probe created path="/tmp/tmp.LqxYRzrrXb/tmp.eSpfCUFYDv/a1-other-KOFk27/sutradhar-cli-1790000000003-AbC123"
+[cleanup] probe created path="/tmp/tmp.LqxYRzrrXb/tmp.eSpfCUFYDv/a1-root-tuWz6M/sutradhar-cli-1790000000008"
+[cleanup] probe created path="/tmp/tmp.LqxYRzrrXb/tmp.eSpfCUFYDv/a1-root-tuWz6M/sutradhar-cli-1790000000009-AbC123"
+[cleanup] probe sweep-removed path="/tmp/tmp.LqxYRzrrXb/tmp.eSpfCUFYDv/a1-root-tuWz6M/sutradhar-cli-1790000000008"
+[cleanup] probe sweep-removed path="/tmp/tmp.LqxYRzrrXb/tmp.eSpfCUFYDv/a1-root-tuWz6M/sutradhar-cli-1790000000009-AbC123"
+PASS A1 sweep removed exactly the 2 controls :: ["sutradhar-cli-1790000000008","sutradhar-cli-1790000000009-AbC123"]
+PASS A1 sweep kept a1-root-tuWz6M/sutradhar-cli-123
+PASS A1 sweep kept a1-root-tuWz6M/sutradhar-cli-1790000000000-AAAAAAAAAAAAAAAAA
+PASS A1 sweep kept a1-root-tuWz6M/sutradhar-cli-1790000000000..x
+PASS A1 sweep kept a1-root-tuWz6M/sutradhar-cli-..1790000000000
+PASS A1 sweep kept a1-root-tuWz6M/sutradhar-cli-1790000000000-a..b
+PASS A1 sweep kept a1-root-tuWz6M/sutradhar-cli-1790000000000..
+PASS A1 sweep kept a1-root-tuWz6M/sutradhar-downloads
+PASS A1 sweep kept a1-root-tuWz6M/sutradhar-download-locks
+PASS A1 sweep kept a1-root-tuWz6M/sutradhar-cli-work
+PASS A1 sweep kept a1-root-tuWz6M/work
+PASS A1 sweep kept a1-root-tuWz6M/SUTRADHAR-CLI-1790000000005
+PASS A1 sweep kept a1-root-tuWz6M/sutradhar-cli-1790000000000-AbC1_3
+PASS A1 sweep kept a1-root-tuWz6M/sutradhar-cli-1790000000000.
+PASS A1 sweep kept a1-root-tuWz6M/sub/sutradhar-cli-1790000000001
+PASS A1 sweep kept a1-root-tuWz6M/profiles/sutradhar-cli-1790000000006
+PASS A1 sweep kept a1-other-KOFk27/sutradhar-cli-1790000000002
+PASS A1 sweep kept a1-other-KOFk27/sutradhar-cli-1790000000003-AbC123
+PASS A1 sweep kept file a1-root-tuWz6M/sutradhar-cli-1790000000000.lnk
+PASS A1 sweep kept file a1-root-tuWz6M/download-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.lock
+PASS A1 sweep kept file a1-root-tuWz6M/sutradhar-download-locks/download-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.lock
+[cleanup] probe close-target path="/tmp/tmp.LqxYRzrrXb/tmp.eSpfCUFYDv/a1-root-tuWz6M/sutradhar-cli-123"
+PASS A1 close refused a1-root-tuWz6M/sutradhar-cli-123 :: {"removed":false,"reason":"not-auto-temp"}
+[cleanup] probe close-target path="/tmp/tmp.LqxYRzrrXb/tmp.eSpfCUFYDv/a1-root-tuWz6M/sutradhar-cli-1790000000000-AAAAAAAAAAAAAAAAA"
+PASS A1 close refused a1-root-tuWz6M/sutradhar-cli-1790000000000-AAAAAAAAAAAAAAAAA :: {"removed":false,"reason":"not-auto-temp"}
+[cleanup] probe close-target path="/tmp/tmp.LqxYRzrrXb/tmp.eSpfCUFYDv/a1-root-tuWz6M/sutradhar-cli-1790000000000..x"
+PASS A1 close refused a1-root-tuWz6M/sutradhar-cli-1790000000000..x :: {"removed":false,"reason":"not-auto-temp"}
+[cleanup] probe close-target path="/tmp/tmp.LqxYRzrrXb/tmp.eSpfCUFYDv/a1-root-tuWz6M/sutradhar-cli-..1790000000000"
+PASS A1 close refused a1-root-tuWz6M/sutradhar-cli-..1790000000000 :: {"removed":false,"reason":"not-auto-temp"}
+[cleanup] probe close-target path="/tmp/tmp.LqxYRzrrXb/tmp.eSpfCUFYDv/a1-root-tuWz6M/sutradhar-cli-1790000000000-a..b"
+PASS A1 close refused a1-root-tuWz6M/sutradhar-cli-1790000000000-a..b :: {"removed":false,"reason":"not-auto-temp"}
+[cleanup] probe close-target path="/tmp/tmp.LqxYRzrrXb/tmp.eSpfCUFYDv/a1-root-tuWz6M/sutradhar-cli-1790000000000.."
+PASS A1 close refused a1-root-tuWz6M/sutradhar-cli-1790000000000.. :: {"removed":false,"reason":"not-auto-temp"}
+[cleanup] probe close-target path="/tmp/tmp.LqxYRzrrXb/tmp.eSpfCUFYDv/a1-root-tuWz6M/sutradhar-downloads"
+PASS A1 close refused a1-root-tuWz6M/sutradhar-downloads :: {"removed":false,"reason":"not-auto-temp"}
+[cleanup] probe close-target path="/tmp/tmp.LqxYRzrrXb/tmp.eSpfCUFYDv/a1-root-tuWz6M/sutradhar-download-locks"
+PASS A1 close refused a1-root-tuWz6M/sutradhar-download-locks :: {"removed":false,"reason":"not-auto-temp"}
+[cleanup] probe close-target path="/tmp/tmp.LqxYRzrrXb/tmp.eSpfCUFYDv/a1-root-tuWz6M/sutradhar-cli-work"
+PASS A1 close refused a1-root-tuWz6M/sutradhar-cli-work :: {"removed":false,"reason":"not-auto-temp"}
+[cleanup] probe close-target path="/tmp/tmp.LqxYRzrrXb/tmp.eSpfCUFYDv/a1-root-tuWz6M/work"
+PASS A1 close refused a1-root-tuWz6M/work :: {"removed":false,"reason":"not-auto-temp"}
+[cleanup] probe close-target path="/tmp/tmp.LqxYRzrrXb/tmp.eSpfCUFYDv/a1-root-tuWz6M/SUTRADHAR-CLI-1790000000005"
+PASS A1 close refused a1-root-tuWz6M/SUTRADHAR-CLI-1790000000005 :: {"removed":false,"reason":"not-auto-temp"}
+[cleanup] probe close-target path="/tmp/tmp.LqxYRzrrXb/tmp.eSpfCUFYDv/a1-root-tuWz6M/sutradhar-cli-1790000000000-AbC1_3"
+PASS A1 close refused a1-root-tuWz6M/sutradhar-cli-1790000000000-AbC1_3 :: {"removed":false,"reason":"not-auto-temp"}
+[cleanup] probe close-target path="/tmp/tmp.LqxYRzrrXb/tmp.eSpfCUFYDv/a1-root-tuWz6M/sutradhar-cli-1790000000000."
+PASS A1 close refused a1-root-tuWz6M/sutradhar-cli-1790000000000. :: {"removed":false,"reason":"not-auto-temp"}
+[cleanup] probe close-target path="/tmp/tmp.LqxYRzrrXb/tmp.eSpfCUFYDv/a1-root-tuWz6M/sub/sutradhar-cli-1790000000001"
+PASS A1 close refused a1-root-tuWz6M/sub/sutradhar-cli-1790000000001 :: {"removed":false,"reason":"not-auto-temp"}
+[cleanup] probe close-target path="/tmp/tmp.LqxYRzrrXb/tmp.eSpfCUFYDv/a1-root-tuWz6M/profiles/sutradhar-cli-1790000000006"
+PASS A1 close refused a1-root-tuWz6M/profiles/sutradhar-cli-1790000000006 :: {"removed":false,"reason":"not-auto-temp"}
+[cleanup] probe close-target path="/tmp/tmp.LqxYRzrrXb/tmp.eSpfCUFYDv/a1-other-KOFk27/sutradhar-cli-1790000000002"
+PASS A1 close refused a1-other-KOFk27/sutradhar-cli-1790000000002 :: {"removed":false,"reason":"not-auto-temp"}
+[cleanup] probe close-target path="/tmp/tmp.LqxYRzrrXb/tmp.eSpfCUFYDv/a1-other-KOFk27/sutradhar-cli-1790000000003-AbC123"
+PASS A1 close refused a1-other-KOFk27/sutradhar-cli-1790000000003-AbC123 :: {"removed":false,"reason":"not-auto-temp"}
+[cleanup] probe close-target path="/tmp/tmp.LqxYRzrrXb/tmp.eSpfCUFYDv/a1-root-tuWz6M/sutradhar-cli-1790000000000.lnk"
+PASS A1 close refused a1-root-tuWz6M/sutradhar-cli-1790000000000.lnk :: {"removed":false,"reason":"not-auto-temp"}
+[cleanup] probe close-target path="/tmp/tmp.LqxYRzrrXb/tmp.eSpfCUFYDv/a1-root-tuWz6M/download-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.lock"
+PASS A1 close refused a1-root-tuWz6M/download-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.lock :: {"removed":false,"reason":"not-auto-temp"}
+[cleanup] probe close-target path="/tmp/tmp.LqxYRzrrXb/tmp.eSpfCUFYDv/a1-root-tuWz6M/sutradhar-download-locks/download-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.lock"
+PASS A1 close refused a1-root-tuWz6M/sutradhar-download-locks/download-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.lock :: {"removed":false,"reason":"not-auto-temp"}
+[cleanup] probe close-target path="/tmp/tmp.LqxYRzrrXb/tmp.eSpfCUFYDv/a1-root-tuWz6M/sutradhar-cli-1790000000007-x/.."
+PASS A1 close refused a1-root-tuWz6M :: {"removed":false,"reason":"not-auto-temp"}
+[cleanup] probe close-target path="/tmp/tmp.LqxYRzrrXb/tmp.eSpfCUFYDv/a1-root-tuWz6M/sutradhar-cli-1790000000007/."
+PASS A1 close refused a1-root-tuWz6M/sutradhar-cli-1790000000007 :: {"removed":false,"reason":"not-auto-temp"}
+[cleanup] probe close-target path="/tmp/tmp.LqxYRzrrXb/tmp.eSpfCUFYDv/a1-root-tuWz6M"
+PASS A1 close refused a1-root-tuWz6M :: {"removed":false,"reason":"not-auto-temp"}
+[cleanup] probe close-target path="/tmp/tmp.LqxYRzrrXb/tmp.eSpfCUFYDv/a1-other-KOFk27"
+PASS A1 close refused a1-other-KOFk27 :: {"removed":false,"reason":"not-auto-temp"}
+[cleanup] probe close-target path="/tmp/tmp.LqxYRzrrXb/tmp.eSpfCUFYDv"
+PASS A1 close refused . :: {"removed":false,"reason":"not-auto-temp"}
+PASS A1 after close intact a1-root-tuWz6M/sutradhar-cli-123
+PASS A1 after close intact a1-root-tuWz6M/sutradhar-cli-1790000000000-AAAAAAAAAAAAAAAAA
+PASS A1 after close intact a1-root-tuWz6M/sutradhar-cli-1790000000000..x
+PASS A1 after close intact a1-root-tuWz6M/sutradhar-cli-..1790000000000
+PASS A1 after close intact a1-root-tuWz6M/sutradhar-cli-1790000000000-a..b
+PASS A1 after close intact a1-root-tuWz6M/sutradhar-cli-1790000000000..
+PASS A1 after close intact a1-root-tuWz6M/sutradhar-downloads
+PASS A1 after close intact a1-root-tuWz6M/sutradhar-download-locks
+PASS A1 after close intact a1-root-tuWz6M/sutradhar-cli-work
+PASS A1 after close intact a1-root-tuWz6M/work
+PASS A1 after close intact a1-root-tuWz6M/SUTRADHAR-CLI-1790000000005
+PASS A1 after close intact a1-root-tuWz6M/sutradhar-cli-1790000000000-AbC1_3
+PASS A1 after close intact a1-root-tuWz6M/sutradhar-cli-1790000000000.
+PASS A1 after close intact a1-root-tuWz6M/sub/sutradhar-cli-1790000000001
+PASS A1 after close intact a1-root-tuWz6M/profiles/sutradhar-cli-1790000000006
+PASS A1 after close intact a1-other-KOFk27/sutradhar-cli-1790000000002
+PASS A1 after close intact a1-other-KOFk27/sutradhar-cli-1790000000003-AbC123
+RESULT fails=0
+# exit=0
+# removed own D=/tmp/tmp.LqxYRzrrXb
+# end=2026-10-04T06:36:16+05:30

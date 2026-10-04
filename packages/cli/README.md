@@ -148,6 +148,7 @@ Run `sutradhar` with no arguments for this same list straight from the binary.
 | `SUTRADHAR_CONFIG` | _(unset — search for `.sutradhar.json`)_ | An absolute path loads exactly that project config file; `none` ignores project config. See "Project config" below. |
 | `SUTRADHAR_CLI_STATE_DIR` | per-project-directory hash | Where session state (`state.json`) is stored — see above. |
 | `SUTRADHAR_CLI_DEADLINE_MS` | `300000` | Process watchdog: a command still running after this many milliseconds is stopped with an error message. `wait <ref> <timeoutMs>` extends its own deadline to at least 3 x `timeoutMs` + 30 s. |
+| `SUTRADHAR_CLI_DEBUG_CLEANUP` | _(unset — silent)_ | Diagnostics switch. Set to `1` to print `[cleanup] <event> ...` lines on stderr for every temp-profile directory (`<OS temp>/sutradhar-cli-*`) that the session-end cleanup (`close`, self-heal) and the session-start sweep consider, create, remove or keep; every path appears as `path="<absolute path>"`. The cleanup is bounded: `close` spends at most 15 s on it and the sweep at most 15 s, measured on a monotonic clock, and no delete starts with less than 1 s left. A delete that has already started cannot be cancelled and may finish after that. |
 
 ## Project config (`.sutradhar.json`)
 
@@ -208,9 +209,34 @@ so future dialogs in that session are resolved automatically without you having 
 
 The warden and the exit-3 gate are new and have known gaps — read [Known limitations](#known-limitations) before relying on them in automation.
 
+## Temp profile directories and their cleanup
+
+Without `--profile`, the first command that needs a browser starts Chrome with a throwaway profile directory,
+`<OS temp>/sutradhar-cli-<epoch ms>[-<suffix>]` (50-100+ MB once Chrome has run). Since 0.6.1 the CLI removes these itself:
+
+- **`close`** (and recovery from a dead session) stops Chrome, forgets the recorded Chrome process ID, and only then removes that
+  session's own directory. Stopping Chrome is capped at about 10 s; the directory cleanup then has one 15 s deadline (waiting for
+  Chrome to exit, the process scan and the delete together). The exit code is unchanged: if the directory could not be removed,
+  `close` prints `Warning: could not remove temp profile ...` and still exits 0; if the state file itself cannot be cleared it fails
+  as in 0.6.0 (after the directory cleanup ran).
+- **Every new session** first sweeps leftover `sutradhar-cli-*` directories that are older than 10 minutes, within a 15 s budget
+  (a Windows process query is part of it). A directory a sweep cannot remove is simply retried by a later session started 10 or more
+  minutes afterwards.
+- **A failed start** (Chrome cannot be spawned, exits at once, or never becomes ready) removes the directory that start created.
+- **A directory is deleted only if all of these hold:** it is a real directory (never a link, junction or file) named like a
+  CLI temp profile directly in the OS temp dir; the process scan succeeded and no running process has it on its command line; its
+  owner process (recorded in `.sutradhar-owner.json`, or Chrome's POSIX `SingletonLock`) is gone; for a sweep, it is older than
+  10 minutes; and on Windows Chrome's own `lockfile` can be deleted (a held lock means the profile is in use).
+- **If the CLI cannot tell whether a directory is in use** (process scan failed or timed out, owner marker unreadable or corrupt), it
+  leaves the directory alone. Named `--profile` directories, and anything not matching the name pattern, are never touched.
+- **Bounds.** All deadlines use a monotonic clock and no delete starts with under 1 s left, but a delete that has already started cannot
+  be cancelled, so the real worst case is the deadline plus one directory delete.
+- **Diagnostics.** `SUTRADHAR_CLI_DEBUG_CLEANUP=1` prints every directory the cleanup considers, removes or keeps as
+  `[cleanup] <event> ... path="<abs>"` on stderr (see [Environment](#environment)).
+
 ## Known limitations
 
-These are open, reproduced problems as of 0.6.0, not
+These are open, reproduced problems as of 0.6.1, not
 hypothetical ones.
 
 **Native dialogs and crashed tabs**
@@ -263,6 +289,18 @@ hypothetical ones.
   answers in several audit rounds; the known ones are fixed). Polling is about every 100 ms, only the
   first matching element is checked, and a failed visible-wait can take about 3 x `timeoutMs`
   because the engine retries twice (`timeoutMs <= 0` does not retry).
+
+**Temp profile cleanup**
+
+- On POSIX there is no equivalent of the Windows `lockfile` check: a live Chrome there is detected through the process scan and the
+  owner PID only (the scan reads `/proc` on Linux and uses `ps -ww` on macOS). The 0.6.1 audits exercised Windows (Node 18, 20, 22 and
+  25, with real Chrome and Edge) and Linux (WSL, Node 20, without Chrome); macOS and real Chrome on Linux were not exercised.
+- The process scan cannot see the processes of other users or elevated processes. Such cases rely on the owner-PID check (a PID that exists but cannot
+  be signalled counts as alive) and, on Windows, on the lock file.
+- If the PID in a directory's marker is reused by an unrelated process, the directory is kept for good (a leak, not a loss).
+- A stale-name directory that the CLI keeps because its marker is corrupt is never removed automatically; delete it by hand.
+- One delete already in progress cannot be cancelled (see above), so `close` or the first command of a session can run past the
+  stated bounds by the time that one delete takes.
 
 ## Why `axsnap`/`clicktext`/`clickrole` over `snap`/`click`
 

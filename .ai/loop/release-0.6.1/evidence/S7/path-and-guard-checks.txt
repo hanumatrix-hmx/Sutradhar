@@ -1,0 +1,16 @@
+== (iii) path check, root=ISO, all logs except L1s-* (plus the harness log and the streamed L9 log)
+45
+cleanup-lines=271 outside-iso=0
+iso-exit=0
+== (iii) path check, root=ISO_SP, L1s-* logs
+cleanup-lines=20 outside-iso=0
+isosp-exit=0
+== negative control: L1s logs against the WRONG root (must exit 1)
+OUTSIDE-ISO e:/ai-cache/tmp/claude/e--hmx-projects-internal-projects-pinchtab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/s 7/sutradhar-cli-1791077070431-hha97q <= [cleanup] created path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S 7\sutradhar-cli-1791077070431-HhA97Q"
+cleanup-lines=2 outside-iso=1
+neg-exit=1
+== iso-guard lines / ISOLATION GUARD lines
+iso-guard lines in logs: 49  in harness.log: 3
+ISOLATION GUARD lines: 0
+== canary removed line
+[cleanup] removed path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S7\sutradhar-cli-1700000000009-CANARY"

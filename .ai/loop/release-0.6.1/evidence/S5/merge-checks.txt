@@ -1,0 +1,46 @@
+## writeState fields (cli.ts)
+320:    userDataDir: spawned.userDataDir,
+321:    tempProfile: spawned.tempProfile,
+323:    viewport: viewportFlag,
+324:    dialogPolicy,
+420:      flags: { allowlistDomains: allowlistDomainsFlag, viewport: viewportFlag, dialog: dialogFlag, dialogText: dialogTextFlag },
+509:          if (fresh) await writeState({ ...fresh, sessionId: sid, viewport: viewportFlag }).catch(() => {});
+711:        flags: { allowlistDomains: allowlistDomainsFlag, viewport: viewportFlag, dialog: dialogFlag, dialogText: dialogTextFlag },
+## conflict markers
+marker-grep-exit=1
+## merge parents
+254b1edd5b37915d0ced408da8e0c46ec3c4d922 P=2c81072ef7b572a5b6effc0894936c7aa10c2caa 8ba1649dea838000c22605158f13cd4db6376606
+## cli.ts: diff vs parent1 (master side) = branch hunks only
+ packages/cli/src/cli.ts | 24 ++++++++++++++++++++++--
+ 1 file changed, 22 insertions(+), 2 deletions(-)
+## cli.ts: diff vs parent2 (branch side) = master-only hunks (viewport/config etc.), must NOT delete branch hunks
+-  resolveFsRoots,
+-  type ResolvedFsRoots,
+-    spawned = await spawnDetachedChrome(!headed, profileUserDataDir, userAgentFlag, viewportFlag);
+-  const attached = await runtime.attach({ endpoint: spawned.wsEndpoint });
+-  if (!attached.hasRealBrowser) {
+-    printErrorAndExit('Spawned Chrome but could not attach to it. Run "sutradhar doctor" to diagnose.');
+-  }
+-  if (viewportFlag) {
+-    await runtime.setViewport(attached.sessionId, viewportFlag);
+-  const { policy: resolved, persist } = resolveDialogPolicy(dialogFlag, dialogTextFlag, carry);
+-    // The CLI's own default is 'report' — every session it creates gets this, unlike the
+-    // runtime's own MCP/SDK-facing default of 'auto' (D-2).
+-    runtime.setDialogPolicy(attached.sessionId, { mode: 'report' });
+-  let fsRoots: ResolvedFsRoots;
+-    fsRoots = resolveFsRoots({ env: process.env });
+-  for (const w of fsRoots.warnings) console.error(`Warning: ${w}`);
+-    allowedDomains: allowlistDomainsFlag,
+-    allowedDownloadRoots: [...fsRoots.allowedDownloadRoots, ...(opts?.extraDownloadRoots ?? [])],
+-    allowedUploadRoots: fsRoots.allowedUploadRoots,
+-      const { policy } = resolveDialogPolicy(dialogFlag, dialogTextFlag, state);
+(lines removed vs branch listed above; expected: none from GAP-315)
+## spawnFreshSession resolution
+  // flag > config > Chrome default. Only the FLAG is persisted below (D10), so a later edit of the
+  // config file keeps taking effect.
+  const spawnViewport = resolveViewport({ flag: viewportFlag, config: activeConfig }).value;
+  // GAP-315: work off temp profile dirs left behind by crashed/killed sessions. Best-effort,
+  // time-boxed, and fail-closed (see temp-profile.ts for the safety rules).
+  await sweepStaleTempProfiles().catch(() => {});
+  let spawned: Awaited<ReturnType<typeof spawnDetachedChrome>>;
+  try {

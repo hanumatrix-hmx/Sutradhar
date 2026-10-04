@@ -1,0 +1,10 @@
+46091a46092,46093
+>   let clearFailed = false;
+>   let clearError;
+46096c46098,46099
+<     warn2(`Warning: could not clear the session state (${msg(err)}); run "sutradhar close" again if the next command misbehaves.`);
+---
+>     clearFailed = true;
+>     clearError = err;
+46105a46109
+>   if (clearFailed) throw clearError;

@@ -1,0 +1,15 @@
+ ✓ tests/unit/close-session.spec.ts > stopSpawnedChrome (close/recovery order) > O1: normal close runs kill -> clearState -> cleanup, and cleanup sees NO chromePid in the store
+ ✓ tests/unit/close-session.spec.ts > stopSpawnedChrome (close/recovery order) > O2: an interrupted (never-settling) cleanup leaves the state already cleared; a second stop makes 0 kill calls
+ ✓ tests/unit/close-session.spec.ts > stopSpawnedChrome (close/recovery order) > O3: a rejecting cleanup is a warning, never a throw; kill ran once; state is cleared
+ ✓ tests/unit/close-session.spec.ts > stopSpawnedChrome (close/recovery order) > O4: a slow kill (resolves only at its cap) still gets the state cleared and the cleanup run, after kill-end
+ ✓ tests/unit/close-session.spec.ts > stopSpawnedChrome (close/recovery order) > O5: an attached session (no chromePid) makes 0 kill calls, clears the state, and runs no cleanup without tempProfile
+ ✓ tests/unit/close-session.spec.ts > stopSpawnedChrome (close/recovery order) > O6: cli.ts wiring (source guard): exactly 2 `await stopSpawnedChrome(` calls, kill by reference, monotonic now
+ ✓ tests/unit/close-session.spec.ts > stopSpawnedChrome (close/recovery order) > O7: a state record written during the cleanup (a concurrent `nav` from the same cwd) survives
+ ✓ tests/unit/close-session.spec.ts > stopSpawnedChrome (close/recovery order) > O7 source guard: cmdClose clears the state exactly where the plan says > located the real cmdClose body (ends with the Session closed message)
+ ✓ tests/unit/close-session.spec.ts > stopSpawnedChrome (close/recovery order) > O7 source guard: cmdClose clears the state exactly where the plan says > (a) no clearState( between `await stopSpawnedChrome(` and the end of the enclosing `if (state.chromePid)` block
+ ✓ tests/unit/close-session.spec.ts > stopSpawnedChrome (close/recovery order) > O7 source guard: cmdClose clears the state exactly where the plan says > (b) exactly one clearState( in cmdClose, inside the else of `if (state.chromePid)` and OUTSIDE `if (!closeBlocked) {...}`
+ ✓ tests/unit/close-session.spec.ts > stopSpawnedChrome (close/recovery order) > O8: with the real default clock, the cleanup deadline is ~15 s ahead on the performance.now() scale
+ ✓ tests/unit/close-session.spec.ts > stopSpawnedChrome (close/recovery order) > O9: a malformed userDataDir is not passed to the cleanup, but a valid chromePid is still killed once and the state cleared
+ ✓ tests/unit/close-session.spec.ts > stopSpawnedChrome (close/recovery order) > O10: a malformed chromePid is never killed (never reaches taskkill); state cleared; resolves
+ ✓ tests/unit/close-session.spec.ts > stopSpawnedChrome (close/recovery order) > a failing kill or clearState never throws (never-throws contract) and later steps still run
+      Tests  14 passed (14)

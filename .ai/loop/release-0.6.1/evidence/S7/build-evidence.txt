@@ -1,0 +1,17 @@
+--- dist mtimes AFTER forced build
+-rwxr-xr-x 1 Varad M 197609  112462 2026-10-04 06:46:06.326055200 +0530 packages/cli/dist/cli.js*
+-rw-r--r-- 1 Varad M 197609    1920 2026-10-04 06:46:06.278660800 +0530 packages/cli/dist/close-session.js
+-rw-r--r-- 1 Varad M 197609   26231 2026-10-04 06:46:06.273427500 +0530 packages/cli/dist/temp-profile.js
+-rwxr-xr-x 1 Varad M 197609 1842899 2026-10-04 06:46:08.337302900 +0530 packages/sutradhar/dist/cli-bin.js*
+-rw-r--r-- 1 Varad M 197609 1689020 2026-10-04 06:46:08.265518600 +0530 packages/sutradhar/dist/index.js
+-rwxr-xr-x 1 Varad M 197609 2569015 2026-10-04 06:46:08.439180900 +0530 packages/sutradhar/dist/mcp-cli.js*
+2026-10-04T06:47:14+05:30
+--- BEFORE
+-rwxr-xr-x 1 Varad M 197609 1822837 2026-10-04 04:43:51.177836900 +0530 packages/sutradhar/dist/cli-bin.js*
+-rw-r--r-- 1 Varad M 197609 1689020 2026-10-04 04:43:51.104002100 +0530 packages/sutradhar/dist/index.js
+-rwxr-xr-x 1 Varad M 197609 2569015 2026-10-04 04:43:51.277323800 +0530 packages/sutradhar/dist/mcp-cli.js*
+
+--- grep -c in cli-bin.js
+11
+?? .ai/loop/release-0.6.1/evidence/S7/
+48c1756c0b7944351f9352151ab79c39d3ddc60382aa45278b3481e25a657ac4 *packages/sutradhar/dist/cli-bin.js

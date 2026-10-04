@@ -1,0 +1,21 @@
+# cmd: timeout 300 wsl.exe -e sh -c 'D=$(mktemp -d) && cp /mnt/e/AI-Cache/tmp/claude/E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/S6e-2/mod/temp-profile.mjs /mnt/e/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/.ai/loop/release-0.6.1/evidence/S4/probes/common.mjs /mnt/e/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/.ai/loop/release-0.6.1/evidence/S4/probes/wsl/*.mjs /mnt/e/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/.ai/loop/release-0.6.1/evidence/S4/probes/wsl/*.mjs "$D"/ && cd "$D" && sha256sum temp-profile.mjs && R=$(mktemp -d -p "$PWD") && echo PROBE_ROOT=$R && node -v && TMPDIR="$R" PROBE_ROOT="$R" TP_MODULE="$PWD/temp-profile.mjs" timeout 240 node  wsl-a6.mjs 2>&1; echo "# exit=$?"; cd /; case "$D" in /tmp/tmp.*) rm -rf -- "$D" && echo "# removed own D=$D";; *) echo REFUSE;; esac' ; start=2026-10-04T06:24:07+05:30
+d24edfa86bf8a7addfb493f0aa81834562aea76ef9920f36ea52c15fc0b0e576  temp-profile.mjs
+PROBE_ROOT=/tmp/tmp.9eHwkCp8qe/tmp.08fkjeAtnI
+v20.20.2
+[wsl-guard] root=/tmp/tmp.9eHwkCp8qe/tmp.08fkjeAtnI
+== wsl-a6 rule 3 isolated node=v20.20.2 platform=linux tmpdir=/tmp/tmp.9eHwkCp8qe/tmp.08fkjeAtnI pid=899
+[cleanup] probe dir path="/tmp/tmp.9eHwkCp8qe/tmp.08fkjeAtnI/a6-SyRgmd/sutradhar-cli-1790000000200-AbC123"
+PASS A6 owner-alive :: ["owner-alive"]
+PASS A6 dummy killed by PID
+[cleanup] probe removed path="/tmp/tmp.9eHwkCp8qe/tmp.08fkjeAtnI/a6-SyRgmd/sutradhar-cli-1790000000200-AbC123"
+PASS A6 removed after kill :: []
+RESULT fails=0
+# exit=0
+# removed own D=/tmp/tmp.9eHwkCp8qe
+PinchTab/.claude/worktrees/project-understanding-696041/.ai/loop/release-0.6.1/evidence/S4/probes/wsl/wsl-a5.mjs' specified more than once
+cp: warning: source file '/mnt/e/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/.ai/loop/release-0.6.1/evidence/S4/probes/wsl/wsl-a6.mjs' specified more than once
+cp: warning: source file '/mnt/e/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/.ai/loop/release-0.6.1/evidence/S4/probes/wsl/wsl-a7.mjs' specified more than once
+cp: warning: source file '/mnt/e/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/.ai/loop/release-0.6.1/evidence/S4/probes/wsl/wsl-c5a.mjs' specified more than once
+cp: warning: source file '/mnt/e/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/.ai/loop/release-0.6.1/evidence/S4/probes/wsl/wsl-c5b.mjs' specified more than once
+cp: warning: source file '/mnt/e/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/.ai/loop/release-0.6.1/evidence/S4/probes/wsl/wsl-port.mjs' specified more than once
+# end=2026-10-04T06:24:08+05:30

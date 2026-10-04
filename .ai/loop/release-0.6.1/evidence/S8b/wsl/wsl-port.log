@@ -1,0 +1,161 @@
+# cmd: timeout 700 wsl.exe -e sh -c 'D=$(mktemp -d) && cp /mnt/e/AI-Cache/tmp/claude/E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/S8b/mod/temp-profile.mjs /mnt/e/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/.ai/loop/release-0.6.1/evidence/S4/probes/common.mjs /mnt/e/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/.ai/loop/release-0.6.1/evidence/S4/probes/wsl/*.mjs /mnt/e/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/.ai/loop/release-0.6.1/evidence/S6e/probes/wsl-a7b.mjs "$D"/ && cd "$D" && sha256sum temp-profile.mjs wsl-port.mjs && R=$(mktemp -d -p "$PWD") && echo PROBE_ROOT=$R && node -v && TMPDIR="$R" PROBE_ROOT="$R" TP_MODULE="$PWD/temp-profile.mjs" timeout 600 node --test wsl-port.mjs 2>&1; echo "# exit=$?"; cd /; case "$D" in /tmp/tmp.*) rm -rf -- "$D" && echo "# removed own D=$D";; *) echo REFUSE;; esac' ; start=2026-10-04T08:34:22+05:30
+676162d0104416177e1dc8eb6ed64b145c9cad9a3ba748985c5350443537e6b5  temp-profile.mjs
+b6401d4dfa7be61b9c67b0e5066ad10bccbcbb578a7090c2e1c7150211e601e3  wsl-port.mjs
+PROBE_ROOT=/tmp/tmp.du52mE7n14/tmp.UDkANN177p
+v20.20.2
+TAP version 13
+# [wsl-guard] root=/tmp/tmp.du52mE7n14/tmp.UDkANN177p
+# == wsl-port: 19-case node:test port of temp-profile.spec.ts node=v20.20.2 platform=linux tmpdir=/tmp/tmp.du52mE7n14/tmp.UDkANN177p pid=1078
+# Subtest: isAutoTempProfileDir (rule 1)
+    # Subtest: T01 accepts legacy and mkdtemp-suffixed names directly in the temp root
+    ok 1 - T01 accepts legacy and mkdtemp-suffixed names directly in the temp root
+      ---
+      duration_ms: 0.560525
+      ...
+    # Subtest: T02 rejects named profiles, nested dirs, other roots and look-alikes
+    ok 2 - T02 rejects named profiles, nested dirs, other roots and look-alikes
+      ---
+      duration_ms: 0.170507
+      ...
+    1..2
+ok 1 - isAutoTempProfileDir (rule 1)
+  ---
+  duration_ms: 1.291658
+  type: 'suite'
+  ...
+# Subtest: commandLinesReference (rule 2 matcher)
+    # Subtest: T03 matches the basename as a whole token, case-insensitively, whatever the path form
+    ok 1 - T03 matches the basename as a whole token, case-insensitively, whatever the path form
+      ---
+      duration_ms: 0.129606
+      ...
+    # Subtest: T04 does not match a longer name that merely starts with it
+    ok 2 - T04 does not match a longer name that merely starts with it
+      ---
+      duration_ms: 0.098504
+      ...
+    1..2
+ok 2 - commandLinesReference (rule 2 matcher)
+  ---
+  duration_ms: 0.316914
+  type: 'suite'
+  ...
+# Subtest: decideRemoval
+    # Subtest: T05 removes only when every rule holds
+    ok 1 - T05 removes only when every rule holds
+      ---
+      duration_ms: 0.45442
+      ...
+    # Subtest: T06 keeps a named/non-temp dir even when everything else says remove
+    ok 2 - T06 keeps a named/non-temp dir even when everything else says remove
+      ---
+      duration_ms: 0.138607
+      ...
+    # Subtest: T07 fails closed when the process scan failed
+    ok 3 - T07 fails closed when the process scan failed
+      ---
+      duration_ms: 0.522324
+      ...
+    # Subtest: T08 keeps a dir a running process has on its command line, even if the owner PID is dead and it is old
+    ok 4 - T08 keeps a dir a running process has on its command line, even if the owner PID is dead and it is old
+      ---
+      duration_ms: 0.113705
+      ...
+    # Subtest: T09 keeps a dir whose owning Chrome PID is alive
+    ok 5 - T09 keeps a dir whose owning Chrome PID is alive
+      ---
+      duration_ms: 0.097904
+      ...
+    # Subtest: T10 keeps a dir younger than the threshold
+    ok 6 - T10 keeps a dir younger than the threshold
+      ---
+      duration_ms: 0.114505
+      ...
+    1..6
+ok 3 - decideRemoval
+  ---
+  duration_ms: 1.748778
+  type: 'suite'
+  ...
+# Subtest: waitForPidExit
+    # Subtest: T11 returns false at the hard timeout for a PID that never exits
+    ok 1 - T11 returns false at the hard timeout for a PID that never exits
+      ---
+      duration_ms: 301.531748
+      ...
+    # Subtest: T12 returns true once the PID is gone
+    ok 2 - T12 returns true once the PID is gone
+      ---
+      duration_ms: 201.488886
+      ...
+    1..2
+ok 4 - waitForPidExit
+  ---
+  duration_ms: 503.268044
+  type: 'suite'
+  ...
+# [cleanup] probe spec-root path="/tmp/tmp.du52mE7n14/tmp.UDkANN177p/gap315-spec-QebKVl"
+# [cleanup] probe created path="/tmp/tmp.du52mE7n14/tmp.UDkANN177p/gap315-spec-QebKVl/sutradhar-cli-1791083063594-W9Lo0N"
+# [cleanup] probe created path="/tmp/tmp.du52mE7n14/tmp.UDkANN177p/gap315-spec-QebKVl/sutradhar-cli-1791083063595-7AZtHu"
+# Subtest: filesystem paths (scratch temp root)
+    # Subtest: T13 createTempProfileDir makes unique, rule-1-matching dirs; the marker round-trips
+    ok 1 - T13 createTempProfileDir makes unique, rule-1-matching dirs; the marker round-trips
+      ---
+      duration_ms: 5.565048
+      ...
+# [cleanup] probe spec-root path="/tmp/tmp.du52mE7n14/tmp.UDkANN177p/gap315-spec-Y7se9O"
+# [cleanup] probe sweep-removed path="/tmp/tmp.du52mE7n14/tmp.UDkANN177p/gap315-spec-Y7se9O/sutradhar-cli-1790000000001"
+    # Subtest: T14 sweep removes only stale, unreferenced, dead-owner temp dirs
+    ok 2 - T14 sweep removes only stale, unreferenced, dead-owner temp dirs
+      ---
+      duration_ms: 13.89892
+      ...
+# [cleanup] probe spec-root path="/tmp/tmp.du52mE7n14/tmp.UDkANN177p/gap315-spec-gGUp16"
+    # Subtest: T15 sweep deletes nothing when the process scan fails
+    ok 3 - T15 sweep deletes nothing when the process scan fails
+      ---
+      duration_ms: 4.236589
+      ...
+# [cleanup] probe spec-root path="/tmp/tmp.du52mE7n14/tmp.UDkANN177p/gap315-spec-8kyZ5J"
+# [cleanup] probe created path="/tmp/tmp.du52mE7n14/tmp.UDkANN177p/gap315-spec-8kyZ5J/sutradhar-cli-1791083063618-PUwh9U"
+    # Subtest: T16 close removes its own fresh temp dir (no age threshold) once the owner is gone
+    ok 4 - T16 close removes its own fresh temp dir (no age threshold) once the owner is gone
+      ---
+      duration_ms: 3.037035
+      ...
+# [cleanup] probe spec-root path="/tmp/tmp.du52mE7n14/tmp.UDkANN177p/gap315-spec-Yd1O07"
+    # Subtest: T17 close never removes a dir still referenced by a running process
+    ok 5 - T17 close never removes a dir still referenced by a running process
+      ---
+      duration_ms: 2.375406
+      ...
+# [cleanup] probe spec-root path="/tmp/tmp.du52mE7n14/tmp.UDkANN177p/gap315-spec-kkFIRN"
+    # Subtest: T18 close never removes a named profile dir
+    ok 6 - T18 close never removes a named profile dir
+      ---
+      duration_ms: 3.774768
+      ...
+# [cleanup] probe spec-root path="/tmp/tmp.du52mE7n14/tmp.UDkANN177p/gap315-spec-2SmKEJ"
+    # Subtest: T19 close keeps the dir if Chrome does not exit within the timeout
+    ok 7 - T19 close keeps the dir if Chrome does not exit within the timeout
+      ---
+      duration_ms: 202.837046
+      ...
+    1..7
+ok 5 - filesystem paths (scratch temp root)
+  ---
+  duration_ms: 236.073828
+  type: 'suite'
+  ...
+1..5
+# tests 19
+# suites 5
+# pass 19
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 776.577433
+# exit=0
+# removed own D=/tmp/tmp.du52mE7n14
+# end=2026-10-04T08:34:23+05:30

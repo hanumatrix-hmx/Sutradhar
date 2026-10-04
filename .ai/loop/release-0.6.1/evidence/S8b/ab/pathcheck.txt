@@ -1,0 +1,11 @@
+v060-close A1 iso-guard-lines=2 isoguardfail=0 cleanup-lines=0 outside-iso=0
+head-close A2 iso-guard-lines=2 isoguardfail=0 cleanup-lines=9 outside-iso=0
+ctl-close A3 iso-guard-lines=2 isoguardfail=0 cleanup-lines=9 outside-iso=0
+v060-selfheal A4 iso-guard-lines=2 isoguardfail=0 cleanup-lines=0 outside-iso=0
+head-selfheal A5 iso-guard-lines=2 isoguardfail=0 cleanup-lines=9 outside-iso=0
+ctl-selfheal A6 iso-guard-lines=2 isoguardfail=0 cleanup-lines=11 outside-iso=0
+mutB2e-close A7 iso-guard-lines=2 isoguardfail=0 cleanup-lines=9 outside-iso=0
+mutB2d-selfheal A8 iso-guard-lines=2 isoguardfail=0 cleanup-lines=11 outside-iso=0
+neg-control (A2 logs vs A1 root):
+cleanup-lines=9 outside-iso=5
+neg-exit=0

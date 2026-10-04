@@ -1,0 +1,16 @@
+== v060 selfheal node=v25.0.0 bin=E:/AI-Cache/tmp/claude/E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/verify060/inst/node_modules/sutradhar/dist/cli-bin.js ISO=E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\A4 tmpdir=E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S8b-tmp-ab
+PASS setup nav exit 0 :: code=0 
+PASS Chrome command line references our ISO (ownership) and yields the profile dir :: dir=E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\A4\sutradhar-cli-1791083549658
+PASS --user-data-dir length <= 200 (P5) :: len=191
+PASS profile dir exists after nav
+INFO state.json wsEndpoint rewritten to closed port 49170; chromePid kept=83712
+PASS lock holder ready (FileShare ReadWrite, no Delete)
+MEASURED {"code":1,"signal":null,"timedOut":false,"ms":3233,"aliveAtReturn":false,"dirAtReturn":true,"fatalLine":"Fatal: EBUSY: resource busy or locked, unlink 'E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\A4\\st\\state.json'","errno":"EBUSY","fatalStatePath":"E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\A4\\st\\state.json","fatalIdx":2,"removedIdx":-1,"sessionClosed":false,"noteUnreachable":true,"phaseKill":false,"stateCleared":false,"couldNotClear":false}
+PASS lock holder released and exited :: exit=0 out=ready,released
+STATE-AFTER {"chromePid":83712,"userDataDir":null}
+INFO harness deleted state.json itself (no CLI command touches this state dir again)
+INFO harness removed leftover dir sutradhar-cli-1791083549658
+PASS leftover query positive control finds the dummy :: 79608 node.exe
+PASS no process references the ISO at the end
+PASS real TEMP sutradhar-cli-* list unchanged
+# harness-fails=0

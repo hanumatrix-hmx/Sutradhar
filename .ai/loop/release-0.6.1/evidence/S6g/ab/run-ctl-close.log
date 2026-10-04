@@ -1,0 +1,27 @@
+[iso-guard] tmpdir=e:/ai-cache/tmp/claude/e--hmx-projects-internal-projects-pinchtab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/s6gi pid=77156
+[iso-guard-harness] tmpdir=e:/ai-cache/tmp/claude/e--hmx-projects-internal-projects-pinchtab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/s6gi pid=77156 node=v25.0.0 label=ctl case=close
+INFO binary E:/AI-Cache/tmp/claude/E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/S6g-ctl/cli-bin.bff46db.js sha256=48c1756c0b7944351f9352151ab79c39d3ddc60382aa45278b3481e25a657ac4
+[iso-guard] tmpdir=e:/ai-cache/tmp/claude/e--hmx-projects-internal-projects-pinchtab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/s6gi pid=82524
+CLI 1 [nav http://127.0.0.1:65183/?ab-ctl-close] status=0 signal= error= 724ms
+PASS setup: nav exit 0 :: status=0
+PASS setup: Chrome CommandLine carries --user-data-dir :: "C:\Program Files\Google\Chrome\Application\chrome.exe" --remote-debugging-port=65184 --user-data-dir=E:\AI-Cache\tmp\cl
+PASS setup: profile dir is a direct child of ISO and --user-data-dir length <= 200 (P5) :: len=200
+PASS setup: ownership proven (live CommandLine references OUR isolated dir) :: sutradhar-cli-1791081905412-MHzGxC
+PASS setup: state.userDataDir equals the CIM dir
+PASS setup: profile dir exists
+PASS setup: lock holder ready (state.json open without delete-share)
+CLI 2 [close] status=0 signal= error= 1087ms
+INFO measured: status=0 errno=null fatal="" sessionClosed=true aliveRightAfter=false dirExistsRightAfter=false state.json-after=PRESENT chromePid=80784
+INFO holder pid=54424 exited=true
+PASS teardown: lock holder released and exited before any other cleanup
+PASS teardown: harness deleted state.json itself (state.json absent)
+PASS teardown: no sutradhar-cli-* dir left in ISO
+INFO AC predicate (close) = false {"a_statusNumberNonZeroFatalErrnoStateJson":false,"noSessionClosed":false,"noteLine":true,"chromeGone":true,"headOnlyBC":true}; expected false
+PASS AC predicate equals the expectation for ctl (expected false) :: {"a_statusNumberNonZeroFatalErrnoStateJson":false,"noSessionClosed":false,"noteLine":true,"chromeGone":true,"headOnlyBC":true}
+INFO holder pid=54424 exited=true
+PASS leftover query positive control: the dummy with an ISO path in argv IS found :: found=1
+PASS leftover query: no process references the isolated dir (and the harness children are gone)
+PASS page server child exited
+PASS real TEMP sutradhar-cli-* list identical before/after :: before=45 after=45
+RESULT ctl-close fails=0 acPredicate=false
+harness-exit=0 label=ctl case=close

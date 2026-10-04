@@ -30,7 +30,9 @@ The per-package READMEs cover the pre-bundling, workspace-internal view:
 agent loop + web inspector dashboard) — this monorepo's `apps/server` + `packages/frontend`,
 see [Quickstart & Development](#-quickstart--development) below.
 
-### Status (0.6.0) and known limitations
+### Status (0.6.1) and known limitations
+
+0.6.1 is a security and cleanup patch: it updates the `fast-uri` copy bundled in the MCP server (six advisories) and makes the CLI remove its own temporary Chrome profile directories; there are no API or tool changes.
 
 0.6.0 adds a `verification` result on every action (plus an `expect` option), `wait_for` condition waits
 (`browser.wait_for`, `sutradhar waitfor`, `page.waitFor()`) and an opt-in `.sutradhar.json` project config
@@ -43,7 +45,7 @@ these did not pass every independent audit and ship with documented limitations:
 crashed tab needs `sutradhar tabs` then `closetab <id>`; wrong-popup closes are possible), downloads
 (one `download_file` per browser at a time; cross-process protection is best effort), `audit` (it can
 miss the first navigation's error status on a brand-new tab), and `wait_for_selector --state hidden`
-(best effort). The full list is in [docs/22-changelog.md](./docs/22-changelog.md) under "0.6.0"
+(best effort). The full list is in [docs/22-changelog.md](./docs/22-changelog.md) under "0.6.1", "0.6.0"
 and "0.5.0 (2026-09-29)" and in [AGENT_SETUP.md](./AGENT_SETUP.md)'s "Known limitations". Sutradhar does no
 stealth or bot-detection evasion; Cloudflare, CAPTCHA and IP blocks stop it like any other automation tool.
 

@@ -1,0 +1,38 @@
+[iso-guard] tmpdir=e:/ai-cache/tmp/claude/e--hmx-projects-internal-projects-pinchtab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/s11 pid=12028
+[iso-guard-harness] tmpdir=e:/ai-cache/tmp/claude/e--hmx-projects-internal-projects-pinchtab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/s11 pid=12028 node=v25.0.0
+[iso-guard] tmpdir=e:/ai-cache/tmp/claude/e--hmx-projects-internal-projects-pinchtab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/s11 pid=84820
+INFO harness start 2026-10-04T03:56:52.733Z CASES=L1 ITER=1 ISO=E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S11 cli-bin sha256=9858726a291e844e1f84089b18310e90379140e2dfabf7b2fda80eb550b5c59b
+INFO profile path length for ISO: 199 (limit 200), for ISO_SP: 199
+PASS P5: ISO leaves room for a 34-char profile name within 200 chars :: 199/199
+PASS ISO starts with no sutradhar-cli-* entries
+REALTEMP start count=45 baseline=45 disappeared=[] appeared=[]
+INFO == L1: 1x nav+close on packages\sutradhar\dist\cli-bin.js
+INFO canary planted E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S11\sutradhar-cli-1700000000009-CANARY
+CLI L1-nav1-1 [nav http://127.0.0.1:61093/?n=L11] exit=0 1334ms
+PASS L1 iter 1: nav exit 0 :: exit=0 1334ms
+PASS L1 iter 1: tempProfile true
+PASS L1 iter 1: (ii) dirname(userDataDir) == ISO :: dirname=e:/ai-cache/tmp/claude/e--hmx-projects-internal-projects-pinchtab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/s11
+PASS L1 iter 1: --user-data-dir length <= 200 (P5) :: len=199
+PASS L1 iter 1: dir exists after nav
+CLI L1-close1-2 [close] exit=0 1172ms
+PASS L1 iter 1: close exit 0 :: exit=0 1172ms
+PASS L1 iter 1: dir gone after close
+PASS L1 iter 1: Chrome PID gone :: pid=78448
+PASS L1 iter 1: debug order phase kill -> state-cleared -> phase cleanup :: idx=194,222,1231
+PASS L1 iter 1: state.json absent after close
+PASS L1 iter 1: no new sutradhar-cli-* left in TEMP :: before=[] after=[]
+PASS (i) canary dir swept by the first session start :: gone=true removed-line=true
+PASS L1 timing phase kill (ms) max <= 10500 :: n=1 p50=341 max=341
+PASS L1 timing phase cleanup (ms) max <= 15500 :: n=1 p50=597 max=597
+PASS L1 timing scan max <= 4000 ms (flag for S8 if not) :: n=2 p50=544 max=578
+TIMING L1 whole-nav-ms n=1 p50=1334 max=1334
+TIMING L1 whole-close-ms n=1 p50=1172 max=1172
+TIMING L1 phase-sweep-ms n=1 p50=514 max=514
+TIMING L1 phase-kill-ms n=1 p50=341 max=341
+TIMING L1 phase-cleanup-ms n=1 p50=597 max=597
+TIMING L1 scan-ms (nav+close) n=2 p50=544 max=578  nav-scan n=1 p50=510 max=510 close-scan n=1 p50=578 max=578
+PASS after L1: no process referencing ISO is still running :: left=none
+REALTEMP after L1 count=45 baseline=45 disappeared=[] appeared=[]
+REALTEMP end count=45 baseline=45 disappeared=[] appeared=[]
+PASS real TEMP sutradhar-cli-* list is IDENTICAL at the end (or every difference is external) :: gone= added=
+ALL PASS
