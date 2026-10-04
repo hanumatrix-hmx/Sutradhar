@@ -509,3 +509,182 @@ describe('S6b amendment N2: cleanup never throws on malformed input (the documen
     expect(await exists(stale)).toBe(true);
   });
 });
+
+// ---------------------------------------------------------------------------------------------
+// S6e-1 (F1 / N3): a link or a non-directory named like a profile is NEVER a candidate. On
+// Windows the rule-5 probe `rm(<dir>/lockfile)` follows a junction / dir symlink and deleted the
+// VICTIM's lockfile (S4 audit A2); a regular FILE named like a profile used to be swept (N3).
+// ---------------------------------------------------------------------------------------------
+import { lstat, readdir, symlink } from 'node:fs/promises';
+
+describe('S6e-1 (F1/N3): links and non-directories are kept, never followed', () => {
+  let root: string;
+  let victimRoot: string;
+  const created: string[] = [];
+  beforeEach(async () => {
+    root = await mkdtemp(path.join(os.tmpdir(), 'gap315-f1-'));
+    victimRoot = await mkdtemp(path.join(os.tmpdir(), 'gap315-f1v-'));
+    created.push(root, victimRoot);
+  });
+  afterEach(async () => {
+    vi.restoreAllMocks();
+    // a junction/symlink inside root is removed as a link by rm (it never follows); victims are removed separately
+    for (const d of created.splice(0)) await rm(d, { recursive: true, force: true });
+  });
+
+  async function makeVictim(name: string): Promise<string> {
+    const v = path.join(victimRoot, name);
+    await mkdir(path.join(v, 'Default'), { recursive: true });
+    await writeFile(path.join(v, 'Default', 'Preferences'), '{"p":1}');
+    await writeFile(path.join(v, 'Local State'), '{"s":1}');
+    await writeFile(path.join(v, 'lockfile'), '');
+    return v;
+  }
+  async function entries(dir: string): Promise<string[]> {
+    const out: string[] = [];
+    const walk = async (d: string, rel: string): Promise<void> => {
+      for (const e of await readdir(d, { withFileTypes: true })) {
+        const r = rel ? `${rel}/${e.name}` : e.name;
+        out.push(r);
+        if (e.isDirectory()) await walk(path.join(d, e.name), r);
+      }
+    };
+    await walk(dir, '');
+    return out.sort();
+  }
+  /** Returns false (and logs why) if this kind of link cannot be created here. */
+  async function tryLink(target: string, link: string, type: 'junction' | 'dir'): Promise<boolean> {
+    try {
+      await symlink(target, link, type);
+      return true;
+    } catch (err) {
+      console.log(`F1 link type=${type} not permitted here: ${(err as NodeJS.ErrnoException).code}`);
+      return false;
+    }
+  }
+  /** rmFn spy: records every path an rm is attempted on, then runs the real rm. */
+  function rmSpy() {
+    const paths: string[] = [];
+    const fn = (async (p: Parameters<typeof rm>[0], o?: Parameters<typeof rm>[1]) => {
+      paths.push(String(p));
+      return rm(p, o);
+    }) as typeof rm;
+    return { paths, fn };
+  }
+
+  async function linkCase(type: 'junction' | 'dir', skip: () => void): Promise<void> {
+    const linkType = type === 'junction' && process.platform !== 'win32' ? 'dir' : type;
+    for (const mode of ['sweep', 'close'] as const) {
+      const modeRoot = await mkdtemp(path.join(root, `${mode}-`));
+      const victim = await makeVictim(`victim-${mode}`);
+      const before = await entries(victim);
+      const link = path.join(modeRoot, 'sutradhar-cli-1700000000000-JUNC');
+      if (!(await tryLink(victim, link, linkType))) {
+        skip();
+        return;
+      }
+      const spy = rmSpy();
+      if (mode === 'sweep') {
+        const res = await sweepStaleTempProfiles({ tmpRoot: modeRoot, scan: async () => [], minAgeMs: 0, rmFn: spy.fn });
+        expect(res.removed).toEqual([]);
+        expect(res.kept).toEqual([{ dir: link, reason: 'not-a-directory' }]);
+      } else {
+        const res = await removeSessionTempProfile(link, undefined, { tmpRoot: modeRoot, scan: async () => [], rmFn: spy.fn });
+        expect(res).toEqual({ removed: false, reason: 'not-a-directory' });
+      }
+      expect(await entries(victim)).toEqual(before); // every victim entry, incl. lockfile, remains
+      expect(await exists(path.join(victim, 'lockfile'))).toBe(true);
+      expect((await lstat(link)).isSymbolicLink()).toBe(true); // the link itself is kept too (a harmless leak)
+      expect(spy.paths.filter((p) => p.startsWith(link))).toEqual([]); // no rm was ever attempted THROUGH the link
+    }
+  }
+
+  it('F1-a: a junction (Windows) / symlink (POSIX) named like a profile is kept by sweep and close; the victim, incl. lockfile, is intact', async () => {
+    let skipped = false;
+    await linkCase('junction', () => {
+      skipped = true;
+    });
+    expect(skipped).toBe(false); // a junction needs no privilege; failing to create one is a test-environment failure
+  });
+
+  it('F1-b: a dir symlink named like a profile is kept (skipped with a logged reason where symlinks need privilege)', async (ctx) => {
+    let skipped = false;
+    await linkCase('dir', () => {
+      skipped = true;
+    });
+    if (skipped) ctx.skip();
+  });
+
+  it('F1-c (N3): a regular FILE named like a profile is kept by sweep and close', async () => {
+    for (const mode of ['sweep', 'close'] as const) {
+      const modeRoot = await mkdtemp(path.join(root, `${mode}-`));
+      const file = path.join(modeRoot, 'sutradhar-cli-1700000000001');
+      await writeFile(file, 'precious');
+      const past = new Date(Date.now() - 2 * STALE_MIN_AGE_MS);
+      await utimes(file, past, past);
+      if (mode === 'sweep') {
+        const res = await sweepStaleTempProfiles({ tmpRoot: modeRoot, scan: async () => [], minAgeMs: 0 });
+        expect(res.removed).toEqual([]);
+        expect(res.kept).toEqual([{ dir: file, reason: 'not-a-directory' }]);
+      } else {
+        expect(await removeSessionTempProfile(file, undefined, { tmpRoot: modeRoot, scan: async () => [] })).toEqual({
+          removed: false,
+          reason: 'not-a-directory',
+        });
+      }
+      expect(await exists(file)).toBe(true);
+    }
+  });
+
+  it('F1-d (positive control): a real dir under the same setup is still removed by sweep and close', async () => {
+    const sweepRoot = await mkdtemp(path.join(root, 'sweep-'));
+    const real = path.join(sweepRoot, 'sutradhar-cli-1700000000002-REAL');
+    await mkdir(path.join(real, 'Default'), { recursive: true });
+    await writeFile(path.join(real, 'lockfile'), '');
+    const res = await sweepStaleTempProfiles({ tmpRoot: sweepRoot, scan: async () => [], minAgeMs: 0 });
+    expect(res.removed).toEqual([real]);
+    expect(await exists(real)).toBe(false);
+
+    const closeRoot = await mkdtemp(path.join(root, 'close-'));
+    const real2 = path.join(closeRoot, 'sutradhar-cli-1700000000003-REAL');
+    await mkdir(path.join(real2, 'Default'), { recursive: true });
+    await writeFile(path.join(real2, 'lockfile'), '');
+    expect(await removeSessionTempProfile(real2, undefined, { tmpRoot: closeRoot, scan: async () => [] })).toEqual({ removed: true });
+    expect(await exists(real2)).toBe(false);
+  });
+
+  it('F1-e: a dir swapped for a junction/symlink between the facts and a retry is NOT followed (re-check inside the retry loop)', async () => {
+    const modeRoot = await mkdtemp(path.join(root, 'swap-'));
+    const victim = await makeVictim('victim-swap');
+    const before = await entries(victim);
+    const dir = path.join(modeRoot, 'sutradhar-cli-1700000000004-SWAP');
+    await mkdir(path.join(dir, 'Default'), { recursive: true });
+    await writeFile(path.join(dir, 'lockfile'), '');
+    const calls: string[] = [];
+    let linked = true;
+    // First attempt: report a lock error AFTER swapping the real dir for a link to the victim.
+    const rmFn = (async (p: Parameters<typeof rm>[0]) => {
+      calls.push(String(p));
+      if (calls.length === 1) {
+        await rm(dir, { recursive: true, force: true });
+        linked = await tryLink(victim, dir, process.platform === 'win32' ? 'junction' : 'dir');
+        throw Object.assign(new Error('simulated lock'), { code: 'EBUSY' });
+      }
+      return rm(p, { force: true });
+    }) as typeof rm;
+    const res = await removeSessionTempProfile(dir, undefined, { tmpRoot: modeRoot, scan: async () => [], rmFn, deadlineMs: 8000 });
+    if (!linked) return; // cannot create the link in this environment (logged by tryLink)
+    expect(res).toEqual({ removed: false, reason: 'not-a-directory' });
+    expect(calls).toHaveLength(1); // the retry never reached the rm
+    expect(await entries(victim)).toEqual(before);
+    expect(await exists(path.join(victim, 'lockfile'))).toBe(true);
+  });
+
+  it('decideRemoval: realDir === false is not-a-directory (after not-auto-temp, before every other rule); undefined keeps the old behaviour', () => {
+    expect(decideRemoval(facts({ realDir: false }))).toEqual({ remove: false, reason: 'not-a-directory' });
+    expect(decideRemoval(facts({ realDir: false, commandLines: null }))).toEqual({ remove: false, reason: 'not-a-directory' });
+    expect(decideRemoval(facts({ realDir: false, dir: path.join(ROOT, 'my-profile') }))).toEqual({ remove: false, reason: 'not-auto-temp' });
+    expect(decideRemoval(facts({ realDir: true }))).toEqual({ remove: true });
+    expect(decideRemoval(facts())).toEqual({ remove: true }); // realDir undefined: unchanged (port-probe compatibility)
+  });
+});

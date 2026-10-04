@@ -12,6 +12,8 @@
  *  1. The dir is an AUTO-CREATED temp profile: its basename matches the CLI's own naming
  *     pattern AND it sits directly in the temp root. Named `--profile` dirs never match (they
  *     live under the ProfileManager's own root, not the temp root, and have different names).
+ *     It must also be a REAL directory: a symlink/junction or a regular file that merely carries such a
+ *     name is never touched, and nothing is ever read or deleted THROUGH it (S6e-1).
  *  2. The running-process scan SUCCEEDED and no process has the dir on its command line
  *     (Chrome's renderer/GPU/utility children carry `--user-data-dir=` too). A failed scan
  *     means "unknown", and unknown means keep.
@@ -33,7 +35,7 @@
  * predicates.
  */
 import { execFile } from 'node:child_process';
-import { mkdtemp, readdir, readFile, readlink, rm, stat, writeFile } from 'node:fs/promises';
+import { lstat, mkdtemp, readdir, readFile, readlink, rm, stat, writeFile } from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
 import { powershellExe, psBin } from './system-binaries.js';
@@ -144,15 +146,19 @@ export interface RemovalFacts {
   ageMs: number;
   /** 0 for `close` (we just stopped this dir's Chrome ourselves), {@link STALE_MIN_AGE_MS} for sweeps. */
   minAgeMs: number;
+  /** `lstat` says the candidate is a real directory (not a symlink/junction, not a file). `false` keeps it
+   *  (`not-a-directory`); `undefined` means "not checked" and leaves the decision unchanged. */
+  realDir?: boolean;
 }
 
 export type RemovalDecision =
   | { remove: true }
-  | { remove: false; reason: 'not-auto-temp' | 'scan-unavailable' | 'in-use' | 'owner-alive' | 'too-young' };
+  | { remove: false; reason: 'not-auto-temp' | 'not-a-directory' | 'scan-unavailable' | 'in-use' | 'owner-alive' | 'too-young' };
 
-/** Rules 1-4. Pure — the unit-tested core of every deletion. */
+/** Rules 1-4 (+ the real-directory check). Pure — the unit-tested core of every deletion. */
 export function decideRemoval(f: RemovalFacts): RemovalDecision {
   if (!isAutoTempProfileDir(f.dir, f.tmpRoot)) return { remove: false, reason: 'not-auto-temp' };
+  if (f.realDir === false) return { remove: false, reason: 'not-a-directory' };
   if (f.commandLines === null) return { remove: false, reason: 'scan-unavailable' };
   if (commandLinesReference(f.dir, f.commandLines)) return { remove: false, reason: 'in-use' };
   if (f.ownerAlive) return { remove: false, reason: 'owner-alive' };
@@ -307,6 +313,17 @@ export async function readOwnerPid(dir: string): Promise<number | undefined> {
   return undefined;
 }
 
+/** True only for a REAL directory: `lstat` (never follows) succeeds and the entry is neither a symlink
+ *  (a Windows junction reports `isSymbolicLink() === true` too) nor a file. Any lstat error is `false`. */
+async function realDirectory(dir: string): Promise<boolean> {
+  try {
+    const st = await lstat(dir);
+    return !st.isSymbolicLink() && st.isDirectory();
+  } catch {
+    return false;
+  }
+}
+
 async function gatherFacts(
   dir: string,
   tmpRoot: string,
@@ -314,6 +331,17 @@ async function gatherFacts(
   minAgeMs: number,
   isAlive: (pid: number) => boolean,
 ): Promise<RemovalFacts | undefined> {
+  // FIRST, before stat, before reading the marker or SingletonLock and before any path.join(dir, ...):
+  // a link or a file named like a profile must never be followed (S4 audit F1/N3).
+  const realDir = await realDirectory(dir);
+  if (!realDir) {
+    try {
+      await lstat(dir);
+    } catch {
+      return undefined; // already gone
+    }
+    return { dir, tmpRoot, commandLines, ownerAlive: false, ageMs: 0, minAgeMs, realDir: false };
+  }
   let mtimeMs: number;
   try {
     mtimeMs = (await stat(dir)).mtimeMs;
@@ -329,6 +357,7 @@ async function gatherFacts(
     ownerAlive: ownerPid !== undefined && isAlive(ownerPid),
     ageMs: Date.now() - mtimeMs,
     minAgeMs,
+    realDir: true,
   };
 }
 
@@ -374,6 +403,12 @@ async function removeWithRetries(
     }
     n++;
     dlog('rm-attempt', { path: dir, n, 'remaining-ms': Math.round(remaining) });
+    // Re-check right before the lockfile probe / delete: the candidate may have been swapped for a link
+    // since the facts were gathered. A kept link is a harmless leak; following it would be a loss.
+    if (!(await realDirectory(dir))) {
+      dlog('rm-stop', { path: dir, n, reason: 'not-a-directory' });
+      return { removed: false, error: 'not-a-directory' };
+    }
     try {
       if (process.platform === 'win32') {
         // Chrome holds `lockfile` open exclusively for the profile's whole lifetime: if it
