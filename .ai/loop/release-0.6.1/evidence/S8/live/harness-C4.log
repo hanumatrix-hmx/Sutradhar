@@ -1,0 +1,15 @@
+# start 2026-10-04T07:42:56+05:30 CASES=C4 (re-run after harness fix: default param swallowed config:undefined)
+[iso-guard] tmpdir=e:/ai-cache/tmp/claude/e--hmx-projects-internal-projects-pinchtab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/s8h pid=51784
+[iso-guard-harness] tmpdir=e:/ai-cache/tmp/claude/e--hmx-projects-internal-projects-pinchtab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/s8h pid=51784 node=v25.0.0
+[iso-guard] tmpdir=e:/ai-cache/tmp/claude/e--hmx-projects-internal-projects-pinchtab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/s8h pid=83296
+INFO start 2026-10-04T02:12:56.180Z CASES=C4 cli-bin=E:\HMX_Projects\Internal_Projects\PinchTab\.claude\worktrees\project-understanding-696041\packages\sutradhar\dist\cli-bin.js
+==== C4 FR2-14: nav with a real .sutradhar.json (viewport) in cwd, SUTRADHAR_CONFIG unset
+CLI C4-nav [nav http://127.0.0.1:56385/?c4] exit=0 927ms
+PASS C4 nav exit 0
+CLI C4-eval [eval innerWidth+'x'+innerHeight] exit=0 255ms
+PASS C4 viewport from .sutradhar.json applied (901x677) :: 901x677
+CLI C4-close [close] exit=0 1093ms
+PASS C4 close exit 0, temp dir removed
+REALTEMP C4 count=45 baseline=45 disappeared=[] appeared=[]
+RESULT fails=0
+# exit=0 end 2026-10-04T07:42:58+05:30

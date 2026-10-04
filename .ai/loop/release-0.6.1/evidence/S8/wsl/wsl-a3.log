@@ -1,0 +1,30 @@
+# cmd: timeout 700 wsl.exe -e sh -c 'D=$(mktemp -d) && cp /mnt/e/AI-Cache/tmp/claude/E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/S8/mod/temp-profile.mjs /mnt/e/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/.ai/loop/release-0.6.1/evidence/S4/probes/common.mjs /mnt/e/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/.ai/loop/release-0.6.1/evidence/S4/probes/wsl/*.mjs /mnt/e/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/.ai/loop/release-0.6.1/evidence/S6e/probes/wsl-a7b.mjs "$D"/ && cd "$D" && sha256sum temp-profile.mjs wsl-a3.mjs && R=$(mktemp -d -p "$PWD") && echo PROBE_ROOT=$R && node -v && TMPDIR="$R" PROBE_ROOT="$R" TP_MODULE="$PWD/temp-profile.mjs" timeout 600 node  wsl-a3.mjs 2>&1; echo "# exit=$?"; cd /; case "$D" in /tmp/tmp.*) rm -rf -- "$D" && echo "# removed own D=$D";; *) echo REFUSE;; esac' ; start=2026-10-04T07:21:04+05:30
+676162d0104416177e1dc8eb6ed64b145c9cad9a3ba748985c5350443537e6b5  temp-profile.mjs
+9b7643be1b216292b94aba4f2963456a04eaaf885f31494609bd2a41ee54c146  wsl-a3.mjs
+PROBE_ROOT=/tmp/tmp.rswMgBoYmQ/tmp.WgWUoDOnw6
+v20.20.2
+[wsl-guard] root=/tmp/tmp.rswMgBoYmQ/tmp.WgWUoDOnw6
+== wsl-a3 symlinks inside a stale candidate (A3, C5-live c) node=v20.20.2 platform=linux tmpdir=/tmp/tmp.rswMgBoYmQ/tmp.WgWUoDOnw6 pid=882
+[cleanup] probe tmpRoot path="/tmp/tmp.rswMgBoYmQ/tmp.WgWUoDOnw6/a3-root-wbnTii"
+[cleanup] probe victimRoot path="/tmp/tmp.rswMgBoYmQ/tmp.WgWUoDOnw6/a3-victims-IAKktk"
+[cleanup] probe victim path="/tmp/tmp.rswMgBoYmQ/tmp.WgWUoDOnw6/a3-victims-IAKktk/victim-d"
+[cleanup] probe victim path="/tmp/tmp.rswMgBoYmQ/tmp.WgWUoDOnw6/a3-victims-IAKktk/victim-f"
+[cleanup] probe victim path="/tmp/tmp.rswMgBoYmQ/tmp.WgWUoDOnw6/a3-victims-IAKktk/victim-sl"
+[cleanup] probe victim path="/tmp/tmp.rswMgBoYmQ/tmp.WgWUoDOnw6/a3-victims-IAKktk/victim-cd"
+[cleanup] probe candidate path="/tmp/tmp.rswMgBoYmQ/tmp.WgWUoDOnw6/a3-root-wbnTii/sutradhar-cli-1790000000030"
+[cleanup] probe candidate path="/tmp/tmp.rswMgBoYmQ/tmp.WgWUoDOnw6/a3-root-wbnTii/sutradhar-cli-1790000000031"
+[cleanup] probe candidate path="/tmp/tmp.rswMgBoYmQ/tmp.WgWUoDOnw6/a3-root-wbnTii/sutradhar-cli-1790000000033-AbC123"
+[cleanup] probe close-result path="/tmp/tmp.rswMgBoYmQ/tmp.WgWUoDOnw6/a3-root-wbnTii/sutradhar-cli-1790000000033-AbC123" removed=true
+PASS A3 close removed candidate :: {"removed":true}
+[cleanup] probe sweep-removed path="/tmp/tmp.rswMgBoYmQ/tmp.WgWUoDOnw6/a3-root-wbnTii/sutradhar-cli-1790000000030"
+[cleanup] probe sweep-removed path="/tmp/tmp.rswMgBoYmQ/tmp.WgWUoDOnw6/a3-root-wbnTii/sutradhar-cli-1790000000031"
+PASS A3 sweep removed sutradhar-cli-1790000000030 :: []
+PASS A3 sweep removed sutradhar-cli-1790000000031 :: []
+PASS A3 victim-d intact :: missing=[]
+PASS A3 victim-f intact :: missing=[]
+PASS A3 victim-sl intact :: missing=[]
+PASS A3 victim-cd intact :: missing=[]
+RESULT fails=0
+# exit=0
+# removed own D=/tmp/tmp.rswMgBoYmQ
+# end=2026-10-04T07:21:04+05:30

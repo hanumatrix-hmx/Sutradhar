@@ -1,0 +1,21 @@
+# cmd: timeout 700 wsl.exe -e sh -c 'D=$(mktemp -d) && cp /mnt/e/AI-Cache/tmp/claude/E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/S8/mod/temp-profile.mjs /mnt/e/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/.ai/loop/release-0.6.1/evidence/S4/probes/common.mjs /mnt/e/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/.ai/loop/release-0.6.1/evidence/S4/probes/wsl/*.mjs /mnt/e/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/.ai/loop/release-0.6.1/evidence/S6e/probes/wsl-a7b.mjs "$D"/ && cd "$D" && sha256sum temp-profile.mjs wsl-c5b.mjs && R=$(mktemp -d -p "$PWD") && echo PROBE_ROOT=$R && node -v && TMPDIR="$R" PROBE_ROOT="$R" TP_MODULE="$PWD/temp-profile.mjs" timeout 600 node  wsl-c5b.mjs 2>&1; echo "# exit=$?"; cd /; case "$D" in /tmp/tmp.*) rm -rf -- "$D" && echo "# removed own D=$D";; *) echo REFUSE;; esac' ; start=2026-10-04T07:21:12+05:30
+676162d0104416177e1dc8eb6ed64b145c9cad9a3ba748985c5350443537e6b5  temp-profile.mjs
+514f8f557bb8a0d968e6a8aa2dad7a623bfa335c22742e248a4c79e73881b2fc  wsl-c5b.mjs
+PROBE_ROOT=/tmp/tmp.U1ebT6DfnS/tmp.3B5zPeqqGM
+v20.20.2
+[wsl-guard] root=/tmp/tmp.U1ebT6DfnS/tmp.3B5zPeqqGM
+== wsl-c5b SingletonLock owner, no marker node=v20.20.2 platform=linux tmpdir=/tmp/tmp.U1ebT6DfnS/tmp.3B5zPeqqGM pid=1027
+[cleanup] probe dir path="/tmp/tmp.U1ebT6DfnS/tmp.3B5zPeqqGM/c5b-tkqq4o/sutradhar-cli-1790000000500-AbC123"
+[cleanup] probe dir path="/tmp/tmp.U1ebT6DfnS/tmp.3B5zPeqqGM/c5b-tkqq4o/sutradhar-cli-1790000000501"
+PASS C5b no marker present
+INFO readOwnerPid d1=1038 d2=1038 dummy=1038
+PASS C5b live SingletonLock pid -> owner-alive (both) :: ["owner-alive","owner-alive"]
+PASS C5b close path owner-alive :: {"removed":false,"reason":"owner-alive"}
+PASS C5b dummy killed by PID
+[cleanup] probe removed path="/tmp/tmp.U1ebT6DfnS/tmp.3B5zPeqqGM/c5b-tkqq4o/sutradhar-cli-1790000000500-AbC123"
+[cleanup] probe removed path="/tmp/tmp.U1ebT6DfnS/tmp.3B5zPeqqGM/c5b-tkqq4o/sutradhar-cli-1790000000501"
+PASS C5b dead pid -> removed :: []
+RESULT fails=0
+# exit=0
+# removed own D=/tmp/tmp.U1ebT6DfnS
+# end=2026-10-04T07:21:13+05:30

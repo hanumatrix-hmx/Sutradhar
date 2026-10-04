@@ -1,0 +1,79 @@
+# start 2026-10-04T07:41:37+05:30
+[iso-guard] tmpdir=e:/ai-cache/tmp/claude/e--hmx-projects-internal-projects-pinchtab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/s8h pid=71452
+[iso-guard-harness] tmpdir=e:/ai-cache/tmp/claude/e--hmx-projects-internal-projects-pinchtab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/s8h pid=71452 node=v25.0.0
+[iso-guard] tmpdir=e:/ai-cache/tmp/claude/e--hmx-projects-internal-projects-pinchtab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/s8h pid=78452
+INFO start 2026-10-04T02:11:37.760Z CASES=B1,B5,C4,CLR,B4 cli-bin=E:\HMX_Projects\Internal_Projects\PinchTab\.claude\worktrees\project-understanding-696041\packages\sutradhar\dist\cli-bin.js
+==== B1 two sessions at once (+ a third session sweeping while both are live, backdated)
+CLI B1-navB [nav http://127.0.0.1:55637/?b1b] exit=0 1000ms (async)
+CLI B1-navA [nav http://127.0.0.1:55637/?b1a] exit=0 1046ms (async)
+PASS B1 both concurrent navs exit 0 :: A=0 B=0
+PASS B1 distinct temp dirs under ISO :: sutradhar-cli-1791079897978-Aue15U sutradhar-cli-1791079897981-gfWRMv
+PASS B1 neither concurrent start removed the other dir
+INFO B1 backdated both dirs by 25 min; A entries=240 B entries=241
+CLI B1-navC [nav http://127.0.0.1:55637/?b1c] exit=0 1500ms
+PASS B1 third session start exit 0
+PASS B1 third session sweep CONSIDERED both live dirs and kept them (in-use/owner-alive) :: A=in-use,in-use B=in-use,in-use
+PASS B1 no pre-existing entry missing in either live dir :: missA=[] missB=[]
+CLI B1-evalA [eval 1+41] exit=0 272ms
+CLI B1-evalB [eval 2+40] exit=0 278ms
+PASS B1 both sessions still work after the third start :: A=0:42 B=0:42
+CLI B1-closeB [close] exit=0 1636ms (async)
+CLI B1-closeA [close] exit=0 1642ms (async)
+PASS B1 concurrent closes exit 0 :: A=0 B=0
+PASS B1 each close removed its own dir
+PASS B1 the third session dir survived both closes
+CLI B1-evalC [eval 6*7] exit=0 283ms
+PASS B1 third session still works
+CLI B1-closeC [close] exit=0 1153ms
+PASS B1 third close exit 0 + dir gone
+PASS B1 chrome 70948 gone
+PASS B1 chrome 65964 gone
+PASS B1 chrome 60828 gone
+REALTEMP B1 count=45 baseline=45 disappeared=[] appeared=[]
+==== B5 TEMP mismatch between nav and close
+CLI B5-nav [nav http://127.0.0.1:55637/?b5] exit=0 843ms
+CLI B5-closeOtherTemp [close] exit=0 601ms
+PASS B5 close exit 0 :: exit=0
+PASS B5 warning names not-auto-temp :: Warning: could not remove temp profile E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S8h\sutradhar-cli-1791079905096-hRssrm (not-auto-temp); a CLI session started 10 or more minutes from now will retry it.
+PASS B5 dir kept
+PASS B5 state cleared
+PASS B5 chrome gone (kill unchanged)
+[cleanup] consider path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S8h\sutradhar-cli-1791079905096-hRssrm" mode=close
+[cleanup] scan ms=520 result=37
+[cleanup] decision path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S8h\sutradhar-cli-1791079905096-hRssrm" reason=remove
+[cleanup] rm-attempt path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S8h\sutradhar-cli-1791079905096-hRssrm" n=1 remaining-ms=14478
+[cleanup] removed path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S8h\sutradhar-cli-1791079905096-hRssrm"
+[cleanup] phase cleanup ms=538
+PASS B5 leftover removed via the module with the right root :: {"removed":true}
+REALTEMP B5 count=45 baseline=45 disappeared=[] appeared=[]
+==== C4 FR2-14: nav with a real .sutradhar.json (viewport) in cwd, SUTRADHAR_CONFIG unset
+CLI C4-nav [nav http://127.0.0.1:55637/?c4] exit=0 718ms
+PASS C4 nav exit 0
+CLI C4-eval [eval innerWidth+'x'+innerHeight] exit=0 253ms
+FAIL C4 viewport from .sutradhar.json applied (901x677) :: 800x600
+CLI C4-close [close] exit=0 1234ms
+PASS C4 close exit 0, temp dir removed
+REALTEMP C4 count=45 baseline=45 disappeared=[] appeared=[]
+==== CLR clearState fails during close (state.json held open without FILE_SHARE_DELETE)
+CLI CLR-nav [nav http://127.0.0.1:55637/?clr] exit=0 863ms
+CLI CLR-close [close] exit=0 1144ms
+INFO CLR close exit=0 stdout="Session closed." warn=["Warning: could not clear the session state (EBUSY: resource busy or locked, unlink 'E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\S8h\\stF\\state.json'); run \"sutradhar close\" again if the next command misbehaves."] state.json-after=PRESENT chromePid=75560
+OBS CLR 0.6.1 close with a failing clearState -> exit=0, "Session closed." printed=true, state.json still records chromePid=75560 (0.6.0 code: an unguarded "await clearState()" rejects -> main().catch -> exit 1)
+INFO holder exited=true
+PASS CLR chrome killed anyway
+CLI CLR-close2 [close] exit=0 4154ms
+OBS CLR second close exit=0 phase-kill-line=true (a stale recorded PID 75560 is killed again)
+REALTEMP CLR count=45 baseline=45 disappeared=[] appeared=[]
+==== B4 sweep: 50 small stale dirs + one ~200 MB stale dir, via a real session start
+INFO B4 created 51 dirs, big=2000x100KiB in 338 ms
+CLI B4-nav [nav http://127.0.0.1:55637/?b4] exit=0 1673ms
+INFO B4 phase sweep ms=825 removed=51 kept-deadline=0 whole-nav=1673
+PASS B4 nav exit 0
+PASS B4 sweep phase <= 15 s + one in-flight rm (<= 20 s observed bound) :: sweep=825
+PASS B4 every candidate either removed or kept with reason=deadline :: removed=51 keptDeadline=0
+CLI B4-close [close] exit=0 1305ms
+PASS B4 close exit 0
+REALTEMP B4 count=45 baseline=45 disappeared=[] appeared=[]
+RESULT fails=1
+# exit=1 end 2026-10-04T07:42:01+05:30
+REALTEMP-IDENTICAL

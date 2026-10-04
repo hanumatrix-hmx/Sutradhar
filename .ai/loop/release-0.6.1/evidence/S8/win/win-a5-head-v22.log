@@ -1,0 +1,106 @@
+# cmd: TEMP=ISO TMP=ISO TMPDIR=ISO NODE_OPTIONS=--import=file:///$SP/iso/assert-tmp.mjs SUTRADHAR_CLI_DEBUG_CLEANUP=1 TP_MODULE=E:/AI-Cache/tmp/claude/E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/S8/mod/temp-profile.mjs timeout 600 "C:/Users/Varad M/AppData/Local/npm-cache/_npx/52027bd8fc0022aa/node_modules/node/bin/node.exe" E:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/.ai/loop/release-0.6.1/evidence/S4/probes/win-a5.mjs ; ISO=E:/AI-Cache/tmp/claude/E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/S8-tmp-head-v22 ; node=v22.23.3 ; module-sha=676162d0104416177e1dc8eb6ed64b145c9cad9a3ba748985c5350443537e6b5 ; probe-sha=1f3dc1cbd81635b588fc7c1d3bf9d28ab57a1f64f46b1fa11cc44e72db6d0028 ; start=2026-10-04T07:21:28+05:30
+[iso-guard] tmpdir=e:/ai-cache/tmp/claude/e--hmx-projects-internal-projects-pinchtab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/s8-tmp-head-v22 pid=50708
+[probe-guard] tmpdir=e:/ai-cache/tmp/claude/e--hmx-projects-internal-projects-pinchtab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/s8-tmp-head-v22 pid=50708
+== win-a5 rule 2 isolated (stand-in, path variants) node=v22.23.3 platform=win32 tmpdir=E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S8-tmp-head-v22 pid=50708
+[cleanup] probe dir path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S8-tmp-head-v22\a5-ntN1PW\sutradhar-cli-179000000010-AbC123" variant=backslash
+[cleanup] consider path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S8-tmp-head-v22\a5-ntN1PW\sutradhar-cli-179000000010-AbC123" mode=close
+[cleanup] scan ms=541 result=36
+[cleanup] decision path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S8-tmp-head-v22\a5-ntN1PW\sutradhar-cli-179000000010-AbC123" reason=in-use
+[cleanup] kept path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S8-tmp-head-v22\a5-ntN1PW\sutradhar-cli-179000000010-AbC123" reason=in-use
+[cleanup] phase cleanup ms=543
+[cleanup] probe close-result path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S8-tmp-head-v22\a5-ntN1PW\sutradhar-cli-179000000010-AbC123" removed=false reason=in-use
+PASS A5 backslash: in-use with real scan :: {"removed":false,"reason":"in-use"}
+[cleanup] consider path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S8-tmp-head-v22\a5-ntN1PW\sutradhar-cli-179000000010-AbC123" mode=sweep
+[cleanup] scan ms=531 result=36
+[cleanup] decision path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S8-tmp-head-v22\a5-ntN1PW\sutradhar-cli-179000000010-AbC123" reason=in-use
+[cleanup] kept path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S8-tmp-head-v22\a5-ntN1PW\sutradhar-cli-179000000010-AbC123" reason=in-use
+[cleanup] phase sweep ms=533 removed=0 kept=1
+PASS A5 backslash: sweep keeps in-use :: ["sutradhar-cli-179000000010-AbC123:in-use"]
+INFO attribution backslash: ["49280/50708/node.exe"] standin=49280 probe=50708
+PASS A5 backslash: attribution is only the stand-in, never the probe :: ["49280/50708/node.exe"]
+PASS A5 backslash: stand-in exited
+[cleanup] consider path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S8-tmp-head-v22\a5-ntN1PW\sutradhar-cli-179000000010-AbC123" mode=close
+[cleanup] scan ms=511 result=35
+[cleanup] decision path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S8-tmp-head-v22\a5-ntN1PW\sutradhar-cli-179000000010-AbC123" reason=remove
+[cleanup] rm-attempt path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S8-tmp-head-v22\a5-ntN1PW\sutradhar-cli-179000000010-AbC123" n=1 remaining-ms=14488
+[cleanup] removed path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S8-tmp-head-v22\a5-ntN1PW\sutradhar-cli-179000000010-AbC123"
+[cleanup] phase cleanup ms=514
+[cleanup] probe close-result-after-kill path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S8-tmp-head-v22\a5-ntN1PW\sutradhar-cli-179000000010-AbC123" removed=true reason=undefined
+PASS A5 backslash: removed after stand-in died (control) :: {"removed":true}
+[cleanup] probe dir path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S8-tmp-head-v22\a5-ntN1PW\sutradhar-cli-179000000011-AbC123" variant=forwardslash
+[cleanup] consider path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S8-tmp-head-v22\a5-ntN1PW\sutradhar-cli-179000000011-AbC123" mode=close
+[cleanup] scan ms=497 result=36
+[cleanup] decision path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S8-tmp-head-v22\a5-ntN1PW\sutradhar-cli-179000000011-AbC123" reason=in-use
+[cleanup] kept path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S8-tmp-head-v22\a5-ntN1PW\sutradhar-cli-179000000011-AbC123" reason=in-use
+[cleanup] phase cleanup ms=498
+[cleanup] probe close-result path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S8-tmp-head-v22\a5-ntN1PW\sutradhar-cli-179000000011-AbC123" removed=false reason=in-use
+PASS A5 forwardslash: in-use with real scan :: {"removed":false,"reason":"in-use"}
+[cleanup] consider path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S8-tmp-head-v22\a5-ntN1PW\sutradhar-cli-179000000011-AbC123" mode=sweep
+[cleanup] scan ms=534 result=36
+[cleanup] decision path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S8-tmp-head-v22\a5-ntN1PW\sutradhar-cli-179000000011-AbC123" reason=in-use
+[cleanup] kept path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S8-tmp-head-v22\a5-ntN1PW\sutradhar-cli-179000000011-AbC123" reason=in-use
+[cleanup] phase sweep ms=535 removed=0 kept=1
+PASS A5 forwardslash: sweep keeps in-use :: ["sutradhar-cli-179000000011-AbC123:in-use"]
+INFO attribution forwardslash: ["84860/50708/node.exe"] standin=84860 probe=50708
+PASS A5 forwardslash: attribution is only the stand-in, never the probe :: ["84860/50708/node.exe"]
+PASS A5 forwardslash: stand-in exited
+[cleanup] consider path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S8-tmp-head-v22\a5-ntN1PW\sutradhar-cli-179000000011-AbC123" mode=close
+[cleanup] scan ms=490 result=35
+[cleanup] decision path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S8-tmp-head-v22\a5-ntN1PW\sutradhar-cli-179000000011-AbC123" reason=remove
+[cleanup] rm-attempt path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S8-tmp-head-v22\a5-ntN1PW\sutradhar-cli-179000000011-AbC123" n=1 remaining-ms=14509
+[cleanup] removed path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S8-tmp-head-v22\a5-ntN1PW\sutradhar-cli-179000000011-AbC123"
+[cleanup] phase cleanup ms=492
+[cleanup] probe close-result-after-kill path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S8-tmp-head-v22\a5-ntN1PW\sutradhar-cli-179000000011-AbC123" removed=true reason=undefined
+PASS A5 forwardslash: removed after stand-in died (control) :: {"removed":true}
+[cleanup] probe dir path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S8-tmp-head-v22\a5-ntN1PW\sutradhar-cli-179000000012-AbC123" variant=quotedTrailing
+[cleanup] consider path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S8-tmp-head-v22\a5-ntN1PW\sutradhar-cli-179000000012-AbC123" mode=close
+[cleanup] scan ms=498 result=36
+[cleanup] decision path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S8-tmp-head-v22\a5-ntN1PW\sutradhar-cli-179000000012-AbC123" reason=in-use
+[cleanup] kept path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S8-tmp-head-v22\a5-ntN1PW\sutradhar-cli-179000000012-AbC123" reason=in-use
+[cleanup] phase cleanup ms=499
+[cleanup] probe close-result path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S8-tmp-head-v22\a5-ntN1PW\sutradhar-cli-179000000012-AbC123" removed=false reason=in-use
+PASS A5 quotedTrailing: in-use with real scan :: {"removed":false,"reason":"in-use"}
+[cleanup] consider path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S8-tmp-head-v22\a5-ntN1PW\sutradhar-cli-179000000012-AbC123" mode=sweep
+[cleanup] scan ms=495 result=36
+[cleanup] decision path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S8-tmp-head-v22\a5-ntN1PW\sutradhar-cli-179000000012-AbC123" reason=in-use
+[cleanup] kept path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S8-tmp-head-v22\a5-ntN1PW\sutradhar-cli-179000000012-AbC123" reason=in-use
+[cleanup] phase sweep ms=496 removed=0 kept=1
+PASS A5 quotedTrailing: sweep keeps in-use :: ["sutradhar-cli-179000000012-AbC123:in-use"]
+INFO attribution quotedTrailing: ["53224/50708/node.exe"] standin=53224 probe=50708
+PASS A5 quotedTrailing: attribution is only the stand-in, never the probe :: ["53224/50708/node.exe"]
+PASS A5 quotedTrailing: stand-in exited
+[cleanup] consider path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S8-tmp-head-v22\a5-ntN1PW\sutradhar-cli-179000000012-AbC123" mode=close
+[cleanup] scan ms=510 result=35
+[cleanup] decision path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S8-tmp-head-v22\a5-ntN1PW\sutradhar-cli-179000000012-AbC123" reason=remove
+[cleanup] rm-attempt path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S8-tmp-head-v22\a5-ntN1PW\sutradhar-cli-179000000012-AbC123" n=1 remaining-ms=14489
+[cleanup] removed path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S8-tmp-head-v22\a5-ntN1PW\sutradhar-cli-179000000012-AbC123"
+[cleanup] phase cleanup ms=513
+[cleanup] probe close-result-after-kill path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S8-tmp-head-v22\a5-ntN1PW\sutradhar-cli-179000000012-AbC123" removed=true reason=undefined
+PASS A5 quotedTrailing: removed after stand-in died (control) :: {"removed":true}
+[cleanup] probe dir path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S8-tmp-head-v22\a5-ntN1PW\sutradhar-cli-179000000013-AbC123" variant=upper
+[cleanup] consider path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S8-tmp-head-v22\a5-ntN1PW\sutradhar-cli-179000000013-AbC123" mode=close
+[cleanup] scan ms=505 result=36
+[cleanup] decision path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S8-tmp-head-v22\a5-ntN1PW\sutradhar-cli-179000000013-AbC123" reason=in-use
+[cleanup] kept path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S8-tmp-head-v22\a5-ntN1PW\sutradhar-cli-179000000013-AbC123" reason=in-use
+[cleanup] phase cleanup ms=506
+[cleanup] probe close-result path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S8-tmp-head-v22\a5-ntN1PW\sutradhar-cli-179000000013-AbC123" removed=false reason=in-use
+PASS A5 upper: in-use with real scan :: {"removed":false,"reason":"in-use"}
+[cleanup] consider path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S8-tmp-head-v22\a5-ntN1PW\sutradhar-cli-179000000013-AbC123" mode=sweep
+[cleanup] scan ms=490 result=36
+[cleanup] decision path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S8-tmp-head-v22\a5-ntN1PW\sutradhar-cli-179000000013-AbC123" reason=in-use
+[cleanup] kept path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S8-tmp-head-v22\a5-ntN1PW\sutradhar-cli-179000000013-AbC123" reason=in-use
+[cleanup] phase sweep ms=491 removed=0 kept=1
+PASS A5 upper: sweep keeps in-use :: ["sutradhar-cli-179000000013-AbC123:in-use"]
+INFO attribution upper: ["80980/50708/node.exe"] standin=80980 probe=50708
+PASS A5 upper: attribution is only the stand-in, never the probe :: ["80980/50708/node.exe"]
+PASS A5 upper: stand-in exited
+[cleanup] consider path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S8-tmp-head-v22\a5-ntN1PW\sutradhar-cli-179000000013-AbC123" mode=close
+[cleanup] scan ms=517 result=35
+[cleanup] decision path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S8-tmp-head-v22\a5-ntN1PW\sutradhar-cli-179000000013-AbC123" reason=remove
+[cleanup] rm-attempt path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S8-tmp-head-v22\a5-ntN1PW\sutradhar-cli-179000000013-AbC123" n=1 remaining-ms=14482
+[cleanup] removed path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S8-tmp-head-v22\a5-ntN1PW\sutradhar-cli-179000000013-AbC123"
+[cleanup] phase cleanup ms=519
+[cleanup] probe close-result-after-kill path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S8-tmp-head-v22\a5-ntN1PW\sutradhar-cli-179000000013-AbC123" removed=true reason=undefined
+PASS A5 upper: removed after stand-in died (control) :: {"removed":true}
+RESULT fails=0
+# exit=0 end=2026-10-04T07:21:43+05:30

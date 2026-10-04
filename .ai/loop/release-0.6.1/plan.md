@@ -2119,3 +2119,83 @@ So S6a changes as follows:
 - The live `win-plant` runs on v18, v20, v22 and v25 PASS.
 - The verdict follows the section-5 rule **plus** P6. Any security finding is blocking.
 - An S8 FAIL is GAP-315 audit failure **#2**: **stop and re-plan** (section 2 rule 4).
+
+---
+
+## Addendum B (post-S8): root-cause re-derivation after audit failure #2, and the revised plan
+
+Written by the orchestrator. S8 (evidence/S8/audit.md) returned REOPEN. With S4 that is the **second** failed
+audit of the GAP-315/349/close-ordering work. Under the global rule, fixing stopped here and the root cause was
+re-derived from the code (not from the builders' notes) before any further change.
+
+### B.0 Root cause: spec, tests or implementation?
+| Finding | What is wrong | Classification | Evidence (re-read by the orchestrator) |
+|---|---|---|---|
+| F-S8-1 (blocking) | The O7 source-text guard (b) in `packages/cli/tests/unit/close-session.spec.ts` (test at line ~164) measures the end of the `if (!closeBlocked) {` block from the `if` keyword instead of from its `{`, so a `clearState()` placed as the LAST statement inside that block is wrongly accepted. | **Test wrong.** The product code is correct (`cli.ts` cmdClose: `await clearState()` sits after the `if (!closeBlocked) {...}` block, inside the `else` of `if (state.chromePid)`; live L12 passes and the L12m mutant is caught). | `cli.ts` ~1720-1734; S8 `M-O6-variant-cmdClose.txt` survives (vitest exit 0). |
+| F-S8-2 | `stopSpawnedChrome` (close-session.ts) catches a `clearState()` failure and only warns, so `close` prints "Session closed." and exits 0, and self-heal continues. In 0.6.0 (`origin/master` cli.ts 483 and 1677) `await clearState()` was uncaught: `close` failed (non-zero) and self-heal failed. | **Spec contradictory, implementation followed the wrong half.** The plan said both "exit codes unchanged vs 0.6.0" (S6b-4) and "stopSpawnedChrome never throws" (N2). N2's real requirement was narrower: never throw *before the state is cleared* (a non-string `userDataDir` must not abort the close after the kill). | close-session.ts 59-64 (`try { await deps.clearState() } catch { warn(...) }`), doc comment "Never throws." |
+| F-S8-4 | T5 relies on ~25 ms of timing slack: load-sensitive, can flake on CI. | **Test wrong** (violates the global rule: no load-sensitive thresholds). | evidence/S8/audit.md F-S8-4 |
+| F-S8-3, F-S8-5, F-S8-6 | INFO only. | Record, no code change. | evidence/S8/audit.md |
+
+Why it was missed: S6b's mutant M-O6 was applied in a single placement (deep inside the `try`), so the guard's
+boundary was never exercised (a false pass of the mutation check itself); and the builder resolved the S6b-4/N2
+contradiction silently instead of stopping. Systemic lesson (also for 0.7.0): **every mutant that targets a
+"where is this statement" guard must be tried at the block boundaries (first statement after `{`, last statement
+before `}`), not only in the middle; contradictions in a spec are a STOP, not a judgement call.**
+
+### B.1 Revised steps (one commit each, in this order). Builder rules, isolation preamble and A.6 apply.
+- **S6f (F-S8-1, test only).** Fix guard (b) exactly as evidence/S8/audit.md `required_fix` says (block end measured
+  from the `{` of `if (!closeBlocked) {`). AC: on the real code the guard passes; under THREE M-O6 placements the
+  guard fails: (i) the S8 variant `evidence/S8/M-O6-variant-cmdClose.txt` (clear as the last statement inside the
+  block), (ii) the S6b builder's original M-O6 placement, (iii) clear as the first statement right after the `{`.
+  Run each through the existing mutation runner with sha256 restore. No product file changes in this commit.
+- **S6g (F-S8-2, restore 0.6.0 failure semantics).** In `stopSpawnedChrome`: if `clearState()` throws, keep the
+  error, still run the bounded temp-profile cleanup (Chrome is already killed, so removing its dir is safe and the
+  15 s deadline still applies), then **rethrow the original error** (no extra warning line; the caller's existing
+  error path prints it as 0.6.0 did). Nothing else may throw (N2 stays: a bad `userDataDir`, a cleanup error, a
+  kill error are still caught). Update the doc comment from "Never throws" to "Throws only a clearState failure,
+  after the cleanup ran". cmdClose and self-heal call sites stay as they are, so the error propagates exactly as
+  0.6.0's uncaught `await clearState()` did.
+  ACs: (1) unit test: clearState rejects -> cleanup is still called with the same args -> the promise rejects
+  with the same error object; (2) unit test: clearState resolves -> nothing thrown (existing O-tests unchanged);
+  (3) mutants that must fail the tests: M-B2a swallow (the current code), M-B2b rethrow BEFORE cleanup,
+  M-B2c rethrow a different/wrapped error; (4) live A/B: reproduce the S8 F-S8-2 scenario (use the auditor's
+  method recorded in evidence/S8/audit.md) against BOTH the published 0.6.0 CLI
+  (`E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\verify060\inst\node_modules\sutradhar\dist\cli-bin.js`)
+  and the freshly force-built HEAD CLI: the exit code must be equal and non-zero, "Session closed." must be absent
+  in both, and on HEAD the temp dir must be removed; (5) `killChromeTree(` count and every S6b AC still hold.
+- **S6h (F-S8-4, test only).** Make T5 deterministic: drive it with the injected `now` clock (or, if the test
+  cannot use the seam, give it a bound at least 10x the measured value). AC: T5 passes 20/20 consecutive runs
+  under a CPU-load generator started by the builder (own PID, killed by PID afterwards), and its mutant still fails.
+- **S10b additions.** Record F-S8-3, F-S8-5 and F-S8-6 as gap entries with the auditor's text; changelog `Changed`
+  mentions F-S8-5 (startup fails at once when Chrome exits early, instead of polling for 10 s).
+
+### B.2 Audit #3 (S8b): final for this work
+A fresh auditor (not the S4 or S8 auditor) re-runs the S8 scope after S6f-S6h: S4 probes unmodified on all
+runtimes + win-a7b/wsl-a7b, the S7 live harness unmodified (sha256 1b7091a9...), the full mutant set (now incl.
+the three M-O6 placements and M-B2a..c), the full package matrix and Linux specs, plus an adversarial read of
+the S6f-S6h diffs. **If S8b is not ACCEPT, the work is BLOCKED and is reverted out of 0.6.1** by the S8 revert step
+(revert the merge and the S6* commits with `git revert`, never reset), and 0.6.1 ships the security fix,
+the dev-only bumps and the housekeeping only, using the BLOCKED gate variant of S11.
+
+### B.3 Revision after plan-review-B (verdict REVISE, 0 BLOCKER / 5 MAJOR / 6 MINOR): binding
+Every fix in `plan-review-B.md` F1-F11 is **adopted verbatim and is binding**; where it differs from B.1/B.2 it
+overrides them. Orchestrator decisions on the open choices:
+- **F1:** S6g edits the existing "never-throws" test exactly as F1 says (kill half unchanged; clearState half replaced by
+  the rethrow test; assert no "could not clear the session state" warning; rename; update the file-header sentence
+  AND the JSDoc). This is a specified change, not a judgement call.
+- **F2:** O6b source guard + mutants M-B2d/M-B2e are REQUIRED. The live self-heal A/B is required too if it can be done
+  under the F4 safety rules; if the builder finds it cannot, it records exactly why and the source guard + mutants stand.
+- **F3/F4:** the live close A/B follows F3 (a)-(e) and the F4 procedure exactly. The `bff46db` CLI must be copied
+  (sha256 `48c1756c...`) BEFORE S6g's force build and used as the negative control. No CLI command may ever run
+  against a state dir whose state.json still records a chromePid after a failed close: the harness deletes state.json
+  first (after releasing its lock holder).
+- **F5:** S6h uses the debug-line method (assert every `rm-attempt remaining-ms=N` >= MIN_RM_START_MS, at least one
+  attempt; M-b must fail). It stays test-only. The load run is supporting evidence only, under F6's limits.
+- **F7, F8:** all listed unit cases and mutants (M-B2f, M-O6 placements iv/v, the L12m anchor re-check) are required.
+- **F9:** S10b additions are scheduled AFTER the S8b verdict. The revert list is the one in F9, plus the post-revert
+  `git diff origin/master -- packages/cli/src` must be empty.
+- **F10:** the S8b auditor brief names every item in F10, and states that S8b is audit #3: any verdict other than
+  ACCEPT means BLOCKED and revert.
+- **F11:** Addendum B (with B.3) is the re-plan required by section 2 rule 4 (#2); `replan-gap315.md` points here.
+  The 1.5 hazard gap entry mentions "a failed state clear leaves chromePid recorded (as in 0.6.0)".
+Commit order: S6f, S6g, S6h (each one commit), then S8b, then (only if ACCEPT) S9, S10, S10b, S11.

@@ -1,0 +1,117 @@
+# cmd: TEMP=ISO TMP=ISO TMPDIR=ISO NODE_OPTIONS=--import=file:///$SP/iso/assert-tmp.mjs SUTRADHAR_CLI_DEBUG_CLEANUP=1 TP_MODULE=E:/AI-Cache/tmp/claude/E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/S8/mod/temp-profile.mjs timeout 600 "C:/Users/Varad M/AppData/Local/npm-cache/_npx/ebaba8b9e55fd0a9/node_modules/node/bin/node.exe" E:/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/.ai/loop/release-0.6.1/evidence/S6e-4/probes/win-n1.mjs ; ISO=E:/AI-Cache/tmp/claude/E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/S8-tmp-head-v20 ; node=v20.20.2 ; module-sha=676162d0104416177e1dc8eb6ed64b145c9cad9a3ba748985c5350443537e6b5 ; probe-sha=386bcf4d6574fcea41f79d6543d05491f9af5758e11e992777ba61667c99ace6 ; start=2026-10-04T07:36:27+05:30
+[iso-guard] tmpdir=e:/ai-cache/tmp/claude/e--hmx-projects-internal-projects-pinchtab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/s8-tmp-head-v20 pid=78244
+[probe-guard] tmpdir=e:/ai-cache/tmp/claude/e--hmx-projects-internal-projects-pinchtab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/s8-tmp-head-v20 pid=78244
+== win-n1 corrupt/unreadable owner marker fails closed node=v20.20.2 platform=win32 tmpdir=E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S8-tmp-head-v20 pid=78244
+[cleanup] probe dir path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S8-tmp-head-v20\n1-w6SSsu\close-NZe5mW\sutradhar-cli-179000000060-AbC123"
+INFO [corrupt JSON] readOwnerPid=undefined
+[cleanup] consider path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S8-tmp-head-v20\n1-w6SSsu\close-NZe5mW\sutradhar-cli-179000000060-AbC123" mode=close
+[cleanup] scan ms=0 result=0
+[cleanup] decision path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S8-tmp-head-v20\n1-w6SSsu\close-NZe5mW\sutradhar-cli-179000000060-AbC123" reason=owner-unknown
+[cleanup] kept path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S8-tmp-head-v20\n1-w6SSsu\close-NZe5mW\sutradhar-cli-179000000060-AbC123" reason=owner-unknown
+[cleanup] phase cleanup ms=2
+[cleanup] probe close-result path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S8-tmp-head-v20\n1-w6SSsu\close-NZe5mW\sutradhar-cli-179000000060-AbC123" removed=false reason=owner-unknown
+PASS N1 [corrupt JSON] close keeps (owner-unknown) :: {"removed":false,"reason":"owner-unknown"}
+[cleanup] probe dir path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S8-tmp-head-v20\n1-w6SSsu\sweep-a89t4y\sutradhar-cli-179000000061-AbC123"
+[cleanup] consider path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S8-tmp-head-v20\n1-w6SSsu\sweep-a89t4y\sutradhar-cli-179000000061-AbC123" mode=sweep
+[cleanup] scan ms=0 result=0
+[cleanup] decision path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S8-tmp-head-v20\n1-w6SSsu\sweep-a89t4y\sutradhar-cli-179000000061-AbC123" reason=owner-unknown
+[cleanup] kept path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S8-tmp-head-v20\n1-w6SSsu\sweep-a89t4y\sutradhar-cli-179000000061-AbC123" reason=owner-unknown
+[cleanup] phase sweep ms=1 removed=0 kept=1
+PASS N1 [corrupt JSON] sweep keeps (owner-unknown) :: ["sutradhar-cli-179000000061-AbC123:owner-unknown"]
+[cleanup] probe dir path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S8-tmp-head-v20\n1-w6SSsu\close-IznhJG\sutradhar-cli-179000000062-AbC123"
+INFO [chromePid is a string] readOwnerPid=undefined
+[cleanup] consider path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S8-tmp-head-v20\n1-w6SSsu\close-IznhJG\sutradhar-cli-179000000062-AbC123" mode=close
+[cleanup] scan ms=0 result=0
+[cleanup] decision path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S8-tmp-head-v20\n1-w6SSsu\close-IznhJG\sutradhar-cli-179000000062-AbC123" reason=owner-unknown
+[cleanup] kept path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S8-tmp-head-v20\n1-w6SSsu\close-IznhJG\sutradhar-cli-179000000062-AbC123" reason=owner-unknown
+[cleanup] phase cleanup ms=1
+[cleanup] probe close-result path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S8-tmp-head-v20\n1-w6SSsu\close-IznhJG\sutradhar-cli-179000000062-AbC123" removed=false reason=owner-unknown
+PASS N1 [chromePid is a string] close keeps (owner-unknown) :: {"removed":false,"reason":"owner-unknown"}
+[cleanup] probe dir path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S8-tmp-head-v20\n1-w6SSsu\sweep-FmLKmF\sutradhar-cli-179000000063-AbC123"
+[cleanup] consider path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S8-tmp-head-v20\n1-w6SSsu\sweep-FmLKmF\sutradhar-cli-179000000063-AbC123" mode=sweep
+[cleanup] scan ms=0 result=0
+[cleanup] decision path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S8-tmp-head-v20\n1-w6SSsu\sweep-FmLKmF\sutradhar-cli-179000000063-AbC123" reason=owner-unknown
+[cleanup] kept path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S8-tmp-head-v20\n1-w6SSsu\sweep-FmLKmF\sutradhar-cli-179000000063-AbC123" reason=owner-unknown
+[cleanup] phase sweep ms=1 removed=0 kept=1
+PASS N1 [chromePid is a string] sweep keeps (owner-unknown) :: ["sutradhar-cli-179000000063-AbC123:owner-unknown"]
+[cleanup] probe dir path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S8-tmp-head-v20\n1-w6SSsu\close-AmygU5\sutradhar-cli-179000000064-AbC123"
+INFO [marker path is a directory (EISDIR)] readOwnerPid=undefined
+[cleanup] consider path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S8-tmp-head-v20\n1-w6SSsu\close-AmygU5\sutradhar-cli-179000000064-AbC123" mode=close
+[cleanup] scan ms=0 result=0
+[cleanup] decision path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S8-tmp-head-v20\n1-w6SSsu\close-AmygU5\sutradhar-cli-179000000064-AbC123" reason=owner-unknown
+[cleanup] kept path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S8-tmp-head-v20\n1-w6SSsu\close-AmygU5\sutradhar-cli-179000000064-AbC123" reason=owner-unknown
+[cleanup] phase cleanup ms=1
+[cleanup] probe close-result path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S8-tmp-head-v20\n1-w6SSsu\close-AmygU5\sutradhar-cli-179000000064-AbC123" removed=false reason=owner-unknown
+PASS N1 [marker path is a directory (EISDIR)] close keeps (owner-unknown) :: {"removed":false,"reason":"owner-unknown"}
+[cleanup] probe dir path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S8-tmp-head-v20\n1-w6SSsu\sweep-pe3goL\sutradhar-cli-179000000065-AbC123"
+[cleanup] consider path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S8-tmp-head-v20\n1-w6SSsu\sweep-pe3goL\sutradhar-cli-179000000065-AbC123" mode=sweep
+[cleanup] scan ms=0 result=0
+[cleanup] decision path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S8-tmp-head-v20\n1-w6SSsu\sweep-pe3goL\sutradhar-cli-179000000065-AbC123" reason=owner-unknown
+[cleanup] kept path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S8-tmp-head-v20\n1-w6SSsu\sweep-pe3goL\sutradhar-cli-179000000065-AbC123" reason=owner-unknown
+[cleanup] phase sweep ms=1 removed=0 kept=1
+PASS N1 [marker path is a directory (EISDIR)] sweep keeps (owner-unknown) :: ["sutradhar-cli-179000000065-AbC123:owner-unknown"]
+[cleanup] probe dir path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S8-tmp-head-v20\n1-w6SSsu\close-4Z9tpi\sutradhar-cli-179000000066-AbC123"
+INFO [chromePid is 0] readOwnerPid=0
+[cleanup] consider path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S8-tmp-head-v20\n1-w6SSsu\close-4Z9tpi\sutradhar-cli-179000000066-AbC123" mode=close
+[cleanup] scan ms=0 result=0
+[cleanup] decision path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S8-tmp-head-v20\n1-w6SSsu\close-4Z9tpi\sutradhar-cli-179000000066-AbC123" reason=owner-unknown
+[cleanup] kept path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S8-tmp-head-v20\n1-w6SSsu\close-4Z9tpi\sutradhar-cli-179000000066-AbC123" reason=owner-unknown
+[cleanup] phase cleanup ms=1
+[cleanup] probe close-result path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S8-tmp-head-v20\n1-w6SSsu\close-4Z9tpi\sutradhar-cli-179000000066-AbC123" removed=false reason=owner-unknown
+PASS N1 [chromePid is 0] close keeps (owner-unknown) :: {"removed":false,"reason":"owner-unknown"}
+[cleanup] probe dir path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S8-tmp-head-v20\n1-w6SSsu\sweep-V0BTVi\sutradhar-cli-179000000067-AbC123"
+[cleanup] consider path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S8-tmp-head-v20\n1-w6SSsu\sweep-V0BTVi\sutradhar-cli-179000000067-AbC123" mode=sweep
+[cleanup] scan ms=0 result=0
+[cleanup] decision path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S8-tmp-head-v20\n1-w6SSsu\sweep-V0BTVi\sutradhar-cli-179000000067-AbC123" reason=owner-unknown
+[cleanup] kept path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S8-tmp-head-v20\n1-w6SSsu\sweep-V0BTVi\sutradhar-cli-179000000067-AbC123" reason=owner-unknown
+[cleanup] phase sweep ms=1 removed=0 kept=1
+PASS N1 [chromePid is 0] sweep keeps (owner-unknown) :: ["sutradhar-cli-179000000067-AbC123:owner-unknown"]
+[cleanup] probe dir path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S8-tmp-head-v20\n1-w6SSsu\close-Lu9v77\sutradhar-cli-179000000068-AbC123"
+INFO [empty marker file] readOwnerPid=undefined
+[cleanup] consider path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S8-tmp-head-v20\n1-w6SSsu\close-Lu9v77\sutradhar-cli-179000000068-AbC123" mode=close
+[cleanup] scan ms=0 result=0
+[cleanup] decision path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S8-tmp-head-v20\n1-w6SSsu\close-Lu9v77\sutradhar-cli-179000000068-AbC123" reason=owner-unknown
+[cleanup] kept path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S8-tmp-head-v20\n1-w6SSsu\close-Lu9v77\sutradhar-cli-179000000068-AbC123" reason=owner-unknown
+[cleanup] phase cleanup ms=1
+[cleanup] probe close-result path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S8-tmp-head-v20\n1-w6SSsu\close-Lu9v77\sutradhar-cli-179000000068-AbC123" removed=false reason=owner-unknown
+PASS N1 [empty marker file] close keeps (owner-unknown) :: {"removed":false,"reason":"owner-unknown"}
+[cleanup] probe dir path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S8-tmp-head-v20\n1-w6SSsu\sweep-xw53Qg\sutradhar-cli-179000000069-AbC123"
+[cleanup] consider path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S8-tmp-head-v20\n1-w6SSsu\sweep-xw53Qg\sutradhar-cli-179000000069-AbC123" mode=sweep
+[cleanup] scan ms=0 result=0
+[cleanup] decision path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S8-tmp-head-v20\n1-w6SSsu\sweep-xw53Qg\sutradhar-cli-179000000069-AbC123" reason=owner-unknown
+[cleanup] kept path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S8-tmp-head-v20\n1-w6SSsu\sweep-xw53Qg\sutradhar-cli-179000000069-AbC123" reason=owner-unknown
+[cleanup] phase sweep ms=1 removed=0 kept=1
+PASS N1 [empty marker file] sweep keeps (owner-unknown) :: ["sutradhar-cli-179000000069-AbC123:owner-unknown"]
+[cleanup] probe dir path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S8-tmp-head-v20\n1-w6SSsu\ctl-mPzkPA\sutradhar-cli-1790000000701-AbC123"
+[cleanup] consider path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S8-tmp-head-v20\n1-w6SSsu\ctl-mPzkPA\sutradhar-cli-1790000000701-AbC123" mode=close
+[cleanup] scan ms=0 result=0
+[cleanup] decision path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S8-tmp-head-v20\n1-w6SSsu\ctl-mPzkPA\sutradhar-cli-1790000000701-AbC123" reason=remove
+[cleanup] rm-attempt path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S8-tmp-head-v20\n1-w6SSsu\ctl-mPzkPA\sutradhar-cli-1790000000701-AbC123" n=1 remaining-ms=14999
+[cleanup] removed path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S8-tmp-head-v20\n1-w6SSsu\ctl-mPzkPA\sutradhar-cli-1790000000701-AbC123"
+[cleanup] phase cleanup ms=3
+PASS N1 control: no marker, no lock -> removed (close) :: {"removed":true}
+[cleanup] probe dir path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S8-tmp-head-v20\n1-w6SSsu\ctl-SvSlof\sutradhar-cli-1790000000702-AbC123"
+[cleanup] consider path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S8-tmp-head-v20\n1-w6SSsu\ctl-SvSlof\sutradhar-cli-1790000000702-AbC123" mode=sweep
+[cleanup] scan ms=0 result=0
+[cleanup] decision path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S8-tmp-head-v20\n1-w6SSsu\ctl-SvSlof\sutradhar-cli-1790000000702-AbC123" reason=remove
+[cleanup] rm-attempt path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S8-tmp-head-v20\n1-w6SSsu\ctl-SvSlof\sutradhar-cli-1790000000702-AbC123" n=1 remaining-ms=14999
+[cleanup] removed path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S8-tmp-head-v20\n1-w6SSsu\ctl-SvSlof\sutradhar-cli-1790000000702-AbC123"
+[cleanup] phase sweep ms=3 removed=1 kept=0
+PASS N1 control: no marker, no lock -> removed (sweep) :: {"removed":["E:\\AI-Cache\\tmp\\claude\\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\\37c49594-f3f4-44c7-b8d5-a5f569bf406f\\scratchpad\\S8-tmp-head-v20\\n1-w6SSsu\\ctl-SvSlof\\sutradhar-cli-1790000000702-AbC123"],"kept":[]}
+[cleanup] probe dir path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S8-tmp-head-v20\n1-w6SSsu\ctl-0RVHCL\sutradhar-cli-1790000000703-AbC123"
+[cleanup] consider path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S8-tmp-head-v20\n1-w6SSsu\ctl-0RVHCL\sutradhar-cli-1790000000703-AbC123" mode=close
+[cleanup] scan ms=0 result=0
+[cleanup] decision path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S8-tmp-head-v20\n1-w6SSsu\ctl-0RVHCL\sutradhar-cli-1790000000703-AbC123" reason=remove
+[cleanup] rm-attempt path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S8-tmp-head-v20\n1-w6SSsu\ctl-0RVHCL\sutradhar-cli-1790000000703-AbC123" n=1 remaining-ms=14995
+[cleanup] removed path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S8-tmp-head-v20\n1-w6SSsu\ctl-0RVHCL\sutradhar-cli-1790000000703-AbC123"
+[cleanup] phase cleanup ms=7
+PASS N1 control: VALID marker with a dead owner -> removed :: deadPid=82436 {"removed":true}
+[cleanup] probe dir path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S8-tmp-head-v20\n1-w6SSsu\ctl-5HwuhH\sutradhar-cli-1790000000704-AbC123"
+[cleanup] consider path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S8-tmp-head-v20\n1-w6SSsu\ctl-5HwuhH\sutradhar-cli-1790000000704-AbC123" mode=close
+[cleanup] scan ms=0 result=0
+[cleanup] decision path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S8-tmp-head-v20\n1-w6SSsu\ctl-5HwuhH\sutradhar-cli-1790000000704-AbC123" reason=owner-alive
+[cleanup] kept path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S8-tmp-head-v20\n1-w6SSsu\ctl-5HwuhH\sutradhar-cli-1790000000704-AbC123" reason=owner-alive
+[cleanup] phase cleanup ms=4
+PASS N1 control: VALID marker with a live owner -> owner-alive (kept) :: {"removed":false,"reason":"owner-alive"}
+RESULT fails=0
+# exit=0 end=2026-10-04T07:36:27+05:30
