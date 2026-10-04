@@ -24,9 +24,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 Nothing yet.
 
-## [0.6.2] - unreleased
+## [0.6.2] - 2026-10-04
 
-Prepared on branch `release/0.6.2`; the date and the published-to-npm line are filled in after `npm publish`.
+Published to npm as `sutradhar@0.6.2` on 2026-10-04.
 Fixes for the defects found by the Claude-direct WebBench run of 2026-10-04 (`tools/webbench/claude-direct-run-2026-10-04.md`).
 
 ### Fixed
