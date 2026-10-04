@@ -1,0 +1,23 @@
+[iso-guard] tmpdir=e:/ai-cache/tmp/claude/e--hmx-projects-internal-projects-pinchtab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/r062/s1-tmp pid=68888
+PASS GET /long?n=10000 status=200 len=12547
+PASS GET /long-emoji status=200 len=12187
+PASS GET /short status=200 len=427
+PASS GET /blank status=200 len=134
+PASS GET /churn?k=8&ms=25 status=200 len=1763
+PASS GET /nodeid status=200 len=385
+PASS GET /nodeid-frame status=200 len=221
+PASS GET /hist/a status=200 len=335
+PASS GET /hist/b status=200 len=335
+PASS GET /hist/spa status=200 len=212
+PASS GET /reload-count status=200 len=161
+PASS GET /beforeunload status=200 len=280
+PASS long: line count gives innerText >= 10000 lines=239
+PASS long-emoji: length len=12000
+PASS long-emoji: pairs at known indices 
+PASS short: ~300 chars of text 
+PASS reload-count increments 
+PASS spa: inline pushState script 
+PASS GET /pdf len=19
+PASS hits recorded 
+PASS negative control: unknown route is 404 (not 200) status=404
+SELFTEST OK
