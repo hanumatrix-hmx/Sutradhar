@@ -1,0 +1,17 @@
+$ grep -nE "\b(execFile|execFileSync|spawn|spawnSync|exec|execSync)\(" packages/cli/src/*.ts   # the plan's grep
+packages/cli/src/spawn-chrome.ts:178:    const spawnFn = deps.spawnFn ?? ((file, a, o) => spawn(file, a, o));
+packages/cli/src/spawn-chrome.ts:241:  spawnFn: (file: string, args: string[], options: SpawnOptions) => KillChild = (file, args, options) => spawn(file, args, options),
+packages/cli/src/temp-profile.ts:255:    execFile(file, args, { timeout: timeoutMs, windowsHide: true, maxBuffer: 64 * 1024 * 1024 }, (err, stdout) =>
+
+$ grep -nE "\b(spawnFn|execFile|execFileSync|spawn|spawnSync|exec|execSync|fork)\b[ ]*\(" packages/cli/src/*.ts   # extended: injected spawn seams too
+packages/cli/src/spawn-chrome.ts:178:    const spawnFn = deps.spawnFn ?? ((file, a, o) => spawn(file, a, o));
+packages/cli/src/spawn-chrome.ts:179:    child = spawnFn(chromePath, args, { detached: true, stdio: 'ignore' });
+packages/cli/src/spawn-chrome.ts:241:  spawnFn: (file: string, args: string[], options: SpawnOptions) => KillChild = (file, args, options) => spawn(file, args, options),
+packages/cli/src/spawn-chrome.ts:247:      const tk = spawnFn(taskkillExe(), ['/PID', String(pid), '/T', '/F'], { stdio: 'ignore', windowsHide: true });
+packages/cli/src/temp-profile.ts:255:    execFile(file, args, { timeout: timeoutMs, windowsHide: true, maxBuffer: 64 * 1024 * 1024 }, (err, stdout) =>
+packages/cli/src/warden-control.ts:278:  const child = spawnFn(execPath, [argv1, '__dialog-warden', payload], {
+
+$ grep -n "child_process" packages/cli/src/*.ts
+packages/cli/src/spawn-chrome.ts:14:import { spawn, type SpawnOptions } from 'node:child_process';
+packages/cli/src/temp-profile.ts:37:import { execFile } from 'node:child_process';
+packages/cli/src/warden-control.ts:11:import { spawn } from 'node:child_process';

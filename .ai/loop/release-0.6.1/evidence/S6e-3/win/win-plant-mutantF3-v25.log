@@ -1,0 +1,20 @@
+# cmd: TEMP=ISO TMP=ISO TMPDIR=ISO NODE_OPTIONS=--import=file:///$SP/iso/assert-tmp.mjs SUTRADHAR_CLI_DEBUG_CLEANUP=1 TP_MODULE=E:/AI-Cache/tmp/claude/E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/S6e-3/mod-mutant/temp-profile.mjs timeout 600 "/c/Program Files/nodejs/node" $EV/S4/probes/win-plant.mjs ; ISO=E:/AI-Cache/tmp/claude/E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/S6e-3-tmp-mutantF3-v25 ; module-sha=ec7e555d5e02a380ac7309ae4db180ff0ccbb937d2ca4574f89cea02a71b1671 ; start=2026-10-04T06:29:12+05:30
+[iso-guard] tmpdir=e:/ai-cache/tmp/claude/e--hmx-projects-internal-projects-pinchtab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/s6e-3-tmp-mutantf3-v25 pid=69740
+[probe-guard] tmpdir=e:/ai-cache/tmp/claude/e--hmx-projects-internal-projects-pinchtab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/s6e-3-tmp-mutantf3-v25 pid=69740
+== win-plant: bare-name powershell.exe resolution from cwd node=v25.0.0 platform=win32 tmpdir=E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S6e-3-tmp-mutantF3-v25 pid=69740
+[cleanup] probe plant-cwd path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S6e-3-tmp-mutantF3-v25\plant-uNvCUX"
+INFO baseline scan lines=35
+INFO planted scan took ms=551 (20000 = planted cmd.exe ran and waited on stdin until the scan timeout)
+INFO scan with planted powershell.exe in cwd -> array(35)
+PASS PLANT: scan unaffected by a powershell.exe in cwd (expected FAIL on branch; S6a powershellExe() fixes)
+[cleanup] probe dir path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S6e-3-tmp-mutantF3-v25\plant-root-Bxxw9O\sutradhar-cli-1790000000900-AbC123"
+[cleanup] consider path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S6e-3-tmp-mutantF3-v25\plant-root-Bxxw9O\sutradhar-cli-1790000000900-AbC123" mode=close
+[cleanup] scan ms=544 result=36
+[cleanup] decision path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S6e-3-tmp-mutantF3-v25\plant-root-Bxxw9O\sutradhar-cli-1790000000900-AbC123" reason=in-use
+[cleanup] kept path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S6e-3-tmp-mutantF3-v25\plant-root-Bxxw9O\sutradhar-cli-1790000000900-AbC123" reason=in-use
+[cleanup] phase cleanup ms=545
+[cleanup] probe close-result path="E:\AI-Cache\tmp\claude\E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041\37c49594-f3f4-44c7-b8d5-a5f569bf406f\scratchpad\S6e-3-tmp-mutantF3-v25\plant-root-Bxxw9O\sutradhar-cli-1790000000900-AbC123" removed=false reason=in-use
+PASS PLANT: in-use stand-in dir kept when cwd holds a planted powershell.exe (expected FAIL on branch) :: {"removed":false,"reason":"in-use"}
+INFO stand-in exited=true
+RESULT fails=0
+# exit=0 end=2026-10-04T06:29:16+05:30

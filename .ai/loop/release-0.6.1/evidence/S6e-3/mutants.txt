@@ -1,0 +1,18 @@
+## M-F3: exit=1 signal= Tests  1 failed | 7 passed | 1 skipped (9)
+   sha-before=6da2045fc8c87e26ed29ef5b4833e55e1ba8a732bc22011b50d7bcde5956969c sha-after=6da2045fc8c87e26ed29ef5b4833e55e1ba8a732bc22011b50d7bcde5956969c restored=true
+   must-fail=[F3-a] caught=true
+   FAILED: tests/unit/system-binaries.spec.ts > S6e-3 (F3): the executables actually run are absolute helper paths > F3-a: the Windows scan runs powershellExe() (absolute), and follows SystemRoot (so it is the helper, not a literal)
+## M-F3b-kill-bare-taskkill: exit=1 signal= Tests  2 failed | 6 passed | 1 skipped (9)
+   sha-before=43a37a483a1ef88a86827e7c07ce0722490ee8e94821d3a0d81088eeb1525a38 sha-after=43a37a483a1ef88a86827e7c07ce0722490ee8e94821d3a0d81088eeb1525a38 restored=true
+   must-fail=[F3-c (Windows), F3-d] caught=true
+   FAILED: tests/unit/system-binaries.spec.ts > S6e-3 (F3): the executables actually run are absolute helper paths > F3-c (Windows): killChromeTree runs taskkillExe() (absolute) with exactly /PID <pid> /T /F
+   FAILED: tests/unit/system-binaries.spec.ts > S6e-3 (F3): the executables actually run are absolute helper paths > F3-d: every spawn/execFile call site in packages/cli/src runs a helper path, process.execPath, the resolved Chrome path or an injected seam, never a bare tool name
+## M-F3c-posix-bare-ps: exit=1 signal= Tests  1 failed | 7 passed | 1 skipped (9)
+   sha-before=6da2045fc8c87e26ed29ef5b4833e55e1ba8a732bc22011b50d7bcde5956969c sha-after=6da2045fc8c87e26ed29ef5b4833e55e1ba8a732bc22011b50d7bcde5956969c restored=true
+   must-fail=[F3-b] caught=true
+   FAILED: tests/unit/system-binaries.spec.ts > S6e-3 (F3): the executables actually run are absolute helper paths > F3-b: the POSIX scan (macOS) runs the absolute psBin(), never the bare name `ps`
+## M-F3d-new-bare-site: exit=1 signal= Tests  1 failed | 7 passed | 1 skipped (9)
+   sha-before=6da2045fc8c87e26ed29ef5b4833e55e1ba8a732bc22011b50d7bcde5956969c sha-after=6da2045fc8c87e26ed29ef5b4833e55e1ba8a732bc22011b50d7bcde5956969c restored=true
+   must-fail=[F3-d] caught=true
+   FAILED: tests/unit/system-binaries.spec.ts > S6e-3 (F3): the executables actually run are absolute helper paths > F3-d: every spawn/execFile call site in packages/cli/src runs a helper path, process.execPath, the resolved Chrome path or an injected seam, never a bare tool name
+ALL-MUTANTS-CAUGHT-AND-RESTORED

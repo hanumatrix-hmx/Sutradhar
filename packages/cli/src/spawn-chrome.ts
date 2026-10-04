@@ -175,7 +175,8 @@ export async function spawnDetachedChrome(
 
   let child: ChildLike;
   try {
-    child = (deps.spawnFn ?? ((file, a, o) => spawn(file, a, o)))(chromePath, args, { detached: true, stdio: 'ignore' });
+    const spawnFn = deps.spawnFn ?? ((file, a, o) => spawn(file, a, o));
+    child = spawnFn(chromePath, args, { detached: true, stdio: 'ignore' });
   } catch (err) {
     // P0: spawn threw synchronously (e.g. EFTYPE / UNKNOWN for a non-executable file).
     await discard();
@@ -222,18 +223,28 @@ export async function spawnDetachedChrome(
   throw new Error(`Timed out waiting for Chrome to start on port ${port}.`);
 }
 
+/** What {@link killChromeTree} needs from the `taskkill` child (a real `ChildProcess` satisfies it). */
+export interface KillChild {
+  on(event: 'exit' | 'error', listener: () => void): unknown;
+}
+
 /** Kills a Chrome process (and its child processes — a plain `process.kill(pid)` only signals
  *  the top-level process, leaving the renderer/GPU/utility subprocesses it spawned running as
  *  orphans) previously started by {@link spawnDetachedChrome}. Best-effort: the process may
  *  already be gone (killed externally, crashed) — that's not an error worth surfacing.
  *  Resolves once the kill command itself has finished (hard timeout `timeoutMs`), so a caller
  *  can go on to wait for the process to exit and clean up its profile dir (GAP-315). */
-export async function killChromeTree(pid: number, timeoutMs = 10_000): Promise<void> {
+export async function killChromeTree(
+  pid: number,
+  timeoutMs = 10_000,
+  /** Test seam (S6e-3): lets a unit test see the executable that is run. Production passes none. */
+  spawnFn: (file: string, args: string[], options: SpawnOptions) => KillChild = (file, args, options) => spawn(file, args, options),
+): Promise<void> {
   if (process.platform === 'win32') {
     await new Promise<void>((resolve) => {
       // Absolute path (system-binaries.ts): same program and arguments as before, but never a
       // planted taskkill.exe from the cwd (Node 18/20 search the cwd first for a bare name).
-      const tk = spawn(taskkillExe(), ['/PID', String(pid), '/T', '/F'], { stdio: 'ignore', windowsHide: true });
+      const tk = spawnFn(taskkillExe(), ['/PID', String(pid), '/T', '/F'], { stdio: 'ignore', windowsHide: true });
       const timer = setTimeout(resolve, timeoutMs);
       const done = () => {
         clearTimeout(timer);
