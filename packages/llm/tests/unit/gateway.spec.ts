@@ -5,24 +5,16 @@
  * The previous version of this file asserted on hardcoded fake strings
  * ("OpenRouter Response to: ..."). The adapters now perform genuine network
  * calls, so these tests verify real structure. Network-dependent tests are
- * gated behind a reachable Ollama daemon so they only run when a backend is up.
+ * gated behind a reachable Ollama daemon that lists the model so they only run when a backend is up.
  */
 
 import { describe, it, expect } from 'vitest';
 import { OpenRouterAdapter, OpenAiCompatibleAdapter, LLM_VERSION } from '../../src/index.js';
 import { createModelId } from '@sutradhar/contracts';
+import { ollamaHasModel } from './ollama-gate.js';
 
 const OLLAMA_URL = 'http://localhost:11434/v1';
 const OLLAMA_MODEL = 'qwen3.5:9b';
-
-async function ollamaReachable(): Promise<boolean> {
-  try {
-    const res = await fetch('http://localhost:11434/api/tags', { method: 'GET' });
-    return res.ok;
-  } catch {
-    return false;
-  }
-}
 
 describe('@sutradhar/llm Gateway & OpenAiCompatibleAdapter', () => {
   it('should export correct package version constant', () => {
@@ -55,7 +47,7 @@ describe('@sutradhar/llm Gateway & OpenAiCompatibleAdapter', () => {
   it(
     'should generate a REAL completion against local Ollama',
     async () => {
-      if (!(await ollamaReachable())) return; // skip when no daemon
+      if (!(await ollamaHasModel(OLLAMA_MODEL))) return; // skip unless daemon lists the model
       const adapter = new OpenAiCompatibleAdapter({
         baseUrl: OLLAMA_URL,
         defaultModel: OLLAMA_MODEL,
@@ -85,7 +77,7 @@ describe('@sutradhar/llm Gateway & OpenAiCompatibleAdapter', () => {
   it(
     'should stream REAL chunks from local Ollama',
     async () => {
-      if (!(await ollamaReachable())) return; // skip when no daemon
+      if (!(await ollamaHasModel(OLLAMA_MODEL))) return; // skip unless daemon lists the model
       const adapter = new OpenAiCompatibleAdapter({
         baseUrl: OLLAMA_URL,
         defaultModel: OLLAMA_MODEL,

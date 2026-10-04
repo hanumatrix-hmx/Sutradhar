@@ -10,15 +10,9 @@
 import { describe, it, expect } from 'vitest';
 import { OllamaAdapter } from '../../src/index.js';
 import { createModelId } from '@sutradhar/contracts';
+import { ollamaReachable, ollamaHasModel } from './ollama-gate.js';
 
-async function ollamaReachable(): Promise<boolean> {
-  try {
-    const res = await fetch('http://localhost:11434/api/tags', { method: 'GET' });
-    return res.ok;
-  } catch {
-    return false;
-  }
-}
+const OLLAMA_MODEL = 'qwen3.5:9b';
 
 describe('@sutradhar/llm Local Ollama Provider Engine', () => {
   it('should initialize OllamaAdapter with the real provider id', () => {
@@ -37,7 +31,7 @@ describe('@sutradhar/llm Local Ollama Provider Engine', () => {
   it(
     'should discover the REAL models installed in the local daemon',
     async () => {
-      if (!(await ollamaReachable())) return; // skip when no daemon
+      if (!(await ollamaHasModel(OLLAMA_MODEL))) return; // skip unless daemon lists the model
       const adapter = new OllamaAdapter();
       const models = await adapter.listLocalModels();
       expect(models.length).toBeGreaterThan(0);
@@ -53,10 +47,10 @@ describe('@sutradhar/llm Local Ollama Provider Engine', () => {
   it(
     'should generate a REAL completion against the local Ollama model',
     async () => {
-      if (!(await ollamaReachable())) return; // skip when no daemon
-      const adapter = new OllamaAdapter({ defaultModel: 'qwen3.5:9b' });
+      if (!(await ollamaHasModel(OLLAMA_MODEL))) return; // skip unless daemon lists the model
+      const adapter = new OllamaAdapter({ defaultModel: OLLAMA_MODEL });
       const response = await adapter.generateCompletion({
-        modelId: createModelId('qwen3.5:9b'),
+        modelId: createModelId(OLLAMA_MODEL),
         messages: [
           { role: 'system', content: 'Reply with strict JSON only.' },
           { role: 'user', content: 'Return: {"ok":true}' },
@@ -77,11 +71,11 @@ describe('@sutradhar/llm Local Ollama Provider Engine', () => {
   it(
     'should stream REAL chunks from the local Ollama model',
     async () => {
-      if (!(await ollamaReachable())) return; // skip when no daemon
-      const adapter = new OllamaAdapter({ defaultModel: 'qwen3.5:9b' });
+      if (!(await ollamaHasModel(OLLAMA_MODEL))) return; // skip unless daemon lists the model
+      const adapter = new OllamaAdapter({ defaultModel: OLLAMA_MODEL });
       const chunks: string[] = [];
       for await (const chunk of adapter.generateStream({
-        modelId: createModelId('qwen3.5:9b'),
+        modelId: createModelId(OLLAMA_MODEL),
         messages: [{ role: 'user', content: 'Say the word hello.' }],
       })) {
         chunks.push(chunk.textDelta);
