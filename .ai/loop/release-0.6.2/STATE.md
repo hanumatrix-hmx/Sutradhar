@@ -34,3 +34,5 @@
 - S10b done (GAP-399..413). Next: S11 gate (re-key S4 inventory first, A-2), S11b.
 
 - S11 gate evidence committed: item 5 llm FAIL (environmental: Ollama daemon on localhost:11434 without qwen3.5:9b; packages/llm unchanged). All else PASS. Next: orchestrator decision on item 5; S11b evidence in evidence/S11b.
+
+- S11b done (evidence/S11b): 982 COMPLETED, 2561 INCOMPLETE, no detached Frame, no empty snap.

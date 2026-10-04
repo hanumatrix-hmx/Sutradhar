@@ -1,0 +1,169 @@
+{
+  "cliSha": "f221f536b9655e5580752adf8189145b9c4d8bb7ed2108633c89f923f5cae346",
+  "tasks": {
+    "982": [
+      {
+        "task": "982",
+        "attempt": "a1",
+        "steps": [],
+        "numbers": {
+          "first": {
+            "offset": 0,
+            "returnedChars": 4000,
+            "totalChars": 9593,
+            "truncated": true,
+            "textLength": 4000,
+            "source": "dom"
+          },
+          "evalLengthImmediately": 9593,
+          "plainFirst": {
+            "textLength": 4000,
+            "marker": "[page text truncated: showing characters 0-4000 of 9593. Continue with: sutradhar text --offset 4000]"
+          },
+          "markerTotalVsJsonTotal": {
+            "markerTotal": 9593,
+            "jsonTotal": 9593,
+            "equal": true
+          },
+          "pagedWindows": 3,
+          "pagedMarkers": [
+            "[page text truncated: showing characters 4000-8000 of 9593. Continue with: sutradhar text --offset 8000]",
+            "[page text: showing characters 8000-9593 of 9593 (end)]"
+          ],
+          "pagedLength": 9593,
+          "evalLengthAfterPaging": 9593,
+          "evalFullTextPrintedLength": 9594,
+          "filedPaged": [
+            "December 26, 2022",
+            "July 01, 2021",
+            "September 06, 2020",
+            "January 29, 2022",
+            "February 02, 2023",
+            "October 02, 2024",
+            "March 21, 2023",
+            "April 29, 2022",
+            "September 19, 2024",
+            "May 29, 2020"
+          ],
+          "filedEval": [
+            "December 26, 2022",
+            "July 01, 2021",
+            "September 06, 2020",
+            "January 29, 2022",
+            "February 02, 2023",
+            "October 02, 2024",
+            "March 21, 2023",
+            "April 29, 2022",
+            "September 19, 2024",
+            "May 29, 2020"
+          ],
+          "titles": [
+            {
+              "title": "NON-DISCLOSURE AGREEMENT",
+              "filed": "December 26, 2022"
+            },
+            {
+              "title": "NON-DISCLOSURE AGREEMENT",
+              "filed": "July 01, 2021"
+            },
+            {
+              "title": "NON-DISCLOSURE AGREEMENT",
+              "filed": "September 06, 2020"
+            },
+            {
+              "title": "Non disclosure agreement template word",
+              "filed": "January 29, 2022"
+            },
+            {
+              "title": "Non-Disclosure Agreement",
+              "filed": "February 02, 2023"
+            }
+          ],
+          "differencesRecorded": {
+            "firstTotalVsEvalImmediate": [
+              9593,
+              9593
+            ],
+            "pagedLengthVsEvalAfter": [
+              9593,
+              9593
+            ]
+          }
+        },
+        "checks": {
+          "firstJsonSelfConsistent": true,
+          "firstPlainMarkerMatchesItsWindow": true,
+          "lastMarkerIsEnd": true,
+          "pagedContainsEveryEvalFiled": true
+        },
+        "outcome": "COMPLETED",
+        "reason": null,
+        "closeExit": 0,
+        "anyDetached": false
+      }
+    ],
+    "2561": [
+      {
+        "task": "2561",
+        "attempt": "a1",
+        "numbers": {
+          "navStays": {
+            "exit": 1,
+            "err": "Fatal: net::ERR_ABORTED at https://www.kayak.com/stays "
+          },
+          "textLength": 2124,
+          "destinationId": 35,
+          "destinationLine": "div \"Swap origin and destination locations\" role=button",
+          "suggestion": null,
+          "finalTextLength": 2543,
+          "finalTextMentionsRome": true,
+          "exits": {
+            "click": 1,
+            "type": 1,
+            "pick": 1
+          },
+          "anyNonZeroExit": [
+            {
+              "argv": "nav https://www.kayak.com/stays --settle",
+              "exit": 1
+            },
+            {
+              "argv": "click #35",
+              "exit": 1
+            },
+            {
+              "argv": "type [#35] Rome",
+              "exit": 1
+            },
+            {
+              "argv": "clickrole option Rome",
+              "exit": 1
+            }
+          ]
+        },
+        "checks": {
+          "noDetachedFrameInAnyOutput": true,
+          "noEmptySnapWhileTextHasContent": true
+        },
+        "outcome": "INCOMPLETE",
+        "reason": "click 1, type 1, pick 1, Rome in final text: true",
+        "snapSummaries": [
+          {
+            "step": "snap-1",
+            "zeroElements": false,
+            "bytes": 1866,
+            "head": "URL: https://www.kayak.com/ | Title: Search Flights, Hotels & Rental Cars | KAYAK | Interactive elements (94): | [#2] div \"Ope"
+          },
+          {
+            "step": "snap-2",
+            "zeroElements": false,
+            "bytes": 2152
+          }
+        ],
+        "closeExit": 0
+      }
+    ]
+  },
+  "startedAt": "2026-10-04T18:55:18.372Z",
+  "endedAt": "2026-10-04T18:56:39.035Z"
+}
