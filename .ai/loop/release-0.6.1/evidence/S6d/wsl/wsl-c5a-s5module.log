@@ -1,0 +1,22 @@
+# cmd: timeout 300 wsl.exe -e sh -c 'D=$(mktemp -d) && cp /mnt/e/AI-Cache/tmp/claude/E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/S6d/mod-s5/temp-profile.mjs /mnt/e/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/.ai/loop/release-0.6.1/evidence/S4/probes/common.mjs /mnt/e/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/.ai/loop/release-0.6.1/evidence/S4/probes/wsl/*.mjs "$D"/ && cd "$D" && sha256sum temp-profile.mjs && R=$(mktemp -d -p "$PWD") && echo PROBE_ROOT=$R && node -v && TMPDIR="$R" PROBE_ROOT="$R" TP_MODULE="$PWD/temp-profile.mjs" timeout 240 node  wsl-c5a.mjs 2>&1; echo "# exit=$?"; cd /; case "$D" in /tmp/tmp.*) rm -rf -- "$D" && echo "# removed own D=$D";; *) echo REFUSE;; esac' ; start=2026-10-04T06:10:39+05:30
+6bdb344108af68b4da3d39cdba95ce4965e6dcc405852d619d00ffae5ac903de  temp-profile.mjs
+PROBE_ROOT=/tmp/tmp.56GkXxHRzz/tmp.dlc2jjnk6p
+v20.20.2
+[wsl-guard] root=/tmp/tmp.56GkXxHRzz/tmp.dlc2jjnk6p
+== wsl-c5a argv longer than 4096 chars node=v20.20.2 platform=linux tmpdir=/tmp/tmp.56GkXxHRzz/tmp.dlc2jjnk6p pid=6506
+[cleanup] probe dir path="/tmp/tmp.56GkXxHRzz/tmp.dlc2jjnk6p/c5a-gvLTAK/sutradhar-cli-179000000043-AbC123" pad=100
+INFO pad=100 scan lines=1 longest=247 hit=true
+[cleanup] probe close-result path="/tmp/tmp.56GkXxHRzz/tmp.dlc2jjnk6p/c5a-gvLTAK/sutradhar-cli-179000000043-AbC123" removed=false reason=in-use
+PASS C5a pad=100 -> in-use :: {"removed":false,"reason":"in-use"}
+[cleanup] probe dir path="/tmp/tmp.56GkXxHRzz/tmp.dlc2jjnk6p/c5a-gvLTAK/sutradhar-cli-179000000044-AbC123" pad=4200
+INFO pad=4200 scan lines=1 longest=4347 hit=true
+[cleanup] probe close-result path="/tmp/tmp.56GkXxHRzz/tmp.dlc2jjnk6p/c5a-gvLTAK/sutradhar-cli-179000000044-AbC123" removed=false reason=in-use
+PASS C5a pad=4200 -> in-use :: {"removed":false,"reason":"in-use"}
+[cleanup] probe dir path="/tmp/tmp.56GkXxHRzz/tmp.dlc2jjnk6p/c5a-gvLTAK/sutradhar-cli-179000000045-AbC123" pad=70000
+INFO pad=70000 scan lines=1 longest=70147 hit=true
+[cleanup] probe close-result path="/tmp/tmp.56GkXxHRzz/tmp.dlc2jjnk6p/c5a-gvLTAK/sutradhar-cli-179000000045-AbC123" removed=false reason=in-use
+PASS C5a pad=70000 -> in-use :: {"removed":false,"reason":"in-use"}
+RESULT fails=0
+# exit=0
+# removed own D=/tmp/tmp.56GkXxHRzz
+# end=2026-10-04T06:10:42+05:30

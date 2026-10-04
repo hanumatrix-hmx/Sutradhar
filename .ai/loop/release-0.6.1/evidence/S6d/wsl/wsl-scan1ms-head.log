@@ -1,0 +1,14 @@
+# cmd: timeout 300 wsl.exe -e sh -c 'D=$(mktemp -d) && cp /mnt/e/AI-Cache/tmp/claude/E--HMX-Projects-Internal-Projects-PinchTab--claude-worktrees-project-understanding-696041/37c49594-f3f4-44c7-b8d5-a5f569bf406f/scratchpad/S6d/mod/temp-profile.mjs /mnt/e/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/.ai/loop/release-0.6.1/evidence/S4/probes/common.mjs /mnt/e/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/.ai/loop/release-0.6.1/evidence/S4/probes/wsl/*.mjs /mnt/e/HMX_Projects/Internal_Projects/PinchTab/.claude/worktrees/project-understanding-696041/.ai/loop/release-0.6.1/evidence/S6d/probes/*.mjs "$D"/ && cd "$D" && sha256sum temp-profile.mjs && R=$(mktemp -d -p "$PWD") && echo PROBE_ROOT=$R && node -v && TMPDIR="$R" PROBE_ROOT="$R" TP_MODULE="$PWD/temp-profile.mjs" timeout 240 node  wsl-scan1ms.mjs 2>&1; echo "# exit=$?"; cd /; case "$D" in /tmp/tmp.*) rm -rf -- "$D" && echo "# removed own D=$D";; *) echo REFUSE;; esac' ; start=2026-10-04T06:11:33+05:30
+c7561ea1bc456670dd54307fd45479d0ce38828c724384a4c57c691f1d13f4f8  temp-profile.mjs
+PROBE_ROOT=/tmp/tmp.KtZg2WPzGr/tmp.M2Y8jVYxDI
+v20.20.2
+[wsl-guard] root=/tmp/tmp.KtZg2WPzGr/tmp.M2Y8jVYxDI
+== wsl-scan1ms node=v20.20.2 platform=linux tmpdir=/tmp/tmp.KtZg2WPzGr/tmp.M2Y8jVYxDI
+[cleanup] probe root path="/tmp/tmp.KtZg2WPzGr/tmp.M2Y8jVYxDI"
+INFO scanCommandLines(1) x300: null=300 array=0
+INFO scanCommandLines(8000): array(0)
+PASS scan1ms: every 1 ms scan is null (fail closed) :: null=300/300
+PASS scan8000: a generous timeout completes (array)
+# exit=0
+# removed own D=/tmp/tmp.KtZg2WPzGr
+# end=2026-10-04T06:11:34+05:30

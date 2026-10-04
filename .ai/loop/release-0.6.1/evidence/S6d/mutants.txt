@@ -1,0 +1,38 @@
+## M-D1: exit=1 signal= Tests  3 failed | 9 passed | 1 skipped (13)
+   sha-before=2494adc0fd83c446af21515924716d1516705d1c1565674ff632292a1e627d2a sha-after=2494adc0fd83c446af21515924716d1516705d1c1565674ff632292a1e627d2a restored=true
+   must-fail=[D1:] caught=true
+   FAILED: tests/unit/scan-command-lines.spec.ts > scanCommandLines: Linux reads /proc (no ps) > D1: returns only the lines that carry the prefix, from the injected /proc reader; `ps` is never run
+   FAILED: tests/unit/scan-command-lines.spec.ts > scanCommandLines: Linux reads /proc (no ps) > D2: an unreadable /proc is null (fail closed), and a close with that scan keeps the dir (scan-unavailable)
+   FAILED: tests/unit/scan-command-lines.spec.ts > scanCommandLines: Linux reads /proc (no ps) > D2b: a reader that matched nothing is [] (the query ran), distinct from null
+## M-D2: exit=1 signal= Tests  1 failed | 11 passed | 1 skipped (13)
+   sha-before=2494adc0fd83c446af21515924716d1516705d1c1565674ff632292a1e627d2a sha-after=2494adc0fd83c446af21515924716d1516705d1c1565674ff632292a1e627d2a restored=true
+   must-fail=[D3:] caught=true
+   FAILED: tests/unit/scan-command-lines.spec.ts > scanCommandLines: macOS / other POSIX use ps -ww > D3: darwin runs the absolute ps with exactly -A -ww -o args= and the given timeout
+## M-D3: exit=1 signal= Tests  2 failed | 10 passed | 1 skipped (13)
+   sha-before=2494adc0fd83c446af21515924716d1516705d1c1565674ff632292a1e627d2a sha-after=2494adc0fd83c446af21515924716d1516705d1c1565674ff632292a1e627d2a restored=true
+   must-fail=[D2:] caught=true
+   FAILED: tests/unit/scan-command-lines.spec.ts > scanCommandLines: Linux reads /proc (no ps) > D2: an unreadable /proc is null (fail closed), and a close with that scan keeps the dir (scan-unavailable)
+   FAILED: tests/unit/scan-command-lines.spec.ts > readProcCommandLines (the /proc reader) > D10: on a host without /proc the default reader is null (so a linux scan fails closed)
+## M-D4: exit=1 signal= Tests  1 failed | 11 passed | 1 skipped (13)
+   sha-before=2494adc0fd83c446af21515924716d1516705d1c1565674ff632292a1e627d2a sha-after=2494adc0fd83c446af21515924716d1516705d1c1565674ff632292a1e627d2a restored=true
+   must-fail=[D8:] caught=true
+   FAILED: tests/unit/scan-command-lines.spec.ts > readProcCommandLines (the /proc reader) > D8: a /proc that lists processes but where NOTHING can be read is null, never []
+## M-D5: exit=1 signal= Tests  1 failed | 11 passed | 1 skipped (13)
+   sha-before=2494adc0fd83c446af21515924716d1516705d1c1565674ff632292a1e627d2a sha-after=2494adc0fd83c446af21515924716d1516705d1c1565674ff632292a1e627d2a restored=true
+   must-fail=[D9b:] caught=true
+   FAILED: tests/unit/scan-command-lines.spec.ts > readProcCommandLines (the /proc reader) > D9b: the deadline stops the scan EARLY (slow reads: null after a few, not after all of them)
+## M-D6: exit=1 signal= Tests  2 failed | 10 passed | 1 skipped (13)
+   sha-before=2494adc0fd83c446af21515924716d1516705d1c1565674ff632292a1e627d2a sha-after=2494adc0fd83c446af21515924716d1516705d1c1565674ff632292a1e627d2a restored=true
+   must-fail=[D5:] caught=true
+   FAILED: tests/unit/scan-command-lines.spec.ts > readProcCommandLines (the /proc reader) > D5: NUL separators become spaces, non-numeric entries are skipped, empty cmdlines (kernel threads) are dropped
+   FAILED: tests/unit/scan-command-lines.spec.ts > readProcCommandLines (the /proc reader) > D6: a process that exits between readdir and read is skipped, not an error
+## M-D7: exit=1 signal= Tests  1 failed | 11 passed | 1 skipped (13)
+   sha-before=2494adc0fd83c446af21515924716d1516705d1c1565674ff632292a1e627d2a sha-after=2494adc0fd83c446af21515924716d1516705d1c1565674ff632292a1e627d2a restored=true
+   must-fail=[D5:] caught=true
+   FAILED: tests/unit/scan-command-lines.spec.ts > readProcCommandLines (the /proc reader) > D5: NUL separators become spaces, non-numeric entries are skipped, empty cmdlines (kernel threads) are dropped
+## M-D8: exit=1 signal= Tests  2 failed | 10 passed | 1 skipped (13)
+   sha-before=2494adc0fd83c446af21515924716d1516705d1c1565674ff632292a1e627d2a sha-after=2494adc0fd83c446af21515924716d1516705d1c1565674ff632292a1e627d2a restored=true
+   must-fail=[D7:] caught=true
+   FAILED: tests/unit/scan-command-lines.spec.ts > readProcCommandLines (the /proc reader) > D7: an unreadable /proc (readdir fails) is null
+   FAILED: tests/unit/scan-command-lines.spec.ts > readProcCommandLines (the /proc reader) > D10: on a host without /proc the default reader is null (so a linux scan fails closed)
+ALL-MUTANTS-CAUGHT-AND-RESTORED

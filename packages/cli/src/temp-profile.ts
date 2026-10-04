@@ -183,27 +183,94 @@ export async function waitForPidExit(pid: number, timeoutMs: number, alive = isP
   return true;
 }
 
+/** Test/seam surface of {@link scanCommandLines}. Production passes none of it. */
+export interface ScanDeps {
+  /** Runs an absolute executable and returns its stdout, or `null` if it failed or timed out. */
+  run?: (file: string, args: string[], timeoutMs: number) => Promise<string | null>;
+  /** Defaults to `process.platform`. */
+  platform?: NodeJS.Platform;
+  /** Linux only: the command line of every process (NUL separators already turned into spaces),
+   *  or `null` if `/proc` is unreadable. Defaults to {@link readProcCommandLines}. */
+  readProc?: (timeoutMs: number) => Promise<string[] | null>;
+}
+
+/** The `fs` calls {@link readProcCommandLines} makes (injectable for tests). */
+export interface ProcFs {
+  readdir(dir: string): Promise<string[]>;
+  readFile(file: string): Promise<Buffer>;
+}
+
+const realProcFs: ProcFs = { readdir: (d) => readdir(d), readFile: (f) => readFile(f) };
+
+/** Linux process scan source: `/proc/<pid>/cmdline` of every process (NUL separators become
+ *  spaces; empty command lines, i.e. kernel threads, are dropped). Unlike `ps`, it needs no procps
+ *  package and never truncates a long argv. Returns `null` (fail closed) if `/proc` cannot be listed,
+ *  if not a single command line could be read (a directory that merely LOOKS like `/proc`: the
+ *  process's own cmdline is always readable on a working one), or if `timeoutMs` ran out. A process
+ *  that exits between the listing and the read is simply skipped. */
+export async function readProcCommandLines(timeoutMs: number, procFs: ProcFs = realProcFs): Promise<string[] | null> {
+  const deadline = performance.now() + timeoutMs;
+  let names: string[];
+  try {
+    names = await procFs.readdir('/proc');
+  } catch {
+    return null;
+  }
+  const lines: string[] = [];
+  let readable = 0;
+  for (const name of names) {
+    if (!/^\d+$/.test(name)) continue;
+    if (performance.now() >= deadline) return null;
+    let raw: Buffer;
+    try {
+      raw = await procFs.readFile(`/proc/${name}/cmdline`);
+    } catch {
+      continue; // exited since the listing, or hidden from this user
+    }
+    readable++;
+    const line = raw.toString('utf8').split('\0').join(' ').trim();
+    if (line) lines.push(line);
+  }
+  if (readable === 0 || performance.now() >= deadline) return null;
+  return lines;
+}
+
+/** Keeps the lines that mention {@link TEMP_PROFILE_PREFIX}. Shared by every platform. */
+function keepPrefixed(lines: readonly string[]): string[] {
+  return lines.filter((l) => l.includes(TEMP_PROFILE_PREFIX));
+}
+
+const execRun: NonNullable<ScanDeps['run']> = (file, args, timeoutMs) =>
+  new Promise<string | null>((resolve) => {
+    execFile(file, args, { timeout: timeoutMs, windowsHide: true, maxBuffer: 64 * 1024 * 1024 }, (err, stdout) =>
+      resolve(err ? null : stdout),
+    );
+  });
+
 /** Command lines of every running process that mentions {@link TEMP_PROFILE_PREFIX}, or `null`
  *  if the scan failed or timed out (callers must then keep everything). `timeoutMs` defaults to
- *  {@link SCAN_TIMEOUT_MS}; callers pass what is left of their own deadline. The executables are
- *  absolute system paths (system-binaries.ts), never bare names resolved from the cwd. */
-export async function scanCommandLines(timeoutMs = SCAN_TIMEOUT_MS): Promise<string[] | null> {
-  const run = (file: string, args: string[]) =>
-    new Promise<string | null>((resolve) => {
-      execFile(file, args, { timeout: timeoutMs, windowsHide: true, maxBuffer: 64 * 1024 * 1024 }, (err, stdout) =>
-        resolve(err ? null : stdout),
-      );
-    });
-  if (process.platform === 'win32') {
+ *  {@link SCAN_TIMEOUT_MS}; callers pass what is left of their own deadline.
+ *  Windows: a CIM query through the absolute PowerShell path. Linux: `/proc/<pid>/cmdline`
+ *  ({@link readProcCommandLines}; no `ps`). Other POSIX (macOS): `ps -A -ww -o args=` (`-ww` = no
+ *  width limit, so a long argv is not cut). Executables are absolute system paths
+ *  (system-binaries.ts), never bare names resolved from the cwd. */
+export async function scanCommandLines(timeoutMs = SCAN_TIMEOUT_MS, deps: ScanDeps = {}): Promise<string[] | null> {
+  const platform = deps.platform ?? process.platform;
+  const run = deps.run ?? execRun;
+  if (platform === 'win32') {
     const script =
       "$ErrorActionPreference='Stop'; " +
       `Get-CimInstance Win32_Process -Filter "CommandLine LIKE '%${TEMP_PROFILE_PREFIX}%'" | ` +
       "ForEach-Object { $_.CommandLine }";
-    const out = await run(powershellExe(), ['-NoProfile', '-NonInteractive', '-Command', script]);
-    return out === null ? null : out.split(/\r?\n/).filter((l) => l.includes(TEMP_PROFILE_PREFIX));
+    const out = await run(powershellExe(), ['-NoProfile', '-NonInteractive', '-Command', script], timeoutMs);
+    return out === null ? null : keepPrefixed(out.split(/\r?\n/));
   }
-  const out = await run(psBin(), ['-A', '-o', 'args=']);
-  return out === null ? null : out.split('\n').filter((l) => l.includes(TEMP_PROFILE_PREFIX));
+  if (platform === 'linux') {
+    const lines = await (deps.readProc ?? readProcCommandLines)(timeoutMs);
+    return lines === null ? null : keepPrefixed(lines);
+  }
+  const out = await run(psBin(), ['-A', '-ww', '-o', 'args='], timeoutMs);
+  return out === null ? null : keepPrefixed(out.split('\n'));
 }
 
 /** Runs the (real or injected) scan with an already-clamped timeout and logs `scan ms= result=`.
