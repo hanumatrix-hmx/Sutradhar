@@ -11,6 +11,7 @@ import os from 'node:os';
 import path from 'node:path';
 import { psBin } from '../../src/system-binaries.js';
 import {
+  commandLinesReference,
   readProcCommandLines,
   removeSessionTempProfile,
   scanCommandLines,
@@ -187,6 +188,16 @@ describe('S6e-2 (F2): case-insensitive scan post-filter', () => {
     } finally {
       rmSync(root, { recursive: true, force: true });
     }
+  });
+
+  it('N4-b: the filter is only a SUBSTRING pre-filter: a line whose token merely contains the prefix is still returned; the word boundary lives in commandLinesReference', async () => {
+    const longerToken = 'chrome --user-data-dir=/tmp/sutradhar-cli-1790000000999-ZZZextra --type=gpu-process';
+    const embedded = 'launcher --label=mysutradhar-cli-1790000000999-ZZZ';
+    const lines = await scanCommandLines(1000, { platform: 'linux', readProc: async () => [longerToken, embedded, NONE] });
+    expect(lines).toEqual([longerToken, embedded]); // both pass the pre-filter (the unrelated line does not)
+    // ... but the token matcher decides: `...-ZZZextra` is a different (longer) name than `...-ZZZ`, so it does not reference that dir.
+    expect(commandLinesReference('/tmp/sutradhar-cli-1790000000999-ZZZ', [longerToken])).toBe(false);
+    expect(commandLinesReference('/tmp/sutradhar-cli-1790000000999-ZZZextra', [longerToken])).toBe(true);
   });
 
   it('F2-c: the same filter applies to the Linux /proc reader and to macOS ps output', async () => {

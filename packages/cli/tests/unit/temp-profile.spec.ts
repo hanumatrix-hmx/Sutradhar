@@ -776,3 +776,92 @@ describe('S6e-4 (N1): an unreadable or corrupt owner marker fails CLOSED (owner-
     expect(decideRemoval(facts())).toEqual({ remove: true }); // ownerState undefined: unchanged (port-probe compatibility)
   });
 });
+
+// ---------------------------------------------------------------------------------------------
+// S6e-5 (N4-a): rule 5 (Windows): Chrome holds `lockfile` open exclusively for the profile's whole life,
+// so the first delete of `lockfile` fails and NOTHING else may be touched. This is the only guard
+// against partial deletion of a live profile when rules 2 and 3 are wrong: with the probe removed
+// (S4 mutant M2) the live A4 run deleted 106 of 200 entries of a running Chrome profile, and the
+// branch spec did not notice.
+// ---------------------------------------------------------------------------------------------
+import { spawn as spawnChildProcess } from 'node:child_process';
+import { readdir as readdirNames } from 'node:fs/promises';
+import { powershellExe } from '../../src/system-binaries.js';
+
+describe('S6e-5 (N4-a): a lockfile held open by a live process protects the whole profile (Windows rule 5)', () => {
+  let root: string;
+  beforeEach(async () => {
+    root = await mkdtemp(path.join(os.tmpdir(), 'gap315-n4a-'));
+  });
+  afterEach(async () => {
+    await rm(root, { recursive: true, force: true });
+  });
+
+  it.skipIf(process.platform !== 'win32')(
+    'N4-a (Windows only; rule 5 is Windows-only, so this is skipped on POSIX): 21 entries survive while lockfile is held with FileShare.None',
+    async () => {
+      const dir = path.join(root, 'sutradhar-cli-1700000000200-N4A');
+      await mkdir(dir);
+      for (let i = 0; i < 20; i++) await writeFile(path.join(dir, `f${String(i).padStart(2, '0')}.dat`), `data ${i}`);
+      const lockPath = path.join(dir, 'lockfile');
+      await writeFile(lockPath, '');
+      const before = (await readdirNames(dir)).sort();
+      expect(before).toHaveLength(21);
+
+      // Hold `lockfile` open exclusively from a CHILD process (the path goes through the environment, never argv).
+      const script = "$f=[IO.File]::Open($env:LOCKPATH,'Open','ReadWrite','None'); 'ready'; [Console]::In.ReadLine()";
+      const child = spawnChildProcess(powershellExe(), ['-NoProfile', '-NonInteractive', '-Command', script], {
+        env: { ...process.env, LOCKPATH: lockPath },
+        stdio: ['pipe', 'pipe', 'ignore'],
+        windowsHide: true,
+      });
+      let exited = false;
+      child.once('exit', () => {
+        exited = true;
+      });
+      try {
+        let out = '';
+        const ready = await new Promise<boolean>((resolve) => {
+          const timer = setTimeout(() => resolve(false), 30_000);
+          child.stdout?.on('data', (d: Buffer) => {
+            out += d.toString('utf8');
+            if (out.includes('ready')) {
+              clearTimeout(timer);
+              resolve(true);
+            }
+          });
+          child.once('exit', () => {
+            clearTimeout(timer);
+            resolve(false);
+          });
+        });
+        expect(ready).toBe(true); // the child really holds the lock before we call anything
+
+        const held = await removeSessionTempProfile(dir, undefined, { tmpRoot: root, scan: async () => [], deadlineMs: 2000, isAlive: () => false });
+        expect(held.removed).toBe(false);
+        const after = (await readdirNames(dir)).sort();
+        for (const name of before) expect(after).toContain(name); // every one of the 21 pre-existing entries is still there
+        expect(after).toContain('lockfile');
+      } finally {
+        // End the child by closing its stdin, then confirm through its own handle that it exited.
+        child.stdin?.end();
+        const gone = await new Promise<boolean>((resolve) => {
+          if (exited) return resolve(true);
+          const timer = setTimeout(() => resolve(false), 15_000);
+          child.once('exit', () => {
+            clearTimeout(timer);
+            resolve(true);
+          });
+        });
+        if (!gone) child.kill(); // only OUR child, by handle
+        expect(gone).toBe(true);
+      }
+
+      // Positive control: with the lock released the very same call removes the dir (the test can see a removal).
+      const released = await removeSessionTempProfile(dir, undefined, { tmpRoot: root, scan: async () => [], deadlineMs: 8000, isAlive: () => false });
+      expect(released).toEqual({ removed: true });
+      expect(await exists(dir)).toBe(false);
+    },
+    90_000,
+  );
+});
