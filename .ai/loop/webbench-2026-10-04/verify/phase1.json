@@ -1,0 +1,276 @@
+[
+  {"id": 1172, "class": "COMPLETED", "subflag": "strict",
+   "fieldFindings": [
+     {"index": 0, "ok": true, "why": "'Academic Support Services' (Broad College) is a named service in on-site search results (search.msu.edu, subdomain); generic name, but it is a service name."},
+     {"index": 1, "ok": true, "why": "Peer-Assisted Learning (PAL) is a tutoring service shown in seq 33."},
+     {"index": 2, "ok": true, "why": "TRiO Student Support Services shown in seq 33."}],
+   "evalAudit": "No raw evals. Wrapper link reads only. type seq27 'academic support tutoring', press seq29 Enter. Seq 19 click '#5' failed (exit 1, wrong id syntax); the retry with '5' worked. a1 starts with nav to startingUrl and ends with close plus a passing check-clean.",
+   "reason": "Three service names come from on-site search results. Seq 5 constructed a msu.edu/search URL, but the final evidence is from the site search box (seq 27-33).",
+   "evidenceSeqs": [27, 29, 33]},
+
+  {"id": 1492, "class": "EXTERNAL-BLOCK", "subflag": "challenge",
+   "fieldFindings": [],
+   "evalAudit": "No raw evals. a1 waitfor seq7 argv was MSYS-mangled ('!C:/Program Files/Git/...'), a driver error that the tool correctly rejected. a2 waitfor seq19 correct, timed out at 30s. Both attempts close plus check-clean.",
+   "reason": "Cloudflare 'Performing security verification' (HTTP 403, Ray ID) on both attempts.",
+   "evidenceSeqs": [1, 3, 15, 17, 19, 21]},
+
+  {"id": 1661, "class": "EXTERNAL-BLOCK", "subflag": "challenge",
+   "fieldFindings": [],
+   "evalAudit": "No raw evals. a1 waitfor argv MSYS-mangled (seq 5, 9), a driver error. Both attempts close plus check-clean.",
+   "reason": "Cloudflare challenge (403, Ray ID) on stackexchange.com in both attempts.",
+   "evidenceSeqs": [1, 7, 13, 17, 19]},
+
+  {"id": 2253, "class": "COMPLETED", "subflag": "strict",
+   "fieldFindings": [
+     {"index": 0, "ok": true, "why": "Result 1 in seq 35 text (Select: 1). The value is a truncated prefix of the full GDPR title."},
+     {"index": 1, "ok": true, "why": "Result 2 (Select: 2), Regulation 2018/1725, truncated prefix."},
+     {"index": 2, "ok": true, "why": "Result 3 (Select: 3), Directive 2016/680, truncated prefix."}],
+   "evalAudit": "No raw evals. clickrole 'EU law (EUR-Lex)' seq21 reached eur-lex.europa.eu by a click. type seq29 'data protection', then submit click seq31. Close plus check-clean.",
+   "reason": "eur-lex.europa.eu is a subdomain of europa.eu, which protocol 2.5 counts as on-site. The first three results match the text order.",
+   "evidenceSeqs": [21, 29, 31, 35, 37]},
+
+  {"id": 2388, "class": "COMPLETED", "subflag": "strict",
+   "fieldFindings": [
+     {"index": 0, "ok": true, "why": "a.title #1, '11h' old, under the Past 24 hours filter (seq 39 shows 'Past 24 hours' and qft interval=7)."},
+     {"index": 1, "ok": true, "why": "a.title #2, 27m old."},
+     {"index": 2, "ok": true, "why": "a.title #3, 19h old."},
+     {"index": 3, "ok": true, "why": "'Tech News' is the actual headline text of result #4 (Indiatimes, 10h), seq 39/41. Odd, but it is the title shown."},
+     {"index": 4, "ok": true, "why": "a.title #5, 1h old."}],
+   "evalAudit": "No raw evals. type seq5 'Tech Industry', press seq7. Seq 27 constructed the news/search URL with nav. Clicks seq31 ('Date' menu) and seq35 ('Past 24 hours') both reported 'timed out after 15000ms' (exit 1), yet the page URL after seq35 carries interval=7 and the filter is applied. That is a probable false-failure tool defect. Seq 11 clickrole News failed; seq 17 NEWS click was contradicted on url-change.",
+   "reason": "The top 5 titles under the past-24h filter are read from on-site Bing News. Completed with a tool defect: the click at seq35 reported a timeout although its navigation took effect.",
+   "evidenceSeqs": [31, 33, 35, 37, 39, 41]},
+
+  {"id": 751, "class": "COMPLETED", "subflag": "strict",
+   "fieldFindings": [
+     {"index": 0, "ok": true, "why": "First site-search result for 'Spring Fashion Trends' (seq 7)."},
+     {"index": 1, "ok": true, "why": "Loewe named in the article intro (seq 15)."},
+     {"index": 2, "ok": true, "why": "Alaïa, same passage."},
+     {"index": 3, "ok": true, "why": "Miu Miu, same passage."},
+     {"index": 4, "ok": true, "why": "Bottega Veneta, same passage."},
+     {"index": 5, "ok": true, "why": "Saint Laurent, same passage."}],
+   "evalAudit": "No raw evals. Seq 5 used a constructed site-search URL. clicktext on the first result title. Close plus check-clean.",
+   "reason": "First search result opened. Five luxury brands are cited from the article text.",
+   "evidenceSeqs": [7, 9, 15]},
+
+  {"id": 1266, "class": "EXTERNAL-BLOCK", "subflag": "captcha",
+   "fieldFindings": [],
+   "evalAudit": "Status evals (seq 7, 17) only read the performance entries. Both attempts close plus check-clean.",
+   "reason": "nytimes.com answered 403 with a captcha-delivery.com (DataDome) iframe on both attempts. The text read was empty because the captcha lives in an iframe.",
+   "evidenceSeqs": [1, 7, 9, 13, 17]},
+
+  {"id": 1379, "class": "AGENT-FAIL", "subflag": "reasoning",
+   "fieldFindings": [],
+   "evalAudit": "No raw evals. Every verb exited 0. Seq 7 constructed the /guides/ URL. Close plus check-clean.",
+   "reason": "The Guides page was workable and fully readable (seq 9, 13 list guide titles and URLs). The driver gave no answer. No popularity signal appears in the logged text, but no drift check or alternative read (homepage text truncated at 4000 chars, no read/scroll) was attempted. No Sutradhar misbehaviour.",
+   "evidenceSeqs": [7, 9, 13, 17]},
+
+  {"id": 1837, "class": "EXTERNAL-BLOCK", "subflag": "geo",
+   "fieldFindings": [],
+   "evalAudit": "None. Single attempt, close plus check-clean.",
+   "reason": "/explore automatically redirected to tiktok.com/in/about, which states that TikTok is blocked in India (regional unavailability, so one attempt is enough).",
+   "evidenceSeqs": [1, 3]},
+
+  {"id": 1946, "class": "COMPLETED", "subflag": "strict",
+   "fieldFindings": [
+     {"index": 0, "ok": true, "why": "Result 1 in seq 17 (Most relevant)."},
+     {"index": 1, "ok": true, "why": "Result 2."},
+     {"index": 2, "ok": true, "why": "Result 3."},
+     {"index": 3, "ok": true, "why": "Result 4 (press release)."}],
+   "evalAudit": "No raw evals. type '#64' seq7 was correctly rejected for bad syntax. type '64' seq11 'heritage conservation', press Enter seq13. Close plus check-clean.",
+   "reason": "Site search was used. The first four results are listed in order. They are stories and press releases rather than 'documents' strictly, but they are the search results the task asks for.",
+   "evidenceSeqs": [11, 13, 17]},
+
+  {"id": 2215, "class": "EXTERNAL-BLOCK", "subflag": "edge-deny",
+   "fieldFindings": [],
+   "evalAudit": "None.",
+   "reason": "Cloudflare 'Sorry, you have been blocked', 403, Ray ID. A deny page with a reference id needs only one attempt.",
+   "evidenceSeqs": [1, 3]},
+
+  {"id": 2554, "class": "EXTERNAL-BLOCK", "subflag": "protocol",
+   "fieldFindings": [
+     {"index": 0, "ok": false, "why": "Value 'This site can't be reached' is Chrome error-page text, not a kettle capacity."},
+     {"index": 1, "ok": false, "why": "Value 'ERR_HTTP2_PROTOCOL_ERROR' is an error code, not a wattage."}],
+   "evalAudit": "None. Both attempts failed at nav with net::ERR_HTTP2_PROTOCOL_ERROR. The geo-redirect flags are spurious (chromewebdata).",
+   "reason": "Both attempts got ERR_HTTP2_PROTOCOL_ERROR. No control shows the site reachable, so this is EXTERNAL-BLOCK(protocol), not completion. SUSPICIOUS: answerFields are filled with error text that satisfies the mechanical checker without answering the task.",
+   "evidenceSeqs": [1, 3, 7, 9]},
+
+  {"id": 1236, "class": "EXTERNAL-BLOCK", "subflag": "edge-deny",
+   "fieldFindings": [],
+   "evalAudit": "Only href evals.",
+   "reason": "Redirected to siteclosed.nordstrom.com ('unusual activity... we don't allow unidentified, automated traffic') on both attempts.",
+   "evidenceSeqs": [1, 5, 9, 13]},
+
+  {"id": 929, "class": "EXTERNAL-BLOCK", "subflag": "protocol",
+   "fieldFindings": [],
+   "evalAudit": "Only href evals.",
+   "reason": "net::ERR_HTTP2_PROTOCOL_ERROR on both attempts. There is no control to distinguish client-side from server-side, and the pattern matches the other HTTP2 edge refusals.",
+   "evidenceSeqs": [1, 7, 9]},
+
+  {"id": 1940, "class": "EXTERNAL-BLOCK", "subflag": "challenge",
+   "fieldFindings": [],
+   "evalAudit": "waitfor seq7 argv MSYS-mangled; seq11 'return ...' was invalid JS. Both are driver errors. Seq 15 is a valid wait that timed out after 30s.",
+   "reason": "Persistent Cloudflare challenge (403, Ray ID) across two navs over about 90 s. PROTOCOL NOTE: there is only one attempt (no fresh-session a2), so this relies on the reference-id exception. Adjudicator may downgrade to EXTERNAL-BLOCK(unconfirmed).",
+   "evidenceSeqs": [1, 5, 15, 19, 23]},
+
+  {"id": 781, "class": "EXTERNAL-BLOCK", "subflag": "edge-deny",
+   "fieldFindings": [],
+   "evalAudit": "Status evals only. type '#49' was a syntax rejection; the retry worked.",
+   "reason": "The search results page returned 403 ('Oops!! Something went wrong') on both attempts. The homepage loaded, but the search was edge-denied.",
+   "evidenceSeqs": [17, 21, 23, 33, 37, 39]},
+
+  {"id": 1979, "class": "COMPLETED", "subflag": "interpreted",
+   "fieldFindings": [
+     {"index": 0, "ok": true, "why": "Food assistance is a category heading on usa.gov/benefits."},
+     {"index": 1, "ok": true, "why": "Health insurance, same page."},
+     {"index": 2, "ok": true, "why": "Housing help, same page."}],
+   "evalAudit": "back via history.back() (seq 39). The site search was performed (type seq25, press seq27, results seq31). Seq 33 then navigated directly to the constructed URL usa.gov/benefits, which does not appear in the logged search results. clickrole seq45 failed to find a result link that was visible in the text; the accessible name probably differs, so it is not provable as a defect.",
+   "reason": "Values are genuine USA.gov benefit categories, but the page was reached by URL construction rather than from the search results. Only 3 of about 7 listed categories were given (the field minimum is 3). Interpreted at best.",
+   "evidenceSeqs": [25, 27, 31, 33, 37, 45]},
+
+  {"id": 2687, "class": "AGENT-FAIL", "subflag": "reasoning",
+   "fieldFindings": [],
+   "evalAudit": "No raw evals. type '#buscador' seq25 failed because the input was hidden until the search button was clicked; this behaviour is correct, and it worked after the click at seq49. Seq 33 clicked node 2, which went to the login page (driver slip, no credentials entered). Seq 71 constructed the /versions URL, which redirected back to the app page.",
+   "reason": "The start URL /mac redirected automatically to /windows. The PUBG Mobile (GameLoop) page was found and is readable, but no update-log entries were reported. Absence is not proven: the text reads are capped at 4000 chars and no read/scroll covered the rest, and the changelog selector count (seq 79) is a single heuristic. No verb misbehaved.",
+   "evidenceSeqs": [1, 53, 57, 59, 71, 75, 79]},
+
+  {"id": 1371, "class": "AGENT-FAIL", "subflag": "partial",
+   "fieldFindings": [
+     {"index": 0, "ok": true, "why": "Released 02/18/2022 (seq 9)."},
+     {"index": 1, "ok": true, "why": "$49.99 standard edition (seq 9)."}],
+   "evalAudit": "No raw evals. Seq 3 used a constructed search URL; seq 7 a constructed game URL. Every read exited 0.",
+   "reason": "The developer field is missing. Seq 9 only shows the publisher 'Sony Interactive Entertainment' and an editorial mention of 'Guerrilla's'. The driver did not read further, and the text was truncated at 4000 chars. Partial, so not COMPLETED; no verb failure.",
+   "evidenceSeqs": [7, 9]},
+
+  {"id": 1517, "class": "EXTERNAL-BLOCK", "subflag": "edge-deny",
+   "fieldFindings": [],
+   "evalAudit": "None.",
+   "reason": "The search URL (constructed) redirected to /risk/action/limit?risk-id=..., 'STATUS: 403'. This is a deny page with a reference id.",
+   "evidenceSeqs": [3, 5]},
+
+  {"id": 1789, "class": "AGENT-FAIL", "subflag": "reasoning",
+   "fieldFindings": [],
+   "evalAudit": "attrs reads seq21/23/31 found no rating attribute values. Screenshots seq25/29 were taken. clicktext 'No, thank you' seq27 dismissed an overlay (decline, not consent). clickrole 'Film' seq9 failed although a Film link exists (seq 7); it was probably in a collapsed menu, so this is not a provable defect.",
+   "reason": "No answer recorded. The star ratings appear to be image/SVG-only (no text or attribute evidence), which could have been AGENT-FAIL(evidence-rule), but the record carries no uncitedValue, so rule 6 cannot apply. The premises were also never gathered (only one review opened). Less favourable plain AGENT-FAIL.",
+   "evidenceSeqs": [17, 19, 21, 23, 25, 29, 31, 35, 37]},
+
+  {"id": 1925, "class": "AGENT-FAIL", "subflag": "reasoning",
+   "fieldFindings": [
+     {"index": 0, "ok": true, "why": "'Planetary and Human Health' is listed under Sustainability Plan Goals (seq 29)."},
+     {"index": 1, "ok": true, "why": "'Equity, Diversity, Inclusion, & Justice' is a plan goal."},
+     {"index": 2, "ok": false, "why": "'Housing & Hospitality' is a footer navigation label, not a goal. The real goals 'Curricula & Research' and 'Sustainable Campus Engagement' were adjacent in the same output."}],
+   "evalAudit": "No raw evals. clickrole 'Sustainability' seq17 went to sustain.ucla.edu (subdomain). clicktext 'Explore the Plan' seq23 failed; seq 27 then constructed the /plan/ URL.",
+   "reason": "One of the three required goals is a nav label (wrong value), so the record is not COMPLETED. SUSPICIOUS: the wrong value passes the mechanical checker.",
+   "evidenceSeqs": [17, 27, 29]},
+
+  {"id": 2336, "class": "AGENT-FAIL", "subflag": "reasoning",
+   "fieldFindings": [
+     {"index": 0, "ok": true, "why": "Slug of result 1 href (attribute value) in seq 17. A tag-slug is an acceptable hashtag-like title."},
+     {"index": 1, "ok": true, "why": "Result 2 slug."},
+     {"index": 2, "ok": true, "why": "Result 3 slug."},
+     {"index": 3, "ok": true, "why": "Result 4 slug."},
+     {"index": 4, "ok": false, "why": "'confetti-cute-...' is the 7th link in seq 17. Results 5 and 6 (pengu-pudgy..., tkthao219-bubududu) were skipped without stated reason. Not the 'first 5'."}],
+   "evalAudit": "attrs reads only. Values come from href attribute values, which count. The order differs between seq 11 and seq 17 (lazy loading). Consent text in seq 13 is a notice, not a wall.",
+   "reason": "The fifth value is not the fifth result in the cited output. Wrong item.",
+   "evidenceSeqs": [5, 7, 11, 15, 17]},
+
+  {"id": 2561, "class": "SUTRADHAR-FAIL", "subflag": "",
+   "fieldFindings": [],
+   "evalAudit": "No raw evals. Many type/click failures; several were legitimate (occlusion seq27/89/93; non-element seq15/71). The defect: after a fresh snap (seq 45) listing #32 'Enter a city...', click 32 (seq 47) and type 32 (seq 49) failed with 'Attempted to use detached Frame' (same at seq 33). Seq 45 also shows a garbled, duplicated node list ('[#58] [#30] li ...'). In a2, click 28 'Search' (seq 83) reported verified, yet the URL and tabs stayed on /hotels (seq 85, 87), a possible false success.",
+   "reason": "On a workable kayak.com/stays page (seq 43 text readable), click and type failed with detached-frame errors against an element present in the immediately preceding snapshot. This blocked the destination entry in a1. Rule 5 applies. The control is snap seq45 against click seq47 and type seq49.",
+   "evidenceSeqs": [33, 41, 43, 45, 47, 49, 83, 85, 87, 89]},
+
+  {"id": 1329, "class": "TASK-INVALID", "subflag": "drift",
+   "fieldFindings": [],
+   "evalAudit": "Seq 5 is a 'refused' record for a non-allow-listed verb 'click-placeholder' (exit 98): odd, but harmless. type '#5' was a syntax rejection; the retry worked.",
+   "reason": "Two independent in-site checks show no administrative customer-support email exists. (1) The contact-us page (seq 8, 18) lists only phone numbers, forms, and a security-only VDP email. (2) The site search for 'customer support email' (seq 30) returns no such address. Weaker alternative: AGENT-FAIL if the adjudicator does not accept these as two independent checks.",
+   "evidenceSeqs": [6, 8, 14, 18, 26, 28, 30]},
+
+  {"id": 1434, "class": "EXTERNAL-BLOCK", "subflag": "edge-deny",
+   "fieldFindings": [],
+   "evalAudit": "None.",
+   "reason": "Redirected to ratelimited.redfin.com ('usage behavior algorithm thinks you might be a robot') on both attempts.",
+   "evidenceSeqs": [1, 3, 7, 9]},
+
+  {"id": 2218, "class": "EXTERNAL-BLOCK", "subflag": "captcha",
+   "fieldFindings": [],
+   "evalAudit": "Status evals only.",
+   "reason": "yelp.com answered 403 with a captcha-delivery.com (DataDome) captcha on both attempts.",
+   "evidenceSeqs": [1, 5, 9, 11]},
+
+  {"id": 2582, "class": "AGENT-FAIL", "subflag": "reasoning",
+   "fieldFindings": [],
+   "evalAudit": "clicktext 'Reject Cookies' seq9 (privacy-preserving). type seq15 'Hypertension', press seq17. Seq 25 and 33 constructed URLs. clicktext 'Hypertension' seq41 reported verified but the URL did not change; it likely hit a non-link element, so this is not provable.",
+   "reason": "The search was used and the consumer high-blood-pressure article was opened. Three `text` reads (seq 27/29/31) returned the same first 4000 chars and stopped before the risk-factor section; the driver never used read or scroll to reach it. No answer. No verb error is provable by a control (no innerText eval).",
+   "evidenceSeqs": [15, 17, 25, 27, 29, 31, 39, 41]},
+
+  {"id": 696, "class": "AGENT-FAIL", "subflag": "reasoning",
+   "fieldFindings": [],
+   "evalAudit": "Seq 9 is a 'refused' non-allow-listed verb 'find-search-placeholder' (exit 98), odd. Seq 30 constructed a search URL that returned HTTP 410. The search-input count was 0 (seq 34).",
+   "reason": "The site has no usable search, but the team page and the latest match page (Fulham 1-1 Man Utd, seq 22-24) were reachable and workable. The driver never located a match-report headline. No answer. No verb misbehaved on the critical path.",
+   "evidenceSeqs": [7, 12, 16, 20, 22, 24, 28, 30, 34]},
+
+  {"id": 982, "class": "AGENT-FAIL", "subflag": "reasoning",
+   "fieldFindings": [],
+   "evalAudit": "read seq29/33 (body innerText, 9594 chars) worked; the text reads were truncated at 4000 chars. type seq5, press seq7. Screenshot seq21.",
+   "reason": "The search results with titles and 'Filed' dates for the first five contracts were logged (seq 29), but no answer was recorded. The driver probably judged 'Filed' ≠ 'effective date' and gave up after one external-hosted contract page (seq 37). No verb failed.",
+   "evidenceSeqs": [5, 7, 25, 29, 35, 37]},
+
+  {"id": 1691, "class": "EXTERNAL-BLOCK", "subflag": "edge-deny",
+   "fieldFindings": [],
+   "evalAudit": "waitfor seq3/19 valid. clicktext 'Tags' seq21 was occluded (cookie banner likely). clickrole 'java' seq27 failed, but the link exists (seq 29), and the click by selector seq33 worked. snap seq31 showed only 10 elements, possibly because of a modal.",
+   "reason": "/questions/tagged/* returned 'Access Denied... IP has been blocked' with a RAY ID on both attempts. a1 also hit the /nocaptcha human verification.",
+   "evidenceSeqs": [7, 9, 13, 33, 35]},
+
+  {"id": 192, "class": "COMPLETED", "subflag": "linked-org",
+   "fieldFindings": [
+     {"index": 0, "ok": true, "why": "Wildfires guide URL linked from 'Be Disaster Ready, California' ('Click each icon below to learn life-saving tips', 'WILDFIRE PREPAREDNESS. TIPS HERE'), seq 61/63. The link itself was not opened."}],
+   "evalAudit": "back via history.back() several times. Seq 5 typed 'parking' first (unexplained probe), then 'disaster preparedness' (seq 11/13). clickrole seq35 and clicktext 'Page 2' seq45 failed. Seq 59 clicktext from ca.gov results went to listoscalifornia.org (via ready.ca.gov).",
+   "reason": "linked-org accepted. The logged page footer says 'Listos California, an initiative of the Governor's Office of Emergency Services' and links caloes.ca.gov and gov.ca.gov; it was reached from a ca.gov search result (ready.ca.gov). Interpreted (linked-org). Minor weakness: the wildfire page content was not itself read.",
+   "evidenceSeqs": [13, 57, 59, 61, 63, 69]},
+
+  {"id": 392, "class": "EXTERNAL-BLOCK", "subflag": "protocol",
+   "fieldFindings": [],
+   "evalAudit": "None.",
+   "reason": "net::ERR_HTTP2_PROTOCOL_ERROR at ea.com on both attempts. No control.",
+   "evidenceSeqs": [1, 5]},
+
+  {"id": 41, "class": "COMPLETED", "subflag": "interpreted",
+   "fieldFindings": [
+     {"index": 0, "ok": true, "why": "A genuine-leather 'Black Brown' belt strap (seq 27) from the 'black leather belts for men' search. It is not the first matching result (the '2Pcs ... Black ... Leather Men Belts' item precedes it) and the title lacks 'men'. A loose match."},
+     {"index": 1, "ok": true, "why": "'449 Reviews' on the product page (seq 27). The checker's C2d failure is only the excerpt length (15 chars), not the value."}],
+   "evalAudit": "No raw evals. Seq 5 typed 'wallet' first (unexplained), then 'black leather belts for men' (seq 11/13). clicktext seq21 was occluded. Seq 25 navigated to an /item/ URL taken from the links read.",
+   "reason": "A review count is given for a belt from the correct on-site search, but the product choice is loose (strap without buckle, colour Brown selected). Interpreted, with low confidence. The adjudicator may prefer AGENT-FAIL(substitution).",
+   "evidenceSeqs": [11, 13, 19, 23, 25, 27]},
+
+  {"id": 568, "class": "EXTERNAL-BLOCK", "subflag": "edge-deny",
+   "fieldFindings": [],
+   "evalAudit": "None.",
+   "reason": "Akamai 'Access Denied' (403) with Reference #18.25f9da17... A deny page with a reference id needs only one attempt.",
+   "evidenceSeqs": [1, 3]},
+
+  {"id": 597, "class": "AGENT-FAIL", "subflag": "unsupported",
+   "fieldFindings": [
+     {"index": 0, "ok": false, "why": "This is simply the first search result. No citation comparison was made. The page shows 17 citations, so 'highly cited' is not supported by any logged evidence."},
+     {"index": 1, "ok": true, "why": "07 April 2025 matches the article page (seq 25)."},
+     {"index": 2, "ok": true, "why": "DOI 10.3389/frai.2025.1518440 matches seq 25."}],
+   "evalAudit": "No raw evals. type '#1' was a syntax rejection; the retry worked. Seq 19 mark count eval. clicktext on the first result.",
+   "reason": "Date and DOI are correct for the article chosen, but the task's selection criterion ('highly cited') was ignored, and 17 citations does not settle it. Per output discipline, the less favourable class applies. Borderline; the adjudicator may accept it as interpreted.",
+   "evidenceSeqs": [13, 15, 17, 23, 25]},
+
+  {"id": 1310, "class": "COMPLETED", "subflag": "strict",
+   "fieldFindings": [
+     {"index": 0, "ok": true, "why": "Accounting, on the undergrad majors list (seq 7)."},
+     {"index": 1, "ok": true, "why": "Actuarial Science."},
+     {"index": 2, "ok": true, "why": "Aerospace Engineering."},
+     {"index": 3, "ok": true, "why": "African American and African Studies."},
+     {"index": 4, "ok": true, "why": "Agribusiness and Applied Economics."}],
+   "evalAudit": "No raw evals. Seq 5 navigated to the majors URL taken from the homepage links read (seq 3), a subdomain of osu.edu.",
+   "reason": "On-site undergraduate majors list; the first five programs were taken.",
+   "evidenceSeqs": [3, 5, 7]},
+
+  {"id": 1414, "class": "EXTERNAL-BLOCK", "subflag": "edge-deny",
+   "fieldFindings": [],
+   "evalAudit": "Status eval seq5 only.",
+   "reason": "realsimple.com answered HTTP 402 with an access-issue deny page on both attempts.",
+   "evidenceSeqs": [1, 3, 5, 9, 11]}
+]

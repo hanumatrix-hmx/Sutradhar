@@ -1,0 +1,19 @@
+{
+  "id": 1414,
+  "slot": "K",
+  "attempts": ["a1", "a2"],
+  "startedAt": "2026-10-04T10:46:24Z",
+  "endedAt": "2026-10-04T10:46:57Z",
+  "answerFields": [],
+  "shortList": null,
+  "classification": "EXTERNAL-BLOCK",
+  "subflag": "edge-deny",
+  "disclosure": "Start page answered HTTP 402 on both attempts; page body is only an access-issue notice, no content.",
+  "toolDefects": [],
+  "blockEvidence": {"logSeq": 3, "excerpt": "If you are a reader experiencing an access issue, please contact support@people.inc. To help us troubleshoot more quickly, you may include your IP address."},
+  "driftChecks": [],
+  "probe": null,
+  "uncitedValue": null,
+  "needsCurlControl": false,
+  "notes": "status (seq 5) showed https://www.realsimple.com/ -> 402. a2 (seq 9, 11) identical. No reference id on page, so a2 was used to confirm."
+}

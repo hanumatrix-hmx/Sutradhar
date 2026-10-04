@@ -18,3 +18,10 @@
    (surface caveat). Must be decided with a replay (scroll position, viewport, text vs read body diff).
 8. (cosmetic, confirmed by driver) `back` prints "undefined" to stdout while navigating correctly (exit 0).
 9. RE-TESTS: PROB-044 (`clicktext` across <mark>-split text, 597) and the type-append bug (41, 192) both PASS live on 0.6.1.
+10. **CONFIRMED in source: silent page-text truncation.** `capability-runtime/src/runtime.ts:2959` returns
+    `document.body.innerText.slice(0, 4000)` (PDF path 2986 also 4000) with no truncation marker and no way to page
+    through the rest; CLI `text` (cli.ts:838) prints it as-is; MCP `browser.snapshot` slices pageText again to 2000
+    (mcp-server/src/tools.ts:524). An agent cannot tell content is missing. Seen: B5/982 (`text` showed 3 of 10 result
+    cards; `read body` got all 10); verifier phase 1 believes it contributed to 1371, 2582, 2687.
+    Fix direction: mark truncation explicitly ("[truncated: N of M chars]"), and let callers request more (offset/limit
+    or a max) on text/snapshot in CLI, MCP and SDK. Severity: MAJOR for an AI-browsing tool (silent data loss).

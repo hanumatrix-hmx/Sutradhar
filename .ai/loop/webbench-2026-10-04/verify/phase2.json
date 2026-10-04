@@ -1,0 +1,535 @@
+[
+ {
+  "id": 1172,
+  "replayClass": "COMPLETED/strict",
+  "agreesWithPhase1": true,
+  "channel": "same-tool replay",
+  "replaySeqs": [
+   1,
+   3,
+   5,
+   7
+  ],
+  "transcriptFlags": [
+   "T1 (slot B1): \"sha256sum brief.md && cat\" in a driver command; the driver hashed its own frozen brief, which looks benign",
+   "T4: 18 cli records / 10 drive.mjs calls; consistent with several drive.mjs calls chained in one Bash command (records stay hash-chained and the checker passed); does not by itself show records made outside drive.mjs; not voided, but the orchestrator should confirm the chaining"
+  ],
+  "notes": "search.msu.edu results for 'academic support tutoring' show the same entries (Academic Support Services - Broad College; TRiO Student Support Services) in the same order. Plausible."
+ },
+ {
+  "id": 1492,
+  "replayClass": "not replayed",
+  "agreesWithPhase1": null,
+  "channel": "none",
+  "replaySeqs": [],
+  "transcriptFlags": [
+   "T1 (slot B1): \"sha256sum brief.md && cat\" in a driver command; the driver hashed its own frozen brief, which looks benign",
+   "T4: 12/5; consistent with several drive.mjs calls chained in one Bash command (records stay hash-chained and the checker passed); does not by itself show records made outside drive.mjs; not voided, but the orchestrator should confirm the chaining"
+  ],
+  "notes": "Not in replay list; phase-1 class EXTERNAL-BLOCK/challenge unchanged. Transcript flags recorded only."
+ },
+ {
+  "id": 1661,
+  "replayClass": "EXTERNAL-BLOCK/challenge",
+  "agreesWithPhase1": true,
+  "channel": "get_page_text",
+  "replaySeqs": [
+   1,
+   3,
+   5
+  ],
+  "transcriptFlags": [
+   "T1 (slot B1): \"sha256sum brief.md && cat\" in a driver command; the driver hashed its own frozen brief, which looks benign",
+   "T4: 11/6; consistent with several drive.mjs calls chained in one Bash command (records stay hash-chained and the checker passed); does not by itself show records made outside drive.mjs; not voided, but the orchestrator should confirm the chaining"
+  ],
+  "notes": "Cloudflare 'Performing security verification', 403, new Ray ID. Through the non-headless Claude_Browser, get_page_text shows 'Access Denied - This IP address ... has been blocked... GEO: IN', so the block is IP-level and independent of the tool."
+ },
+ {
+  "id": 2253,
+  "replayClass": "COMPLETED/strict",
+  "agreesWithPhase1": true,
+  "channel": "same-tool replay",
+  "replaySeqs": [
+   1,
+   3,
+   5,
+   7,
+   9,
+   11,
+   13,
+   15,
+   17,
+   19,
+   21
+  ],
+  "transcriptFlags": [
+   "T1 (slot B1): \"sha256sum brief.md && cat\" in a driver command; the driver hashed its own frozen brief, which looks benign",
+   "T4: 20/8; consistent with several drive.mjs calls chained in one Bash command (records stay hash-chained and the checker passed); does not by itself show records made outside drive.mjs; not voided, but the orchestrator should confirm the chaining"
+  ],
+  "notes": "clickrole 'EU law (EUR-Lex)' was first occluded by the cookie banner (seq 5, a correct refusal). After 'Accept only essential cookies' (node 5, seq 11) it worked. Quick search 'data protection' then `read a.title` gives the identical first three titles: Regulation 2016/679, Regulation 2018/1725, Directive 2016/680. The driver's seq5 click 5 was the same essential-only cookie choice."
+ },
+ {
+  "id": 2388,
+  "replayClass": "not replayed",
+  "agreesWithPhase1": null,
+  "channel": "none",
+  "replaySeqs": [],
+  "transcriptFlags": [
+   "T1 (slot B1): \"sha256sum brief.md && cat\" in a driver command; the driver hashed its own frozen brief, which looks benign",
+   "T4: 22/10; consistent with several drive.mjs calls chained in one Bash command (records stay hash-chained and the checker passed); does not by itself show records made outside drive.mjs; not voided, but the orchestrator should confirm the chaining"
+  ],
+  "notes": "Not in replay list; phase-1 class COMPLETED/strict unchanged. Transcript flags recorded only."
+ },
+ {
+  "id": 751,
+  "replayClass": "not replayed",
+  "agreesWithPhase1": null,
+  "channel": "none",
+  "replaySeqs": [],
+  "transcriptFlags": [
+   "T1 (slot B1): \"sha256sum brief.md && cat\" in a driver command; the driver hashed its own frozen brief, which looks benign",
+   "T4: 9/4; consistent with several drive.mjs calls chained in one Bash command (records stay hash-chained and the checker passed); does not by itself show records made outside drive.mjs; not voided, but the orchestrator should confirm the chaining"
+  ],
+  "notes": "Not in replay list; phase-1 class COMPLETED/strict unchanged. Transcript flags recorded only."
+ },
+ {
+  "id": 1266,
+  "replayClass": "not replayed",
+  "agreesWithPhase1": null,
+  "channel": "none",
+  "replaySeqs": [],
+  "transcriptFlags": [
+   "T1 (slot B2): \"sha256sum brief.md && cat\" in a driver command; the driver hashed its own frozen brief, which looks benign",
+   "T4: 10/5; consistent with several drive.mjs calls chained in one Bash command (records stay hash-chained and the checker passed); does not by itself show records made outside drive.mjs; not voided, but the orchestrator should confirm the chaining"
+  ],
+  "notes": "Not in replay list; phase-1 class EXTERNAL-BLOCK/captcha unchanged. Transcript flags recorded only."
+ },
+ {
+  "id": 1379,
+  "replayClass": "not replayed",
+  "agreesWithPhase1": null,
+  "channel": "none",
+  "replaySeqs": [],
+  "transcriptFlags": [
+   "T1 (slot B2): \"sha256sum brief.md && cat\" in a driver command; the driver hashed its own frozen brief, which looks benign",
+   "T4: 10/8; consistent with several drive.mjs calls chained in one Bash command (records stay hash-chained and the checker passed); does not by itself show records made outside drive.mjs; not voided, but the orchestrator should confirm the chaining"
+  ],
+  "notes": "Not in replay list; phase-1 class AGENT-FAIL/reasoning unchanged. Transcript flags recorded only."
+ },
+ {
+  "id": 1837,
+  "replayClass": "not replayed",
+  "agreesWithPhase1": null,
+  "channel": "none",
+  "replaySeqs": [],
+  "transcriptFlags": [
+   "T1 (slot B2): \"sha256sum brief.md && cat\" in a driver command; the driver hashed its own frozen brief, which looks benign"
+  ],
+  "notes": "Not in replay list; phase-1 class EXTERNAL-BLOCK/geo unchanged. Transcript flags recorded only."
+ },
+ {
+  "id": 1946,
+  "replayClass": "COMPLETED/strict",
+  "agreesWithPhase1": true,
+  "channel": "Claude_Browser read-only innerText eval",
+  "replaySeqs": [
+   1,
+   3,
+   5,
+   7,
+   9,
+   11
+  ],
+  "transcriptFlags": [
+   "T1 (slot B2): \"sha256sum brief.md && cat\" in a driver command; the driver hashed its own frozen brief, which looks benign",
+   "T4: 10/7; consistent with several drive.mjs calls chained in one Bash command (records stay hash-chained and the checker passed); does not by itself show records made outside drive.mjs; not voided, but the orchestrator should confirm the chaining"
+  ],
+  "notes": "type 64 / press Enter give the same top results: Kenya Great Rift Valley; Shreen Amin; Empowered through heritage conservation (Jordan). Independently confirmed in Claude_Browser."
+ },
+ {
+  "id": 2215,
+  "replayClass": "not replayed",
+  "agreesWithPhase1": null,
+  "channel": "none",
+  "replaySeqs": [],
+  "transcriptFlags": [
+   "T1 (slot B2): \"sha256sum brief.md && cat\" in a driver command; the driver hashed its own frozen brief, which looks benign",
+   "T4: 3/2; consistent with several drive.mjs calls chained in one Bash command (records stay hash-chained and the checker passed); does not by itself show records made outside drive.mjs; not voided, but the orchestrator should confirm the chaining"
+  ],
+  "notes": "Not in replay list; phase-1 class EXTERNAL-BLOCK/edge-deny unchanged. Transcript flags recorded only."
+ },
+ {
+  "id": 2554,
+  "replayClass": "not replayed",
+  "agreesWithPhase1": null,
+  "channel": "none",
+  "replaySeqs": [],
+  "transcriptFlags": [
+   "T1 (slot B2): \"sha256sum brief.md && cat\" in a driver command; the driver hashed its own frozen brief, which looks benign",
+   "T4: 6/3; consistent with several drive.mjs calls chained in one Bash command (records stay hash-chained and the checker passed); does not by itself show records made outside drive.mjs; not voided, but the orchestrator should confirm the chaining"
+  ],
+  "notes": "Not in replay list; phase-1 class EXTERNAL-BLOCK/protocol unchanged. Transcript flags recorded only."
+ },
+ {
+  "id": 1236,
+  "replayClass": "EXTERNAL-BLOCK/edge-deny",
+  "agreesWithPhase1": true,
+  "channel": "get_page_text",
+  "replaySeqs": [
+   1,
+   3,
+   5,
+   7
+  ],
+  "transcriptFlags": [
+   "T1 (slot B3): \"sha256sum brief.md && cat\" in a driver command; the driver hashed its own frozen brief, which looks benign",
+   "T4: 8/2; consistent with several drive.mjs calls chained in one Bash command (records stay hash-chained and the checker passed); does not by itself show records made outside drive.mjs; not voided, but the orchestrator should confirm the chaining"
+  ],
+  "notes": "Redirected to siteclosed.nordstrom.com ('unusual activity... we don't allow unidentified, automated traffic'), the same as the drivers saw. Side note: nav seq1 reported 'verified ... committed at https://www.nordstrom.com/' although the page ended on siteclosed (a JS redirect after commit). get_page_text in the non-headless Claude_Browser loaded the real Nordstrom homepage, so the block targets the automation fingerprint, not the IP. That is still an external anti-bot block, and stealth is out of scope."
+ },
+ {
+  "id": 929,
+  "replayClass": "not replayed",
+  "agreesWithPhase1": null,
+  "channel": "none",
+  "replaySeqs": [],
+  "transcriptFlags": [
+   "T1 (slot B3): \"sha256sum brief.md && cat\" in a driver command; the driver hashed its own frozen brief, which looks benign",
+   "T4: 6/3; consistent with several drive.mjs calls chained in one Bash command (records stay hash-chained and the checker passed); does not by itself show records made outside drive.mjs; not voided, but the orchestrator should confirm the chaining"
+  ],
+  "notes": "Not in replay list; phase-1 class EXTERNAL-BLOCK/protocol unchanged. Transcript flags recorded only."
+ },
+ {
+  "id": 1940,
+  "replayClass": "not replayed",
+  "agreesWithPhase1": null,
+  "channel": "none",
+  "replaySeqs": [],
+  "transcriptFlags": [
+   "T1 (slot B3): \"sha256sum brief.md && cat\" in a driver command; the driver hashed its own frozen brief, which looks benign",
+   "T4: 13/5; consistent with several drive.mjs calls chained in one Bash command (records stay hash-chained and the checker passed); does not by itself show records made outside drive.mjs; not voided, but the orchestrator should confirm the chaining"
+  ],
+  "notes": "Not in replay list; phase-1 class EXTERNAL-BLOCK/challenge unchanged. Transcript flags recorded only."
+ },
+ {
+  "id": 781,
+  "replayClass": "not replayed",
+  "agreesWithPhase1": null,
+  "channel": "none",
+  "replaySeqs": [],
+  "transcriptFlags": [
+   "T1 (slot B3): \"sha256sum brief.md && cat\" in a driver command; the driver hashed its own frozen brief, which looks benign",
+   "T4: 21/7; consistent with several drive.mjs calls chained in one Bash command (records stay hash-chained and the checker passed); does not by itself show records made outside drive.mjs; not voided, but the orchestrator should confirm the chaining"
+  ],
+  "notes": "Not in replay list; phase-1 class EXTERNAL-BLOCK/edge-deny unchanged. Transcript flags recorded only."
+ },
+ {
+  "id": 1979,
+  "replayClass": "COMPLETED/interpreted",
+  "agreesWithPhase1": true,
+  "channel": "same-tool replay",
+  "replaySeqs": [
+   1,
+   3,
+   5,
+   7,
+   9,
+   11,
+   13,
+   15,
+   17
+  ],
+  "transcriptFlags": [
+   "T1 (slot B3): \"sha256sum brief.md && cat\" in a driver command; the driver hashed its own frozen brief, which looks benign",
+   "T4: 26/8; consistent with several drive.mjs calls chained in one Bash command (records stay hash-chained and the checker passed); does not by itself show records made outside drive.mjs; not voided, but the orchestrator should confirm the chaining"
+  ],
+  "notes": "`links a[href*='benefit']` on the usa.gov homepage lists 'Government benefits <https://www.usa.gov/benefits>'. clicktext on the card description reached /benefits, where Food assistance, Health insurance and Housing help are present. So /benefits is linked on-site, not a guessed URL, but it was not reached from the search results. Interpreted stands. Side notes: `links` with no selector exited 1 (seq 3); click a[href='/benefits'] gave 'No visible element' (seq 7), probably the hidden nav-menu copy; clicktext with a heading+description string failed (seq 9). These look like usage limits, not defects."
+ },
+ {
+  "id": 2687,
+  "replayClass": "not replayed",
+  "agreesWithPhase1": null,
+  "channel": "none",
+  "replaySeqs": [],
+  "transcriptFlags": [
+   "T1 (slot B3): \"sha256sum brief.md && cat\" in a driver command; the driver hashed its own frozen brief, which looks benign",
+   "T4: 41/15; consistent with several drive.mjs calls chained in one Bash command (records stay hash-chained and the checker passed); does not by itself show records made outside drive.mjs; not voided, but the orchestrator should confirm the chaining"
+  ],
+  "notes": "Not in replay list; phase-1 class AGENT-FAIL/reasoning unchanged. Transcript flags recorded only."
+ },
+ {
+  "id": 1371,
+  "replayClass": "AGENT-FAIL/partial",
+  "agreesWithPhase1": true,
+  "channel": "same-tool replay",
+  "replaySeqs": [
+   1,
+   3,
+   5,
+   7
+  ],
+  "transcriptFlags": [
+   "T1 (slot B4): \"sha256sum brief.md && cat\" in a driver command; the driver hashed its own frozen brief, which looks benign"
+  ],
+  "notes": "`read main` gave '[read: 0 matches]' (no <main>). `read body` (32.6k chars) shows 'Released 02/18/2022' and '$49.99' but no labelled Developer field. Guerrilla is named only in an editorial quote (\"follow-up to Guerrilla's break-out...\") and blog bylines. The developer was inferable but never recorded. Partial stands."
+ },
+ {
+  "id": 1517,
+  "replayClass": "not replayed",
+  "agreesWithPhase1": null,
+  "channel": "none",
+  "replaySeqs": [],
+  "transcriptFlags": [
+   "T1 (slot B4): \"sha256sum brief.md && cat\" in a driver command; the driver hashed its own frozen brief, which looks benign"
+  ],
+  "notes": "Not in replay list; phase-1 class EXTERNAL-BLOCK/edge-deny unchanged. Transcript flags recorded only."
+ },
+ {
+  "id": 1789,
+  "replayClass": "AGENT-FAIL/reasoning",
+  "agreesWithPhase1": true,
+  "channel": "Claude_Browser read-only innerText eval + same-origin GET",
+  "replaySeqs": [
+   1,
+   3,
+   5,
+   7
+  ],
+  "transcriptFlags": [
+   "T1 (slot B4): \"sha256sum brief.md && cat\" in a driver command; the driver hashed its own frozen brief, which looks benign"
+  ],
+  "notes": "`attrs svg aria-label,class,data-testid` on film+tone/reviews returns empty attributes. In Claude_Browser, no element on the list page has a star or rating aria/class or 'N out of 5 stars' text. On the article (you-can-see-everything) HTML the rating exists only as CSS ('--star-rating-background'), with no text or label. So ratings are visual-only. A correct driver would land at AGENT-FAIL(evidence-rule) with an uncitedValue; this driver recorded nothing (and no premises). Phase 1 AGENT-FAIL stands. Recommended adjudication note: the 'highest rated' half of the task is unreachable by the six read verbs."
+ },
+ {
+  "id": 1925,
+  "replayClass": "not replayed",
+  "agreesWithPhase1": null,
+  "channel": "none",
+  "replaySeqs": [],
+  "transcriptFlags": [
+   "T1 (slot B4): \"sha256sum brief.md && cat\" in a driver command; the driver hashed its own frozen brief, which looks benign"
+  ],
+  "notes": "Not in replay list; phase-1 class AGENT-FAIL/reasoning unchanged. Transcript flags recorded only."
+ },
+ {
+  "id": 2336,
+  "replayClass": "not replayed",
+  "agreesWithPhase1": null,
+  "channel": "none",
+  "replaySeqs": [],
+  "transcriptFlags": [
+   "T1 (slot B4): \"sha256sum brief.md && cat\" in a driver command; the driver hashed its own frozen brief, which looks benign"
+  ],
+  "notes": "Not in replay list; phase-1 class AGENT-FAIL/reasoning unchanged. Transcript flags recorded only."
+ },
+ {
+  "id": 2561,
+  "replayClass": "SUTRADHAR-FAIL",
+  "agreesWithPhase1": true,
+  "channel": "Claude_Browser read-only eval (frame inventory)",
+  "replaySeqs": [
+   1,
+   3,
+   5,
+   7,
+   9,
+   11,
+   13,
+   15,
+   17,
+   19,
+   21,
+   23,
+   25,
+   27,
+   29,
+   31,
+   33,
+   35
+  ],
+  "transcriptFlags": [
+   "T1 (slot B4): \"sha256sum brief.md && cat\" in a driver command; the driver hashed its own frozen brief, which looks benign"
+  ],
+  "notes": "MINIMAL REPRO OF THE DETACHED FRAME (reproduced 3 times, 2 sessions). r2: `nav https://www.kayak.com --settle` (seq 25), `nav https://www.kayak.com/stays --settle` (seq 27), `snap` (seq 29, lists [#32] div 'Enter a city, hotel, airport, address or landmark'), `click 32` (seq 31). Result: exit 1, 'Click failed: Attempted to use detached Frame 2529FB13...'. `text` on the same page (seq 33) works. A redirect is NOT required (r1 also reproduced via /hotels/Rome,Italy/... redirecting to /stays, seq 7). r1 further: a re-snap returned 'Interactive elements (0)' (seq 9, a silently empty snapshot) and click 32 again gave detached Frame with a different frame id (seq 11). CONTROL: `clickrole button 'Enter a city, hotel, airport, address or landmark'` succeeded (seq 13); the next snap showed [#31] input 'Destination'. But `type 31 Rome` (seq 19) AND CSS-selector `type input[placeholder^='Enter a city'] Rome` (seq 21) both failed with detached Frame (new frame id each call). So the destination cannot be entered on /stays: node-id and CSS-selector element actions fail while role-based click and text reads work. Hypothesis from the independent channel: kayak.com/stays has 4 iframes, one with src 'https://www.kayak.com/stays' (the same URL as the top document) and one 'https://www.kayak.com/ugtm/stays'. Sutradhar's frame resolution for snapshot-id/selector actions likely binds to the same-URL child iframe, which is repeatedly torn down and recreated. Contrast: on /hotels (a2 of the original run) node-id clicks and selector-type worked. Phase 1 SUTRADHAR-FAIL confirmed."
+ },
+ {
+  "id": 1329,
+  "replayClass": "not replayed",
+  "agreesWithPhase1": null,
+  "channel": "none",
+  "replaySeqs": [],
+  "transcriptFlags": [
+   "T1 (slot B5): \"sha256sum brief.md && cat\" in a driver command; the driver hashed its own frozen brief, which looks benign"
+  ],
+  "notes": "Not in replay list; phase-1 class TASK-INVALID/drift unchanged. Transcript flags recorded only."
+ },
+ {
+  "id": 1434,
+  "replayClass": "EXTERNAL-BLOCK/edge-deny",
+  "agreesWithPhase1": true,
+  "channel": "same-tool replay",
+  "replaySeqs": [
+   1,
+   3,
+   5
+  ],
+  "transcriptFlags": [
+   "T1 (slot B5): \"sha256sum brief.md && cat\" in a driver command; the driver hashed its own frozen brief, which looks benign"
+  ],
+  "notes": "ratelimited.redfin.com 'Are You a Robot?', HTTP 429, the same as logged."
+ },
+ {
+  "id": 2218,
+  "replayClass": "not replayed",
+  "agreesWithPhase1": null,
+  "channel": "none",
+  "replaySeqs": [],
+  "transcriptFlags": [
+   "T1 (slot B5): \"sha256sum brief.md && cat\" in a driver command; the driver hashed its own frozen brief, which looks benign"
+  ],
+  "notes": "Not in replay list; phase-1 class EXTERNAL-BLOCK/captcha unchanged. Transcript flags recorded only."
+ },
+ {
+  "id": 2582,
+  "replayClass": "AGENT-FAIL/reasoning",
+  "agreesWithPhase1": true,
+  "channel": "Claude_Browser read-only innerText eval",
+  "replaySeqs": [
+   3,
+   5,
+   7,
+   9,
+   11
+  ],
+  "transcriptFlags": [
+   "T1 (slot B5): \"sha256sum brief.md && cat\" in a driver command; the driver hashed its own frozen brief, which looks benign"
+  ],
+  "notes": "TEXT CAP REPRO 2: on the MSD consumer 'High Blood Pressure' article, `text` (seq 7) gives 4,000 chars of content, cut mid-word ('130-139 (systolic blood pr') with no marker, before the causes and risk-factor sections. `read main` (seq 9) gives 33.5k chars including 'Contributing factors: Obesity, a sedentary lifestyle, stress, smoking, and excessive amounts of alcohol or sodium...'. Claude_Browser innerText (33.9k chars) confirms the same sentence. The content was reachable with an allowed read verb, so the driver failure stands as AGENT-FAIL. The silent truncation of `text` is a product usability defect worth logging; a minimum fix is a truncation marker or paging. Replay note: my first nav to /home was refused by the wrapper (exit 93, first nav must be startingUrl), which is correct behaviour."
+ },
+ {
+  "id": 696,
+  "replayClass": "not replayed",
+  "agreesWithPhase1": null,
+  "channel": "none",
+  "replaySeqs": [],
+  "transcriptFlags": [
+   "T1 (slot B5): \"sha256sum brief.md && cat\" in a driver command; the driver hashed its own frozen brief, which looks benign"
+  ],
+  "notes": "Not in replay list; phase-1 class AGENT-FAIL/reasoning unchanged. Transcript flags recorded only."
+ },
+ {
+  "id": 982,
+  "replayClass": "AGENT-FAIL/reasoning",
+  "agreesWithPhase1": true,
+  "channel": "Claude_Browser read-only innerText eval",
+  "replaySeqs": [
+   1,
+   3,
+   5,
+   7,
+   9,
+   11,
+   13,
+   15,
+   17,
+   19,
+   21,
+   23,
+   25,
+   27,
+   29
+  ],
+  "transcriptFlags": [
+   "T1 (slot B5): \"sha256sum brief.md && cat\" in a driver command; the driver hashed its own frozen brief, which looks benign"
+  ],
+  "notes": "r1: the box search ended in HTTP 429 \"We're sorry... automated queries\" (seq 9, 11), so the site is rate-limiting. r2: closed by mistake before reading; no data. r3: a direct search URL loaded. MINIMAL REPRO OF THE TEXT CAP: `drive.mjs V1 982 r3 nav https://www.lawinsider.com --settle`, then `nav https://www.lawinsider.com/search?q=Non-Disclosure+Agreement --settle`, then `text` (seq 25). That gives exactly 4000 chars of page text with no truncation marker, ending mid-word ('For t'), with only 3 of 10 'Filed' entries. Then `read body` (seq 27) gives 9,803 chars with all 10 'Filed <date>' entries (Dec 26 2022, Jul 01 2021, Sep 06 2020, Jan 29 2022, Feb 02 2023, ...). So another read verb does reach the content, and `text` silently truncates. I did not determine whether the cap is in the Sutradhar CLI or in drive.mjs. Independent channel: the Claude_Browser innerText eval contains 'December 26, 2022'. The data was available, and the site shows 'Filed' rather than 'effective' dates, so phase 1 AGENT-FAIL stands."
+ },
+ {
+  "id": 1691,
+  "replayClass": "not replayed",
+  "agreesWithPhase1": null,
+  "channel": "none",
+  "replaySeqs": [],
+  "transcriptFlags": [
+   "T1 (slot B6): \"sha256sum brief.md && cat\" in a driver command; the driver hashed its own frozen brief, which looks benign"
+  ],
+  "notes": "Not in replay list; phase-1 class EXTERNAL-BLOCK/edge-deny unchanged. Transcript flags recorded only."
+ },
+ {
+  "id": 192,
+  "replayClass": "not replayed",
+  "agreesWithPhase1": null,
+  "channel": "none",
+  "replaySeqs": [],
+  "transcriptFlags": [
+   "T1 (slot B6): \"sha256sum brief.md && cat\" in a driver command; the driver hashed its own frozen brief, which looks benign"
+  ],
+  "notes": "Not in replay list; phase-1 class COMPLETED/linked-org unchanged. Transcript flags recorded only."
+ },
+ {
+  "id": 392,
+  "replayClass": "not replayed",
+  "agreesWithPhase1": null,
+  "channel": "none",
+  "replaySeqs": [],
+  "transcriptFlags": [
+   "T1 (slot B6): \"sha256sum brief.md && cat\" in a driver command; the driver hashed its own frozen brief, which looks benign"
+  ],
+  "notes": "Not in replay list; phase-1 class EXTERNAL-BLOCK/protocol unchanged. Transcript flags recorded only."
+ },
+ {
+  "id": 41,
+  "replayClass": "not replayed",
+  "agreesWithPhase1": null,
+  "channel": "none",
+  "replaySeqs": [],
+  "transcriptFlags": [
+   "T1 (slot B6): \"sha256sum brief.md && cat\" in a driver command; the driver hashed its own frozen brief, which looks benign"
+  ],
+  "notes": "Not in replay list; phase-1 class COMPLETED/interpreted unchanged. Transcript flags recorded only."
+ },
+ {
+  "id": 568,
+  "replayClass": "not replayed",
+  "agreesWithPhase1": null,
+  "channel": "none",
+  "replaySeqs": [],
+  "transcriptFlags": [
+   "T1 (slot B6): \"sha256sum brief.md && cat\" in a driver command; the driver hashed its own frozen brief, which looks benign"
+  ],
+  "notes": "Not in replay list; phase-1 class EXTERNAL-BLOCK/edge-deny unchanged. Transcript flags recorded only."
+ },
+ {
+  "id": 597,
+  "replayClass": "not replayed",
+  "agreesWithPhase1": null,
+  "channel": "none",
+  "replaySeqs": [],
+  "transcriptFlags": [
+   "T1 (slot B6): \"sha256sum brief.md && cat\" in a driver command; the driver hashed its own frozen brief, which looks benign"
+  ],
+  "notes": "Not in replay list; phase-1 class AGENT-FAIL/unsupported unchanged. Transcript flags recorded only."
+ },
+ {
+  "id": 1310,
+  "replayClass": "not replayed",
+  "agreesWithPhase1": null,
+  "channel": "none",
+  "replaySeqs": [],
+  "transcriptFlags": [
+   "T1 (slot K): \"sha256sum brief.md && cat\" in a driver command; the driver hashed its own frozen brief, which looks benign"
+  ],
+  "notes": "Not in replay list; phase-1 class COMPLETED/strict unchanged. Transcript flags recorded only."
+ },
+ {
+  "id": 1414,
+  "replayClass": "not replayed",
+  "agreesWithPhase1": null,
+  "channel": "none",
+  "replaySeqs": [],
+  "transcriptFlags": [
+   "T1 (slot K): \"sha256sum brief.md && cat\" in a driver command; the driver hashed its own frozen brief, which looks benign"
+  ],
+  "notes": "Not in replay list; phase-1 class EXTERNAL-BLOCK/edge-deny unchanged. Transcript flags recorded only."
+ }
+]
