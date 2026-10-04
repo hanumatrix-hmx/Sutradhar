@@ -1,0 +1,52 @@
+$ git diff --stat
+warning: in the working copy of 'packages/mcp-server/src/version.ts', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'packages/sutradhar/package.json', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'packages/sutradhar/src/index.ts', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'packages/sutradhar/tests/unit/api.spec.ts', LF will be replaced by CRLF the next time Git touches it
+ packages/mcp-server/src/version.ts        | 2 +-
+ packages/sutradhar/package.json           | 2 +-
+ packages/sutradhar/src/index.ts           | 2 +-
+ packages/sutradhar/tests/unit/api.spec.ts | 2 +-
+ 4 files changed, 4 insertions(+), 4 deletions(-)
+$ git diff -U0
+warning: in the working copy of 'packages/mcp-server/src/version.ts', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'packages/sutradhar/package.json', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'packages/sutradhar/src/index.ts', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'packages/sutradhar/tests/unit/api.spec.ts', LF will be replaced by CRLF the next time Git touches it
+diff --git a/packages/mcp-server/src/version.ts b/packages/mcp-server/src/version.ts
+index 9c7c933..cc51d55 100644
+--- a/packages/mcp-server/src/version.ts
++++ b/packages/mcp-server/src/version.ts
+@@ -2 +2 @@
+-export const MCP_SERVER_VERSION = '0.6.0';
++export const MCP_SERVER_VERSION = '0.6.1';
+diff --git a/packages/sutradhar/package.json b/packages/sutradhar/package.json
+index c18360c..9f5bf25 100644
+--- a/packages/sutradhar/package.json
++++ b/packages/sutradhar/package.json
+@@ -3 +3 @@
+-  "version": "0.6.0",
++  "version": "0.6.1",
+diff --git a/packages/sutradhar/src/index.ts b/packages/sutradhar/src/index.ts
+index a4cb9b0..dbfbc14 100644
+--- a/packages/sutradhar/src/index.ts
++++ b/packages/sutradhar/src/index.ts
+@@ -39 +39 @@ import { Browser, type LaunchOptions } from './browser.js';
+-export const SUTRADHAR_VERSION = '0.6.0';
++export const SUTRADHAR_VERSION = '0.6.1';
+diff --git a/packages/sutradhar/tests/unit/api.spec.ts b/packages/sutradhar/tests/unit/api.spec.ts
+index aa9e690..4ebd495 100644
+--- a/packages/sutradhar/tests/unit/api.spec.ts
++++ b/packages/sutradhar/tests/unit/api.spec.ts
+@@ -42 +42 @@ describe('sutradhar SDK public API', () => {
+-    expect(SUTRADHAR_VERSION).toBe('0.6.0');
++    expect(SUTRADHAR_VERSION).toBe('0.6.1');
+$ git grep 0.6.0 (scoped)
+grep-exit=1
+$ grep from ../../src
+15:} from '../../src/index.js';
+ M packages/mcp-server/src/version.ts
+ M packages/sutradhar/package.json
+ M packages/sutradhar/src/index.ts
+ M packages/sutradhar/tests/unit/api.spec.ts
+?? .ai/loop/release-0.6.1/evidence/S9/
