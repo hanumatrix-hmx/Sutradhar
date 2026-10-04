@@ -24,9 +24,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 Nothing yet.
 
-## [0.6.1] - unreleased
+## [0.6.1] - 2026-10-04
 
-Prepared on branch `release/0.6.1`; the date and the published-to-npm line are filled in after `npm publish`.
+Published to npm as `sutradhar@0.6.1` on 2026-10-04.
 A patch release: no SDK or MCP API or tool changes (still 72 `browser.*` tools plus `agent.runGoal`). CLI exit codes
 are unchanged, including when `close` or session recovery cannot clear its state file: that still fails with the same
 error and a non-zero exit code, as in 0.6.0.
